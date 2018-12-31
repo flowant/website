@@ -12,6 +12,14 @@ buildscript {
 	}
 }
 
+plugins {
+	id 'io.franzbecker.gradle-lombok' version '1.14'
+}
+
+lombok {
+	version = '1.18.4'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -27,13 +35,39 @@ repositories {
 	maven { url "https://repo.spring.io/milestone" }
 }
 
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+	all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+        exclude group: 'ch.qos.logback', module: 'logback-core'
+    }
+}
 
 dependencies {
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    implementation('org.springframework.boot:spring-boot-starter-log4j2')
+    implementation('com.lmax:disruptor:3.4.2') {
+       because 'used by log4j2 asynchronous'
+    }
 	implementation('org.springframework.boot:spring-boot-starter-data-cassandra-reactive')
-	implementation('org.springframework.boot:spring-boot-starter-security')
+	implementation('com.datastax.cassandra:cassandra-driver-core')
 	implementation('org.springframework.boot:spring-boot-starter-webflux')
-	implementation('org.springframework.session:spring-session-core')
+	implementation('io.projectreactor:reactor-core')
+	implementation('org.cassandraunit:cassandra-unit:3.5.0.1')
+	implementation('com.codahale.metrics:metrics-core:3.0.2') {
+	   because 'used by cassandra unit test'
+	}
+	implementation group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '8.10.2'
+	
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('io.projectreactor:reactor-test')
-	testImplementation('org.springframework.security:spring-security-test')
 }
+
+
+
