@@ -1,4 +1,4 @@
-package org.flowant.users.data;
+package org.flowant.backend.model;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -9,8 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
-@Data
-@Builder
+@Data(staticConstructor = "of")
 @UserDefinedType
 public class ZonedTime {
     @NonNull
@@ -19,7 +18,7 @@ public class ZonedTime {
     LocalDateTime time;
 
     public static ZonedTime now() {
-        return ZonedTime.builder().zoneId(ZoneId.systemDefault()).time(LocalDateTime.now()).build();
+        return ZonedTime.of(ZoneId.systemDefault(), LocalDateTime.now());
     }
 
 }

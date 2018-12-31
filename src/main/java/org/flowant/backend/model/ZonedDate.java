@@ -1,14 +1,15 @@
-package org.flowant.users.data;
+package org.flowant.backend.model;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
-@Builder
-@Data
+@Data(staticConstructor = "of")
 @UserDefinedType
 public class ZonedDate {
     @NonNull
@@ -17,6 +18,6 @@ public class ZonedDate {
     LocalDate localDate;
 
     public static ZonedDate now() {
-        return ZonedDate.builder().zoneId(ZoneId.systemDefault()).localDate(LocalDate.now()).build();
+        return ZonedDate.of(ZoneId.systemDefault(), LocalDate.now());
     }
 }

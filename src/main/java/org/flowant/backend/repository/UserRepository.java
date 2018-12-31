@@ -1,7 +1,8 @@
-package org.flowant.users.data;
+package org.flowant.backend.repository;
 
 import java.util.UUID;
 
+import org.flowant.backend.model.User;
 import org.springframework.data.cassandra.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 

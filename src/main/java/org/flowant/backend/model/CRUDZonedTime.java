@@ -1,4 +1,4 @@
-package org.flowant.users.data;
+package org.flowant.backend.model;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -8,7 +8,7 @@ import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 import lombok.Data;
 import lombok.NonNull;
 
-@Data
+@Data(staticConstructor = "of")
 @UserDefinedType
 public class CRUDZonedTime {
     @NonNull

@@ -1,7 +1,8 @@
-package org.flowant.users.data;
+package org.flowant.backend.model;
 
 import java.util.Locale;
 
+import org.flowant.backend.model.Phone;
 import org.junit.Assert;
 import org.junit.Test;
 

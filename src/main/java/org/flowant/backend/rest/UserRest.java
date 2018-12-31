@@ -1,11 +1,11 @@
-package org.flowant.users.rest;
+package org.flowant.backend.rest;
 
 import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.flowant.users.data.User;
-import org.flowant.users.data.UserRepository;
+import org.flowant.backend.model.User;
+import org.flowant.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

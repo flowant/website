@@ -1,8 +1,10 @@
-package org.flowant.users.data;
+package org.flowant.backend.rest;
 
 import java.util.Collections;
 import java.util.UUID;
 
+import org.flowant.backend.model.User;
+import org.flowant.backend.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,13 +24,13 @@ public class UserRestTest {
 	private WebTestClient webTestClient;
 	
 	@Autowired
-	private UserRepository UserRepository;
+	private UserRepository repository;
 	
 	private User user;
 	
 	@Before
 	public void setUp() {
-	    user = new User(UUID.randomUUID(), "username1", "password1", "email1");
+	    user = User.of(UUID.randomUUID(), "username1", "password1", "email1");
 	}
 	
 	@Test
@@ -59,7 +61,7 @@ public class UserRestTest {
 	@Test
 	public void testGetSingleUser() {
 		
-		User userInserted = UserRepository.save(user).block();
+		User userInserted = repository.save(user).block();
 
 		webTestClient.get().uri("/user/{id}", Collections.singletonMap("id", userInserted.getId()))
 			.exchange()
@@ -72,7 +74,7 @@ public class UserRestTest {
 	@Test
 	public void testUpdateSingleUser() {
 		
-		User UserInserted = UserRepository.save(user).block();
+		User UserInserted = repository.save(user).block();
 		
 		user.setUsername("newUsername");
 
@@ -89,7 +91,7 @@ public class UserRestTest {
 	
 	@Test
 	public void testDeleteUser() {
-		User userInserted = UserRepository.save(user).block();
+		User userInserted = repository.save(user).block();
 		
 		webTestClient.delete().uri("/user/{id}", Collections.singletonMap("id",  userInserted.getId()))
 			.exchange()

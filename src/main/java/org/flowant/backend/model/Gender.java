@@ -1,4 +1,4 @@
-package org.flowant.users.data;
+package org.flowant.backend.model;
 
 public enum Gender {
     MAIL, FEMAIL, UNDEFINED;

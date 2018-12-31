@@ -1,7 +1,9 @@
-package org.flowant.users.data;
+package org.flowant.backend.repository;
 
 import java.util.UUID;
 
+import org.flowant.backend.model.User;
+import org.flowant.backend.repository.UserRepository;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -30,8 +32,8 @@ public class UserRepositoryTest {
 	public void setUp() {
 		Flux<User> deleteAndInsert = repository.deleteAll()
 				.thenMany(repository.saveAll(Flux.just(
-				        new User(UUID.randomUUID(), "username1", "password1", "email1"),
-						new User(UUID.randomUUID(), "username2", "password2", "email2"))));
+				        User.of(UUID.randomUUID(), "username1", "password1", "email1"),
+						User.of(UUID.randomUUID(), "username2", "password2", "email2"))));
 
 		StepVerifier.create(deleteAndInsert).expectNextCount(2).verifyComplete();
 	}

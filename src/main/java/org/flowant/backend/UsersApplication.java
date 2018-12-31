@@ -1,7 +1,7 @@
-package org.flowant.users;
+package org.flowant.backend;
 
-import org.flowant.users.data.LoggingEventListener;
-import org.flowant.users.data.User;
+import org.flowant.backend.model.LoggingEventListener;
+import org.flowant.backend.model.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
