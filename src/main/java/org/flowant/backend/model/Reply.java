@@ -7,8 +7,9 @@ import lombok.NonNull;
 @Data(staticConstructor = "of")
 @UserDefinedType
 public class Reply {
-    @NonNull
     String content;
-    Reputation reputation = new Reputation();
-    CRUDZonedTime crudTime = CRUDZonedTime.now();
+    @NonNull
+    Reputation reputation;
+    @NonNull
+    CRUDZonedTime crudTime;
 }

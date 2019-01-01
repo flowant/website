@@ -1,15 +1,16 @@
 package org.flowant.backend.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import lombok.Data;
+import lombok.NonNull;
 
-@Data
+@Data(staticConstructor = "of")
 @UserDefinedType
 public class Review {
-    Reputation reputation = new Reputation();
-    List<Reply> replies = new ArrayList<>();
+    @NonNull
+    Reputation reputation;
+    List<Reply> replies;
 }

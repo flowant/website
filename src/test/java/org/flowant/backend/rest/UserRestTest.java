@@ -2,7 +2,10 @@ package org.flowant.backend.rest;
 
 import java.util.Collections;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.flowant.backend.model.CRUDZonedTime;
 import org.flowant.backend.model.User;
 import org.flowant.backend.repository.UserRepository;
 import org.junit.Before;
@@ -30,7 +33,7 @@ public class UserRestTest {
 	
 	@Before
 	public void setUp() {
-	    user = User.of(UUID.randomUUID(), "username1", "password1", "email1");
+	    user = User.of(UUID.randomUUID(), "username1", "password1", "email1", CRUDZonedTime.now());
 	}
 	
 	@Test
@@ -70,6 +73,34 @@ public class UserRestTest {
 			.jsonPath("$.id").isNotEmpty()
 			.jsonPath("$.username").isEqualTo("username1");
 	}
+	
+	@Test
+    public void testCollection() {
+	    user.setFollowers(Stream.generate(UUID::randomUUID).limit(5).collect(Collectors.toList()));
+	    Stream.generate(UUID::randomUUID).limit(5).forEach(user.getFollowing()::add);
+
+        User userInserted = repository.save(user).block();
+
+        webTestClient.get().uri("/user/{id}", Collections.singletonMap("id", userInserted.getId()))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.id").isNotEmpty()
+            .jsonPath("$.username").isEqualTo("username1");
+        
+        user.setUsername("newUsername");
+
+        webTestClient.put().uri("/user/{id}", Collections.singletonMap("id", userInserted.getId()))
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .accept(MediaType.APPLICATION_JSON_UTF8)
+            .body(Mono.just(user), User.class)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(userInserted.getId().toString())
+            .jsonPath("$.username").isEqualTo("newUsername");
+        
+    }
 	
 	@Test
 	public void testUpdateSingleUser() {

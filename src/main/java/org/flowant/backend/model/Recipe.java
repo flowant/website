@@ -1,20 +1,21 @@
 package org.flowant.backend.model;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import lombok.Data;
+import lombok.NonNull;
 
 @Data(staticConstructor = "of")
 @UserDefinedType
 public class Recipe {
-    List<String> ingredients = new ArrayList<>();
+    @NonNull
+    List<String> ingredients;
     long prepareSeconds;
     long cookSeconds;
-    int servings = 1; // The default value is 1.
+    int servings;
     int calory; //TODO calculate with servings
     String NutritionFacts;//TODO calculate with servings
 

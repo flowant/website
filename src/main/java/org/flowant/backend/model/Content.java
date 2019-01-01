@@ -1,6 +1,5 @@
 package org.flowant.backend.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,9 +17,11 @@ public class Content {
     @NonNull
     String title; // to be tags allways
     Recipe extend; // TODO extend
-    List<Paragraph> paragraphs = new ArrayList<>();
-    Review review = new Review();
-    List<Tag> tags = new ArrayList<>();
+    List<Paragraph> paragraphs;
+    @NonNull
+    Review review;
+    List<Tag> tags;
     Authority accessLevel = Authority.ANONYMOUS;
-    CRUDZonedTime crudTime = CRUDZonedTime.now();
+    @NonNull
+    CRUDZonedTime crudTime;
 }

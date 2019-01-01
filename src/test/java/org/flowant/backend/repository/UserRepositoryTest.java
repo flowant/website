@@ -2,6 +2,7 @@ package org.flowant.backend.repository;
 
 import java.util.UUID;
 
+import org.flowant.backend.model.CRUDZonedTime;
 import org.flowant.backend.model.User;
 import org.flowant.backend.repository.UserRepository;
 import org.junit.Before;
@@ -30,18 +31,20 @@ public class UserRepositoryTest {
 	 */
 	@Before
 	public void setUp() {
+	    
+	    Flux<User> users = Flux.range(1, 5).map(i -> User.of(UUID.randomUUID(),
+                "username" + i, "password" + i, "email" + i, CRUDZonedTime.now()));
+	    
 		Flux<User> deleteAndInsert = repository.deleteAll()
-				.thenMany(repository.saveAll(Flux.just(
-				        User.of(UUID.randomUUID(), "username1", "password1", "email1"),
-						User.of(UUID.randomUUID(), "username2", "password2", "email2"))));
-
-		StepVerifier.create(deleteAndInsert).expectNextCount(2).verifyComplete();
+				.thenMany(repository.saveAll(users));
+		
+		StepVerifier.create(deleteAndInsert).expectNextCount(5).verifyComplete();
 	}
 
     @Test
     public void testFindAll() {
         StepVerifier.create(repository.findAll().doOnNext(System.out::println))
-                .expectNextCount(2)
+                .expectNextCount(5)
                 .verifyComplete();
     }
 	
