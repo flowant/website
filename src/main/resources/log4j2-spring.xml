@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+  <Properties>
+    <Property name="PID">????</Property>
+    <Property name="LOG_DIR">log</Property>
+    <Property name="LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint}
+      %clr{%5p} %clr{${sys:PID}}{magenta} %clr{---}{faint}
+      %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint}
+      %m%n%xwEx</Property>
+  </Properties>
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT" follow="true">
+      <PatternLayout pattern="${LOG_PATTERN}" />
+    </Console>
+    <RollingFile name="RollingFile"
+      fileName="${LOG_DIR}/application.log"
+      filePattern="${LOG_DIR}/application.%d{dd-MMM}.log.gz"
+      immediateFlush="false" ignoreExceptions="false">
+      <PatternLayout pattern="${LOG_PATTERN}" />
+      <Policies>
+        <OnStartupTriggeringPolicy />
+        <SizeBasedTriggeringPolicy
+          size="10 MB" />
+        <TimeBasedTriggeringPolicy />
+      </Policies>
+      <DefaultRolloverStrategy max="5" />
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <AsyncLogger name="org.flowant.users.data" level="debug" />
+    <AsyncRoot level="info">
+      <AppenderRef ref="RollingFile" />
+      <AppenderRef ref="Console" />
+    </AsyncRoot>
+  </Loggers>
+</Configuration>
