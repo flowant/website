@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.flowant.backend.model.CRUDZonedTime;
 import org.flowant.backend.model.User;
+import org.flowant.backend.model.UserMaker;
 import org.flowant.backend.repository.UserRepository;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -31,10 +32,7 @@ public class UserRepositoryTest {
 	 */
 	@Before
 	public void setUp() {
-	    
-	    Flux<User> users = Flux.range(1, 5).map(i -> User.of(UUID.randomUUID(),
-                "username" + i, "password" + i, "email" + i, CRUDZonedTime.now()));
-	    
+	    Flux<User> users = Flux.range(1, 5).map(UserMaker::small);
 		Flux<User> deleteAndInsert = repository.deleteAll()
 				.thenMany(repository.saveAll(users));
 		

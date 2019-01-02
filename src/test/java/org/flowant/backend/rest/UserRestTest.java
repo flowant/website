@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.flowant.backend.model.CRUDZonedTime;
 import org.flowant.backend.model.User;
+import org.flowant.backend.model.UserMaker;
 import org.flowant.backend.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,15 +38,20 @@ public class UserRestTest {
 
     @Before
     public void setUp() {
-        user = User.of(UUID.randomUUID(), "username1", "password1", "email1", CRUDZonedTime.now());
+        user = UserMaker.small();
     }
 
+    // make user
+    // insert user and check and delete and check
+    // insert users and check and delete all and check
+    // modefy user and check and delete and check
+    
     @Test
     public void testInsertUser() {
         webTestClient.post().uri("/user").contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange().expectStatus()
-                .isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8).expectBody().jsonPath("$.id")
-                .isNotEmpty().jsonPath("$.username").isEqualTo("username1").consumeWith(RestLogger::log);
+                .isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8).expectBody().consumeWith(RestLogger::log).jsonPath("$.id")
+                .isNotEmpty().jsonPath("$.username").isEqualTo("username1");
     }
 
     @Test
@@ -67,7 +73,7 @@ public class UserRestTest {
     @Test
     public void testCollection() {
         user.setFollowers(Stream.generate(UUID::randomUUID).limit(5).collect(Collectors.toList()));
-        user.setFollowing(Stream.generate(UUID::randomUUID).limit(5).collect(Collectors.toList()));
+        user.setFollowings(Stream.generate(UUID::randomUUID).limit(5).collect(Collectors.toList()));
 
         User userInserted = repository.save(user).block();
 

@@ -5,7 +5,6 @@ import java.time.ZoneId;
 
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 

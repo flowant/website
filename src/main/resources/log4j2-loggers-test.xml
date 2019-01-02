@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Loggers>
-  <AsyncLogger name="org.flowant.users.data" level="debug" />
   <AsyncRoot level="info">
     <AppenderRef ref="RollingFile" />
     <AppenderRef ref="Console" />
   </AsyncRoot>
+  <AsyncLogger name="org.flowant.backend" level="debug" />
   <AsyncLogger name="org.flowant.backend.rest.RestLogger" level="debug">
     <AppenderRef ref="RestFile" />
   </AsyncLogger>

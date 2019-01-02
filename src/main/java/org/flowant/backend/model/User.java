@@ -1,17 +1,18 @@
 package org.flowant.backend.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Delegate;
 import lombok.NonNull;
+import lombok.Singular;
 
-@Data(staticConstructor = "of")
+@Data
+@Builder
 @Table
 public class User {
     @Id
@@ -25,14 +26,19 @@ public class User {
     String email;
     String firstname;
     String lastname;
+    @Builder.Default
     Gender gender = Gender.UNDEFINED;
     ZonedDate birthdate;
     Phone phone;
     PostalAddress address;
+    @Builder.Default
     Authority role = Authority.ANONYMOUS;
+    @Singular
     List<UUID> followers;
-    List<UUID> following;
-    List<Tag> interest; //TODO to be updated by user activities;
+    @Singular
+    List<UUID> followings;
+    @Singular
+    List<Tag> interests; //TODO to be updated by user activities;
     @NonNull
     CRUDZonedTime crudTime;//TODO updated time
 }
