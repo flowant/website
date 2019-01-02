@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: prod
+  data:
+    cassandra:
+      keyspace-name: example
+
+---
+spring:
+  profiles: prod
+  data:
+    cassandra:
+      schema-action: CREATE_IF_NOT_EXISTS
+
+logging:
+  config: classpath:log4j2-spring-prod.xml
+
+---
+spring:
+  profiles: test
+  data:
+    cassandra:
+      schema-action: RECREATE
+
+logging:
+  config: classpath:log4j2-spring-test.xml
+

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="log4j2-properties.xml" />
+  <xi:include href="log4j2-appenders.xml" />
+  <xi:include href="log4j2-loggers-prod.xml" />
+</Configuration>

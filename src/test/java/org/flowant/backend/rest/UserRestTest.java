@@ -2,9 +2,12 @@ package org.flowant.backend.rest;
 
 import java.util.Collections;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.flowant.backend.model.CRUDZonedTime;
 import org.flowant.backend.model.User;
 import org.flowant.backend.repository.UserRepository;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import reactor.core.publisher.Mono;
@@ -38,11 +42,10 @@ public class UserRestTest {
 
     @Test
     public void testInsertUser() {
-
         webTestClient.post().uri("/user").contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange().expectStatus()
                 .isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8).expectBody().jsonPath("$.id")
-                .isNotEmpty().jsonPath("$.username").isEqualTo("username1");
+                .isNotEmpty().jsonPath("$.username").isEqualTo("username1").consumeWith(RestLogger::log);
     }
 
     @Test

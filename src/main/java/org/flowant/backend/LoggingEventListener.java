@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.flowant.backend.model;
+package org.flowant.backend;
 
 import org.springframework.data.cassandra.core.mapping.event.AbstractCassandraEventListener;
 import org.springframework.data.cassandra.core.mapping.event.AfterConvertEvent;
