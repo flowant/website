@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datastax.driver.core.utils.UUIDs;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

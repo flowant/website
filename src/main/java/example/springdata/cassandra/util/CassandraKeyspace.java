@@ -53,7 +53,7 @@ public class CassandraKeyspace extends CassandraResource {
 	 * @return the {@link CassandraKeyspace} rule.
 	 */
 	public static CassandraKeyspace onLocalhost() {
-		return new CassandraKeyspace("localhost", ProtocolOptions.DEFAULT_PORT, "example",
+		return new CassandraKeyspace("localhost", ProtocolOptions.DEFAULT_PORT, "backend",
 				Cassandra.embeddedIfNotRunning("localhost", ProtocolOptions.DEFAULT_PORT), new Version(0, 0, 0));
 	}
 

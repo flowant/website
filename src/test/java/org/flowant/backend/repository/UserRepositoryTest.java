@@ -1,102 +1,64 @@
 package org.flowant.backend.repository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
+
 import org.flowant.backend.model.User;
 import org.flowant.backend.model.UserMaker;
-import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import example.springdata.cassandra.util.CassandraKeyspace;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-@RunWith(SpringRunner.class)
+@RunWith(JUnitParamsRunner.class)
 @SpringBootTest
+
 public class UserRepositoryTest {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
-	@ClassRule public final static CassandraKeyspace CASSANDRA_KEYSPACE = CassandraKeyspace.onLocalhost();
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
-	@Autowired UserRepository repository;
+	@ClassRule
+	public final static CassandraKeyspace CASSANDRA_KEYSPACE = CassandraKeyspace.onLocalhost();
 
-	/**
-	 * Clear table and insert some rows.
-	 */
-	@Before
-	public void setUp() {
-	    Flux<User> users = Flux.range(1, 5).map(UserMaker::small);
-		Flux<User> deleteAndInsert = repository.deleteAll()
-				.thenMany(repository.saveAll(users));
-		
-		StepVerifier.create(deleteAndInsert).expectNextCount(5).verifyComplete();
-	}
+	@Autowired
+	UserRepository userRepository;
+
+	Consumer<? super User> deleteUser = u -> userRepository.delete(u).subscribe();
+	Consumer<? super Collection<User>> deleteUsers = l -> l.forEach(deleteUser);
+
+	@Test
+    @Parameters
+    public void testSave(User user) {
+        Flux<User> saveThenFind = userRepository.save(user).thenMany(userRepository.findById(user.getId()));
+        StepVerifier.create(saveThenFind).consumeNextWith(deleteUser).verifyComplete();
+    }
+    public static List<User> parametersForTestSave() {
+        return Arrays.asList(UserMaker.small(), UserMaker.large());
+    }
 
     @Test
-    public void testFindAll() {
-        StepVerifier.create(repository.findAll().doOnNext(System.out::println))
-                .expectNextCount(5)
-                .verifyComplete();
+    public void testSaveAllFindAllById() {
+        Flux<User> users = Flux.range(1, 5).map(UserMaker::large).cache();
+        Flux<User> saveAllThenFind = userRepository.saveAll(users)
+                .thenMany(userRepository.findAllById(users.map(User::getId)));
+        StepVerifier.create(saveAllThenFind).recordWith(ArrayList::new).expectNextCount(5)
+        .consumeRecordedWith(deleteUsers).verifyComplete();
     }
-	
-//	/**
-//	 * This sample performs a count, inserts data and performs a count again using reactive operator chaining.
-//	 */
-//	@Test
-//	public void shouldInsertAndCountData() {
-//
-//		Mono<Long> saveAndCount = repository.count() //
-//				.doOnNext(System.out::println) //
-//				.thenMany(repository.saveAll(Flux.just(new Person("Hank", "Schrader", 43), //
-//						new Person("Mike", "Ehrmantraut", 62)))) //
-//				.last() //
-//				.flatMap(v -> repository.count()) //
-//				.doOnNext(System.out::println);
-//
-//		StepVerifier.create(saveAndCount).expectNext(6L).verifyComplete();
-//	}
-//
-//	/**
-//	 * Result set {@link com.datastax.driver.core.Row}s are converted to entities as they are emitted. Reactive pull and
-//	 * prefetch define the amount of fetched records.
-//	 */
-
-//
-//	/**
-//	 * Fetch data using query derivation.
-//	 */
-//	@Test
-//	public void shouldQueryDataWithQueryDerivation() {
-//		StepVerifier.create(repository.findByLastname("White")).expectNextCount(2).verifyComplete();
-//	}
-//
-//	/**
-//	 * Fetch data using a string query.
-//	 */
-//	@Test
-//	public void shouldQueryDataWithStringQuery() {
-//		StepVerifier.create(repository.findByFirstnameInAndLastname("Walter", "White")).expectNextCount(1).verifyComplete();
-//	}
-//
-//	/**
-//	 * Fetch data using query derivation.
-//	 */
-//	@Test
-//	public void shouldQueryDataWithDeferredQueryDerivation() {
-//		StepVerifier.create(repository.findByLastname(Mono.just("White"))).expectNextCount(2).verifyComplete();
-//	}
-//
-//	/**
-//	 * Fetch data using query derivation and deferred parameter resolution.
-//	 */
-//	@Test
-//	public void shouldQueryDataWithMixedDeferredQueryDerivation() {
-//
-//		StepVerifier.create(repository.findByFirstnameAndLastname(Mono.just("Walter"), "White")) //
-//				.expectNextCount(1) //
-//				.verifyComplete();
-//	}
 
 }
