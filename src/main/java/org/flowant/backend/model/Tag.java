@@ -3,11 +3,15 @@ package org.flowant.backend.model;
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-@Data(staticConstructor = "of")
+@Data
+@RequiredArgsConstructor(staticName="of")
+@NoArgsConstructor
 @UserDefinedType
 public class Tag {
     @NonNull
-    String tag;
+    String name;
 }

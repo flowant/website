@@ -1,11 +1,7 @@
 package org.flowant.backend.repository;
 
-import java.util.UUID;
-
-import org.flowant.backend.model.CRUDZonedTime;
 import org.flowant.backend.model.User;
 import org.flowant.backend.model.UserMaker;
-import org.flowant.backend.repository.UserRepository;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -17,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import example.springdata.cassandra.util.CassandraKeyspace;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

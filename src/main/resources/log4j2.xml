@@ -3,7 +3,8 @@
 <!-- 
   It's used by unit tests without Spring Framework.
   In case of Spring initialization, This configuration is used 
-  shortly until Spring Framework load log4j2-spring-xxxx.xml file -->
+  shortly until Spring Framework load log4j2-spring-xxxx.xml file
+-->
   <xi:include href="log4j2-properties.xml" />
   <xi:include href="log4j2-appenders.xml" />
   <xi:include href="log4j2-loggers-test.xml" />

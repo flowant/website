@@ -24,7 +24,7 @@ public class UserMaker {
     static String detailCode = "detailCode";
 
     // Tag
-    static String tag = "tag";
+    static String name = "name";
 
     public static User small(int suffix) {
         return User.builder().id(UUID.randomUUID()).username(username + suffix).password(password + suffix)
@@ -42,7 +42,7 @@ public class UserMaker {
                         zipCode + suffix))
                 .birthdate(ZonedDate.now()).firstname(firstname + suffix).lastname(lastname + suffix)
                 .phone(Phone.of(suffix, 100000000 + suffix)).follower(UUID.randomUUID()).following(UUID.randomUUID())
-                .interest(Tag.of(tag + suffix))
+                .interest(Tag.of(name + suffix))
                 .crudTime(CRUDZonedTime.now()).build();
     }
 
@@ -51,8 +51,9 @@ public class UserMaker {
     }
 
     @Test
-    public void make() {
-        log.info("User:{}", small()::toString);
+    public void maker() {
+        log.debug("User:{}", small()::toString);
         log.debug("User:{}", large()::toString);
     }
+
 }

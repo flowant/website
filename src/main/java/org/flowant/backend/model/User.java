@@ -6,13 +6,19 @@ import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Singular;
 
-@Data
 @Builder
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor(staticName="of")
+@NoArgsConstructor
 @Table
 public class User {
     @Id

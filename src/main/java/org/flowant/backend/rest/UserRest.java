@@ -25,56 +25,46 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class UserRest {
+    final static String ID = "id";
+    final static String USER = "/user";
+    final static String USER_STREAM = "/user/stream";
+    final static String USER__ID__ = "/user/{id}";
+
     @Autowired
     private UserRepository userRepository;
-    
-    @GetMapping(value = "/user")
-    public Flux<User> getAllUser() {
+
+    @GetMapping(value = USER)
+    public Flux<User> getAll() {
         return userRepository.findAll();
     }
-    
-    @GetMapping(value = "/user/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<User> streamAllUser() {
+
+    @GetMapping(value = USER_STREAM, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<User> getAllStream() {
         return userRepository.findAll();
     }
-    
-    @PostMapping(value = "/user")
-    public Mono<ResponseEntity<User>> createUser(@Valid @RequestBody User userInput) {
-        userInput.setId(UUIDs.timeBased());
-        return userRepository.save(userInput).map(user -> {
-            return ResponseEntity.ok(user);
-        }).defaultIfEmpty(
-            new ResponseEntity<>(HttpStatus.NOT_FOUND)
-        );
+
+    @PostMapping(value = USER)
+    public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
+        return userRepository.save(user).map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping(value = "/user/{id}")
-    public Mono<ResponseEntity<User>> getPersonById(@PathVariable(value = "id") String id) {
-        return userRepository.findById(UUID.fromString(id)).map(person -> {
-            return ResponseEntity.ok(person);
-        }).defaultIfEmpty(
-            new ResponseEntity<>(HttpStatus.NOT_FOUND)
-        );
+    @GetMapping(value = USER__ID__)
+    public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
+        return userRepository.findById(UUID.fromString(id)).map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(value = "/user/{id}")
-    public Mono<ResponseEntity<User>> updatePerson(@PathVariable(value = "id") String id, @Valid @RequestBody User userInput) {
-        return userRepository.findById(UUID.fromString(id)).flatMap(user -> {
-            user.setUsername(userInput.getUsername());
-            return userRepository.save(user);
-        }).map(updatedPerson -> {
-            return ResponseEntity.ok(updatedPerson);
-        }).defaultIfEmpty(
-            new ResponseEntity<>(HttpStatus.NOT_FOUND)
-        );
+    @PutMapping(value = USER__ID__)
+    public Mono<ResponseEntity<User>> putById(@PathVariable(value = ID) String id, @Valid @RequestBody User user) {
+        // TODO need update policy
+        return userRepository.save(user).map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping(value = "/user/{id}")
-    public Mono<ResponseEntity<Void>> deleteUser(@PathVariable(value = "id") String id) {
-        return userRepository.findById(UUID.fromString(id)).flatMap(person ->
-            userRepository.delete(person).then(Mono.just(new ResponseEntity<Void>(HttpStatus.OK)))
-        ).defaultIfEmpty(
-            new ResponseEntity<>(HttpStatus.NOT_FOUND)
-        );
+    @DeleteMapping(value = USER__ID__)
+    public Mono<ResponseEntity<Void>> deleteUser(@PathVariable(value = ID) String id) {
+        return userRepository.deleteById(UUID.fromString(id)).map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

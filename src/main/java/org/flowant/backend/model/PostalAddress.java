@@ -2,10 +2,16 @@ package org.flowant.backend.model;
 
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-@Data(staticConstructor = "of")
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor(staticName="of")
+@NoArgsConstructor
 @UserDefinedType
 public class PostalAddress {
     @NonNull
