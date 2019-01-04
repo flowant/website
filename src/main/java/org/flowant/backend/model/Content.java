@@ -7,11 +7,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+@Builder
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor(staticName="of")
@@ -24,9 +26,10 @@ public class Content {
     String title; // to be tags allways
     Recipe extend; // TODO extend
     List<Paragraph> paragraphs;
+    List<Tag> tags;
     @NonNull
     Review review;
-    List<Tag> tags;
+    @Builder.Default
     Authority accessLevel = Authority.ANONYMOUS;
     @NonNull
     CRUDZonedTime crudTime;

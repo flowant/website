@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.flowant.backend.model.User;
-import org.flowant.backend.model.UserMaker;
+import org.flowant.backend.model.UserTest;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,7 +24,6 @@ import reactor.test.StepVerifier;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-
 public class UserRepositoryTest {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
@@ -45,12 +44,12 @@ public class UserRepositoryTest {
         StepVerifier.create(saveThenFind).consumeNextWith(deleteUser).verifyComplete();
     }
     public static List<User> parametersForTestSave() {
-        return Arrays.asList(UserMaker.small(), UserMaker.large());
+        return Arrays.asList(UserTest.small(), UserTest.large());
     }
 
     @Test
     public void testSaveAllFindAllById() {
-        Flux<User> users = Flux.range(1, 5).map(UserMaker::large).cache();
+        Flux<User> users = Flux.range(1, 5).map(UserTest::large).cache();
         Flux<User> saveAllThenFind = userRepository.saveAll(users)
                 .thenMany(userRepository.findAllById(users.map(User::getId)));
         StepVerifier.create(saveAllThenFind).recordWith(ArrayList::new).expectNextCount(5)

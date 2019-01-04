@@ -8,7 +8,7 @@ import org.junit.Test;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class UserMaker {
+public class UserTest {
 
     static String username = "username";
     static String password = "password";
@@ -52,7 +52,7 @@ public class UserMaker {
     }
 
     @Test
-    public void maker() {
+    public void testMaker() {
         log.debug("User:{}", small()::toString);
         log.debug("User:{}", large()::toString);
     }

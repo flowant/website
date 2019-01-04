@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import org.assertj.core.util.Lists;
 import org.flowant.backend.model.Tag;
 import org.flowant.backend.model.User;
-import org.flowant.backend.model.UserMaker;
+import org.flowant.backend.model.UserTest;
 import org.flowant.backend.repository.UserRepository;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -69,7 +69,7 @@ public class UserRestTest {
     }
 
     public static List<User> parametersForTestInsert() {
-        return Arrays.asList(UserMaker.small(), UserMaker.large());
+        return Arrays.asList(UserTest.small(), UserTest.large());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class UserRestTest {
     }
 
     public static List<User> parametersForTestGetId() {
-        return Arrays.asList(UserMaker.small(), UserMaker.large());
+        return Arrays.asList(UserTest.small(), UserTest.large());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class UserRestTest {
 
     @Test
     public void testGetAll() {
-        Flux<User> users = Flux.range(1, 5).map(UserMaker::small).cache();
+        Flux<User> users = Flux.range(1, 5).map(UserTest::small).cache();
         userRepository.deleteAll().thenMany(userRepository.saveAll(users)).blockLast();
 
         webTestClient.get().uri(UserRest.USER).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
@@ -123,7 +123,7 @@ public class UserRestTest {
 
     @Test
     public void testPutNotExist() {
-        User user = UserMaker.large();
+        User user = UserTest.large();
         webTestClient.put().uri(UserRest.USER__ID__, user).contentType(MediaType.APPLICATION_JSON_UTF8)
         .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
         .expectStatus().isOk().expectBody().consumeWith(r -> {
@@ -141,7 +141,7 @@ public class UserRestTest {
 
     @Test
     public void testPut() {
-        User user = UserMaker.large();
+        User user = UserTest.large();
         userRepository.save(user).block();
 
         user.setFirstname("newFirstname");
@@ -158,7 +158,7 @@ public class UserRestTest {
 
     @Test
     public void testDelete() {
-        User user = UserMaker.large();
+        User user = UserTest.large();
         userRepository.save(user).block();
 
         webTestClient.delete().uri(UserRest.USER__ID__, user.getId()).exchange()

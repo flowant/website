@@ -19,21 +19,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RunWith(JUnitParamsRunner.class)
 public class JacksonTest {
-
-    @Test
-    @Parameters
-    public void testUser(User user) throws JsonGenerationException, JsonMappingException, IOException {
-        testWithJson(user);
-    }
-    public static List<User> parametersForTestUser() {
-      return Arrays.asList(UserMaker.small(), UserMaker.large());
-    }
-
-    @Test
-    public void testTagWithJson() throws JsonGenerationException, JsonMappingException, IOException {
-        testWithJson(Tag.of("name"));
-    }
-
     public <T> void testWithJson(T t) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -42,4 +27,28 @@ public class JacksonTest {
         Object obj = objectMapper.readValue(json, t.getClass());
         log.debug("ToString:{}", obj);
     }
+
+    @Test
+    public void testTagWithJson() throws JsonGenerationException, JsonMappingException, IOException {
+        testWithJson(Tag.of("name"));
+    }
+
+    @Test
+    @Parameters
+    public void testUser(User user) throws JsonGenerationException, JsonMappingException, IOException {
+        testWithJson(user);
+    }
+    public static List<User> parametersForTestUser() {
+      return Arrays.asList(UserTest.small(), UserTest.large());
+    }
+
+    @Test
+    @Parameters
+    public void testContent(Content content) throws JsonGenerationException, JsonMappingException, IOException {
+        testWithJson(content);
+    }
+    public static List<Content> parametersForTestContent() {
+      return Arrays.asList(ContentTest.small(), ContentTest.large());
+    }
+
 }

@@ -23,7 +23,7 @@ public class Recipe {
     long cookSeconds;
     int servings;
     int calory; //TODO calculate with servings
-    String NutritionFacts;//TODO calculate with servings
+    String nutritionFacts;//TODO calculate with servings
 
     public void setPrepareDuration(Duration d) {
         prepareSeconds = d.getSeconds();
