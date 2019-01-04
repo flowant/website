@@ -56,10 +56,8 @@ public class ContentRepositoryTest {
         .consumeRecordedWith(deleteContents).verifyComplete();
     }
 
-    @Test
     public void testSaveDebug() {
         Content content = ContentTest.large();
-        Flux<Content> saveThenFind = contentRepository.save(content).thenMany(contentRepository.findById(content.getId()));
-        StepVerifier.create(saveThenFind).verifyComplete();
+        contentRepository.save(content).block();
     }
 }

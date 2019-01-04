@@ -61,7 +61,7 @@ public class UserRest {
     }
 
     @DeleteMapping(value = USER__ID__)
-    public Mono<ResponseEntity<Void>> deleteUser(@PathVariable(value = ID) String id) {
+    public Mono<ResponseEntity<Void>> delete(@PathVariable(value = ID) String id) {
         return userRepository.deleteById(UUID.fromString(id)).map(ResponseEntity::ok);
     }
 }
