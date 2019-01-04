@@ -62,7 +62,6 @@ public class UserRest {
 
     @DeleteMapping(value = USER__ID__)
     public Mono<ResponseEntity<Void>> deleteUser(@PathVariable(value = ID) String id) {
-        return userRepository.deleteById(UUID.fromString(id)).map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return userRepository.deleteById(UUID.fromString(id)).map(ResponseEntity::ok);
     }
 }

@@ -121,29 +121,51 @@ public class UserRestTest {
                 });
     }
 
-//
-//    @Test
-//    public void testUpdateSingleUser() {
-//
-//        User UserInserted = userRepository.save(user).block();
-//
-//        user.setUsername("newUsername");
-//
-//        webTestClient.put().uri("/user/{id}", Collections.singletonMap("id", UserInserted.getId()))
-//                .contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8)
-//                .body(Mono.just(user), User.class).exchange().expectStatus().isOk().expectBody().jsonPath("$.id")
-//                .isEqualTo(UserInserted.getId().toString()).jsonPath("$.username").isEqualTo("newUsername");
-//    }
-//
-//    @Test
-//    public void testDeleteUser() {
-//        User userInserted = userRepository.save(user).block();
-//
-//        webTestClient.delete().uri("/user/{id}", Collections.singletonMap("id", userInserted.getId())).exchange()
-//                .expectStatus().isOk();
-//
-//        webTestClient.get().uri("/user/{id}", Collections.singletonMap("id", userInserted.getId())).exchange()
-//                .expectStatus().isNotFound();
-//    }
+    @Test
+    public void testPutNotExist() {
+        User user = UserMaker.large();
+        webTestClient.put().uri(UserRest.USER__ID__, user).contentType(MediaType.APPLICATION_JSON_UTF8)
+        .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
+        .expectStatus().isOk().expectBody().consumeWith(r -> {
+            log.trace(r);
+            StepVerifier.create(userRepository.findById(user.getId()))
+                    .consumeNextWith(deleteUser).verifyComplete();
+        });
+    }
+
+    @Test
+    public void testPutMalformedId() {
+        webTestClient.put().uri(UserRest.USER__ID__, "notExist").exchange()
+                .expectStatus().isBadRequest().expectBody().consumeWith(log::trace);
+    }
+
+    @Test
+    public void testPut() {
+        User user = UserMaker.large();
+        userRepository.save(user).block();
+
+        user.setFirstname("newFirstname");
+        user.setFollowers(List.of(UUID.randomUUID(), UUID.randomUUID()));
+
+        webTestClient.put().uri(UserRest.USER__ID__, user).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
+                .expectStatus().isOk().expectBody().consumeWith( r -> {
+                    log.trace(r::toString);
+                    StepVerifier.create(userRepository.findById(user.getId())).expectNext(user)
+                            .then(()-> deleteUser.accept(user)).verifyComplete();
+                });
+    }
+
+    @Test
+    public void testDelete() {
+        User user = UserMaker.large();
+        userRepository.save(user).block();
+
+        webTestClient.delete().uri(UserRest.USER__ID__, user.getId()).exchange()
+                .expectStatus().isOk().expectBody().consumeWith(r -> {
+                    log.trace(r::toString);
+                    StepVerifier.create(userRepository.findById(user.getId())).expectNextCount(0).verifyComplete();
+                });
+    }
 
 }
