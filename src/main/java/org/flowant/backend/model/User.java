@@ -12,7 +12,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Singular;
 
 @Builder
 @Data
@@ -39,11 +38,8 @@ public class User {
     PostalAddress address;
     @Builder.Default
     Authority role = Authority.ANONYMOUS;
-    @Singular
     List<UUID> followers;
-    @Singular
     List<UUID> followings;
-    @Singular
     List<Tag> interests; //TODO to be updated by user activities;
     @NonNull
     CRUDZonedTime crudTime;//TODO updated time

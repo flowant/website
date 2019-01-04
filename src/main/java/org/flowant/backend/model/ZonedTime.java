@@ -3,6 +3,7 @@ package org.flowant.backend.model;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import org.flowant.backend.util.TimeUtil;
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import lombok.Data;
@@ -21,7 +22,7 @@ public class ZonedTime {
     LocalDateTime time;
 
     public static ZonedTime now() {
-        return ZonedTime.of(ZoneId.systemDefault(), LocalDateTime.now());
+        return ZonedTime.of(ZoneId.systemDefault(), TimeUtil.nowMillisecond());
     }
 
 }

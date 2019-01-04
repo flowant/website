@@ -3,6 +3,7 @@ package org.flowant.backend.model;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import org.flowant.backend.util.TimeUtil;
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class CRUDZonedTime {
     LocalDateTime deleted;// TODO trash can function
 
     public static CRUDZonedTime now() {
-        LocalDateTime t = LocalDateTime.now();
+        LocalDateTime t = TimeUtil.nowMillisecond();
         return new CRUDZonedTime(ZoneId.systemDefault(), t, t, t);
     }
 }

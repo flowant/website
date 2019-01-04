@@ -27,7 +27,7 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'org.flowant'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
+sourceCompatibility = 11.0
 
 repositories {
 	mavenCentral()

@@ -4,8 +4,7 @@
     <AppenderRef ref="RollingFile" />
     <AppenderRef ref="Console" />
   </AsyncRoot>
-  <AsyncLogger name="org.flowant.backend" level="debug" />
-  <AsyncLogger name="org.springframework.test.web.reactive.server" level="debug" />
+  <AsyncLogger name="org.flowant.backend" level="trace" />
   <AsyncLogger name="org.flowant.backend.rest.RestLogger">
     <AppenderRef ref="RestFile" />
   </AsyncLogger>

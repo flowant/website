@@ -1,5 +1,6 @@
 package org.flowant.backend.model;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -41,8 +42,8 @@ public class UserMaker {
                 .address(PostalAddress.of(address + suffix, city + suffix, state + suffix, country + suffix,
                         zipCode + suffix))
                 .birthdate(ZonedDate.now()).firstname(firstname + suffix).lastname(lastname + suffix)
-                .phone(Phone.of(suffix, 100000000 + suffix)).follower(UUID.randomUUID()).following(UUID.randomUUID())
-                .interest(Tag.of(name + suffix))
+                .phone(Phone.of(suffix, 100000000 + suffix)).followers(List.of(UUID.randomUUID()))
+                .followings(List.of(UUID.randomUUID())).interests(List.of(Tag.of(name + suffix)))
                 .crudTime(CRUDZonedTime.now()).build();
     }
 
