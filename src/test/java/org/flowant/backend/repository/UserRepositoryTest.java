@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import example.springdata.cassandra.util.CassandraKeyspace;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import reactor.core.publisher.Flux;
@@ -32,9 +31,6 @@ public class UserRepositoryTest {
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-	@ClassRule
-	public final static CassandraKeyspace CASSANDRA_KEYSPACE = CassandraKeyspace.onLocalhost();
 
 	@Autowired
 	UserRepository userRepository;

@@ -3,7 +3,9 @@ spring:
     active: prod
   data:
     cassandra:
-      keyspace-name: backend
+      contactPoints: 127.0.0.1
+      port: 9042
+      cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
 
 ---
 spring:
@@ -11,6 +13,7 @@ spring:
   data:
     cassandra:
       schema-action: CREATE_IF_NOT_EXISTS
+      keyspace-name: backend_prod
 
 logging:
   config: classpath:log4j2-spring-prod.xml
@@ -20,7 +23,8 @@ spring:
   profiles: test
   data:
     cassandra:
-      schema-action: RECREATE
+      schema-action: CREATE_IF_NOT_EXISTS
+      keyspace-name: backend_test
 
 logging:
   config: classpath:log4j2-spring-test.xml
