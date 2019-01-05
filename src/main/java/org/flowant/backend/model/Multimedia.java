@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Multimedia {
+public class Multimedia implements MultimediaInfo {
     @Id
     @NonNull
     UUID id;

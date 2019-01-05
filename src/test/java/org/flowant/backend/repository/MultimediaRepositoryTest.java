@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.flowant.backend.model.Multimedia;
+import org.flowant.backend.model.MultimediaInfo;
 import org.flowant.backend.model.MultimediaTest;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -19,11 +20,13 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
+@Log4j2
 public class MultimediaRepositoryTest {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
@@ -49,15 +52,16 @@ public class MultimediaRepositoryTest {
 
     @Test
     public void testSaveAllFindAllById() {
-        Flux<Multimedia> multimedias = Flux.range(1, 5).map(MultimediaTest::large).cache();
-        Flux<Multimedia> saveAllThenFind = multimediaRepository.saveAll(multimedias)
-                .thenMany(multimediaRepository.findAllById(multimedias.map(Multimedia::getId)));
+        Flux<Multimedia> multimedia = Flux.range(1, 5).map(MultimediaTest::large).cache();
+        Flux<Multimedia> saveAllThenFind = multimediaRepository.saveAll(multimedia)
+                .thenMany(multimediaRepository.findAllById(multimedia.map(Multimedia::getId)));
         StepVerifier.create(saveAllThenFind).recordWith(ArrayList::new).expectNextCount(5)
         .consumeRecordedWith(deleteMultimedias).verifyComplete();
     }
 
     public void testSaveDebug() {
         Multimedia multimedia = MultimediaTest.large();
-        multimediaRepository.save(multimedia).block();
+        MultimediaInfo mInfo = multimediaRepository.save(multimedia).map(MultimediaInfo.class::cast).block();
+        log.trace("MultimediaInfo: {}", mInfo::toString);
     }
 }
