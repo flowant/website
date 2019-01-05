@@ -1,6 +1,6 @@
 package org.flowant.backend.model;
 
-import java.nio.ByteBuffer;
+import java.util.UUID;
 
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @UserDefinedType
-public class Paragraph {
-    ByteBuffer multimedia;
+public class MultimediaRef {
     @NonNull
-    String sentences;
+    String url;
+    UUID refId; // Multimedia's ID can be null when no file is uploaded
 }

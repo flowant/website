@@ -1,9 +1,7 @@
 package org.flowant.backend.model;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.IntStream;
 
 import org.junit.Test;
 
@@ -20,10 +18,8 @@ public class ContentTest {
     static int calory = 1000; //TODO calculate with servings
     static String nutritionFacts = "nutritionFacts";
 
-    static ByteBuffer multimedia = ByteBuffer.allocateDirect(10);
-    static {
-        IntStream.range(0, 10).forEach(i -> multimedia.put((byte) i));
-    }
+    static String url = "url";
+
     static String sentences = "sentences";
     static String content = "content";
 
@@ -43,19 +39,12 @@ public class ContentTest {
     }
 
     public static Content large(int s) {
-//        return Content.builder().id(UUID.randomUUID()).title(title + s)
-//                .extend(new Recipe(List.of(ingredients + s), prepareSeconds + s, cookSeconds + s,
-//                        servings + s, calory + s, nutritionFacts + s))
-//                .paragraphs(List.of(new Paragraph(multimedia, sentences + s))).tags(List.of(Tag.of(name + s)))
-//                .review(new Review(Reputation.of(rating + s, liked + s, reported + s),
-//                        List.of(new Reply(content + s, Reputation.of(rating + s, liked + s, reported + s),
-//                                CRUDZonedTime.now()))))
-//                .crudTime(CRUDZonedTime.now())
-//                .build();
         return Content.builder().id(UUID.randomUUID()).title(title + s)
                 .extend(new Recipe(List.of(ingredients + s), prepareSeconds + s, cookSeconds + s,
                         servings + s, calory + s, nutritionFacts + s))
-                .paragraphs(List.of(Paragraph.of(sentences + s))).tags(List.of(Tag.of(name + s)))
+                .multimediaRefs(List.of(new MultimediaRef(url + s, UUID.randomUUID())))
+                .sentences(sentences + s)
+                .tags(List.of(Tag.of(name + s)))
                 .review(new Review(Reputation.of(rating + s, liked + s, reported + s),
                         List.of(new Reply(content + s, Reputation.of(rating + s, liked + s, reported + s),
                                 CRUDZonedTime.now()))))

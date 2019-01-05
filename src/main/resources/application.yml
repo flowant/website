@@ -24,6 +24,7 @@ spring:
   data:
     cassandra:
       schema-action: CREATE_IF_NOT_EXISTS
+#      schema-action: recreate # recreate is slow because of doing recreating
       keyspace-name: backend_test
 
 logging:
