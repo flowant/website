@@ -17,18 +17,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Multimedia implements MultimediaInfo {
+public class File implements FileInfo {
     @Id
     @NonNull
     UUID id;
     @NonNull
     UUID contentId; // owner of this media;
     @NonNull
-    ByteBuffer media; //TODO to be chunked and parallel
+    ByteBuffer data; //TODO to be chunked and parallel
     @NonNull
     String contentType;
     @NonNull
-    String originalFilename; // client's filename
+    String filename; // client's filename
     long length; //TODO should be filled before being inserted to DB
     @NonNull
     CRUDZonedTime crudTime;

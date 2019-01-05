@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.flowant.backend.model.Multimedia;
-import org.flowant.backend.model.MultimediaInfo;
-import org.flowant.backend.model.MultimediaTest;
+import org.flowant.backend.model.File;
+import org.flowant.backend.model.FileInfo;
+import org.flowant.backend.model.FileTest;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,33 +35,33 @@ public class MultimediaRepositoryTest {
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
 	@Autowired
-	MultimediaRepository multimediaRepository;
+	FileRepository multimediaRepository;
 
-	Consumer<? super Multimedia> deleteMultimedia = c -> multimediaRepository.delete(c).subscribe();
-	Consumer<? super Collection<Multimedia>> deleteMultimedias = l -> l.forEach(deleteMultimedia);
+	Consumer<? super File> deleteMultimedia = c -> multimediaRepository.delete(c).subscribe();
+	Consumer<? super Collection<File>> deleteMultimedias = l -> l.forEach(deleteMultimedia);
 
 	@Test
     @Parameters
-    public void testSave(Multimedia multimedia) {
-        Flux<Multimedia> saveThenFind = multimediaRepository.save(multimedia).thenMany(multimediaRepository.findById(multimedia.getId()));
+    public void testSave(File multimedia) {
+        Flux<File> saveThenFind = multimediaRepository.save(multimedia).thenMany(multimediaRepository.findById(multimedia.getId()));
         StepVerifier.create(saveThenFind).consumeNextWith(deleteMultimedia).verifyComplete();
     }
-    public static List<Multimedia> parametersForTestSave() {
-        return Arrays.asList(MultimediaTest.large());
+    public static List<File> parametersForTestSave() {
+        return Arrays.asList(FileTest.large());
     }
 
     @Test
     public void testSaveAllFindAllById() {
-        Flux<Multimedia> multimedia = Flux.range(1, 5).map(MultimediaTest::large).cache();
-        Flux<Multimedia> saveAllThenFind = multimediaRepository.saveAll(multimedia)
-                .thenMany(multimediaRepository.findAllById(multimedia.map(Multimedia::getId)));
+        Flux<File> multimedia = Flux.range(1, 5).map(FileTest::large).cache();
+        Flux<File> saveAllThenFind = multimediaRepository.saveAll(multimedia)
+                .thenMany(multimediaRepository.findAllById(multimedia.map(File::getId)));
         StepVerifier.create(saveAllThenFind).recordWith(ArrayList::new).expectNextCount(5)
         .consumeRecordedWith(deleteMultimedias).verifyComplete();
     }
 
     public void testSaveDebug() {
-        Multimedia multimedia = MultimediaTest.large();
-        MultimediaInfo mInfo = multimediaRepository.save(multimedia).map(MultimediaInfo.class::cast).block();
+        File multimedia = FileTest.large();
+        FileInfo mInfo = multimediaRepository.save(multimedia).map(FileInfo.class::cast).block();
         log.trace("MultimediaInfo: {}", mInfo::toString);
     }
 }

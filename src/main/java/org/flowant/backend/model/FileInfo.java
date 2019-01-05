@@ -2,11 +2,11 @@ package org.flowant.backend.model;
 
 import java.util.UUID;
 
-public interface MultimediaInfo {
+public interface FileInfo {
     UUID getId();
     UUID getContentId();
     String getContentType();
-    String getOriginalFilename();
+    String getFilename();
     long getLength();
     CRUDZonedTime getCrudTime();
 }

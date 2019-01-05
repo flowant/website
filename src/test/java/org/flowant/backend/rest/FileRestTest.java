@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import org.flowant.backend.model.Multimedia;
+import org.flowant.backend.model.File;
 import org.flowant.backend.model.Tag;
-import org.flowant.backend.repository.MultimediaRepository;
+import org.flowant.backend.repository.FileRepository;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,7 +32,7 @@ import reactor.core.publisher.Mono;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Log4j2
-public class MultimediaRestTest {
+public class FileRestTest {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -43,15 +43,15 @@ public class MultimediaRestTest {
     private WebTestClient webTestClient;
 
     @Autowired
-    private MultimediaRepository multimediaRepository;
+    private FileRepository fileRepository;
 
-    Consumer<? super Multimedia> deleteMultimedia = u -> multimediaRepository.delete(u).subscribe();
-    Consumer<? super Collection<Multimedia>> deleteMultimedias = l -> l.forEach(deleteMultimedia);
+    Consumer<? super File> deleteFile = u -> fileRepository.delete(u).subscribe();
+    Consumer<? super Collection<File>> deleteFiles = l -> l.forEach(deleteFile);
 
 //    @Test
     public void testPostMalformed() {
-        ResponseSpec respSpec = webTestClient.post().uri(MultimediaRest.MULTIMEDIA).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(Tag.of("notMultimedia")), Tag.class).exchange();
+        ResponseSpec respSpec = webTestClient.post().uri(FileRest.FILE).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(Tag.of("notFile")), Tag.class).exchange();
         respSpec.expectStatus().is4xxClientError().expectBody().consumeWith(log::trace);
     }
 
@@ -61,22 +61,22 @@ public class MultimediaRestTest {
 
         HttpHeaders headers = new HttpHeaders();
 //        headers.setContentType(MediaType.IMAGE_PNG);
-        headers.add(MultimediaRest.CID, UUID.randomUUID().toString());
+        headers.add(FileRest.CID, UUID.randomUUID().toString());
 
         HttpEntity<ClassPathResource> entity = new HttpEntity<>(img, headers);
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        parts.add("file", entity);
+        parts.add(FileRest.ATTACHMENT, entity);
 
         webTestClient.post()
-//                .uri(builder -> builder.path(MultimediaRest.MULTIMEDIA)
-//                        .queryParam(MultimediaRest.CID, UUID.randomUUID()).build())
-                .uri(MultimediaRest.MULTIMEDIA)
+//                .uri(builder -> builder.path(FileRest.FILE)
+//                        .queryParam(FileRest.CID, UUID.randomUUID()).build())
+                .uri(FileRest.FILE)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(parts))
                 .exchange().expectStatus().isOk().expectBody().consumeWith(r -> {
                     log.trace(r);
-//                    StepVerifier.create(multimediaRepository.findById(multimedia.getId()))
-//                            .consumeNextWith(deleteMultimedia).verifyComplete();
+//                    StepVerifier.create(fileRepository.findById(file.getId()))
+//                            .consumeNextWith(deleteFile).verifyComplete();
                 });
     }
 
@@ -86,117 +86,117 @@ public class MultimediaRestTest {
 
         for (int i = 2; i < 4; i++) {
             HttpHeaders headers = new HttpHeaders();
-            headers.add(MultimediaRest.CID, UUID.randomUUID().toString());
+            headers.add(FileRest.CID, UUID.randomUUID().toString());
 
             HttpEntity<ClassPathResource> entity = new HttpEntity<>(
                     new ClassPathResource("sea" + i + ".jpg"), headers);
 
-            parts.add("file", entity);
+            parts.add(FileRest.ATTACHMENT, entity);
         }
 
         webTestClient.post()
-//                .uri(builder -> builder.path(MultimediaRest.MULTIMEDIA)
-//                        .queryParam(MultimediaRest.CID, UUID.randomUUID()).build())
-                .uri(MultimediaRest.MULTIMEDIA + "s")
+//                .uri(builder -> builder.path(FileRest.FILE)
+//                        .queryParam(FileRest.CID, UUID.randomUUID()).build())
+                .uri(FileRest.FILES)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(parts))
                 .exchange().expectStatus().isOk().expectBody().consumeWith(r -> {
                     log.trace(r);
-//                    StepVerifier.create(multimediaRepository.findById(multimedia.getId()))
-//                            .consumeNextWith(deleteMultimedia).verifyComplete();
+//                    StepVerifier.create(fileRepository.findById(file.getId()))
+//                            .consumeNextWith(deleteFile).verifyComplete();
                 });
     }
 
 
 //    @Test
 //    public void testGetNotExist() {
-//        webTestClient.get().uri(MultimediaRest.MULTIMEDIA__ID__, UUID.randomUUID()).exchange()
+//        webTestClient.get().uri(FileRest.FILE__ID__, UUID.randomUUID()).exchange()
 //                .expectStatus().isNotFound().expectBody().consumeWith(log::trace);
 //    }
 //
 //    @Test
 //    public void testGetMalformedId() {
-//        webTestClient.get().uri(MultimediaRest.MULTIMEDIA__ID__, "notExist").exchange()
+//        webTestClient.get().uri(FileRest.FILE__ID__, "notExist").exchange()
 //                .expectStatus().is5xxServerError().expectBody().consumeWith(log::trace);
 //    }
 //
 //    @Test
 //    @Parameters
-//    public void testGetId(Multimedia multimedia) {
-//        multimediaRepository.save(multimedia).block();
-//        webTestClient.get().uri(MultimediaRest.MULTIMEDIA__ID__, multimedia.getId()).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
+//    public void testGetId(File file) {
+//        fileRepository.save(file).block();
+//        webTestClient.get().uri(FileRest.FILE__ID__, file.getId()).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
 //                .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-//                .expectBody(Multimedia.class).isEqualTo(multimedia).consumeWith( r -> {
+//                .expectBody(File.class).isEqualTo(file).consumeWith( r -> {
 //                    log.trace(r);
-//                    deleteMultimedia.accept(multimedia);
+//                    deleteFile.accept(file);
 //                });
 //    }
-//    public static List<Multimedia> parametersForTestGetId() {
-//        return Arrays.asList(MultimediaTest.large());
+//    public static List<File> parametersForTestGetId() {
+//        return Arrays.asList(FileTest.large());
 //    }
 //
 //    @Test
 //    public void testGetAllEmpty() {
-//        multimediaRepository.deleteAll().block();
-//        webTestClient.get().uri(MultimediaRest.MULTIMEDIA).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
+//        fileRepository.deleteAll().block();
+//        webTestClient.get().uri(FileRest.FILE).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
 //                .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
 //                .expectBody(List.class).consumeWith(log::trace).isEqualTo(Lists.emptyList());
 //    }
 //
 //    @Test
 //    public void testGetAll() {
-//        Flux<Multimedia> multimedias = Flux.range(1, 5).map(MultimediaTest::large).cache();
-//        multimediaRepository.deleteAll().thenMany(multimediaRepository.saveAll(multimedias)).blockLast();
+//        Flux<File> files = Flux.range(1, 5).map(FileTest::large).cache();
+//        fileRepository.deleteAll().thenMany(fileRepository.saveAll(files)).blockLast();
 //
-//        webTestClient.get().uri(MultimediaRest.MULTIMEDIA).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
+//        webTestClient.get().uri(FileRest.FILE).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
 //                .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-//                .expectBodyList(Multimedia.class).hasSize(5).consumeWith(r -> {
+//                .expectBodyList(File.class).hasSize(5).consumeWith(r -> {
 //                    log.trace(r);
-//                    multimedias.subscribe(deleteMultimedia);
+//                    files.subscribe(deleteFile);
 //                });
 //    }
 //
 //    @Test
 //    public void testPutNotExist() {
-//        Multimedia multimedia = MultimediaTest.large();
-//        webTestClient.put().uri(MultimediaRest.MULTIMEDIA__ID__, multimedia).contentType(MediaType.APPLICATION_JSON_UTF8)
-//        .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(multimedia), Multimedia.class).exchange()
+//        File file = FileTest.large();
+//        webTestClient.put().uri(FileRest.FILE__ID__, file).contentType(MediaType.APPLICATION_JSON_UTF8)
+//        .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(file), File.class).exchange()
 //        .expectStatus().isOk().expectBody().consumeWith(r -> {
 //            log.trace(r);
-//            StepVerifier.create(multimediaRepository.findById(multimedia.getId()))
-//                    .consumeNextWith(deleteMultimedia).verifyComplete();
+//            StepVerifier.create(fileRepository.findById(file.getId()))
+//                    .consumeNextWith(deleteFile).verifyComplete();
 //        });
 //    }
 //
 //    @Test
 //    public void testPutMalformedId() {
-//        webTestClient.put().uri(MultimediaRest.MULTIMEDIA__ID__, "notExist").exchange()
+//        webTestClient.put().uri(FileRest.FILE__ID__, "notExist").exchange()
 //                .expectStatus().isBadRequest().expectBody().consumeWith(log::trace);
 //    }
 //
 //    @Test
 //    public void testPut() {
-//        Multimedia multimedia = MultimediaTest.large();
-//        multimediaRepository.save(multimedia).block();
+//        File file = FileTest.large();
+//        fileRepository.save(file).block();
 //
-//        webTestClient.put().uri(MultimediaRest.MULTIMEDIA__ID__, multimedia).contentType(MediaType.APPLICATION_JSON_UTF8)
-//                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(multimedia), Multimedia.class).exchange()
+//        webTestClient.put().uri(FileRest.FILE__ID__, file).contentType(MediaType.APPLICATION_JSON_UTF8)
+//                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(file), File.class).exchange()
 //                .expectStatus().isOk().expectBody().consumeWith( r -> {
 //                    log.trace(r::toString);
-//                    StepVerifier.create(multimediaRepository.findById(multimedia.getId())).expectNext(multimedia)
-//                            .then(()-> deleteMultimedia.accept(multimedia)).verifyComplete();
+//                    StepVerifier.create(fileRepository.findById(file.getId())).expectNext(file)
+//                            .then(()-> deleteFile.accept(file)).verifyComplete();
 //                });
 //    }
 //
 //    @Test
 //    public void testDelete() {
-//        Multimedia multimedia = MultimediaTest.large();
-//        multimediaRepository.save(multimedia).block();
+//        File file = FileTest.large();
+//        fileRepository.save(file).block();
 //
-//        webTestClient.delete().uri(MultimediaRest.MULTIMEDIA__ID__, multimedia.getId()).exchange()
+//        webTestClient.delete().uri(FileRest.FILE__ID__, file.getId()).exchange()
 //                .expectStatus().isOk().expectBody().consumeWith(r -> {
 //                    log.trace(r::toString);
-//                    StepVerifier.create(multimediaRepository.findById(multimedia.getId())).expectNextCount(0).verifyComplete();
+//                    StepVerifier.create(fileRepository.findById(file.getId())).expectNextCount(0).verifyComplete();
 //                });
 //    }
 

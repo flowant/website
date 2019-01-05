@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @UserDefinedType
-public class MultimediaRef {
+public class FileRef {
     @NonNull
     String url;
-    UUID refId; // Multimedia's ID can be null when no file is uploaded
+    UUID fileId; // File's ID can be null when no file is uploaded
 }

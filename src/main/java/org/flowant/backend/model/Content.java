@@ -25,7 +25,7 @@ public class Content {
     @NonNull
     String title; // to be tags always
     Recipe extend; // TODO how to extend gracefully?
-    List<MultimediaRef> multimediaRefs;
+    List<FileRef> fileRefs;
     String sentences;
     List<Tag> tags;
     @NonNull

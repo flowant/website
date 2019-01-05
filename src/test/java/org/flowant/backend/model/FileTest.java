@@ -8,7 +8,7 @@ import org.junit.Test;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class MultimediaTest {
+public class FileTest {
 
     static UUID id;
     static UUID contentId;
@@ -16,12 +16,12 @@ public class MultimediaTest {
     static String contentType = "contentType";
     static String originalFilename = "originalFilename";
 
-    public static Multimedia large(int s) {
-        return Multimedia.of(UUID.randomUUID(), UUID.randomUUID(), media.putInt(0, s), contentType + s,
+    public static File large(int s) {
+        return File.of(UUID.randomUUID(), UUID.randomUUID(), media.putInt(0, s), contentType + s,
                 originalFilename + s, CRUDZonedTime.now());
     }
 
-    public static Multimedia large() {
+    public static File large() {
         return large(0);
     }
 

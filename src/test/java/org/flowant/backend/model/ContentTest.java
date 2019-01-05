@@ -42,7 +42,7 @@ public class ContentTest {
         return Content.builder().id(UUID.randomUUID()).title(title + s)
                 .extend(new Recipe(List.of(ingredients + s), prepareSeconds + s, cookSeconds + s,
                         servings + s, calory + s, nutritionFacts + s))
-                .multimediaRefs(List.of(new MultimediaRef(url + s, UUID.randomUUID())))
+                .fileRefs(List.of(new FileRef(url + s, UUID.randomUUID())))
                 .sentences(sentences + s)
                 .tags(List.of(Tag.of(name + s)))
                 .review(new Review(Reputation.of(rating + s, liked + s, reported + s),
