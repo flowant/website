@@ -30,7 +30,6 @@ public class FileRest {
     public static final String FILES__ID__ = "/files/{id}";
 
     @PostMapping(value = FILES)
-    @PutMapping(value = FILES)
     public Mono<ResponseEntity<List<FileRef>>> postAll_test(@RequestPart(ATTACHMENT) Flux<FilePart> files) {
         return FileStorage.saveAll(files).collectList().map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
