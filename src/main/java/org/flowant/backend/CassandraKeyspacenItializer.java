@@ -24,7 +24,7 @@ public class CassandraKeyspacenItializer {
     @Value("${spring.data.cassandra.keyspace-name}")
     private String keyspaceName;
 
-    @Value("${spring.data.cassandra.cql-create-keyspace}")
+    @Value("${backend.cql-create-keyspace}")
     private String cqlCreateKeySpace;
 
     @PostConstruct

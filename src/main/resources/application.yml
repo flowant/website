@@ -5,7 +5,11 @@ spring:
     cassandra:
       contactPoints: 127.0.0.1
       port: 9042
-      cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+
+backend:
+  cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+  storage:
+    root: /home/flowant/work/storage
 
 ---
 spring:
