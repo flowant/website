@@ -56,7 +56,7 @@ public class FileStorage {
     }
 
     public static Mono<Resource> findById (String id) {
-            return Mono.just(new FileSystemResource(root + SEP_DIR + id));
+        return exist(id) ? Mono.just(new FileSystemResource(root + SEP_DIR + id)) : Mono.empty();
     }
 
     public static Mono<Resource> findById (UUID id) {
@@ -64,10 +64,11 @@ public class FileStorage {
     }
 
     public static Mono<Boolean> deleteById(String id) {
-        return Mono.fromCallable(() -> rmdirs(root + SEP_DIR + id)).onErrorResume(t -> {
-            log.error(ExceptionUtils.getStackTrace(t));
-            return Mono.just(Boolean.FALSE);
-        });
+        return exist(id) == false ? Mono.empty() :
+                Mono.fromCallable(() -> rmdirs(root + SEP_DIR + id)).onErrorResume(t -> {
+                    log.error(ExceptionUtils.getStackTrace(t));
+                    return Mono.just(Boolean.FALSE);
+                });
     }
 
     public static Mono<Boolean> deleteById(UUID id) {
@@ -76,6 +77,10 @@ public class FileStorage {
 
     public static Path mkdirs(String path) throws IOException {
         return mkdirs(Paths.get(path));
+    }
+
+    public static boolean exist(String id) {
+        return Files.exists(Paths.get(root + SEP_DIR + id));
     }
 
     public static Path mkdirs(Path path) throws IOException {

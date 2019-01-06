@@ -44,7 +44,8 @@ public class FileRest {
     }
 
     @DeleteMapping(value = FILES__ID__)
-    public Mono<ResponseEntity<Boolean>> delete(@PathVariable(value = ID) String id) {
-        return FileStorage.deleteById(id).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<Boolean>> deleteById(@PathVariable(value = ID) String id) {
+        return FileStorage.deleteById(id).map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
