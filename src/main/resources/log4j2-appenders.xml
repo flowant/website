@@ -15,8 +15,4 @@
     </Policies>
     <DefaultRolloverStrategy max="5" />
   </RollingFile>
-  <File name="RestFile" fileName="${LOG_DIR}/RestInOut.log"
-    append="false">
-    <PatternLayout pattern="${LOG_PATTERN}" />
-  </File>
 </Appenders>

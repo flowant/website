@@ -1,4 +1,4 @@
-package org.flowant.backend;
+package org.flowant.backend.repository;
 
 import javax.annotation.PostConstruct;
 

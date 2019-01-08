@@ -89,8 +89,9 @@ public class ContentRestTest {
         contentRepository.save(content).block();
         webTestClient.get().uri(ContentRest.CONTENT__ID__, content.getId()).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(Content.class).isEqualTo(content).consumeWith( r -> {
+                .expectBody(Content.class).consumeWith( r -> {
                     log.trace(r);
+                    ContentTest.assertEqual(content, r.getResponseBody());
                     deleteContent.accept(content);
                 });
     }
@@ -146,9 +147,10 @@ public class ContentRestTest {
 
         webTestClient.put().uri(ContentRest.CONTENT__ID__, content).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(content), Content.class).exchange()
-                .expectStatus().isOk().expectBody().consumeWith( r -> {
+                .expectStatus().isOk().expectBody(Content.class).consumeWith( r -> {
                     log.trace(r::toString);
-                    StepVerifier.create(contentRepository.findById(content.getId())).expectNext(content)
+                    StepVerifier.create(contentRepository.findById(content.getId()))
+                            .consumeNextWith(c -> ContentTest.assertEqual(content, c))
                             .then(()-> deleteContent.accept(content)).verifyComplete();
                 });
     }
@@ -164,5 +166,4 @@ public class ContentRestTest {
                     StepVerifier.create(contentRepository.findById(content.getId())).expectNextCount(0).verifyComplete();
                 });
     }
-
 }

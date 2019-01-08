@@ -28,5 +28,5 @@ public class FileRef {
     String filename; // client's filename
     long length; //TODO should be filled before being inserted to DB
     @NonNull
-    CRUDZonedTime crudTime;
+    CRUZonedTime crudTime;
 }

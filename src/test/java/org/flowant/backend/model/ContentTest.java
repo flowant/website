@@ -3,6 +3,8 @@ package org.flowant.backend.model;
 import java.util.List;
 import java.util.UUID;
 
+import org.flowant.backend.TestUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import lombok.extern.log4j.Log4j2;
@@ -31,7 +33,7 @@ public class ContentTest {
 
     public static Content small(int s) {
         return Content.of(UUID.randomUUID(), title + s, 
-                Review.of(Reputation.of(rating + s, liked + s, reported + s)), CRUDZonedTime.now());
+                Review.of(Reputation.of(rating + s, liked + s, reported + s)), CRUZonedTime.now());
     }
 
     public static Content small() {
@@ -47,8 +49,8 @@ public class ContentTest {
                 .tags(List.of(Tag.of(name + s)))
                 .review(new Review(Reputation.of(rating + s, liked + s, reported + s),
                         List.of(new Reply(content + s, Reputation.of(rating + s, liked + s, reported + s),
-                                CRUDZonedTime.now()))))
-                .crudTime(CRUDZonedTime.now())
+                                CRUZonedTime.now()))))
+                .cruTime(CRUZonedTime.now())
                 .build();
     }
 
@@ -60,5 +62,18 @@ public class ContentTest {
     public void testMaker() {
         log.debug("Content:{}", small()::toString);
         log.debug("Content:{}", large()::toString);
+    }
+
+    public static Content assertEqual(Content excepted, Content actual) {
+        Assert.assertEquals(excepted.getId(), actual.getId());
+        Assert.assertEquals(excepted.getSentences(), actual.getSentences());
+        Assert.assertEquals(excepted.getTitle(), actual.getTitle());
+        Assert.assertEquals(excepted.getAccessLevel(), actual.getAccessLevel());
+        Assert.assertEquals(excepted.getExtend(), actual.getExtend());
+        TestUtil.assertListEquals(excepted.getFileRefs(), actual.getFileRefs());
+        TestUtil.assertListEquals(excepted.getTags(), actual.getTags());
+        Assert.assertEquals(excepted.getReview().getReputation(), excepted.getReview().getReputation());
+        TestUtil.assertListEquals(excepted.getReview().getReplies(), excepted.getReview().getReplies());
+        return actual;
     }
 }

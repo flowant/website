@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.flowant.backend.model.CRUZonedTime;
 import org.flowant.backend.model.Content;
 import org.flowant.backend.repository.ContentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,29 +34,31 @@ public class ContentRest {
 
     @GetMapping(value = CONTENT)
     public Flux<Content> getAll() {
-        return contentRepository.findAll();
+        return contentRepository.findAll().doOnNext(content -> content.getCruTime().readNow());
     }
 
     @GetMapping(value = CONTENT_STREAM, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Content> getAllStream() {
-        return contentRepository.findAll();
+        return contentRepository.findAll().doOnNext(content -> content.getCruTime().readNow());
     }
 
     @PostMapping(value = CONTENT)
     public Mono<ResponseEntity<Content>> post(@Valid @RequestBody Content content) {
+        content.setCruTime(CRUZonedTime.now());
         return contentRepository.save(content).map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(value = CONTENT__ID__)
     public Mono<ResponseEntity<Content>> getById(@PathVariable(value = ID) String id) {
-        return contentRepository.findById(UUID.fromString(id)).map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return contentRepository.findById(UUID.fromString(id)).doOnNext(content -> content.getCruTime().readNow())
+                .map(ResponseEntity::ok).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(value = CONTENT__ID__)
     public Mono<ResponseEntity<Content>> putById(@PathVariable(value = ID) String id, @Valid @RequestBody Content content) {
         // TODO need update policy
+        content.getCruTime().updatedNow();
         return contentRepository.save(content).map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

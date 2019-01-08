@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.flowant.backend;
+package org.flowant.backend.repository;
 
 import org.springframework.data.cassandra.core.mapping.event.AbstractCassandraEventListener;
 import org.springframework.data.cassandra.core.mapping.event.AfterConvertEvent;
@@ -28,75 +28,33 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class LoggingEventListener extends AbstractCassandraEventListener<Object> {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.data.cassandra.core.mapping.event.
-     * AbstractCassandraEventListener#onBeforeSave(org.springframework.data.
-     * cassandra.core.mapping.event.BeforeSaveEvent)
-     */
     @Override
     public void onBeforeSave(BeforeSaveEvent<Object> event) {
         log.debug("onBeforeSave: {}, {}", event::getSource, event::getStatement);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.data.cassandra.core.mapping.event.
-     * AbstractCassandraEventListener#onAfterSave(org.springframework.data.cassandra
-     * .core.mapping.event.AfterSaveEvent)
-     */
     @Override
     public void onAfterSave(AfterSaveEvent<Object> event) {
-        log.info("onAfterSave: {}", event.getSource());
+        log.debug("onAfterSave: {}", event.getSource());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.data.cassandra.core.mapping.event.
-     * AbstractCassandraEventListener#onBeforeDelete(org.springframework.data.
-     * cassandra.core.mapping.event.BeforeDeleteEvent)
-     */
     @Override
     public void onBeforeDelete(BeforeDeleteEvent<Object> event) {
-        log.info("onBeforeDelete: {}", event.getSource());
+        log.debug("onBeforeDelete: {}", event.getSource());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.data.cassandra.core.mapping.event.
-     * AbstractCassandraEventListener#onAfterDelete(org.springframework.data.
-     * cassandra.core.mapping.event.AfterDeleteEvent)
-     */
     @Override
     public void onAfterDelete(AfterDeleteEvent<Object> event) {
-        log.info("onAfterDelete: {}", event.getSource());
+        log.debug("onAfterDelete: {}", event.getSource());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.data.cassandra.core.mapping.event.
-     * AbstractCassandraEventListener#onAfterLoad(org.springframework.data.cassandra
-     * .core.mapping.event.AfterLoadEvent)
-     */
     @Override
     public void onAfterLoad(AfterLoadEvent<Object> event) {
-        log.info("onAfterLoad: {}", event.getSource());
+        log.debug("onAfterLoad: {}", event.getSource());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.data.cassandra.core.mapping.event.
-     * AbstractCassandraEventListener#onAfterConvert(org.springframework.data.
-     * cassandra.core.mapping.event.AfterConvertEvent)
-     */
     @Override
     public void onAfterConvert(AfterConvertEvent<Object> event) {
-        log.info("onAfterConvert: {}", event.getSource());
+        log.debug("onAfterConvert: {}", event.getSource());
     }
 }

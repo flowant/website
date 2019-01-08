@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.flowant.backend.model.CRUZonedTime;
 import org.flowant.backend.model.User;
 import org.flowant.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,29 +34,31 @@ public class UserRest {
 
     @GetMapping(value = USER)
     public Flux<User> getAll() {
-        return userRepository.findAll();
+        return userRepository.findAll().doOnNext(user -> user.getCruTime().readNow());
     }
 
     @GetMapping(value = USER_STREAM, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<User> getAllStream() {
-        return userRepository.findAll();
+        return userRepository.findAll().doOnNext(user -> user.getCruTime().readNow());
     }
 
     @PostMapping(value = USER)
     public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
+        user.setCruTime(CRUZonedTime.now());
         return userRepository.save(user).map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(value = USER__ID__)
     public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
-        return userRepository.findById(UUID.fromString(id)).map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return userRepository.findById(UUID.fromString(id)).doOnNext(user -> user.getCruTime().readNow())
+                .map(ResponseEntity::ok).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(value = USER__ID__)
     public Mono<ResponseEntity<User>> putById(@PathVariable(value = ID) String id, @Valid @RequestBody User user) {
         // TODO need update policy
+        user.getCruTime().updatedNow();
         return userRepository.save(user).map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

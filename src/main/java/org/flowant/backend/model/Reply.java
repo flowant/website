@@ -18,5 +18,5 @@ public class Reply {
     @NonNull
     Reputation reputation;
     @NonNull
-    CRUDZonedTime crudTime;
+    CRUZonedTime crudTime;
 }

@@ -33,5 +33,5 @@ public class Content {
     @Builder.Default
     Authority accessLevel = Authority.ANONYMOUS;
     @NonNull
-    CRUDZonedTime crudTime;
+    CRUZonedTime cruTime;
 }

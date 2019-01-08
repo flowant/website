@@ -42,5 +42,5 @@ public class User {
     List<UUID> followings;
     List<Tag> interests; //TODO to be updated by user activities;
     @NonNull
-    CRUDZonedTime crudTime;//TODO updated time
+    CRUZonedTime cruTime;//TODO updated time
 }

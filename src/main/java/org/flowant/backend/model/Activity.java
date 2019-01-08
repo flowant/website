@@ -15,5 +15,5 @@ public class Activity {
     @NonNull
     String action;
     @NonNull
-    CRUDZonedTime crudTime;
+    CRUZonedTime crudTime;
 }

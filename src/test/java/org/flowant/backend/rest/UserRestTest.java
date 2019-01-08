@@ -21,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -51,9 +50,9 @@ public class UserRestTest {
 
     @Test
     public void testInsertMalformed() {
-        ResponseSpec respSpec = webTestClient.post().uri(UserRest.USER).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(Tag.of("notUser")), Tag.class).exchange();
-        respSpec.expectStatus().is5xxServerError().expectBody().consumeWith(log::trace);
+        webTestClient.post().uri(UserRest.USER).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(Tag.of("notUser")), Tag.class).exchange()
+                .expectStatus().is5xxServerError().expectBody().consumeWith(log::trace);
     }
 
     @Test
@@ -61,8 +60,9 @@ public class UserRestTest {
     public void testInsert(User user) {
         webTestClient.post().uri(UserRest.USER).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
-                .expectStatus().isOk().expectBody().consumeWith(r -> {
+                .expectStatus().isOk().expectBody(User.class).consumeWith(r -> {
                     log.trace(r);
+                    UserTest.assertEqual(user, r.getResponseBody());
                     StepVerifier.create(userRepository.findById(user.getId()))
                             .consumeNextWith(deleteUser).verifyComplete();
                 });
@@ -90,8 +90,9 @@ public class UserRestTest {
         userRepository.save(user).block();
         webTestClient.get().uri(UserRest.USER__ID__, user.getId()).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-                .expectBody(User.class).isEqualTo(user).consumeWith( r -> {
+                .expectBody(User.class).consumeWith( r -> {
                     log.trace(r);
+                    UserTest.assertEqual(user, r.getResponseBody());
                     deleteUser.accept(user);
                 });
     }
@@ -112,7 +113,6 @@ public class UserRestTest {
     public void testGetAll() {
         Flux<User> users = Flux.range(1, 5).map(UserTest::small).cache();
         userRepository.deleteAll().thenMany(userRepository.saveAll(users)).blockLast();
-
         webTestClient.get().uri(UserRest.USER).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(User.class).hasSize(5).consumeWith(r -> {
@@ -124,7 +124,7 @@ public class UserRestTest {
     @Test
     public void testPutNotExist() {
         User user = UserTest.large();
-        webTestClient.put().uri(UserRest.USER__ID__, user).contentType(MediaType.APPLICATION_JSON_UTF8)
+        webTestClient.put().uri(UserRest.USER__ID__, user.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
         .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
         .expectStatus().isOk().expectBody().consumeWith(r -> {
             log.trace(r);
@@ -147,11 +147,13 @@ public class UserRestTest {
         user.setFirstname("newFirstname");
         user.setFollowers(List.of(UUID.randomUUID(), UUID.randomUUID()));
 
-        webTestClient.put().uri(UserRest.USER__ID__, user).contentType(MediaType.APPLICATION_JSON_UTF8)
+        webTestClient.put().uri(UserRest.USER__ID__, user.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
                 .expectStatus().isOk().expectBody().consumeWith( r -> {
                     log.trace(r::toString);
-                    StepVerifier.create(userRepository.findById(user.getId())).expectNext(user)
+                    StepVerifier.create(userRepository.findById(user.getId()))
+                            .consumeNextWith(actual -> UserTest.assertEqual(user, actual))
                             .then(()-> deleteUser.accept(user)).verifyComplete();
                 });
     }
@@ -160,12 +162,10 @@ public class UserRestTest {
     public void testDelete() {
         User user = UserTest.large();
         userRepository.save(user).block();
-
         webTestClient.delete().uri(UserRest.USER__ID__, user.getId()).exchange()
                 .expectStatus().isOk().expectBody().consumeWith(r -> {
                     log.trace(r::toString);
                     StepVerifier.create(userRepository.findById(user.getId())).expectNextCount(0).verifyComplete();
                 });
     }
-
 }

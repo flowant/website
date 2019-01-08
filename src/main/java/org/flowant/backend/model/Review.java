@@ -1,6 +1,5 @@
 package org.flowant.backend.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
@@ -19,5 +18,5 @@ import lombok.RequiredArgsConstructor;
 public class Review {
     @NonNull
     Reputation reputation;
-    List<Reply> replies = new ArrayList<>(); //TODO why does cassandra save this field differently?
+    List<Reply> replies;
 }

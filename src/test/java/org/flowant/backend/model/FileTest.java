@@ -16,7 +16,7 @@ public class FileTest {
 
     public static FileRef large(int s) {
         return FileRef.of(UUID.randomUUID(), url + s,
-                contentType + s, filename + s, CRUDZonedTime.now());
+                contentType + s, filename + s, CRUZonedTime.now());
     }
 
     public static FileRef large() {
