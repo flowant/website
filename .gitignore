@@ -1,9 +1,9 @@
-.gradle
-/build/
-/bin/
-/logs/
-/target/
-/gradle/
+**/build/
+**/bin/
+**/logs/
+**/target/
+**/gradle/
+**/.gradle/
 
 ### STS ###
 .apt_generated
@@ -19,11 +19,11 @@
 *.iws
 *.iml
 *.ipr
-/out/
+**/out/
 
 ### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+**/nbproject/private/
+**/nbbuild/
+**/dist/
+**/nbdist/
+**/.nb-gradle/
