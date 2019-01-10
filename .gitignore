@@ -4,6 +4,12 @@
 **/target/
 **/gradle/
 **/.gradle/
+**/.mvn/
+
+tree
+mvnw
+mvnw.cmd
+.editorconfig
 
 ### STS ###
 .apt_generated
@@ -27,3 +33,6 @@
 **/dist/
 **/nbdist/
 **/.nb-gradle/
+
+### VSCode ###
+**/.vscode/

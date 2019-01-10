@@ -56,8 +56,9 @@ public class ContentRepositoryTest {
         .consumeRecordedWith(deleteContents).verifyComplete();
     }
 
+    @Test
     public void testSaveDebug() {
-        Content content = ContentTest.large();
-        contentRepository.save(content).block();
+        Flux<Content> contents = Flux.range(1, 5).map(ContentTest::large);
+        contentRepository.saveAll(contents).blockLast();
     }
 }
