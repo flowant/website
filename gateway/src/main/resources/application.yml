@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9090
   address: 127.0.0.1
 
 spring:
@@ -13,13 +13,23 @@ spring:
 #    redis:
 #      flush-mode=on-save # Sessions flush mode.
 #      namespace=spring:session # Namespace for keys used to store sessions.
+
   cloud:
     gateway:
       routes:
       - id: frontend
-        uri: http://127.0.0.1:8090/frontend
+        uri: http://127.0.0.1:9091
         predicates:
         - Path=/frontend/**
+        filters:
+        - RewritePath=/frontend/(?<segment>.*), /$\{segment}
+
+      - id: backend
+        uri: http://127.0.0.1:9092
+        predicates:
+        - Path=/backend/**
+        filters:
+        - RewritePath=/backend/(?<segment>.*), /$\{segment}
 
 management:
   endpoints:
