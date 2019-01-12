@@ -1,9 +1,7 @@
 package org.flowant.gateway;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
@@ -37,10 +35,10 @@ public class GatewaySecurityConfiguration {
          */
         CookieServerCsrfTokenRepository csrfTokenRepository = 
                 CookieServerCsrfTokenRepository.withHttpOnlyFalse();
-        csrfTokenRepository.setCookiePath("/"); 
+        csrfTokenRepository.setCookiePath("/");
 
         return http.authorizeExchange()
-                .pathMatchers("/login", "/index.html", "/", "*.bundle.*" ,"favicon.ico").permitAll()
+                .pathMatchers("/", "/index.html", "/*.js", "login", "favicon.ico").permitAll()
                 .anyExchange().authenticated()
                     .and()
                 .csrf().csrfTokenRepository(csrfTokenRepository)
