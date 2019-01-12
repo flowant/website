@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 9091
   address: 127.0.0.1
 
 spring:

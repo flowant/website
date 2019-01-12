@@ -15,7 +15,7 @@ export class AppComponent {
     http.get('/user').subscribe(data => {
       if (data['name']) {
         this.authenticated = true;
-        http.get('/content').subscribe(response => this.greeting = response);
+        http.get('/content').subscribe(response => this.greeting = response[0]);
       } else {
         this.authenticated = false;
       }

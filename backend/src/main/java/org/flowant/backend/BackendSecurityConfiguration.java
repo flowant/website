@@ -15,10 +15,11 @@ public class BackendSecurityConfiguration {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.authorizeExchange()
                 .pathMatchers(HttpMethod.POST, "/**").hasRole("WRITER")
+                .pathMatchers("/actuator/**", "/").permitAll()//TODO: remove
                 .anyExchange().authenticated().and()
                 .csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()).and()
-                .httpBasic().disable()
-                .securityContextRepository(new WebSessionServerSecurityContextRepository())
+                .httpBasic()
+                    .disable()
                 .build();
     }
 

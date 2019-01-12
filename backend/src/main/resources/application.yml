@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 9092
   address: 127.0.0.1
 
 spring:
@@ -17,6 +17,12 @@ backend:
   cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
   storage:
     root: /home/flowant/work/storage
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 ---
 spring:

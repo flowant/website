@@ -1,7 +1,9 @@
 package org.flowant.gateway;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
@@ -24,41 +26,28 @@ public class GatewaySecurityConfiguration {
                 .roles("USER", "ADMIN", "READER").authorities("ROLE_ACTUATOR", "ROLE_USER").build());
     }
 
-//  @Configuration
-//  @Order(SecurityProperties.BASIC_AUTH_ORDER)
-//  protected static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-//
-//      @Autowired
-//      public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-//          // @formatter:off
-//          auth.inMemoryAuthentication().withUser("user").password("password").roles("USER").and().withUser("admin")
-//                  .password("admin").roles("USER", "ADMIN", "READER", "WRITER").and().withUser("audit")
-//                  .password("audit").roles("USER", "ADMIN", "READER");
-//          // @formatter:on
-//      }
-//
-//      @Override
-//      protected void configure(HttpSecurity http) throws Exception {
-//          // @formatter:off
-//          http.httpBasic().and().logout().and().authorizeRequests().antMatchers("/index.html", "/").permitAll()
-//                  .anyRequest().authenticated().and().csrf()
-//                  .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-//          // @formatter:on
-//      }
-//  }
-
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+
+        /*
+         * Angular add the X-XSRF-TOKEN header only if the XSRF-TOKEN cookie
+         * was generated server-side with the following options:
+         * Path = / and httpOnly = false
+         * TODO check again
+         */
+        CookieServerCsrfTokenRepository csrfTokenRepository = 
+                CookieServerCsrfTokenRepository.withHttpOnlyFalse();
+        csrfTokenRepository.setCookiePath("/"); 
+
         return http.authorizeExchange()
-                .pathMatchers("/index.html", "/").permitAll()
+                .pathMatchers("/login", "/index.html", "/", "*.bundle.*" ,"favicon.ico").permitAll()
                 .anyExchange().authenticated()
                     .and()
-                .csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
+                .csrf().csrfTokenRepository(csrfTokenRepository)
                     .and()
-                .securityContextRepository(new WebSessionServerSecurityContextRepository())
-                .httpBasic()
-                    .and()
-                .logout()
+                .httpBasic().securityContextRepository(new WebSessionServerSecurityContextRepository())
+                    .disable()
+                .formLogin()
                     .and()
                 .build();
     }
