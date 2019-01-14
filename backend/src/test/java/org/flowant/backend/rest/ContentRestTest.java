@@ -11,16 +11,11 @@ import org.flowant.backend.model.Content;
 import org.flowant.backend.model.ContentTest;
 import org.flowant.backend.model.Tag;
 import org.flowant.backend.repository.ContentRepository;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
 import junitparams.JUnitParamsRunner;
@@ -33,16 +28,7 @@ import reactor.test.StepVerifier;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Log4j2
-public class ContentRestTest {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Autowired
-    private WebTestClient webTestClient;
-
+public class ContentRestTest extends BaseRestTest {
     @Autowired
     private ContentRepository contentRepository;
 
@@ -101,7 +87,6 @@ public class ContentRestTest {
 
     @Test
     public void testGetAllEmpty() {
-        contentRepository.deleteAll().block();
         webTestClient.get().uri(ContentRest.CONTENT).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(List.class).consumeWith(log::trace).isEqualTo(Lists.emptyList());
@@ -110,7 +95,7 @@ public class ContentRestTest {
     @Test
     public void testGetAll() {
         Flux<Content> contents = Flux.range(1, 5).map(ContentTest::large).cache();
-        contentRepository.deleteAll().thenMany(contentRepository.saveAll(contents)).blockLast();
+        contentRepository.saveAll(contents).blockLast();
 
         webTestClient.get().uri(ContentRest.CONTENT).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)

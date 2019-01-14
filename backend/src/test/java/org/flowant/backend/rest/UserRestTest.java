@@ -11,16 +11,11 @@ import org.flowant.backend.model.Tag;
 import org.flowant.backend.model.User;
 import org.flowant.backend.model.UserTest;
 import org.flowant.backend.repository.UserRepository;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -32,16 +27,7 @@ import reactor.test.StepVerifier;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Log4j2
-public class UserRestTest {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Autowired
-    private WebTestClient webTestClient;
-
+public class UserRestTest extends BaseRestTest {
     @Autowired
     private UserRepository userRepository;
 
@@ -103,7 +89,6 @@ public class UserRestTest {
 
     @Test
     public void testGetAllEmpty() {
-        userRepository.deleteAll().block();
         webTestClient.get().uri(UserRest.USER).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(List.class).consumeWith(log::trace).isEqualTo(Lists.emptyList());
@@ -112,7 +97,7 @@ public class UserRestTest {
     @Test
     public void testGetAll() {
         Flux<User> users = Flux.range(1, 5).map(UserTest::small).cache();
-        userRepository.deleteAll().thenMany(userRepository.saveAll(users)).blockLast();
+        userRepository.saveAll(users).blockLast();
         webTestClient.get().uri(UserRest.USER).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(User.class).hasSize(5).consumeWith(r -> {

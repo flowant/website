@@ -1,23 +1,25 @@
 package org.flowant.backend;
 
+import static org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository.withHttpOnlyFalse;
+
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 
-@Configuration
+@EnableWebFluxSecurity
 public class BackendSecurityConfiguration {
+
+    public static final String ROLE_WRITER = "WRITER";//TODO Enum
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.authorizeExchange()
-                .pathMatchers(HttpMethod.POST, "/**").hasRole("WRITER")
-                .pathMatchers("/actuator/**", "/").permitAll()//TODO: remove
+                .pathMatchers(HttpMethod.POST, "/**").hasRole(ROLE_WRITER)
+                .pathMatchers("/actuator/**", "/").permitAll() //TODO: remove
                 .anyExchange().authenticated().and()
-                .csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()).and()
+                .csrf().csrfTokenRepository(withHttpOnlyFalse()).and()
                 .httpBasic()
                     .disable()
                 .build();

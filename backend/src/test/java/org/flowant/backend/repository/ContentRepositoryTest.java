@@ -55,10 +55,4 @@ public class ContentRepositoryTest {
         StepVerifier.create(saveAllThenFind).recordWith(ArrayList::new).expectNextCount(5)
         .consumeRecordedWith(deleteContents).verifyComplete();
     }
-
-    @Test
-    public void testSaveDebug() {
-        Flux<Content> contents = Flux.range(1, 5).map(ContentTest::large);
-        contentRepository.saveAll(contents).blockLast();
-    }
 }
