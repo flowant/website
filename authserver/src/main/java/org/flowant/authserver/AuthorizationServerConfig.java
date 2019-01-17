@@ -38,7 +38,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory().withClient(client).secret(passwordEncoder.encode(password))
                 .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials")
-                .scopes("read", "write", ".*")
+                .scopes("message:read", "message:write")
                 .autoApprove(true)
                 .accessTokenValiditySeconds(3600)
                 .redirectUris("http://localhost:9093/");

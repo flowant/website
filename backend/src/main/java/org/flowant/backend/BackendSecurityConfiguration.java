@@ -13,7 +13,7 @@ public class BackendSecurityConfiguration {
 
     public static final String ROLE_WRITER = "WRITER";//TODO Enum
 
-    @Bean
+//    @Bean // TODO modify for OAuth2 Resource server, also Testcases
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.authorizeExchange()
                 .pathMatchers(HttpMethod.POST, "/**").hasRole(ROLE_WRITER)

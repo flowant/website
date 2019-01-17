@@ -3,14 +3,17 @@ server:
   address: 127.0.0.1
 
 spring:
-  session:
-    store-type: redis
   profiles:
     active: prod
   data:
     cassandra:
       contactPoints: 127.0.0.1
       port: 9042
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9093/.well-known/jwks.json
 
 backend:
   cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
@@ -40,8 +43,8 @@ spring:
   data:
     cassandra:
       keyspace-name: backend_test
-      schema-action: CREATE_IF_NOT_EXISTS
-#      schema-action: recreate # recreate is slow because of doing recreating
+#      schema-action: CREATE_IF_NOT_EXISTS
+      schema-action: recreate # recreate is slow because of doing recreating
 
 logging:
   config: classpath:log4j2-spring-test.xml

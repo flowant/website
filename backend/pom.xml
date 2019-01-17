@@ -14,16 +14,16 @@
   <name>backend</name>
   <description>backend of website</description>
 
-  <properties>
-    <apt.version>1.1.3</apt.version>
-    <lombok.version>1.18.4</lombok.version>
-  </properties>
-
   <dependencies>
+
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <scope>provided</scope>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
     </dependency>
 
     <dependency>
