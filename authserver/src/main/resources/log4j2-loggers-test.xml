@@ -4,5 +4,5 @@
     <AppenderRef ref="RollingFile" />
     <AppenderRef ref="Console" />
   </AsyncRoot>
-  <AsyncLogger name="org.flowant.backend" level="trace" />
+  <AsyncLogger name="org.flowant" level="trace" />
 </Loggers>

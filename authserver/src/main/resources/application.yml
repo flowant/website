@@ -2,14 +2,6 @@ server:
   port: 9093
   address: 127.0.0.1
 
-security:
-  oauth2:
-    client:
-      client-id: acme
-      client-secret: acmesecret
-      scope: read,write
-      auto-approve-scopes: '.*'
-
 spring:
   profiles:
     active: prod
@@ -19,6 +11,14 @@ management:
     web:
       exposure:
         include: "*"
+
+dev:
+  user: user
+  userPassword: user
+  client: client
+  clientPassword: client
+  admin: client
+  adminPassword: client
 
 ---
 spring:
