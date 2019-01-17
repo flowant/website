@@ -9,3 +9,27 @@ security:
       client-secret: acmesecret
       scope: read,write
       auto-approve-scopes: '.*'
+
+spring:
+  profiles:
+    active: prod
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+---
+spring:
+  profiles: prod
+
+logging:
+  config: classpath:log4j2-spring-prod.xml
+
+---
+spring:
+  profiles: test
+
+logging:
+  config: classpath:log4j2-spring-test.xml
