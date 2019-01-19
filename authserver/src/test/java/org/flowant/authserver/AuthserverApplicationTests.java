@@ -106,14 +106,14 @@ public class AuthserverApplicationTests {
         obtainPasswordAccessToken(user, userPassword);
     }
 
-    @Test
-    public void testPasswordAccessTokenForbidden() throws Exception {
-        String accessToken = obtainPasswordAccessToken(user, userPassword);
-        ResultActions result = mockMvc.perform(get("/admin").header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isForbidden());
-
-        log.trace(result.andReturn().getResponse().getContentAsString());
-    }
+//    @Test
+//    public void testPasswordAccessTokenForbidden() throws Exception {
+//        String accessToken = obtainPasswordAccessToken(user, userPassword);
+//        ResultActions result = mockMvc.perform(get("/admin").header("Authorization", "Bearer " + accessToken))
+//                .andExpect(status().isForbidden());
+//
+//        log.trace(result.andReturn().getResponse().getContentAsString());
+//    }
 
 // TODO why?
 //    @Test

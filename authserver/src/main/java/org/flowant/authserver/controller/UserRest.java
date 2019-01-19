@@ -1,17 +1,19 @@
 package org.flowant.authserver.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.security.Principal;
 
-@Controller
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
 public class UserRest {
     @RequestMapping("/user")
-    public String user() {
-        return "hello user";
+    public Principal user(Principal principal) {
+        return principal; //TODO response minimal information to browser
     }
 
     @RequestMapping("/admin")
-    public String admin() {
-        return "hello admin";
+    public Principal admin(Principal principal) {
+        return principal; //TODO response minimal information to browser
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -43,20 +44,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.requestMatchers()
-                .antMatchers("/**", "/oauth/**", "/.well-known/jwks.json")
-                .and()
-            .authorizeRequests()
-                .antMatchers("/user").hasRole("USER")
-                .and()
-            .authorizeRequests()
-                .antMatchers("/admin").hasRole("ADMIN")
-                .and()
-            .authorizeRequests()
-                .antMatchers("/oauth/**").permitAll()
-                .and()
-            .authorizeRequests()
-                .antMatchers("/.well-known/jwks.json").permitAll()
-                .and();
+        http.antMatcher("/**")
+                .authorizeRequests()
+                .antMatchers(
+                        // sign in and up
+                        "/", "/login**", "/error**",
+                        // OAuth2 server public key
+                        "/.well-known/jwks.json",
+                        // debug
+                        "/actuator/**", "/oauth/**")
+                    .permitAll()
+                .anyRequest().authenticated().and()
+                .oauth2Login().loginPage("/login").and()
+                // TODO: change to JWT client side logout
+                .logout().logoutSuccessUrl("/").permitAll().and()
+                // is required to post to /logout
+                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 }
