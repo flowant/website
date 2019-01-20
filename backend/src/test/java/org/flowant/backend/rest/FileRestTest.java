@@ -1,8 +1,8 @@
 package org.flowant.backend.rest;
 
-import org.flowant.backend.model.FileRef;
-import org.flowant.backend.model.Tag;
 import org.flowant.backend.storage.FileStorage;
+import org.flowant.common.model.FileRef;
+import org.flowant.common.model.Tag;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

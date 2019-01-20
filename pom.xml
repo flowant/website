@@ -5,7 +5,7 @@
 
   <groupId>org.flowant</groupId>
   <artifactId>website</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <packaging>pom</packaging>
   <name>Basic Website</name>
 
@@ -119,6 +119,9 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <classifier>exec</classifier>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -132,10 +135,9 @@
   </repositories>
 
   <modules>
-    <module>gateway</module>
-    <module>frontend</module>
+    <module>common</module>
     <module>backend</module>
-    <module>authserver</module>
+    <!-- <module>gateway</module> <module>frontend</module> <module>authserver</module> -->
   </modules>
 
 </project>

@@ -2,8 +2,8 @@ package org.flowant.backend.rest;
 
 import java.util.List;
 
-import org.flowant.backend.model.FileRef;
 import org.flowant.backend.storage.FileStorage;
+import org.flowant.common.model.FileRef;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

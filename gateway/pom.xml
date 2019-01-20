@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.flowant</groupId>
     <artifactId>website</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${website.version}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -16,9 +16,28 @@
   <description>gateway of website</description>
 
   <dependencies>
+  
+  <dependency>
+      <groupId>org.flowant</groupId>
+      <artifactId>common</artifactId>
+      <version>${website.version}</version>
+    </dependency>
+  
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-gateway</artifactId>
+    </dependency>
+    
+    <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-tomcat</artifactId>
+        <!--<scope>provided</scope>-->
     </dependency>
   </dependencies>
 

@@ -7,10 +7,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.assertj.core.util.Lists;
-import org.flowant.backend.model.Tag;
-import org.flowant.backend.model.User;
-import org.flowant.backend.model.UserTest;
-import org.flowant.backend.repository.UserRepository;
+import org.flowant.common.model.Tag;
+import org.flowant.common.model.User;
+import org.flowant.common.repository.UserRepository;
+import org.flowant.common.util.test.UserMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,14 +48,14 @@ public class UserRestTest extends BaseRestTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
                 .expectStatus().isOk().expectBody(User.class).consumeWith(r -> {
                     log.trace(r);
-                    UserTest.assertEqual(user, r.getResponseBody());
+                    UserMaker.assertEqual(user, r.getResponseBody());
                     StepVerifier.create(userRepository.findById(user.getId()))
                             .consumeNextWith(deleteUser).verifyComplete();
                 });
     }
 
     public static List<User> parametersForTestInsert() {
-        return Arrays.asList(UserTest.small(), UserTest.large());
+        return Arrays.asList(UserMaker.small(), UserMaker.large());
     }
 
     @Test
@@ -78,13 +78,13 @@ public class UserRestTest extends BaseRestTest {
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(User.class).consumeWith( r -> {
                     log.trace(r);
-                    UserTest.assertEqual(user, r.getResponseBody());
+                    UserMaker.assertEqual(user, r.getResponseBody());
                     deleteUser.accept(user);
                 });
     }
 
     public static List<User> parametersForTestGetId() {
-        return Arrays.asList(UserTest.small(), UserTest.large());
+        return Arrays.asList(UserMaker.small(), UserMaker.large());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class UserRestTest extends BaseRestTest {
 
     @Test
     public void testGetAll() {
-        Flux<User> users = Flux.range(1, 5).map(UserTest::small).cache();
+        Flux<User> users = Flux.range(1, 5).map(UserMaker::small).cache();
         userRepository.saveAll(users).blockLast();
         webTestClient.get().uri(UserRest.USER).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -108,7 +108,7 @@ public class UserRestTest extends BaseRestTest {
 
     @Test
     public void testPutNotExist() {
-        User user = UserTest.large();
+        User user = UserMaker.large();
         webTestClient.put().uri(UserRest.USER__ID__, user.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
         .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
         .expectStatus().isOk().expectBody().consumeWith(r -> {
@@ -126,7 +126,7 @@ public class UserRestTest extends BaseRestTest {
 
     @Test
     public void testPut() {
-        User user = UserTest.large();
+        User user = UserMaker.large();
         userRepository.save(user).block();
 
         user.setFirstname("newFirstname");
@@ -138,14 +138,14 @@ public class UserRestTest extends BaseRestTest {
                 .expectStatus().isOk().expectBody().consumeWith( r -> {
                     log.trace(r::toString);
                     StepVerifier.create(userRepository.findById(user.getId()))
-                            .consumeNextWith(actual -> UserTest.assertEqual(user, actual))
+                            .consumeNextWith(actual -> UserMaker.assertEqual(user, actual))
                             .then(()-> deleteUser.accept(user)).verifyComplete();
                 });
     }
 
     @Test
     public void testDelete() {
-        User user = UserTest.large();
+        User user = UserMaker.large();
         userRepository.save(user).block();
         webTestClient.delete().uri(UserRest.USER__ID__, user.getId()).exchange()
                 .expectStatus().isOk().expectBody().consumeWith(r -> {

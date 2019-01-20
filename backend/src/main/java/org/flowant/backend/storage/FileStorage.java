@@ -8,9 +8,9 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.flowant.backend.model.CRUZonedTime;
-import org.flowant.backend.model.FileRef;
 import org.flowant.backend.rest.FileRest;
+import org.flowant.common.model.CRUZonedTime;
+import org.flowant.common.model.FileRef;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

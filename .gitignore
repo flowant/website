@@ -10,6 +10,7 @@ tree
 mvnw
 mvnw.cmd
 .editorconfig
+.attach_pid*
 
 ### STS ###
 .apt_generated

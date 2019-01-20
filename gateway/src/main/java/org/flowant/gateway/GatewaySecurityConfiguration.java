@@ -30,35 +30,36 @@ public class GatewaySecurityConfiguration {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
 
-        /*
-         * Angular add the X-XSRF-TOKEN header only if the XSRF-TOKEN cookie
-         * was generated server-side with the following options:
-         * Path = / and httpOnly = false
-         * TODO check again
-         */
-        CookieServerCsrfTokenRepository csrfTokenRepository =
-                CookieServerCsrfTokenRepository.withHttpOnlyFalse();
-//        csrfTokenRepository.setCookiePath("/");
+//        /*
+//         * Angular add the X-XSRF-TOKEN header only if the XSRF-TOKEN cookie
+//         * was generated server-side with the following options:
+//         * Path = / and httpOnly = false
+//         * TODO check again
+//         */
+//        CookieServerCsrfTokenRepository csrfTokenRepository =
+//                CookieServerCsrfTokenRepository.withHttpOnlyFalse();
+////        csrfTokenRepository.setCookiePath("/");
 
         return http.authorizeExchange()
                 .pathMatchers("/", "/index.html", "/*.js", "/favicon.ico").permitAll()
-                .anyExchange().authenticated()
-                    .and()
-                .csrf().csrfTokenRepository(csrfTokenRepository)
-                    .and()
-                .httpBasic().securityContextRepository(new WebSessionServerSecurityContextRepository())
-                    .and()
-                 /* Issue: Webflux basic auth returns www-authenticate even when x-requested-with is set #5234
-                  * https://github.com/spring-projects/spring-security/issues/5234
-                  *
-                  * This always remove WWW-Authenticate header in response regardless of x-requested-with header in Request.
-                  * So, we don't have to add x-requested-with header in Angular.
-                  *
-                  * see also HttpBasicServerAuthenticationEntryPoint class */
-                 .exceptionHandling()
-                     .authenticationEntryPoint((exchange, e) -> Mono.fromRunnable(() -> 
-                             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
-                     .and()
+                .and()
+//                .anyExchange().authenticated()
+//                    .and()
+//                .csrf().csrfTokenRepository(csrfTokenRepository)
+//                    .and()
+//                .httpBasic().securityContextRepository(new WebSessionServerSecurityContextRepository())
+//                    .and()
+//                 /* Issue: Webflux basic auth returns www-authenticate even when x-requested-with is set #5234
+//                  * https://github.com/spring-projects/spring-security/issues/5234
+//                  *
+//                  * This always remove WWW-Authenticate header in response regardless of x-requested-with header in Request.
+//                  * So, we don't have to add x-requested-with header in Angular.
+//                  *
+//                  * see also HttpBasicServerAuthenticationEntryPoint class */
+//                 .exceptionHandling()
+//                     .authenticationEntryPoint((exchange, e) -> Mono.fromRunnable(() -> 
+//                             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
+//                     .and()
                 .build();
     }
 

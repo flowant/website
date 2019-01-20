@@ -1,11 +1,5 @@
 package org.flowant.backend.repository;
 
-import java.util.UUID;
+public interface ContentRepository extends org.flowant.common.repository.ContentRepository {
 
-import org.flowant.backend.model.Content;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-
-public interface ContentRepository extends ReactiveCrudRepository<Content, UUID> {
-    //TODO should delete file when content is deleted
-    //TODO should update fileRef when file is uploaded.
 }

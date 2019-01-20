@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.flowant.backend.model.CRUZonedTime;
-import org.flowant.backend.model.User;
-import org.flowant.backend.repository.UserRepository;
+import org.flowant.common.model.CRUZonedTime;
+import org.flowant.common.model.User;
+import org.flowant.common.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

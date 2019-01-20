@@ -7,8 +7,7 @@
   <parent>
     <groupId>org.flowant</groupId>
     <artifactId>website</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>0.0.1</version>
   </parent>
 
   <artifactId>authserver</artifactId>
@@ -16,6 +15,12 @@
   <description>authserver of website</description>
 
   <dependencies>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

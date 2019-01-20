@@ -3,10 +3,6 @@ server:
   address: 127.0.0.1
 
 spring:
-  session:
-    store-type: redis
-    timeout: 86400
-
   cloud:
     gateway:
       routes:
@@ -21,6 +17,14 @@ spring:
         - Path=/frontend/**
         filters:
         - RewritePath=/frontend/(?<segment>.*), /$\{segment}
+
+security:
+  oauth2:
+    client:
+      client-id: client
+      client-secret: client
+      access-token-uri: http://localhost:9093/oauth/token
+      user-authorization-uri: http://localhost:9093/oauth/authorize
 
 management:
   endpoints:

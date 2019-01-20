@@ -7,10 +7,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import org.assertj.core.util.Lists;
-import org.flowant.backend.model.Content;
-import org.flowant.backend.model.ContentTest;
-import org.flowant.backend.model.Tag;
-import org.flowant.backend.repository.ContentRepository;
+import org.flowant.common.model.Content;
+import org.flowant.common.model.Tag;
+import org.flowant.common.repository.ContentRepository;
+import org.flowant.common.util.test.ContentMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class ContentRestTest extends BaseRestTest {
                 });
     }
     public static List<Content> parametersForTestInsert() {
-        return Arrays.asList(ContentTest.small(), ContentTest.large());
+        return Arrays.asList(ContentMaker.small(), ContentMaker.large());
     }
 
     @Test
@@ -77,12 +77,12 @@ public class ContentRestTest extends BaseRestTest {
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(Content.class).consumeWith( r -> {
                     log.trace(r);
-                    ContentTest.assertEqual(content, r.getResponseBody());
+                    ContentMaker.assertEqual(content, r.getResponseBody());
                     deleteContent.accept(content);
                 });
     }
     public static List<Content> parametersForTestGetId() {
-        return Arrays.asList(ContentTest.small(), ContentTest.large());
+        return Arrays.asList(ContentMaker.small(), ContentMaker.large());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ContentRestTest extends BaseRestTest {
 
     @Test
     public void testGetAll() {
-        Flux<Content> contents = Flux.range(1, 5).map(ContentTest::large).cache();
+        Flux<Content> contents = Flux.range(1, 5).map(ContentMaker::large).cache();
         contentRepository.saveAll(contents).blockLast();
 
         webTestClient.get().uri(ContentRest.CONTENT).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
@@ -107,7 +107,7 @@ public class ContentRestTest extends BaseRestTest {
 
     @Test
     public void testPutNotExist() {
-        Content content = ContentTest.large();
+        Content content = ContentMaker.large();
         webTestClient.put().uri(ContentRest.CONTENT__ID__, content).contentType(MediaType.APPLICATION_JSON_UTF8)
         .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(content), Content.class).exchange()
         .expectStatus().isOk().expectBody().consumeWith(r -> {
@@ -125,7 +125,7 @@ public class ContentRestTest extends BaseRestTest {
 
     @Test
     public void testPut() {
-        Content content = ContentTest.large();
+        Content content = ContentMaker.large();
         contentRepository.save(content).block();
 
         content.setTitle("newTitle");
@@ -135,14 +135,14 @@ public class ContentRestTest extends BaseRestTest {
                 .expectStatus().isOk().expectBody(Content.class).consumeWith( r -> {
                     log.trace(r::toString);
                     StepVerifier.create(contentRepository.findById(content.getId()))
-                            .consumeNextWith(c -> ContentTest.assertEqual(content, c))
+                            .consumeNextWith(c -> ContentMaker.assertEqual(content, c))
                             .then(()-> deleteContent.accept(content)).verifyComplete();
                 });
     }
 
     @Test
     public void testDelete() {
-        Content content = ContentTest.small();
+        Content content = ContentMaker.small();
         contentRepository.save(content).block();
 
         webTestClient.delete().uri(ContentRest.CONTENT__ID__, content.getId()).exchange()
