@@ -3,6 +3,7 @@ package org.flowant.common.util.test;
 import java.util.List;
 import java.util.UUID;
 
+import org.flowant.common.model.Authority;
 import org.flowant.common.model.CRUZonedTime;
 import org.flowant.common.model.Phone;
 import org.flowant.common.model.PostalAddress;
@@ -50,6 +51,7 @@ public class UserMaker {
                         zipCode + suffix))
                 .birthdate(ZonedDate.now()).firstname(firstname + suffix).lastname(lastname + suffix)
                 .phone(Phone.of(suffix, 100000000 + suffix)).followers(List.of(UUID.randomUUID()))
+                .authorities(List.of(Authority.of("USER"), Authority.of("MEMBER")))
                 .followings(List.of(UUID.randomUUID())).interests(List.of(Tag.of(name + suffix)))
                 .cruTime(CRUZonedTime.now()).build();
     }
@@ -69,7 +71,7 @@ public class UserMaker {
         Assert.assertEquals(expected.getPassword(), actual.getPassword());
         Assert.assertEquals(expected.getPhone(), actual.getPhone());
         Assert.assertEquals(expected.getGender(), actual.getGender());
-        Assert.assertEquals(expected.getRole(), actual.getRole());
+        AssertUtil.assertListEquals(expected.getAuthorities(), actual.getAuthorities());
         AssertUtil.assertListEquals(expected.getFollowers(), actual.getFollowers());
         AssertUtil.assertListEquals(expected.getFollowings(), actual.getFollowings());
         AssertUtil.assertListEquals(expected.getInterests(), actual.getInterests());

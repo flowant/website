@@ -1,9 +1,10 @@
 package org.flowant.authserver;
 
 import java.security.KeyPair;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -14,13 +15,24 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
+
 @Configuration
+@ConfigurationProperties(prefix = "oauth2-server")
+@Getter @Setter @ToString
+@Log4j2
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Value("${dev.client}")
-    String client;
-    @Value("${dev.clientPassword}")
-    String password;
+    String clientId;
+    String clientSecret;
+    List<String> authorizedGrantTypes;
+    List<String> scopes;
+    boolean autoApprove;
+    int accessTokenValiditySeconds;
+    String redirectUris;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -36,12 +48,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory().withClient(client).secret(passwordEncoder.encode(password))
-                .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials")
-                .scopes("message:read", "message:write")
+        log.info(this::toString);
+        clients.inMemory().withClient(clientId).secret(passwordEncoder.encode(clientSecret))
+                .authorizedGrantTypes(authorizedGrantTypes.toArray(new String[authorizedGrantTypes.size()]))
+                .scopes(scopes.toArray(new String[scopes.size()]))
                 .autoApprove(true)
-                .accessTokenValiditySeconds(3600)
-                .redirectUris("http://localhost:9093/");
+                .accessTokenValiditySeconds(accessTokenValiditySeconds)
+                .redirectUris(redirectUris);
     }
 
     @Override

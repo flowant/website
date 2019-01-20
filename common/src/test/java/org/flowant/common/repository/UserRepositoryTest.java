@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.flowant.common.model.User;
-import org.flowant.common.model.UserTest;
+import org.flowant.common.util.test.UserMaker;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,16 +44,23 @@ public class UserRepositoryTest {
         StepVerifier.create(saveThenFind).consumeNextWith(deleteUser).verifyComplete();
     }
     public static List<User> parametersForTestSave() {
-        return Arrays.asList(UserTest.small(), UserTest.large());
+        return Arrays.asList(UserMaker.small(), UserMaker.large());
     }
 
     @Test
     public void testSaveAllFindAllById() {
-        Flux<User> users = Flux.range(1, 5).map(UserTest::large).cache();
+        Flux<User> users = Flux.range(1, 5).map(UserMaker::large).cache();
         Flux<User> saveAllThenFind = userRepository.saveAll(users)
                 .thenMany(userRepository.findAllById(users.map(User::getId)));
         StepVerifier.create(saveAllThenFind).recordWith(ArrayList::new).expectNextCount(5)
         .consumeRecordedWith(deleteUsers).verifyComplete();
+    }
+
+    @Test
+    public void testFindByEmail() {
+        User user = UserMaker.large();
+        Flux<User> saveThenFind = userRepository.save(user).thenMany(userRepository.findByEmail(user.getEmail()));
+        StepVerifier.create(saveThenFind).consumeNextWith(deleteUser).verifyComplete();
     }
 
 }

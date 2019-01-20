@@ -30,8 +30,6 @@ public class Content {
     List<Tag> tags;
     @NonNull
     Review review;
-    @Builder.Default
-    Authority accessLevel = Authority.ANONYMOUS;
     @NonNull
     CRUZonedTime cruTime;
 }

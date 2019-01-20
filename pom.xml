@@ -136,8 +136,9 @@
 
   <modules>
     <module>common</module>
+    <module>authserver</module>
     <module>backend</module>
-    <!-- <module>gateway</module> <module>frontend</module> <module>authserver</module> -->
+    <!-- <module>gateway</module> <module>frontend</module>  -->
   </modules>
 
 </project>

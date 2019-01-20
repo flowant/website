@@ -6,15 +6,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.flowant.authserver.repository.UserRepository;
 import org.flowant.common.model.User;
+import org.flowant.common.util.test.UserMaker;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,22 +35,21 @@ import lombok.extern.log4j.Log4j2;
 public class AuthserverApplicationTests {
 
     @Autowired
-    private WebApplicationContext wac;
+    WebApplicationContext wac;
 
     @Autowired
-    private FilterChainProxy springSecurityFilterChain;
+    FilterChainProxy springSecurityFilterChain;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    AuthorizationServerConfig authConfig;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     private MockMvc mockMvc;
-
-    //TODO clean up
-    @Value("${dev.user}")
-    String user;
-    @Value("${dev.userPassword}")
-    String userPassword;
-    @Value("${dev.client}")
-    String client;
-    @Value("${dev.clientPassword}")
-    String clientPassword;
 
     @Before
     public void setup() {
@@ -76,7 +78,8 @@ public class AuthserverApplicationTests {
         params.add("grant_type", "client_credentials");
 
         ResultActions result = mockMvc
-                .perform(post("/oauth/token").params(params).with(httpBasic(client, clientPassword))
+                .perform(post("/oauth/token").params(params).with(httpBasic(
+                        authConfig.getClientId(), authConfig.getClientSecret()))
                 .accept("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"));
@@ -91,7 +94,8 @@ public class AuthserverApplicationTests {
         params.add("password", password);
 
         ResultActions result = mockMvc
-                .perform(post("/oauth/token").params(params).with(httpBasic(client, clientPassword))
+                .perform(post("/oauth/token").params(params).with(httpBasic(
+                        authConfig.getClientId(), authConfig.getClientSecret()))
                         .accept("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"));
@@ -104,26 +108,44 @@ public class AuthserverApplicationTests {
 
     @Test
     public void testPasswordAccessToken() throws Exception {
-        obtainPasswordAccessToken(user, userPassword);
+        User user = UserMaker.small();
+        String orgPassword = user.getPassword();
+        user.setPassword(passwordEncoder.encode(orgPassword));
+        userRepository.save(user).block();
+
+        obtainPasswordAccessToken(user.getEmail(), orgPassword);
+
+        userRepository.delete(user).block();
     }
 
+// TODO
 //    @Test
 //    public void testPasswordAccessTokenForbidden() throws Exception {
-//        String accessToken = obtainPasswordAccessToken(user, userPassword);
+//        User user = UserMaker.large();
+//        String orgPassword = user.getPassword();
+//        user.setPassword(passwordEncoder.encode(orgPassword));
+//        userRepository.save(user).block();
+//
+//        String accessToken = obtainPasswordAccessToken(user.getEmail(), orgPassword);
 //        ResultActions result = mockMvc.perform(get("/admin").header("Authorization", "Bearer " + accessToken))
-//                .andExpect(status().isForbidden());
+//                .andExpect(status().is3xxRedirection());
 //
 //        log.trace(result.andReturn().getResponse().getContentAsString());
+//        userRepository.delete(user).block();
 //    }
-
-// TODO why?
+//
 //    @Test
 //    public void testPasswordAccessTokenGranted() throws Exception {
-//        String accessToken = obtainPasswordAccessToken(user, userPassword);
+//        User user = UserMaker.large();
+//        String orgPassword = user.getPassword();
+//        user.setPassword(passwordEncoder.encode(orgPassword));
+//        userRepository.save(user).block();
+//
+//        String accessToken = obtainPasswordAccessToken(user.getEmail(), orgPassword);
 //        ResultActions result = mockMvc.perform(get("/user").header("Authorization", "Bearer " + accessToken))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType("application/json;charset=UTF-8"));
+//                .andExpect(status().isOk());
 //
 //        log.trace(result.andReturn().getResponse().getContentAsString());
+//        userRepository.delete(user).block();
 //    }
 }

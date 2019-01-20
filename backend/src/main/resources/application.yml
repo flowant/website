@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    active: prod
+    active: test
   data:
     cassandra:
       contactPoints: 127.0.0.1

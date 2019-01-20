@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.flowant.common.util.test.ContentMaker;
+import org.flowant.common.util.test.UserMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,7 +41,7 @@ public class JacksonTest {
         testWithJson(user);
     }
     public static List<User> parametersForTestUser() {
-      return Arrays.asList(UserTest.small(), UserTest.large());
+      return Arrays.asList(UserMaker.small(), UserMaker.large());
     }
 
     @Test

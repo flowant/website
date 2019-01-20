@@ -74,7 +74,6 @@ public class ContentMaker {
         Assert.assertEquals(excepted.getId(), actual.getId());
         Assert.assertEquals(excepted.getSentences(), actual.getSentences());
         Assert.assertEquals(excepted.getTitle(), actual.getTitle());
-        Assert.assertEquals(excepted.getAccessLevel(), actual.getAccessLevel());
         Assert.assertEquals(excepted.getExtend(), actual.getExtend());
         AssertUtil.assertListEquals(excepted.getFileRefs(), actual.getFileRefs());
         AssertUtil.assertListEquals(excepted.getTags(), actual.getTags());
