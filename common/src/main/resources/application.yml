@@ -5,7 +5,9 @@ spring:
     cassandra:
       contactPoints: 127.0.0.1
       port: 9042
-      cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+
+website:
+  cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
 
 ---
 spring:
@@ -24,7 +26,6 @@ spring:
   data:
     cassandra:
       keyspace-name: backend_test
-#      schema-action: CREATE_IF_NOT_EXISTS
       schema-action: recreate # recreate is slow because of doing recreating
 
 logging:

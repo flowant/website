@@ -9,7 +9,6 @@ spring:
     cassandra:
       contactPoints: 127.0.0.1
       port: 9042
-      cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
   security:
     oauth2:
       client:
@@ -33,22 +32,23 @@ spring:
             provider: github
             scope: user
 
-oauth2-server:
-  clientId: ${OAUTH2_CLIENT_ID}
-  clientSecret: ${OAUTH2_CLIENT_PASSWORD}
-  authorizedGrantTypes:
-    - password
-    - authorization_code
-    - refresh_token
-    - client_credentials
-  scopes:
-    - message:read
-    - message:write
-  autoApprove: true
-  accessTokenValiditySeconds: 3600
-  redirectUris: "http://localhost:9093/"
-
-keystore:
+website:
+  cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+  oauth2-server:
+    clientId: ${OAUTH2_CLIENT_ID}
+    clientSecret: ${OAUTH2_CLIENT_PASSWORD}
+    authorizedGrantTypes:
+      - password
+      - authorization_code
+      - refresh_token
+      - client_credentials
+    scopes:
+      - message:read
+      - message:write
+    autoApprove: true
+    accessTokenValiditySeconds: 3600
+    redirectUris: "http://localhost:9093/"
+  keystore:
     path: classpath:keystore/keystore.jks
     alias: website_keystore
     password: ${OAUTH2_KEYSTORE_STOREPASS}
@@ -76,8 +76,8 @@ spring:
   data:
     cassandra:
       keyspace-name: backend_test
-#      schema-action: CREATE_IF_NOT_EXISTS
       schema-action: recreate # recreate is slow because of doing recreating
+#      schema-action: CREATE_IF_NOT_EXISTS
 
 logging:
   config: classpath:log4j2-spring-test.xml

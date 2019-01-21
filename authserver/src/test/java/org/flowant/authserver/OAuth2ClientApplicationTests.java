@@ -18,6 +18,7 @@ package org.flowant.authserver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.flowant.website.AuthserverApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+                classes=AuthserverApplication.class)
 public class OAuth2ClientApplicationTests {
 
     @LocalServerPort

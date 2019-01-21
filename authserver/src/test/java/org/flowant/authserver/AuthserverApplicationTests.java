@@ -6,9 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.flowant.authserver.repository.UserRepository;
-import org.flowant.common.model.User;
-import org.flowant.common.util.test.UserMaker;
+import org.flowant.website.AuthorizationServerConfig;
+import org.flowant.website.AuthserverApplication;
+import org.flowant.website.model.User;
+import org.flowant.website.repository.UserRepository;
+import org.flowant.website.repository.devutil.MockUserRepoUtil;
+import org.flowant.website.util.test.UserMaker;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,7 +31,8 @@ import org.springframework.web.context.WebApplicationContext;
 import lombok.extern.log4j.Log4j2;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+                classes=AuthserverApplication.class)
 @Log4j2
 public class AuthserverApplicationTests {
 
@@ -47,8 +49,8 @@ public class AuthserverApplicationTests {
     AuthorizationServerConfig authConfig;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
-
+    MockUserRepoUtil mockUserRepoUtil;
+    
     private MockMvc mockMvc;
 
     @Before
@@ -108,13 +110,8 @@ public class AuthserverApplicationTests {
 
     @Test
     public void testPasswordAccessToken() throws Exception {
-        User user = UserMaker.small();
-        String orgPassword = user.getPassword();
-        user.setPassword(passwordEncoder.encode(orgPassword));
-        userRepository.save(user).block();
-
-        obtainPasswordAccessToken(user.getEmail(), orgPassword);
-
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
+        obtainPasswordAccessToken(user.getEmail(), user.getPassword());
         userRepository.delete(user).block();
     }
 
