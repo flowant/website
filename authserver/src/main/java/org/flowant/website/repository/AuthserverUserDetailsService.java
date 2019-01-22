@@ -1,7 +1,6 @@
 package org.flowant.website.repository;
 
 import org.flowant.website.model.User;
-import org.flowant.website.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -22,6 +22,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         // debug
                         "/actuator/**", "/oauth/**")
                     .permitAll()
+                .antMatchers("/user").hasAuthority("USER")
+                .antMatchers("/admin").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
             .oauth2Login()

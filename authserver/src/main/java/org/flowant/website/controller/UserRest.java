@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserRest {
+
     @RequestMapping("/user")
     public Principal user(Principal principal) {
         return principal; //TODO response minimal information to browser
