@@ -1,7 +1,7 @@
 package org.flowant.website;
 
 import java.security.KeyPair;
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -28,11 +28,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     String clientId;
     String clientSecret;
-    List<String> authorizedGrantTypes;
-    List<String> scopes;
-    boolean autoApprove;
+    String[] authorizedGrantTypes;
+    String[] authorities;
     int accessTokenValiditySeconds;
-    String redirectUris;
+    int refreshTokenValiditySeconds;
+    String[] scopes;
+    String[] autoApproveScopes;
+    boolean autoApprove;
+    String[] registeredRedirectUris;
+    String[] resourceIds;
+    Map<String, String> additionalInformation;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -49,13 +54,17 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         log.info(this::toString);
-        //TODO add more fields
         clients.inMemory().withClient(clientId).secret(passwordEncoder.encode(clientSecret))
-                .authorizedGrantTypes(authorizedGrantTypes.toArray(new String[authorizedGrantTypes.size()]))
-                .scopes(scopes.toArray(new String[scopes.size()]))
-                .autoApprove(true)
+                .authorizedGrantTypes(authorizedGrantTypes)
+                .authorities(authorities)
                 .accessTokenValiditySeconds(accessTokenValiditySeconds)
-                .redirectUris(redirectUris);
+                .refreshTokenValiditySeconds(refreshTokenValiditySeconds)
+                .scopes(scopes)
+                .autoApprove(autoApproveScopes)
+                .autoApprove(autoApprove)
+                .redirectUris(registeredRedirectUris)
+                .resourceIds(resourceIds)
+                .additionalInformation(additionalInformation);
     }
 
     @Override

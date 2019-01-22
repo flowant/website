@@ -42,12 +42,21 @@ website:
       - authorization_code
       - refresh_token
       - client_credentials
+    authorities:
+      - auth
+    accessTokenValiditySeconds: 3600
+    refreshTokenValiditySeconds: 3600
     scopes:
       - message:read
       - message:write
+    autoApproveScopes:
+      - read
+      - write
     autoApprove: true
-    accessTokenValiditySeconds: 3600
-    redirectUris: "http://localhost:9093/"
+    registeredRedirectUris: "http://localhost:9093/"
+    resourceIds: id1, id2
+    additionalInformation:
+      org: flowant
   keystore:
     path: classpath:keystore/keystore.jks
     alias: website_keystore
