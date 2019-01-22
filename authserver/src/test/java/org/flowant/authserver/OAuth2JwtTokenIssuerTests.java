@@ -107,7 +107,7 @@ public class OAuth2JwtTokenIssuerTests {
     @Test
     public void testPasswordAccessToken() throws Exception {
         User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
-        obtainPasswordAccessToken(user.getEmail(), user.getPassword());
+        obtainPasswordAccessToken(user.getUsername(), user.getPassword());
         mockUserRepoUtil.deleteUser(user);
     }
 }

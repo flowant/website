@@ -58,9 +58,9 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void testFindByEmail() {
+    public void testFindByUsername() {
         User user = UserMaker.large();
-        Flux<User> saveThenFind = userRepository.save(user).thenMany(userRepository.findByEmail(user.getEmail()));
+        Flux<User> saveThenFind = userRepository.save(user).thenMany(userRepository.findByUsername(user.getUsername()));
         StepVerifier.create(saveThenFind).consumeNextWith(deleteUser).verifyComplete();
     }
 

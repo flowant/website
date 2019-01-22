@@ -26,11 +26,11 @@ public class User implements UserDetails {
 
     @Id @NonNull
     UUID id;
-    @NonNull
+    @NonNull @Indexed
     String username;
     @NonNull
     String password;
-    @NonNull @Indexed
+    @NonNull
     String email;
     String firstname;
     String lastname;

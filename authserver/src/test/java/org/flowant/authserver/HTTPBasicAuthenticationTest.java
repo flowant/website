@@ -35,7 +35,7 @@ public class HTTPBasicAuthenticationTest {
     public void loginWithValidUserThenAuthenticated() throws Exception {
         User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
 
-        mockMvc.perform(get("/userInfo").with(httpBasic(user.getEmail(),user.getPassword())))
+        mockMvc.perform(get("/userInfo").with(httpBasic(user.getUsername(),user.getPassword())))
             .andExpect(authenticated().withUsername(user.getUsername()));
 
         mockUserRepoUtil.deleteUser(user);
@@ -65,5 +65,4 @@ public class HTTPBasicAuthenticationTest {
         mockMvc.perform(get("/userInfo"))
                 .andExpect(status().isOk());
     }
-    
 }
