@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.flowant.website.AuthorizationServerConfig;
 import org.flowant.website.AuthserverApplication;
 import org.flowant.website.model.User;
-import org.flowant.website.repository.UserRepository;
 import org.flowant.website.repository.devutil.MockUserRepoUtil;
 import org.flowant.website.util.test.UserMaker;
 import org.junit.Before;
@@ -34,7 +33,7 @@ import lombok.extern.log4j.Log4j2;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
                 classes=AuthserverApplication.class)
 @Log4j2
-public class AuthserverApplicationTests {
+public class OAuth2JwtTokenIssuerTests {
 
     @Autowired
     WebApplicationContext wac;
@@ -43,14 +42,11 @@ public class AuthserverApplicationTests {
     FilterChainProxy springSecurityFilterChain;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
     AuthorizationServerConfig authConfig;
 
     @Autowired
     MockUserRepoUtil mockUserRepoUtil;
-    
+
     private MockMvc mockMvc;
 
     @Before
@@ -112,37 +108,6 @@ public class AuthserverApplicationTests {
     public void testPasswordAccessToken() throws Exception {
         User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
         obtainPasswordAccessToken(user.getEmail(), user.getPassword());
-        userRepository.delete(user).block();
+        mockUserRepoUtil.deleteUser(user);
     }
-
-// TODO
-//    @Test
-//    public void testPasswordAccessTokenForbidden() throws Exception {
-//        User user = UserMaker.large();
-//        String orgPassword = user.getPassword();
-//        user.setPassword(passwordEncoder.encode(orgPassword));
-//        userRepository.save(user).block();
-//
-//        String accessToken = obtainPasswordAccessToken(user.getEmail(), orgPassword);
-//        ResultActions result = mockMvc.perform(get("/admin").header("Authorization", "Bearer " + accessToken))
-//                .andExpect(status().is3xxRedirection());
-//
-//        log.trace(result.andReturn().getResponse().getContentAsString());
-//        userRepository.delete(user).block();
-//    }
-//
-//    @Test
-//    public void testPasswordAccessTokenGranted() throws Exception {
-//        User user = UserMaker.large();
-//        String orgPassword = user.getPassword();
-//        user.setPassword(passwordEncoder.encode(orgPassword));
-//        userRepository.save(user).block();
-//
-//        String accessToken = obtainPasswordAccessToken(user.getEmail(), orgPassword);
-//        ResultActions result = mockMvc.perform(get("/user").header("Authorization", "Bearer " + accessToken))
-//                .andExpect(status().isOk());
-//
-//        log.trace(result.andReturn().getResponse().getContentAsString());
-//        userRepository.delete(user).block();
-//    }
 }

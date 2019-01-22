@@ -29,8 +29,12 @@ public class MockUserRepoUtil {
         return user;
     }
 
-    public void saveMockUsers() {
-        for (int i = 0; i < 5; i++) {
+    public void deleteUser(User user) {
+        userRepository.delete(user).block();
+    }
+
+    public void saveMockUsers(int cntUser) {
+        for (int i = 0; i < cntUser; i++) {
             User user = saveUserWithEncodedPassword(UserMaker.large(i));
             log.debug("saved mock user:{}", user);
         }
@@ -39,7 +43,7 @@ public class MockUserRepoUtil {
     @EventListener
     public void onApplicationEvent(MockDataGenerateEvent event) {
         log.debug(event::toString);
-        saveMockUsers();
+        saveMockUsers(5);
     }
 
 }
