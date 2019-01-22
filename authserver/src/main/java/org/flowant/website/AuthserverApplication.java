@@ -21,6 +21,11 @@ public class AuthserverApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = 
                 SpringApplication.run(AuthserverApplication.class, args);
-        ctx.publishEvent(new MockDataGenerateEvent());
+
+        for (String profile : ctx.getEnvironment().getActiveProfiles()) {
+            if ("test".equalsIgnoreCase(profile)) {
+                ctx.publishEvent(new MockDataGenerateEvent());
+            }
+        }
     }
 }
