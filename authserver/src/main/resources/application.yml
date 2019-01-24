@@ -69,12 +69,9 @@ website:
       - write
     autoApprove: true
     registeredRedirectUris:
-      - "http://127.0.0.1:9090/"
-      - http://localhost:9090/hello
+      - http://localhost:9090/login/oauth2/code/website
       - http://localhost:9090/
-      - "http://127.0.0.1:9090/hello"
-      - http://localhost:9999/login
-    resourceIds: id1, id2
+    resourceIds: oauth2-resource
     additionalInformation:
       org: flowant
   keystore:

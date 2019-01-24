@@ -3,6 +3,7 @@ package org.flowant.website;
 import org.flowant.website.repository.AuthserverUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -11,6 +12,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @EnableWebSecurity
+@Order(5) // @EnableResourceServer annotation creates a WebSecurityConfigurerAdapter with a hard-coded Order (of 3)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

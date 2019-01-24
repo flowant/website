@@ -6,11 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.flowant.website.OAuth2ServerConfig;
 import org.flowant.website.AuthserverApplication;
+import org.flowant.website.OAuth2ServerConfig;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.devutil.MockUserRepoUtil;
 import org.flowant.website.util.test.UserMaker;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -108,6 +110,20 @@ public class OAuth2JwtTokenIssuerTests {
     public void testPasswordAccessToken() throws Exception {
         User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
         obtainPasswordAccessToken(user.getUsername(), user.getPassword());
+        mockUserRepoUtil.deleteUser(user);
+    }
+
+    @Test
+    public void testUserInfoUrl() throws Exception {
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
+        String accessToken = obtainPasswordAccessToken(user.getUsername(), user.getPassword());
+
+        MvcResult result = mockMvc.perform(get("/me").header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk()).andReturn();
+
+        Assert.assertTrue(result.getResponse().getContentAsString().contains(user.getUsername()));
+        log.trace(result);
+
         mockUserRepoUtil.deleteUser(user);
     }
 }
