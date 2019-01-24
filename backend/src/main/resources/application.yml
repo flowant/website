@@ -9,7 +9,6 @@ spring:
     cassandra:
       contactPoints: 127.0.0.1
       port: 9042
-      schema-action: recreate
   security:
     oauth2:
       resourceserver:
@@ -33,7 +32,7 @@ spring:
   data:
     cassandra:
       keyspace-name: backend_prod
-      schema-action: recreate
+      schema-action: CREATE_IF_NOT_EXISTS
 
 logging:
   config: classpath:log4j2-spring-prod.xml
@@ -44,7 +43,7 @@ spring:
   data:
     cassandra:
       keyspace-name: backend_test
-      schema-action: recreate
+      schema-action: CREATE_IF_NOT_EXISTS
 
 logging:
   config: classpath:log4j2-spring-test.xml
