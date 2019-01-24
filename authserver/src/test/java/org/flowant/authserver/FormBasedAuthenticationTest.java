@@ -42,7 +42,7 @@ public class FormBasedAuthenticationTest {
 
     @Test
     public void loginWithValidUserThenAuthenticated() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
 
         FormLoginRequestBuilder login = formLogin().user(user.getUsername()).password(user.getPassword());
         mockMvc.perform(login)
@@ -53,7 +53,7 @@ public class FormBasedAuthenticationTest {
 
     @Test
     public void loginWithRememberMe() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
 
         MvcResult result = mockMvc.perform(post("/login").param("username", user.getUsername())
             .param("password", user.getPassword()).param("remember-me", "on").with(csrf()))
@@ -62,7 +62,7 @@ public class FormBasedAuthenticationTest {
         String rememberMe = result.getResponse().getCookie("remember-me").getValue();
         log.trace(rememberMe);
 
-        mockMvc.perform(get("/userInfo").cookie(new Cookie("remember-me", rememberMe)))
+        mockMvc.perform(get("/user").cookie(new Cookie("remember-me", rememberMe)))
             .andExpect(authenticated().withUsername(user.getUsername()));
 
         mockUserRepoUtil.deleteUser(user);
@@ -86,14 +86,14 @@ public class FormBasedAuthenticationTest {
 
     @Test
     public void accessSecuredResourceUnauthenticatedThenRedirectsToLogin() throws Exception {
-        mockMvc.perform(get("/userInfo"))
+        mockMvc.perform(get("/user"))
             .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
     public void accessSecuredResourceAuthenticatedThenOk() throws Exception {
-        mockMvc.perform(get("/userInfo"))
+        mockMvc.perform(get("/user"))
                 .andExpect(status().isOk());
     }
 }

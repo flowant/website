@@ -46,8 +46,8 @@ public class OAuth2ClientApplicationTests {
     public void loginShouldHaveAllOAuth2ClientsToChooseFrom() {
         ResponseEntity<String> entity = this.restTemplate.getForEntity("/login", String.class);
         assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(entity.getBody()).contains("/oauth2/authorization/facebook");
-        assertThat(entity.getBody()).contains("/oauth2/authorization/google");
-        assertThat(entity.getBody()).contains("/oauth2/authorization/github");
+        assertThat(entity.getBody()).contains("/facebook");
+        assertThat(entity.getBody()).contains("/google");
+        assertThat(entity.getBody()).contains("/github");
     }
 }

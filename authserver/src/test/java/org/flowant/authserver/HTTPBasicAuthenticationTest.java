@@ -35,7 +35,7 @@ public class HTTPBasicAuthenticationTest {
     public void loginWithValidUserThenAuthenticated() throws Exception {
         User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
 
-        mockMvc.perform(get("/userInfo").with(httpBasic(user.getUsername(),user.getPassword())))
+        mockMvc.perform(get("/user").with(httpBasic(user.getUsername(),user.getPassword())))
             .andExpect(authenticated().withUsername(user.getUsername()));
 
         mockUserRepoUtil.deleteUser(user);
@@ -43,7 +43,7 @@ public class HTTPBasicAuthenticationTest {
 
     @Test
     public void loginWithInvalidUserThenUnauthenticated() throws Exception {
-        mockMvc.perform(get("/userInfo").with(httpBasic("invalid","invalid")))
+        mockMvc.perform(get("/user").with(httpBasic("invalid","invalid")))
             .andExpect(unauthenticated());
     }
 
@@ -55,14 +55,14 @@ public class HTTPBasicAuthenticationTest {
 
     @Test
     public void accessSecuredResourceUnauthenticatedThenRedirectsToLogin() throws Exception {
-        mockMvc.perform(get("/userInfo"))
+        mockMvc.perform(get("/user"))
             .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
     public void accessSecuredResourceAuthenticatedThenOk() throws Exception {
-        mockMvc.perform(get("/userInfo"))
+        mockMvc.perform(get("/user"))
                 .andExpect(status().isOk());
     }
 }

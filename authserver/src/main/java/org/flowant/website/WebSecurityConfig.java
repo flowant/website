@@ -1,15 +1,20 @@
 package org.flowant.website;
 
 import org.flowant.website.repository.AuthserverUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    OAuth2ClientConfig oAuth2ClientConfig;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -22,8 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         // debug
                         "/actuator/**", "/oauth/**")
                     .permitAll()
-                .antMatchers("/user").hasAuthority("USER")
-                .antMatchers("/admin").hasAuthority("ADMIN")
+                .antMatchers("/user").hasRole("USER")
+                .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
             .oauth2Login()
@@ -41,7 +46,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logout()
                 .permitAll()
                 .and()
-            .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+            .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
+            .addFilterBefore(oAuth2ClientConfig.ssoFilter(), BasicAuthenticationFilter.class);
     }
 
     @Bean
@@ -49,5 +57,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         return new AuthserverUserDetailsService();
     }
-
 }

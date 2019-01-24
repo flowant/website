@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -20,11 +21,12 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
+@EnableAuthorizationServer
 @Configuration
 @ConfigurationProperties(prefix = "website.oauth2-server")
 @Getter @Setter @ToString
 @Log4j2
-public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
     String clientId;
     String clientSecret;
@@ -47,7 +49,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     AuthenticationManager authenticationManager;
 
-    public AuthorizationServerConfig(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public OAuth2ServerConfig(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         this.authenticationManager = authenticationConfiguration.getAuthenticationManager();
     }
 

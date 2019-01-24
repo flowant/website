@@ -71,12 +71,12 @@
 </head>
 <body>
 <div class="login-form">
-    <form th:action="@{/login}" method="post">
+    <form th:action="@{./login}" method="post">
         <h2 class="text-center">Sign in</h2>
         <div class="text-center social-btn">
-            <a href="/oauth2/authorization/facebook" class="btn btn-primary btn-block"><i class="fa fa-facebook"></i> Sign in with <b>Facebook</b></a>
-            <a href="/oauth2/authorization/github" class="btn btn-info btn-block"><i class="fa fa-github"></i> Sign in with <b>Github</b></a>
-            <a href="/oauth2/authorization/google" class="btn btn-danger btn-block"><i class="fa fa-google"></i> Sign in with <b>Google</b></a>
+            <a href="./login/facebook" class="btn btn-primary btn-block"><i class="fa fa-facebook"></i> Sign in with <b>Facebook</b></a>
+            <a href="./login/github" class="btn btn-info btn-block"><i class="fa fa-github"></i> Sign in with <b>Github</b></a>
+            <a href="./login/google" class="btn btn-danger btn-block"><i class="fa fa-google"></i> Sign in with <b>Google</b></a>
         </div>
         <div class="or-seperator"><i>or</i></div>
         <div class="login-status-message" th:if="${param.error}">Invalid username and password.</div>

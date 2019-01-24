@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.flowant.website.AuthorizationServerConfig;
+import org.flowant.website.OAuth2ServerConfig;
 import org.flowant.website.AuthserverApplication;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.devutil.MockUserRepoUtil;
@@ -42,7 +42,7 @@ public class OAuth2JwtTokenIssuerTests {
     FilterChainProxy springSecurityFilterChain;
 
     @Autowired
-    AuthorizationServerConfig authConfig;
+    OAuth2ServerConfig authConfig;
 
     @Autowired
     MockUserRepoUtil mockUserRepoUtil;

@@ -34,7 +34,8 @@ public class MockUserRepoUtil {
     }
 
     public void saveMockUsers(int cntUser) {
-        for (int i = 0; i < cntUser; i++) {
+        int count = userRepository.count().block().intValue();
+        for (int i = count; i < cntUser; i++) {
             User user = saveUserWithEncodedPassword(UserMaker.large(i));
             log.debug("saved mock user:{}", user);
         }
