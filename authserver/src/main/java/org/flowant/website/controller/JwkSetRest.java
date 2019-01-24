@@ -15,8 +15,8 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 
 @Controller
-class JwkSetRest {
-
+public class JwkSetRest {
+    public static final String JWK_SET_URI = "/.well-known/jwks.json";
     @Autowired
     KeyPair keyPair;
 
@@ -29,7 +29,7 @@ class JwkSetRest {
         jwkSet = new JWKSet(key).toJSONObject();
     }
 
-    @GetMapping("/.well-known/jwks.json")
+    @GetMapping(JWK_SET_URI)
     @ResponseBody
     public Map<String, Object> getKey() {
         return jwkSet;

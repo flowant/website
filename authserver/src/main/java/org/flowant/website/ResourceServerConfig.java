@@ -1,5 +1,6 @@
 package org.flowant.website;
 
+import org.flowant.website.controller.UserInfoEndpointRest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -11,6 +12,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/me").authorizeRequests().anyRequest().authenticated();
+        http.antMatcher(UserInfoEndpointRest.ME).authorizeRequests().anyRequest().authenticated();
     }
 }

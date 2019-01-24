@@ -17,7 +17,7 @@ public class UserRest {
 //    }
 
     //TODO response minimal information to browser
-    @RequestMapping({"/user", "/me"})
+    @RequestMapping("/user")
     public Principal user(Principal principal) {
         return principal;
     }

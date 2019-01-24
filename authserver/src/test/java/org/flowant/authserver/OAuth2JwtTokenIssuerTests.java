@@ -1,5 +1,7 @@
 package org.flowant.authserver;
 
+import static org.flowant.website.controller.JwkSetRest.JWK_SET_URI;
+import static org.flowant.website.controller.UserInfoEndpointRest.ME;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,7 +62,7 @@ public class OAuth2JwtTokenIssuerTests {
 
     @Test
     public void testGetJWKs() throws Exception {
-        ResultActions result = mockMvc.perform(get("/.well-known/jwks.json"))
+        ResultActions result = mockMvc.perform(get(JWK_SET_URI))
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json;charset=UTF-8"));
 
@@ -118,7 +120,7 @@ public class OAuth2JwtTokenIssuerTests {
         User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
         String accessToken = obtainPasswordAccessToken(user.getUsername(), user.getPassword());
 
-        MvcResult result = mockMvc.perform(get("/me").header("Authorization", "Bearer " + accessToken))
+        MvcResult result = mockMvc.perform(get(ME).header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk()).andReturn();
 
         Assert.assertTrue(result.getResponse().getContentAsString().contains(user.getUsername()));

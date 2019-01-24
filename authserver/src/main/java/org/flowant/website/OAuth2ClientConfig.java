@@ -78,7 +78,7 @@ public class OAuth2ClientConfig {
     }
 
     private Filter ssoFilter(ClientResources client, String path) {
-        log.debug("add ssoFilter, clientId:{}, getUserInfoUri:{}",
+        log.info("add ssoFilter, clientId:{}, getUserInfoUri:{}",
                 client.getClient()::getClientId, client.getResource()::getUserInfoUri);
 
         OAuth2ClientAuthenticationProcessingFilter filter = new OAuth2ClientAuthenticationProcessingFilter(path);
