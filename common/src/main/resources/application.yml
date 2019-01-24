@@ -26,7 +26,7 @@ spring:
   data:
     cassandra:
       keyspace-name: backend_test
-      schema-action: recreate # recreate is slow because of doing recreating
+      schema-action: recreate # should be recreated only if models are changed.
 
 logging:
   config: classpath:log4j2-spring-test.xml

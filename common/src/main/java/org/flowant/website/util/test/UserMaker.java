@@ -51,7 +51,7 @@ public class UserMaker {
                         zipCode + suffix))
                 .birthdate(ZonedDate.now()).firstname(firstname + suffix).lastname(lastname + suffix)
                 .phone(Phone.of(suffix, 100000000 + suffix)).followers(List.of(UUID.randomUUID()))
-                .authorities(List.of(Authority.of("USER"), Authority.of("MEMBER")))
+                .authorities(List.of(Authority.of("ROLE_USER"), Authority.of("MEMBER")))
                 .followings(List.of(UUID.randomUUID())).interests(List.of(Tag.of(name + suffix)))
                 .cruTime(CRUZonedTime.now()).build();
     }

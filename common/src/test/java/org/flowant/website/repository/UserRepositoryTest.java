@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.flowant.website.model.User;
-import org.flowant.website.repository.UserRepository;
 import org.flowant.website.util.test.UserMaker;
 import org.junit.ClassRule;
 import org.junit.Rule;
