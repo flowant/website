@@ -58,6 +58,7 @@ public class OAuth2JwtTokenIssuerTests {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .addFilter(springSecurityFilterChain)
                 .build();
+        mockUserRepoUtil.findAllDeleteAll();
     }
 
     @Test

@@ -33,6 +33,10 @@ public class MockUserRepoUtil {
         userRepository.delete(user).block();
     }
 
+    public void findAllDeleteAll() {
+        userRepository.deleteAll(userRepository.findAll()).block();
+    }
+
     public void saveMockUsers(int cntUser) {
         int count = userRepository.count().block().intValue();
         for (int i = count; i < cntUser; i++) {
