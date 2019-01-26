@@ -39,6 +39,9 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class OAuth2JwtTokenIssuerTests {
 
+    public static final String ACCESS_TOKEN = "access_token";
+    public static final String REFRESH_TOKEN = "refresh_token";
+
     @Autowired
     WebApplicationContext wac;
 
@@ -90,7 +93,7 @@ public class OAuth2JwtTokenIssuerTests {
         log.trace(result.andReturn().getResponse().getContentAsString());
     }
 
-    public String obtainPasswordAccessToken(String username, String password) throws Exception {
+    public String obtainPasswordAccessToken(String username, String password, String tokenName) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
         params.add("username", username);
@@ -106,26 +109,54 @@ public class OAuth2JwtTokenIssuerTests {
         String resultString = result.andReturn().getResponse().getContentAsString();
         log.trace(resultString);
         JacksonJsonParser jsonParser = new JacksonJsonParser();
-        return jsonParser.parseMap(resultString).get("access_token").toString();
+        return jsonParser.parseMap(resultString).get(tokenName).toString();
     }
 
     @Test
     public void testPasswordAccessToken() throws Exception {
         User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
-        obtainPasswordAccessToken(user.getUsername(), user.getPassword());
+        obtainPasswordAccessToken(user.getUsername(), user.getPassword(), ACCESS_TOKEN);
         mockUserRepoUtil.deleteUser(user);
+    }
+
+    @Test
+    public void testUserInfoUrlUnauthorized() throws Exception {
+        mockMvc.perform(get(ME)).andExpect(status().isUnauthorized());
     }
 
     @Test
     public void testUserInfoUrl() throws Exception {
         User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
-        String accessToken = obtainPasswordAccessToken(user.getUsername(), user.getPassword());
+        String accessToken = obtainPasswordAccessToken(user.getUsername(), user.getPassword(), ACCESS_TOKEN);
 
         MvcResult result = mockMvc.perform(get(ME).header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk()).andReturn();
 
         Assert.assertTrue(result.getResponse().getContentAsString().contains(user.getUsername()));
         log.trace(result);
+
+        mockUserRepoUtil.deleteUser(user);
+    }
+
+    @Test
+    public void testRefreshToken() throws Exception {
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
+        String refreshToken = obtainPasswordAccessToken(user.getUsername(), user.getPassword(), REFRESH_TOKEN);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", REFRESH_TOKEN);
+        params.add(REFRESH_TOKEN, refreshToken);
+
+        ResultActions result = mockMvc
+                .perform(post("/oauth/token").params(params).with(httpBasic(
+                        authConfig.getClientId(), authConfig.getClientSecret()))
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
+
+        String resultString = result.andReturn().getResponse().getContentAsString();
+        resultString.contains(REFRESH_TOKEN);
+        log.trace(resultString);
 
         mockUserRepoUtil.deleteUser(user);
     }
