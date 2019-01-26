@@ -44,12 +44,12 @@ public class UserRepositoryTest {
         StepVerifier.create(saveThenFind).consumeNextWith(deleteUser).verifyComplete();
     }
     public static List<User> parametersForTestSave() {
-        return Arrays.asList(UserMaker.small(), UserMaker.large());
+        return Arrays.asList(UserMaker.smallRandom(), UserMaker.largeRandom());
     }
 
     @Test
     public void testSaveAllFindAllById() {
-        Flux<User> users = Flux.range(1, 5).map(UserMaker::large).cache();
+        Flux<User> users = Flux.range(1, 5).map(i -> UserMaker.largeRandom()).cache();
         Flux<User> saveAllThenFind = userRepository.saveAll(users)
                 .thenMany(userRepository.findAllById(users.map(User::getId)));
         StepVerifier.create(saveAllThenFind).recordWith(ArrayList::new).expectNextCount(5)
@@ -58,7 +58,7 @@ public class UserRepositoryTest {
 
     @Test
     public void testFindByUsername() {
-        User user = UserMaker.large();
+        User user = UserMaker.largeRandom();
         Flux<User> saveThenFind = userRepository.save(user).thenMany(userRepository.findByUsername(user.getUsername()));
         StepVerifier.create(saveThenFind).consumeNextWith(deleteUser).verifyComplete();
     }

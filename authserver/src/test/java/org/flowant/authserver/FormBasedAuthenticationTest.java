@@ -14,7 +14,6 @@ import org.flowant.website.AuthserverApplication;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.devutil.MockUserRepoUtil;
 import org.flowant.website.util.test.UserMaker;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +40,9 @@ public class FormBasedAuthenticationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Before
-    public void setup() {
-        mockUserRepoUtil.findAllDeleteAll();
-    }
-
     @Test
     public void loginWithValidUserThenAuthenticated() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.largeRandom());
 
         FormLoginRequestBuilder login = formLogin().user(user.getUsername()).password(user.getPassword());
         mockMvc.perform(login)
@@ -59,7 +53,7 @@ public class FormBasedAuthenticationTest {
 
     @Test
     public void loginWithRememberMe() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.largeRandom());
 
         MvcResult result = mockMvc.perform(post("/login").param("username", user.getUsername())
             .param("password", user.getPassword()).param("remember-me", "on").with(csrf()))

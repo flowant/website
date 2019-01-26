@@ -57,7 +57,7 @@ public class ContentRestTest extends BaseRestTest {
                 });
     }
     public static List<Content> parametersForTestInsert() {
-        return Arrays.asList(ContentMaker.small(), ContentMaker.large());
+        return Arrays.asList(ContentMaker.smallRandom(), ContentMaker.largeRandom());
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ContentRestTest extends BaseRestTest {
                 });
     }
     public static List<Content> parametersForTestGetId() {
-        return Arrays.asList(ContentMaker.small(), ContentMaker.large());
+        return Arrays.asList(ContentMaker.smallRandom(), ContentMaker.largeRandom());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ContentRestTest extends BaseRestTest {
 
     @Test
     public void testGetAll() {
-        Flux<Content> contents = Flux.range(1, 5).map(ContentMaker::large).cache();
+        Flux<Content> contents = Flux.range(1, 5).map(i -> ContentMaker.largeRandom()).cache();
         contentRepository.saveAll(contents).blockLast();
 
         webTestClient.get().uri(ContentRest.CONTENT).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
@@ -110,7 +110,7 @@ public class ContentRestTest extends BaseRestTest {
 
     @Test
     public void testPutNotExist() {
-        Content content = ContentMaker.large();
+        Content content = ContentMaker.largeRandom();
         webTestClient.put().uri(ContentRest.CONTENT__ID__, content).contentType(MediaType.APPLICATION_JSON_UTF8)
         .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(content), Content.class).exchange()
         .expectStatus().isOk().expectBody().consumeWith(r -> {
@@ -128,7 +128,7 @@ public class ContentRestTest extends BaseRestTest {
 
     @Test
     public void testPut() {
-        Content content = ContentMaker.large();
+        Content content = ContentMaker.largeRandom();
         contentRepository.save(content).block();
 
         content.setTitle("newTitle");
@@ -145,7 +145,7 @@ public class ContentRestTest extends BaseRestTest {
 
     @Test
     public void testDelete() {
-        Content content = ContentMaker.small();
+        Content content = ContentMaker.smallRandom();
         contentRepository.save(content).block();
 
         webTestClient.delete().uri(ContentRest.CONTENT__ID__, content.getId()).exchange()

@@ -26,7 +26,7 @@ public class User implements UserDetails {
 
     @Id @NonNull
     UUID id;
-    @NonNull @Indexed
+    @NonNull @Indexed //TODO username should be unique
     String username;
     @NonNull
     String password;

@@ -44,7 +44,7 @@ public class JacksonTest {
         testWithJson(user);
     }
     public static List<User> parametersForTestUser() {
-      return Arrays.asList(UserMaker.small(), UserMaker.large());
+      return Arrays.asList(UserMaker.smallRandom(), UserMaker.largeRandom());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class JacksonTest {
         testWithJson(content);
     }
     public static List<Content> parametersForTestContent() {
-      return Arrays.asList(ContentMaker.small(), ContentMaker.large());
+      return Arrays.asList(ContentMaker.smallRandom(), ContentMaker.largeRandom());
     }
 
 }

@@ -10,7 +10,7 @@ public class FileTest {
 
     @Test
     public void testMaker() {
-        log.debug("Multimedia:{}", FileMaker.large()::toString);
+        log.debug("Multimedia:{}", FileMaker.largeRandom()::toString);
     }
 
 }

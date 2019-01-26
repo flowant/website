@@ -11,11 +11,7 @@ import org.flowant.website.model.Tag;
 import org.flowant.website.model.User;
 import org.flowant.website.model.ZonedDate;
 import org.junit.Assert;
-import org.junit.Test;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 public class UserMaker {
 
     static String username = "username";
@@ -35,29 +31,29 @@ public class UserMaker {
     // Tag
     static String name = "name";
 
-    public static User small(int suffix) {
-        return User.builder().id(UUID.randomUUID()).username(username + suffix).password(password + suffix)
-                .email(email + suffix).cruTime(CRUZonedTime.now()).build();
+    public static User small(UUID id) {
+        return User.builder().id(id).username(username + id).password(password + id)
+                .email(email + id).cruTime(CRUZonedTime.now()).build();
     }
 
-    public static User small() {
-        return small(0);
+    public static User smallRandom() {
+        return small(UUID.randomUUID());
     }
 
-    public static User large(int suffix) {
-        return User.builder().id(UUID.randomUUID()).username(username + suffix).password(password + suffix)
-                .email(email + suffix)
-                .address(PostalAddress.of(address + suffix, city + suffix, state + suffix, country + suffix,
-                        zipCode + suffix))
-                .birthdate(ZonedDate.now()).firstname(firstname + suffix).lastname(lastname + suffix)
-                .phone(Phone.of(suffix, 100000000 + suffix)).followers(List.of(UUID.randomUUID()))
+    public static User large(UUID id) {
+        return User.builder().id(id).username(username + id).password(password + id)
+                .email(email + id)
+                .address(PostalAddress.of(address + id, city + id, state + id, country + id,
+                        zipCode + id))
+                .birthdate(ZonedDate.now()).firstname(firstname + id).lastname(lastname + id)
+                .phone(Phone.of(82, id.hashCode())).followers(List.of(UUID.randomUUID()))
                 .authorities(List.of(Authority.of("ROLE_USER"), Authority.of("MEMBER")))
-                .followings(List.of(UUID.randomUUID())).interests(List.of(Tag.of(name + suffix)))
+                .followings(List.of(UUID.randomUUID())).interests(List.of(Tag.of(name + id)))
                 .cruTime(CRUZonedTime.now()).build();
     }
 
-    public static User large() {
-        return large(0);
+    public static User largeRandom() {
+        return large(UUID.randomUUID());
     }
 
     public static User assertEqual(User expected, User actual) {
@@ -76,12 +72,6 @@ public class UserMaker {
         AssertUtil.assertListEquals(expected.getFollowings(), actual.getFollowings());
         AssertUtil.assertListEquals(expected.getInterests(), actual.getInterests());
         return actual;
-    }
-
-    @Test
-    public void testMaker() {
-        log.debug("User:{}", small()::toString);
-        log.debug("User:{}", large()::toString);
     }
 
 }

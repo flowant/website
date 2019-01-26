@@ -13,7 +13,7 @@ public class AuthserverUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).block();
+        User user = userRepository.findByUsername(username).blockFirst();
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }

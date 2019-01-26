@@ -33,15 +33,16 @@ public class MockUserRepoUtil {
         userRepository.delete(user).block();
     }
 
-    public void findAllDeleteAll() {
-        userRepository.deleteAll(userRepository.findAll()).block();
-    }
-
     public void saveMockUsers(int cntUser) {
-        int count = userRepository.count().block().intValue();
-        for (int i = count; i < cntUser; i++) {
-            User user = saveUserWithEncodedPassword(UserMaker.large(i));
-            log.debug("saved mock user:{}", user);
+        for (int i = 0; i < cntUser; i++) {
+            User user = UserMaker.largeRandom();
+            user.setUsername("user" + i);
+            user.setPassword("pass" + i);
+            if (0 != userRepository.findByUsername(user.getUsername()).count().block())
+            {
+                user = saveUserWithEncodedPassword(user);
+                log.debug("saved mock user:{}", user);
+            }
         }
     }
 

@@ -54,14 +54,15 @@ public class OAuth2JwtTokenIssuerTests {
     @Autowired
     MockUserRepoUtil mockUserRepoUtil;
 
-    private MockMvc mockMvc;
+    private static MockMvc mockMvc;
 
     @Before
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                .addFilter(springSecurityFilterChain)
-                .build();
-        mockUserRepoUtil.findAllDeleteAll();
+        if (mockMvc == null) {
+            mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                    .addFilter(springSecurityFilterChain)
+                    .build();
+        }
     }
 
     @Test
@@ -114,7 +115,7 @@ public class OAuth2JwtTokenIssuerTests {
 
     @Test
     public void testPasswordAccessToken() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.small());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.smallRandom());
         obtainPasswordAccessToken(user.getUsername(), user.getPassword(), ACCESS_TOKEN);
         mockUserRepoUtil.deleteUser(user);
     }
@@ -126,7 +127,7 @@ public class OAuth2JwtTokenIssuerTests {
 
     @Test
     public void testUserInfoUrl() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.largeRandom());
         String accessToken = obtainPasswordAccessToken(user.getUsername(), user.getPassword(), ACCESS_TOKEN);
 
         MvcResult result = mockMvc.perform(get(ME).header("Authorization", "Bearer " + accessToken))
@@ -140,7 +141,7 @@ public class OAuth2JwtTokenIssuerTests {
 
     @Test
     public void testRefreshToken() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.largeRandom());
         String refreshToken = obtainPasswordAccessToken(user.getUsername(), user.getPassword(), REFRESH_TOKEN);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();

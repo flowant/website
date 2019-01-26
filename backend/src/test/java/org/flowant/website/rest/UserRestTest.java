@@ -58,7 +58,7 @@ public class UserRestTest extends BaseRestTest {
     }
 
     public static List<User> parametersForTestInsert() {
-        return Arrays.asList(UserMaker.small(), UserMaker.large());
+        return Arrays.asList(UserMaker.smallRandom(), UserMaker.largeRandom());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class UserRestTest extends BaseRestTest {
     }
 
     public static List<User> parametersForTestGetId() {
-        return Arrays.asList(UserMaker.small(), UserMaker.large());
+        return Arrays.asList(UserMaker.smallRandom(), UserMaker.largeRandom());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class UserRestTest extends BaseRestTest {
 
     @Test
     public void testGetAll() {
-        Flux<User> users = Flux.range(1, 5).map(UserMaker::small).cache();
+        Flux<User> users = Flux.range(1, 5).map(i ->UserMaker.largeRandom()).cache();
         userRepository.saveAll(users).blockLast();
         webTestClient.get().uri(UserRest.USER).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -111,7 +111,7 @@ public class UserRestTest extends BaseRestTest {
 
     @Test
     public void testPutNotExist() {
-        User user = UserMaker.large();
+        User user = UserMaker.largeRandom();
         webTestClient.put().uri(UserRest.USER__ID__, user.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
         .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(user), User.class).exchange()
         .expectStatus().isOk().expectBody().consumeWith(r -> {
@@ -129,7 +129,7 @@ public class UserRestTest extends BaseRestTest {
 
     @Test
     public void testPut() {
-        User user = UserMaker.large();
+        User user = UserMaker.largeRandom();
         userRepository.save(user).block();
 
         user.setFirstname("newFirstname");
@@ -148,7 +148,7 @@ public class UserRestTest extends BaseRestTest {
 
     @Test
     public void testDelete() {
-        User user = UserMaker.large();
+        User user = UserMaker.largeRandom();
         userRepository.save(user).block();
         webTestClient.delete().uri(UserRest.USER__ID__, user.getId()).exchange()
                 .expectStatus().isOk().expectBody().consumeWith(r -> {

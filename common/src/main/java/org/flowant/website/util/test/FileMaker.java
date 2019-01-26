@@ -4,11 +4,7 @@ import java.util.UUID;
 
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.FileRef;
-import org.junit.Test;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 public class FileMaker {
 
     static UUID id;
@@ -16,18 +12,13 @@ public class FileMaker {
     static String contentType = "contentType";
     static String filename = "originalFilename";
 
-    public static FileRef large(int s) {
-        return FileRef.of(UUID.randomUUID(), url + s,
-                contentType + s, filename + s, CRUZonedTime.now());
+    public static FileRef large(UUID id) {
+        return FileRef.of(id, url + id,
+                contentType + id, filename + id, CRUZonedTime.now());
     }
 
-    public static FileRef large() {
-        return large(0);
-    }
-
-    @Test
-    public void testMaker() {
-        log.debug("Multimedia:{}", large()::toString);
+    public static FileRef largeRandom() {
+        return large(UUID.randomUUID());
     }
 
 }

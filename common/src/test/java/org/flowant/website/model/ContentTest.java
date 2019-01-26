@@ -10,8 +10,8 @@ public class ContentTest {
 
     @Test
     public void testMaker() {
-        log.debug("Content:{}", ContentMaker.small()::toString);
-        log.debug("Content:{}", ContentMaker.large()::toString);
+        log.debug("Content:{}", ContentMaker.smallRandom()::toString);
+        log.debug("Content:{}", ContentMaker.largeRandom()::toString);
     }
 
 }

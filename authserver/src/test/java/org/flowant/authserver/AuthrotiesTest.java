@@ -8,7 +8,6 @@ import org.flowant.website.AuthserverApplication;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.devutil.MockUserRepoUtil;
 import org.flowant.website.util.test.UserMaker;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +32,9 @@ public class AuthrotiesTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Before
-    public void setup() {
-        mockUserRepoUtil.findAllDeleteAll();
-    }
-
     @Test
     public void accessWithValidRole() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.largeRandom());
 
         MvcResult result = mockMvc.perform(get("/user").with(httpBasic(user.getUsername(),user.getPassword())))
             .andExpect(status().isOk()).andReturn();
@@ -52,7 +46,7 @@ public class AuthrotiesTest {
 
     @Test
     public void accessWithoutValidRole() throws Exception {
-        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.large());
+        User user = mockUserRepoUtil.saveUserWithEncodedPassword(UserMaker.largeRandom());
 
         MvcResult result = mockMvc.perform(get("/admin").with(httpBasic(user.getUsername(),user.getPassword())))
             .andExpect(status().isForbidden()).andReturn();

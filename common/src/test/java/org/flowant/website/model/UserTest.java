@@ -10,8 +10,8 @@ public class UserTest {
 
     @Test
     public void testMaker() {
-        log.debug("User:{}", UserMaker.small()::toString);
-        log.debug("User:{}", UserMaker.large()::toString);
+        log.debug("User:{}", UserMaker.smallRandom()::toString);
+        log.debug("User:{}", UserMaker.largeRandom()::toString);
     }
 
 }

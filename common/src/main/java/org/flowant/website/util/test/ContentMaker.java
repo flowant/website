@@ -11,11 +11,7 @@ import org.flowant.website.model.Reputation;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.Tag;
 import org.junit.Assert;
-import org.junit.Test;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 public class ContentMaker {
     static String title = "title";
     
@@ -37,37 +33,33 @@ public class ContentMaker {
 
     static String name = "name";
 
-    public static Content small(int s) {
-        return Content.of(UUID.randomUUID(), title + s, 
-                Review.of(Reputation.of(rating + s, liked + s, reported + s)), CRUZonedTime.now());
+    public static Content small(UUID id) {
+        int cs = id.hashCode() / 1000000;
+        return Content.of(id, title + id,
+                Review.of(Reputation.of(rating + cs, liked + cs, reported + cs)), CRUZonedTime.now());
     }
 
-    public static Content small() {
-        return small(0);
+    public static Content smallRandom() {
+        return small(UUID.randomUUID());
     }
 
-    public static Content large(int s) {
-        return Content.builder().id(UUID.randomUUID()).title(title + s)
-                .extend(new Recipe(List.of(ingredients + s), prepareSeconds + s, cookSeconds + s,
-                        servings + s, calory + s, nutritionFacts + s))
-                .fileRefs(List.of(FileMaker.large()))
-                .sentences(sentences + s)
-                .tags(List.of(Tag.of(name + s)))
-                .review(new Review(Reputation.of(rating + s, liked + s, reported + s),
-                        List.of(new Reply(content + s, Reputation.of(rating + s, liked + s, reported + s),
+    public static Content large(UUID id) {
+        int cs = id.hashCode() / 1000000;
+        return Content.builder().id(id).title(title + id)
+                .extend(new Recipe(List.of(ingredients + id), prepareSeconds + cs, cookSeconds + cs,
+                        servings + cs, calory + cs, nutritionFacts + id))
+                .fileRefs(List.of(FileMaker.largeRandom()))
+                .sentences(sentences + id)
+                .tags(List.of(Tag.of(name + id)))
+                .review(new Review(Reputation.of(rating + cs, liked + cs, reported + cs),
+                        List.of(new Reply(content + id, Reputation.of(rating + cs, liked + cs, reported + cs),
                                 CRUZonedTime.now()))))
                 .cruTime(CRUZonedTime.now())
                 .build();
     }
 
-    public static Content large() {
-        return large(0);
-    }
-
-    @Test
-    public void testMaker() {
-        log.debug("Content:{}", small()::toString);
-        log.debug("Content:{}", large()::toString);
+    public static Content largeRandom() {
+        return large(UUID.randomUUID());
     }
 
     public static Content assertEqual(Content excepted, Content actual) {

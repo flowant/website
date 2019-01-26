@@ -45,12 +45,12 @@ public class ContentRepositoryTest {
         StepVerifier.create(saveThenFind).consumeNextWith(deleteContent).verifyComplete();
     }
     public static List<Content> parametersForTestSave() {
-        return Arrays.asList(ContentMaker.small(), ContentMaker.large());
+        return Arrays.asList(ContentMaker.smallRandom(), ContentMaker.largeRandom());
     }
 
     @Test
     public void testSaveAllFindAllById() {
-        Flux<Content> contents = Flux.range(1, 5).map(ContentMaker::large).cache();
+        Flux<Content> contents = Flux.range(1, 5).map(i -> ContentMaker.largeRandom()).cache();
         Flux<Content> saveAllThenFind = contentRepository.saveAll(contents)
                 .thenMany(contentRepository.findAllById(contents.map(Content::getId)));
         StepVerifier.create(saveAllThenFind).recordWith(ArrayList::new).expectNextCount(5)
