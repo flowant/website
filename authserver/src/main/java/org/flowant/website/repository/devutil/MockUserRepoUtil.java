@@ -38,8 +38,7 @@ public class MockUserRepoUtil {
             User user = UserMaker.largeRandom();
             user.setUsername("user" + i);
             user.setPassword("pass" + i);
-            if (0 != userRepository.findByUsername(user.getUsername()).count().block())
-            {
+            if (0 == userRepository.findByUsername(user.getUsername()).count().block()) {
                 user = saveUserWithEncodedPassword(user);
                 log.debug("saved mock user:{}", user);
             }
