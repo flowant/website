@@ -1,18 +1,47 @@
 server:
-  port: 9091
-  address: 127.0.0.1
+  port: 9090
 
 spring:
-#  redis:
-#    host: localhost
-#    port: 6379
-#    password: #password
-  session:
-    store-type: redis
-    timeout: 86400
+  profiles:
+    active: test
+  security:
+    oauth2:
+      client:
+        registration:
+          website:
+            client-id: client
+            client-secret: client
+            client-name: testClient
+            provider: website
+            scope: message:read, message:write
+            redirect-uri: http://localhost:9090/login/oauth2/code/website
+            client-authentication-method: basic
+            authorization-grant-type: authorization_code
+        provider:
+          website:
+            authorization-uri: http://localhost:9093/oauth/authorize
+            token-uri: http://localhost:9093/oauth/token
+            user-info-uri: http://localhost:9093/me
+            jwk-set-uri: http://localhost:9093/.well-known/jwks.json
+            user-name-attribute: name
+
+---
+spring:
+  profiles: prod
+
+logging:
+  config: classpath:log4j2-spring-prod.xml
+
+---
+spring:
+  profiles: test
+
+logging:
+  config: classpath:log4j2-spring-test.xml
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+

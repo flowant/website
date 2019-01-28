@@ -1,6 +1,5 @@
 server:
   port: 9093
-  address: 127.0.0.1
   servlet:
     context-path: /
 
@@ -9,7 +8,7 @@ spring:
     active: test
   data:
     cassandra:
-      contactPoints: 127.0.0.1
+      contactPoints: localhost
       port: 9042
 
 website:
@@ -69,6 +68,8 @@ website:
       - write
     autoApprove: true
     registeredRedirectUris:
+      - http://127.0.0.1:9090/login/oauth2/code/website
+      - http://127.0.0.1:9090/
       - http://localhost:9090/login/oauth2/code/website
       - http://localhost:9090/
     resourceIds: oauth2-resource
@@ -78,12 +79,6 @@ website:
     path: classpath:keystore/keystore.jks
     alias: website_keystore
     password: ${OAUTH2_KEYSTORE_STOREPASS}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
 
 ---
 spring:
@@ -107,3 +102,9 @@ spring:
 
 logging:
   config: classpath:log4j2-spring-test.xml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

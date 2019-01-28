@@ -7,75 +7,22 @@
   <parent>
     <groupId>org.flowant</groupId>
     <artifactId>website</artifactId>
-    <version>${website.version}</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>0.0.1</version>
   </parent>
 
   <artifactId>gateway</artifactId>
   <name>gateway</name>
-  <description>gateway of website</description>
+  <description>api gateway of website</description>
 
   <dependencies>
-  
-  <dependency>
-      <groupId>org.flowant</groupId>
-      <artifactId>common</artifactId>
-      <version>${website.version}</version>
-    </dependency>
-  
-  <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-webflux</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-gateway</artifactId>
     </dependency>
-    
-    <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
     <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-tomcat</artifactId>
-        <!--<scope>provided</scope>-->
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <!-- from https://github.com/dsyer/spring-boot-angular -->
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.6</version>
-        <configuration>
-          <nodeVersion>v10.15.0</nodeVersion>
-        </configuration>
-        <executions>
-          <execution>
-            <id>install-npm</id>
-            <goals>
-              <goal>install-node-and-npm</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>npm-install</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>npm-build</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>run-script build</arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

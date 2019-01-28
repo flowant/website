@@ -7,8 +7,7 @@
   <parent>
     <groupId>org.flowant</groupId>
     <artifactId>website</artifactId>
-    <version>${website.version}</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>0.0.1</version>
   </parent>
 
   <artifactId>frontend</artifactId>
@@ -16,17 +15,22 @@
   <description>frontend for website</description>
 
   <dependencies>
-    <dependency>
-      <groupId>org.flowant</groupId>
-      <artifactId>common</artifactId>
-      <version>${website.version}</version>
-    </dependency>
-  </dependencies>
 
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+
+  </dependencies>
+<!-- 
   <build>
     <plugins>
       <plugin>
-        <!-- from https://github.com/dsyer/spring-boot-angular -->
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.6</version>
@@ -59,5 +63,5 @@
       </plugin>
     </plugins>
   </build>
-
+ -->
 </project>

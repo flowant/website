@@ -20,12 +20,6 @@ website:
   storage:
     root: /home/flowant/work/storage
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
 ---
 spring:
   profiles: prod
@@ -47,3 +41,10 @@ spring:
 
 logging:
   config: classpath:log4j2-spring-test.xml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+

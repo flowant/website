@@ -1,8 +1,10 @@
 server:
-  port: 9090
+  port: 9091
   address: 127.0.0.1
 
 spring:
+  profiles:
+    active: test
   cloud:
     gateway:
       routes:
@@ -10,21 +12,24 @@ spring:
         uri: http://127.0.0.1:9092/content
         predicates:
         - Path=/content/**
-
-      - id: frontend
-        uri: http://127.0.0.1:9091
+      - id: logout
+        uri: http://127.0.0.1:9093/logout
         predicates:
-        - Path=/frontend/**
-        filters:
-        - RewritePath=/frontend/(?<segment>.*), /$\{segment}
+        - Path=/logout
 
-security:
-  oauth2:
-    client:
-      client-id: client
-      client-secret: client
-      access-token-uri: http://localhost:9093/oauth/token
-      user-authorization-uri: http://localhost:9093/oauth/authorize
+---
+spring:
+  profiles: prod
+
+logging:
+  config: classpath:log4j2-spring-prod.xml
+
+---
+spring:
+  profiles: test
+
+logging:
+  config: classpath:log4j2-spring-test.xml
 
 management:
   endpoints:
