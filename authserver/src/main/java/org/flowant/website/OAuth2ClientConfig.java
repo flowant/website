@@ -61,17 +61,10 @@ public class OAuth2ClientConfig {
         return new ClientResources();
     }
 
-    @Bean
-    @ConfigurationProperties("website.oauth2-client.github")
-    public ClientResources github() {
-        return new ClientResources();
-    }
-
     public Filter ssoFilter() {
         CompositeFilter filter = new CompositeFilter();
         List<Filter> filters = new ArrayList<>();
         filters.add(ssoFilter(facebook(), "/login/facebook"));
-        filters.add(ssoFilter(github(), "/login/github"));
         filters.add(ssoFilter(google(), "/login/google"));
         filter.setFilters(filters);
         return filter;

@@ -48,6 +48,5 @@ public class OAuth2ClientApplicationTests {
         assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(entity.getBody()).contains("/facebook");
         assertThat(entity.getBody()).contains("/google");
-        assertThat(entity.getBody()).contains("/github");
     }
 }
