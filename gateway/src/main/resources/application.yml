@@ -1,6 +1,5 @@
 server:
   port: 9091
-  address: 127.0.0.1
 
 spring:
   profiles:
@@ -12,10 +11,6 @@ spring:
         uri: http://127.0.0.1:9092/content
         predicates:
         - Path=/content/**
-      - id: logout
-        uri: http://127.0.0.1:9093/logout
-        predicates:
-        - Path=/logout
 
 ---
 spring:
