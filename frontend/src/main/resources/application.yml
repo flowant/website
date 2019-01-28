@@ -19,10 +19,10 @@ spring:
             authorization-grant-type: authorization_code
         provider:
           website:
-            authorization-uri: http://localhost:9093/oauth/authorize
-            token-uri: http://localhost:9093/oauth/token
-            user-info-uri: http://localhost:9093/me
-            jwk-set-uri: http://localhost:9093/.well-known/jwks.json
+            authorization-uri: http://localhost:9093/uaa/oauth/authorize
+            token-uri: http://localhost:9093/uaa/oauth/token
+            user-info-uri: http://localhost:9093/uaa/me
+            jwk-set-uri: http://localhost:9093/uaa/.well-known/jwks.json
             user-name-attribute: name
 
 ---
