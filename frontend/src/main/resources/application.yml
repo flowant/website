@@ -24,6 +24,13 @@ spring:
             user-info-uri: http://localhost:9093/uaa/me
             jwk-set-uri: http://localhost:9093/uaa/.well-known/jwks.json
             user-name-attribute: name
+  cloud:
+    gateway:
+      routes:
+      - id: content
+        uri: http://127.0.0.1:9092/content
+        predicates:
+        - Path=/content/**
 
 ---
 spring:

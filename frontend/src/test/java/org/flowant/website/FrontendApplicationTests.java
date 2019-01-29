@@ -1,4 +1,4 @@
-package org.flowant.frontend;
+package org.flowant.website;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

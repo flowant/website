@@ -1,4 +1,4 @@
-package org.flowant.frontend;
+package org.flowant.website;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

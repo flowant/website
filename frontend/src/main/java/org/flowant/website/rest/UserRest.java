@@ -1,4 +1,4 @@
-package org.flowant.frontend.rest;
+package org.flowant.website.rest;
 
 import java.security.Principal;
 
@@ -9,14 +9,9 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class UserRest {
-    final static String USER = "/user";
+    public final static String USER = "/user";
 
-    @RequestMapping("/")
-    public String email(Principal principal) {
-        return principal.getName();
-    }
-
-    @RequestMapping("/user")
+    @RequestMapping(USER)
     public Mono<Principal> user(Principal user) {
       return Mono.just(user);
     }

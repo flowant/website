@@ -1,4 +1,4 @@
-package org.flowant.frontend;
+package org.flowant.website;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
