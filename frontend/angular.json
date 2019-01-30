@@ -27,7 +27,11 @@
               "src/assets/css/sb-admin-2.css"
             ],
             "scripts": [
-              "src/assets/js/sb-admin-2.js"
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/jquery.easing/jquery.easing.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "src/assets/js/sb-admin-2.js",
+              "src/assets/js/summernote-bs4.min.js"
             ]
           },
           "configurations": {
