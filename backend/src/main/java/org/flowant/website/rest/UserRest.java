@@ -49,18 +49,17 @@ public class UserRest {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PutMapping(value = USER)
+    public Mono<ResponseEntity<User>> put(@Valid @RequestBody User user) {
+        user.getCruTime().updatedNow();
+        return userRepository.save(user).map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @GetMapping(value = USER__ID__)
     public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
         return userRepository.findById(UUID.fromString(id)).doOnNext(user -> user.getCruTime().readNow())
                 .map(ResponseEntity::ok).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @PutMapping(value = USER__ID__)
-    public Mono<ResponseEntity<User>> putById(@PathVariable(value = ID) String id, @Valid @RequestBody User user) {
-        // TODO need update policy
-        user.getCruTime().updatedNow();
-        return userRepository.save(user).map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping(value = USER__ID__)

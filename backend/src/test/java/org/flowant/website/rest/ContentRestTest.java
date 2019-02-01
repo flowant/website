@@ -109,31 +109,13 @@ public class ContentRestTest extends BaseRestTest {
     }
 
     @Test
-    public void testPutNotExist() {
-        Content content = ContentMaker.largeRandom();
-        webTestClient.put().uri(ContentRest.CONTENT__ID__, content).contentType(MediaType.APPLICATION_JSON_UTF8)
-        .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(content), Content.class).exchange()
-        .expectStatus().isOk().expectBody().consumeWith(r -> {
-            log.trace(r);
-            StepVerifier.create(contentRepository.findById(content.getId()))
-                    .consumeNextWith(deleteContent).verifyComplete();
-        });
-    }
-
-    @Test
-    public void testPutMalformedId() {
-        webTestClient.put().uri(ContentRest.CONTENT__ID__, "notExist").exchange()
-                .expectStatus().isBadRequest().expectBody().consumeWith(log::trace);
-    }
-
-    @Test
     public void testPut() {
         Content content = ContentMaker.largeRandom();
         contentRepository.save(content).block();
 
         content.setTitle("newTitle");
 
-        webTestClient.put().uri(ContentRest.CONTENT__ID__, content).contentType(MediaType.APPLICATION_JSON_UTF8)
+        webTestClient.put().uri(ContentRest.CONTENT, content).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(content), Content.class).exchange()
                 .expectStatus().isOk().expectBody(Content.class).consumeWith( r -> {
                     log.trace(r::toString);

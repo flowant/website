@@ -49,18 +49,17 @@ public class ContentRest {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PutMapping(value = CONTENT)
+    public Mono<ResponseEntity<Content>> put(@Valid @RequestBody Content content) {
+        content.getCruTime().updatedNow();
+        return contentRepository.save(content).map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @GetMapping(value = CONTENT__ID__)
     public Mono<ResponseEntity<Content>> getById(@PathVariable(value = ID) String id) {
         return contentRepository.findById(UUID.fromString(id)).doOnNext(content -> content.getCruTime().readNow())
                 .map(ResponseEntity::ok).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @PutMapping(value = CONTENT__ID__)
-    public Mono<ResponseEntity<Content>> putById(@PathVariable(value = ID) String id, @Valid @RequestBody Content content) {
-        // TODO need update policy
-        content.getCruTime().updatedNow();
-        return contentRepository.save(content).map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping(value = CONTENT__ID__)
