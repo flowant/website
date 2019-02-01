@@ -40,7 +40,7 @@ public class FileStorage {
         return files.flatMap(partFile -> {
             UUID id = UUID.randomUUID();
             FileRef fileRef = FileRef.builder()
-                    .id(id).crudTime(CRUZonedTime.now())
+                    .id(id).cruTime(CRUZonedTime.now())
                     .contentType(partFile.headers().getContentType().toString())
                     .length(partFile.headers().getContentLength())
                     .filename(partFile.filename()).uri(FileRest.FILES + SEP_URL + id)

@@ -14,7 +14,7 @@ import org.junit.Assert;
 
 public class ContentMaker {
     static String title = "title";
-    
+
     static String ingredients = "ingredients";
     static long prepareSeconds = 60;
     static long cookSeconds = 300;
