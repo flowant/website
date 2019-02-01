@@ -1,0 +1,11 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+
+table {
+    text-align: center;
+}
+
+.input-table {
+    @extend .form-control-plaintext;
+    @extend .form-control-sm;
+    text-align: center;
+}
