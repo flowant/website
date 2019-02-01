@@ -30,7 +30,9 @@ spring:
       - id: content
         uri: http://127.0.0.1:9092/content
         predicates:
-        - Path=/content/**
+        - Path=/api/content/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
 
 ---
 spring:

@@ -1,6 +1,6 @@
 
 <div class="form-group">
-  <textarea id="title" class="form-control is-valid" rows="1" placeholder="Please type a title here."></textarea>
+  <textarea id="title" [(ngModel)]="content.title" class="form-control is-valid" rows="1" placeholder="Please type a title here."></textarea>
 </div>
 
 <div class="container">
@@ -35,3 +35,5 @@
   <label for="directions">Directions:</label>
   <div id="directions" class="summernote directions"></div>
 </div>
+
+<app-messages></app-messages>

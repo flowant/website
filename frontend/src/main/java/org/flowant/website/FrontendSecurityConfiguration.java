@@ -12,6 +12,7 @@ public class FrontendSecurityConfiguration {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         return http.authorizeExchange()
                 .pathMatchers("/", "/index.html", "/*.js", "/favicon.ico").permitAll()
+                .pathMatchers("/api/**").permitAll()
                 .anyExchange().authenticated()
                     .and()
                 .oauth2Login()
