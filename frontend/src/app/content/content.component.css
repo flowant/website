@@ -1,0 +1,10 @@
+table {
+    text-align: center;
+}
+
+input {
+    height: 2em;
+    font-size: 1em;
+    padding-left: .4em;
+    text-align: center;
+  }

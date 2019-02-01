@@ -14,15 +14,26 @@ export class ContentComponent implements OnInit {
 
   ngOnInit() {
     $(document).ready(function() {
-      $('#summernote').summernote({
-        placeholder: 'Hello bootstrap 4',
-        tabsize: 2,
-        height: 100,
-        focus: true
+      $('.summernote.directions').summernote({
+        placeholder: 'Please type directions here.',
+        height: 200,
+        // airMode: true,
+        // focus: true
+        toolbar: [
+          // [groupName, [list of button]]
+          ['style', ['style']],
+          ['font', ['bold', 'italic', 'underline', 'clear']],
+          ['fontColor', ['color']],
+          ['history', ['undo', 'redo']],
+          ['para', ['ul', 'paragraph', 'height']],
+          ['insert', ['link', 'picture', 'video']],
+          ['fullscreen', ['fullscreen']]
+        ]
       });
-      // TODO destroy after using it
-      // $('#summernote').summernote('destroy');
     });
+
   }
 
+  // TODO destroy after using it
+      // $('#summernote').summernote('destroy');
 }
