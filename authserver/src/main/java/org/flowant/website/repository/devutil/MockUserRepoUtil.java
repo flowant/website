@@ -1,5 +1,10 @@
 package org.flowant.website.repository.devutil;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PreDestroy;
+
 import org.flowant.website.event.MockDataGenerateEvent;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.AuthserverUserRepository;
@@ -21,6 +26,8 @@ public class MockUserRepoUtil {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    List<User> mocks = new ArrayList<>();
+
     public User saveUserWithEncodedPassword(User user) {
         String orgPassword = user.getPassword();
         user.setPassword(passwordEncoder.encode(orgPassword));
@@ -33,13 +40,14 @@ public class MockUserRepoUtil {
         userRepository.delete(user).block();
     }
 
-    public void saveMockUsers(int cntUser) {
+    protected void saveMockUsers(int cntUser) {
         for (int i = 0; i < cntUser; i++) {
             User user = UserMaker.largeRandom();
             user.setUsername("user" + i);
             user.setPassword("pass" + i);
             if (0 == userRepository.findByUsername(user.getUsername()).count().block()) {
                 user = saveUserWithEncodedPassword(user);
+                mocks.add(user);
                 log.debug("saved mock user:{}", user);
             }
         }
@@ -51,4 +59,11 @@ public class MockUserRepoUtil {
         saveMockUsers(5);
     }
 
+    @PreDestroy
+    public void onPreDestroy() throws Exception {
+        if (mocks.size() > 0) {
+            userRepository.deleteAll(mocks).block();
+            log.debug("Mock data are deleted before shutting down.");
+        }
+    }
 }

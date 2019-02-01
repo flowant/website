@@ -17,13 +17,9 @@ public class AuthserverApplication {
     }
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext ctx = 
+        ConfigurableApplicationContext ctx =
                 SpringApplication.run(AuthserverApplication.class, args);
 
-        for (String profile : ctx.getEnvironment().getActiveProfiles()) {
-            if ("test".equalsIgnoreCase(profile)) {
-                ctx.publishEvent(new MockDataGenerateEvent());
-            }
-        }
+        MockDataGenerateEvent.publishEventWhenActiveProfileIsTest(ctx);
     }
 }
