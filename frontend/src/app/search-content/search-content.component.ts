@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Content, Extend } from '../protocols/model';
+import { BackendService } from '../backend.service'
+import { NGXLogger } from 'ngx-logger';
 
 @Component({
   selector: 'app-search-content',
@@ -7,9 +10,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SearchContentComponent implements OnInit {
 
-  constructor() { }
+  contents : Content[];
+
+  constructor(private backendService: BackendService, private logger: NGXLogger) { }
 
   ngOnInit() {
+    this.getContents();
   }
 
+  getContents(): void {
+    this.backendService.getContents()
+      .subscribe(returned => this.contents = returned);
+  }
 }

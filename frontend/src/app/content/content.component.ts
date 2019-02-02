@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import * as $ from 'jquery';
-import { Content } from '../protocols/model';
+import * as uuid from 'uuid';
+import * as parse from 'parse-duration';
+import { Content, Extend } from '../protocols/model';
 import { BackendService } from '../backend.service'
+import { NGXLogger } from 'ngx-logger';
 
 declare var $: any;
 
@@ -12,26 +17,52 @@ declare var $: any;
 })
 export class ContentComponent implements OnInit {
 
-  contents: Content[] = [];
-
   content: Content;
 
-  constructor(private backendService: BackendService) { }
+  prepTime: string;
+  cookTime: string;
 
-  getContents(): void {
-    this.backendService.getContents()
-      .subscribe(contents => this.content = contents[0]);
+  constructor(
+    private backendService: BackendService,
+    private location: Location,
+    private route: ActivatedRoute,
+    private logger: NGXLogger) {
   }
 
-  test(): void {
-    this.content.id;
+  newContent(): Content {
+    this.content = new Content();
+    this.content.id = uuid.v4(); // UUID random
+    this.content.extend = new Extend();
+    return this.content;
+  }
+
+  getContent(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id == null) {
+      this.newContent();
+    } else {
+      this.backendService.getContent(id)
+        .subscribe(returned => {
+          this.content = returned;
+          this.logger.trace('getContent:', this.content);
+        });
+    }
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+
+  save(): void {
+    this.backendService.updateContent(this.content)
+      .subscribe(() => this.goBack());
   }
 
   ngOnInit() {
-    this.getContents();
+    this.getContent();
 
     $(document).ready(function() {
-      $('.summernote.directions').summernote({
+      $('#directions').summernote({
         placeholder: 'Please type directions here.',
         height: 200,
         // airMode: true,

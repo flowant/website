@@ -32,7 +32,7 @@ export class BackendService {
   }
 
   /** GET content by id. Return `undefined` when id not found */
-  getContentNo404<Data>(id: number): Observable<Content> {
+  getContentNo404<Data>(id: string): Observable<Content> {
     const url = `${this.contentUrl}/${id}`;
     return this.http.get<Content[]>(url)
       .pipe(
@@ -46,7 +46,7 @@ export class BackendService {
   }
 
   /** GET content by id. Will 404 if id not found */
-  getContent(id: number): Observable<Content> {
+  getContent(id: string): Observable<Content> {
     const url = `${this.contentUrl}/${id}`;
     return this.http.get<Content>(url).pipe(
       tap(_ => this.log(`fetched content id=${id}`)),

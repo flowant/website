@@ -1,39 +1,32 @@
+<div *ngIf="content">
+  <textarea [(ngModel)]="content.title" class="form-control" placeholder="Please type a title here."></textarea>
 
-<div class="form-group">
-  <textarea id="title" [(ngModel)]="content.title" class="form-control is-valid" rows="1" placeholder="Please type a title here."></textarea>
-</div>
-
-<div class="container">
-    <div class="table-responsive-sm">
-      <table class="table table-hover table-sm">
-        <thead>
-          <tr>
-            <th>Prepair</th>
-            <th>Cook</th>
-            <th>ReadyIn</th>
-            <th>Servings</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><input type="text" class="input-table" placeholder="10m30s"></td>
-            <td><input type="text" class="input-table" placeholder="1h"></td>
-            <td><input type="text" class="input-table" placeholder="1h10m30s"></td>
-            <td><input type="text" class="input-table" placeholder="1"></td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="container">
+      <div class="table-responsive-sm">
+        <table class="table table-hover table-sm">
+          <thead>
+            <tr>
+              <th>Prepair</th>
+              <th>Cook</th>
+              <th>Servings</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="text" [(ngModel)]="prepTime" class="input-table" placeholder="10m30s"></td>
+              <td><input type="text" [(ngModel)]="cookTime" class="input-table" placeholder="1h"></td>
+              <td><input type="text" [(ngModel)]="content.extend.servings" class="input-table" placeholder="1"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
 
-<div class="form-group">
   <label for="ingredients">Ingredients:</label>
   <textarea id="ingredients" class="form-control" rows="3" placeholder="Please type ingredients in separated lines. For examples 6 ounces mozzarella cheese, shredded."></textarea>
-</div>
 
-<div class="form-group">
   <label for="directions">Directions:</label>
   <div id="directions" class="summernote directions"></div>
-</div>
 
-<app-messages></app-messages>
+  <app-messages></app-messages>
+</div>
