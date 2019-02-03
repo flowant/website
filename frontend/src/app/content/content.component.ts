@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import * as $ from 'jquery';
 import * as uuid from 'uuid';
-import * as parse from 'parse-duration';
 import { Content, Extend } from '../protocols/model';
 import { BackendService } from '../backend.service'
 import { NGXLogger } from 'ngx-logger';
@@ -19,14 +18,24 @@ export class ContentComponent implements OnInit {
 
   content: Content;
 
-  prepTime: string;
-  cookTime: string;
+  isReadonly: boolean;
+  id: string;
+
+  flatIngredients: string = "";
 
   constructor(
     private backendService: BackendService,
     private location: Location,
     private route: ActivatedRoute,
     private logger: NGXLogger) {
+
+    this.id = this.route.snapshot.paramMap.get('id');
+    // TODO should depend on permission
+    this.isReadonly = this.id != null;
+  }
+
+  styleSuffix(): string {
+    return this.isReadonly ? "Readonly": "";
   }
 
   newContent(): Content {
@@ -37,15 +46,22 @@ export class ContentComponent implements OnInit {
   }
 
   getContent(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id == null) {
+    if (this.id == null) {
       this.newContent();
     } else {
-      this.backendService.getContent(id)
-        .subscribe(returned => {
-          this.content = returned;
-          this.logger.trace('getContent:', this.content);
-        });
+      this.backendService.getContent(this.id)
+          .subscribe(returned => {
+            this.convertFromContent(returned);
+            this.logger.trace('getContent:', returned);
+            // this content should be set lastly
+            this.content = returned;
+          });
+    }
+  }
+
+  convertFromContent(content: Content): void {
+    for (let ingredient of content.extend.ingredients) {
+      this.flatIngredients += ingredient + '\n';
     }
   }
 
@@ -78,10 +94,8 @@ export class ContentComponent implements OnInit {
           ['fullscreen', ['fullscreen']]
         ]
       });
-    });
-
-  }
-
-  // TODO destroy after using it
+      // TODO destroy after using it
       // $('#summernote').summernote('destroy');
+    });
+  }
 }

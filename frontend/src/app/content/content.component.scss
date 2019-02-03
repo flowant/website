@@ -4,8 +4,39 @@ table {
     text-align: center;
 }
 
-.input-table {
+.titleReadonly {
     @extend .form-control-plaintext;
-    @extend .form-control-sm;
+    @extend .h4;
+    pointer-events: none;
+}
+
+.title {
+    @extend .form-control;
+    @extend .h4;
+}
+
+.inputTableReadonly {
     text-align: center;
+    @extend .form-control-sm;
+    @extend .form-control-plaintext;
+    pointer-events: none;
+}
+
+.inputTable {
+    text-align: center;
+    @extend .form-control-sm;
+    @extend .form-control;
+}
+
+.ingredientsReadonly {
+    @extend .form-control-plaintext;
+    pointer-events: none;
+}
+
+.ingredients {
+    @extend .form-control;
+}
+
+label {
+    @extend .h6;
 }

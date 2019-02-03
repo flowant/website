@@ -1,21 +1,21 @@
 <div *ngIf="content">
-  <textarea [(ngModel)]="content.title" class="form-control" placeholder="Please type a title here."></textarea>
+  <textarea [(ngModel)]="content.title" [ngClass]="'title'+ styleSuffix()"
+      placeholder="Please type a title here."></textarea>
 
   <div class="container">
       <div class="table-responsive-sm">
         <table class="table table-hover table-sm">
           <thead>
-            <tr>
-              <th>Prepair</th>
-              <th>Cook</th>
-              <th>Servings</th>
-            </tr>
+            <tr> <th>Prepair</th> <th>Cook</th> <th>Servings</th> </tr>
           </thead>
           <tbody>
             <tr>
-              <td><input type="text" [(ngModel)]="prepTime" class="input-table" placeholder="10m30s"></td>
-              <td><input type="text" [(ngModel)]="cookTime" class="input-table" placeholder="1h"></td>
-              <td><input type="text" [(ngModel)]="content.extend.servings" class="input-table" placeholder="1"></td>
+              <td><input type="text" [(ngModel)]="content.extend.prepTime"
+                  [ngClass]="'inputTable'+ styleSuffix()" placeholder="10m30s"></td>
+              <td><input type="text" [(ngModel)]="content.extend.cookTime"
+                  [ngClass]="'inputTable'+ styleSuffix()" placeholder="1h"></td>
+              <td><input type="text" [(ngModel)]="content.extend.servings"
+                  [ngClass]="'inputTable'+ styleSuffix()" placeholder="1"></td>
             </tr>
           </tbody>
         </table>
@@ -23,10 +23,11 @@
     </div>
 
   <label for="ingredients">Ingredients:</label>
-  <textarea id="ingredients" class="form-control" rows="3" placeholder="Please type ingredients in separated lines. For examples 6 ounces mozzarella cheese, shredded."></textarea>
+  <textarea id="ingredients" [(ngModel)]="flatIngredients" [ngClass]="'ingredients'+ styleSuffix()"
+      placeholder="Please type ingredients in separated lines. For examples 6 ounces mozzarella cheese, shredded."></textarea>
 
   <label for="directions">Directions:</label>
-  <div id="directions" class="summernote directions"></div>
+  <div id="directions"></div>
 
   <app-messages></app-messages>
 </div>

@@ -10,8 +10,8 @@ export class Content {
 }
 export class Extend {
     ingredients?: (string)[] | null;
-    prepareSeconds: number;
-    cookSeconds: number;
+    prepareTime: string;
+    cookTime: string;
     servings: number;
     calory: number;
     nutritionFacts: string;

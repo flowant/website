@@ -16,8 +16,8 @@ public class ContentMaker {
     static String title = "title";
 
     static String ingredients = "ingredients";
-    static long prepareSeconds = 60;
-    static long cookSeconds = 300;
+    static String prepareTime = "10m20s";
+    static String cookTime = "35m";
     static int servings = 0;
     static int calory = 1000; //TODO calculate with servings
     static String nutritionFacts = "nutritionFacts";
@@ -46,7 +46,7 @@ public class ContentMaker {
     public static Content large(UUID id) {
         int cs = id.hashCode() / 1000000;
         return Content.builder().id(id).title(title + id)
-                .extend(new Recipe(List.of(ingredients + id), prepareSeconds + cs, cookSeconds + cs,
+                .extend(new Recipe(List.of(ingredients + id, ingredients + id), prepareTime, cookTime,
                         servings + cs, calory + cs, nutritionFacts + id))
                 .fileRefs(List.of(FileMaker.largeRandom()))
                 .sentences(sentences + id)
