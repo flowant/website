@@ -6,4 +6,5 @@
   </AsyncRoot>
   <AsyncLogger name="org.flowant" level="trace" />
   <AsyncLogger name="org.springframework.security" level="debug" />
+  <AsyncLogger name="org.springframework.cloud.gateway" level="debug" />
 </Loggers>

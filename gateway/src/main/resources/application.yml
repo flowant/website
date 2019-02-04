@@ -13,11 +13,10 @@ spring:
         - Path=/api/content/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:9090"
-            allowedMethods: GET, POST, PUT, DELETE
+
+website:
+  cors:
+    allowedOrigins: "http://localhost:9090"
 
 ---
 spring:

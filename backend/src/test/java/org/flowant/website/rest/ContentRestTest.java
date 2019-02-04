@@ -115,7 +115,7 @@ public class ContentRestTest extends BaseRestTest {
 
         content.setTitle("newTitle");
 
-        webTestClient.put().uri(ContentRest.CONTENT, content).contentType(MediaType.APPLICATION_JSON_UTF8)
+        webTestClient.put().uri(ContentRest.CONTENT).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(content), Content.class).exchange()
                 .expectStatus().isOk().expectBody(Content.class).consumeWith( r -> {
                     log.trace(r::toString);

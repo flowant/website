@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { Observable, of } from 'rxjs';
 import * as $ from 'jquery';
-import * as uuid from 'uuid';
-import { Content, Extend } from '../protocols/model';
+import { Content, Extend, Review, Reputation } from '../protocols/model';
 import { BackendService } from '../backend.service'
 import { NGXLogger } from 'ngx-logger';
 
@@ -34,68 +34,78 @@ export class ContentComponent implements OnInit {
     this.isReadonly = this.id != null;
   }
 
+  ngOnInit() {
+    this.prepareContent();
+  }
+
+  prepareContent(): void {
+    let observable = this.id ? this.backendService.getContent(this.id) : this.newContent();
+    observable.subscribe(c => {
+      this.content = c;
+      this.convertFromContent();
+      this.sentences();
+      this.logger.trace('getContent:', c);
+    });
+  }
+
+  newContent(): Observable<Content> {
+    this.content = new Content();
+    return of(this.content);
+  }
+
+  convertFromContent(): void {
+    for (let i in this.content.extend.ingredients) {
+      this.flatIngredients += this.content.extend.ingredients[i] + '\n';
+    }
+  }
+
+  convertToContent(): void {
+    this.content.extend.ingredients = this.flatIngredients.split('\n');
+  }
+
+  sentences(): void {
+    let component = this;
+
+    $(document).ready(function() {
+      if(component.isReadonly) {
+        // $('#directions').summernote({
+        //   airMode: true,
+        // });
+        // $('#directions').summernote('insertText', component.content.sentences);
+        $('#directions').html(component.content.sentences);
+      } else {
+        $('#directions').summernote({
+          // height: 300,
+          toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontColor', ['color']],
+            ['history', ['undo', 'redo']],
+            ['para', ['ul', 'paragraph', 'height']],
+            ['insert', ['link', 'picture', 'video']],
+            ['fullscreen', ['fullscreen']]
+          ]
+        });
+      }
+    });
+  }
+
+  onSave(): void {
+    this.convertToContent();
+    this.logger.trace('onSave:', this.content);
+    this.backendService.addContent(this.content)
+      .subscribe(() => {});
+  }
   styleSuffix(): string {
     return this.isReadonly ? "Readonly": "";
-  }
-
-  newContent(): Content {
-    this.content = new Content();
-    this.content.id = uuid.v4(); // UUID random
-    this.content.extend = new Extend();
-    return this.content;
-  }
-
-  getContent(): void {
-    if (this.id == null) {
-      this.newContent();
-    } else {
-      this.backendService.getContent(this.id)
-          .subscribe(returned => {
-            this.convertFromContent(returned);
-            this.logger.trace('getContent:', returned);
-            // this content should be set lastly
-            this.content = returned;
-          });
-    }
-  }
-
-  convertFromContent(content: Content): void {
-    for (let ingredient of content.extend.ingredients) {
-      this.flatIngredients += ingredient + '\n';
-    }
   }
 
   goBack(): void {
     this.location.back();
   }
 
-  save(): void {
-    this.backendService.updateContent(this.content)
-      .subscribe(() => this.goBack());
-  }
-
-  ngOnInit() {
-    this.getContent();
-
-    $(document).ready(function() {
-      $('#directions').summernote({
-        placeholder: 'Please type directions here.',
-        height: 200,
-        // airMode: true,
-        // focus: true
-        toolbar: [
-          // [groupName, [list of button]]
-          ['style', ['style']],
-          ['font', ['bold', 'italic', 'underline', 'clear']],
-          ['fontColor', ['color']],
-          ['history', ['undo', 'redo']],
-          ['para', ['ul', 'paragraph', 'height']],
-          ['insert', ['link', 'picture', 'video']],
-          ['fullscreen', ['fullscreen']]
-        ]
-      });
-      // TODO destroy after using it
-      // $('#summernote').summernote('destroy');
-    });
-  }
+  // save(): void {
+  //   this.backendService.updateContent(this.content)
+  //     .subscribe(() => this.goBack());
+  // }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
+import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -20,7 +20,8 @@ export class BackendService {
   private contentUrl = 'http://localhost:9091/api/content';
 
   constructor(private http: HttpClient,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private logger: NGXLogger) { }
 
   /** GET contents from the server */
   getContents(): Observable<Content[]> {
@@ -104,8 +105,8 @@ export class BackendService {
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      // send the error to remote logging infrastructure
+      this.logger.error(error);
 
       // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
@@ -117,6 +118,7 @@ export class BackendService {
 
   /** Log a ContentService message with the MessageService */
   private log(message: string) {
-    this.messageService.add(`ContentService: ${message}`);
+    this.logger.debug('BackendService:', message);
+    this.messageService.add(`BackendService: ${message}`);
   }
 }
