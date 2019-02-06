@@ -23,6 +23,8 @@
     "core-js": "^2.5.4",
     "jquery": "^3.3.1",
     "jquery.easing": "^1.4.1",
+    "js-joda": "^1.9.2",
+    "js-joda-timezone": "^2.0.1",
     "ngx-logger": "^3.3.11",
     "npm": "^6.7.0",
     "popper.js": "^1.14.7",

@@ -96,6 +96,7 @@ export class ContentComponent implements OnInit {
     this.backendService.addContent(this.content)
       .subscribe(() => {});
   }
+
   styleSuffix(): string {
     return this.isReadonly ? "Readonly": "";
   }
@@ -104,8 +105,4 @@ export class ContentComponent implements OnInit {
     this.location.back();
   }
 
-  // save(): void {
-  //   this.backendService.updateContent(this.content)
-  //     .subscribe(() => this.goBack());
-  // }
 }

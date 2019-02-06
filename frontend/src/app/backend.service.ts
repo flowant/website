@@ -3,8 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-
-import { Content } from './protocols/model';
+import { Content, reviver } from './protocols/model';
 import { MessageService } from './message.service';
 
 const httpOptions = {
@@ -25,34 +24,22 @@ export class BackendService {
 
   /** GET contents from the server */
   getContents(): Observable<Content[]> {
-    return this.http.get<Content[]>(this.contentUrl)
+    return this.http.get(this.contentUrl, {observe: 'response', responseType: 'text'})
       .pipe(
-        tap(_ => this.log('fetched contents')),
+        map(r => JSON.parse(r.body, reviver)),
+        tap(r => this.logger.trace('fetched contents:', r)),
         catchError(this.handleError('getContents', []))
-      );
-  }
-
-  /** GET content by id. Return `undefined` when id not found */
-  getContentNo404<Data>(id: string): Observable<Content> {
-    const url = `${this.contentUrl}/${id}`;
-    return this.http.get<Content[]>(url)
-      .pipe(
-        map(contents => contents[0]), // returns a {0|1} element array
-        tap(h => {
-          const outcome = h ? `fetched` : `did not find`;
-          this.log(`${outcome} content id=${id}`);
-        }),
-        catchError(this.handleError<Content>(`getContent id=${id}`))
       );
   }
 
   /** GET content by id. Will 404 if id not found */
   getContent(id: string): Observable<Content> {
     const url = `${this.contentUrl}/${id}`;
-    return this.http.get<Content>(url).pipe(
-      tap(_ => this.log(`fetched content id=${id}`)),
-      catchError(this.handleError<Content>(`getContent id=${id}`))
-    );
+    return this.http.get(url, {observe: 'response', responseType: 'text'})
+      .pipe(
+        map(r => JSON.parse(r.body, reviver)),
+        tap(r => this.logger.trace('fetched content:', r)),
+        catchError(this.handleError<Content>(`getContent id=${id}`)));
   }
 
   /* GET contents whose name contains search term */
@@ -62,17 +49,15 @@ export class BackendService {
       return of([]);
     }
     return this.http.get<Content[]>(`${this.contentUrl}/?name=${term}`).pipe(
-      tap(_ => this.log(`found contents matching "${term}"`)),
+      tap(r => this.logger.trace('found contents matching:', term)),
       catchError(this.handleError<Content[]>('searchContents', []))
     );
   }
 
-  //////// Save methods //////////
-
   /** POST: add a new content to the server */
   addContent (content: Content): Observable<Content> {
     return this.http.post<Content>(this.contentUrl, content, httpOptions).pipe(
-      tap((content: Content) => this.log(`added content w/ id=${content.id}`)),
+      tap(c => this.logger.trace('added content:', c)),
       catchError(this.handleError<Content>('addContent'))
     );
   }
@@ -83,7 +68,7 @@ export class BackendService {
     const url = `${this.contentUrl}/${id}`;
 
     return this.http.delete<Content>(url, httpOptions).pipe(
-      tap(_ => this.log(`deleted content id=${id}`)),
+      tap(_ => this.logger.trace('deleted content id:', id)),
       catchError(this.handleError<Content>('deleteContent'))
     );
   }
@@ -91,7 +76,7 @@ export class BackendService {
   /** PUT: update the content on the server */
   updateContent (content: Content): Observable<any> {
     return this.http.put(this.contentUrl, content, httpOptions).pipe(
-      tap(_ => this.log(`updated content id=${content.id}`)),
+      tap(c => this.logger.trace('updated content:', c)),
       catchError(this.handleError<any>('updateContent'))
     );
   }
@@ -109,16 +94,10 @@ export class BackendService {
       this.logger.error(error);
 
       // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
+      this.messageService.add(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
-  }
-
-  /** Log a ContentService message with the MessageService */
-  private log(message: string) {
-    this.logger.debug('BackendService:', message);
-    this.messageService.add(`BackendService: ${message}`);
   }
 }
