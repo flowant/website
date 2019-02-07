@@ -38,6 +38,7 @@ export class BackendService {
   gatewayUrl = 'http://localhost:9091/api';
   contentUrl = this.gatewayUrl + '/content';
   fileUrl = this.gatewayUrl + '/files';
+  fileDeletesUrl = this.fileUrl + '/deletes';
 
   constructor(private http: HttpClient,
     private messageService: MessageService,
@@ -117,6 +118,12 @@ export class BackendService {
       map(r => JSON.parse(r.body, reviver)),
       tap(r => this.logger.trace('added files:', r)),
       catchError(this.handleError<FileRefs[]>('addFiles', [])));
+  }
+
+  deleteFiles(files: FileRefs[]): Observable<any> {
+    return this.http.post(this.fileDeletesUrl, files, writeOptions).pipe(
+      tap(r => this.logger.trace('deleted files:', r)),
+      catchError(this.handleError<FileRefs[]>('deleteFiles')));
   }
 
   /**

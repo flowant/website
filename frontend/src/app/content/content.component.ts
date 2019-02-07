@@ -94,8 +94,9 @@ export class ContentComponent implements OnInit {
             },
             onMediaDelete : function (target) {
               // This callback isn't called when Media are deleted by a keyboard.
-              // So. we need another way to delete images on the backend.
-              component.logger.trace('onMediaDelete:', target.attr('src'));
+              // We need another way to delete images on the backend. see deleteUnusedFile()
+              // Use this event handler after this issue is resolved.
+              // component.logger.trace('onMediaDelete:', target.attr('src'));
             }
           }
         });
@@ -103,8 +104,21 @@ export class ContentComponent implements OnInit {
     });
   }
 
+  // see summernote's onMediaDelete event handler
+  deleteUnusedFile() {
+    const [used, unused] =
+        this.content.fileRefs.reduce((result, element) => {
+          result[this.content.sentences.indexOf(element.uri) !== -1 ? 0 : 1].push(element);
+          return result;
+        }, [[], []]);
+    this.content.fileRefs = used;
+    this.backendService.deleteFiles(unused)
+      .subscribe(() => {});
+  }
+
   onSave(): void {
     this.convertToContent();
+    this.deleteUnusedFile();
     this.logger.trace('onSave:', this.content);
     this.backendService.addContent(this.content)
       .subscribe(() => {});

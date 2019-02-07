@@ -63,6 +63,7 @@ public class ContentRest {
                 .map(ResponseEntity::ok).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    // If File Server is separated, we can use FILES_DELETES end point instead of FileStorage.deleteAll
     @DeleteMapping(value = CONTENT__ID__)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         return contentRepository.findById(UUID.fromString(id))
