@@ -1,5 +1,7 @@
 package org.flowant.website.rest;
 
+import java.util.List;
+
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.FileRef;
 import org.flowant.website.model.Tag;
@@ -22,6 +24,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import lombok.extern.log4j.Log4j2;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -121,6 +124,17 @@ public class FileRestTest extends BaseRestTest {
                     FileStorage.findById(fileRef.getId()).subscribe(res -> Assert.assertFalse(res.exists()));
                 });
             });
+        });
+    }
+
+    @Test
+    public void testDeleteAll() {
+        postFiles(3, webTestClient).consumeWith(body -> {
+            List<FileRef> refs = body.getResponseBody();
+
+            webTestClient.post().uri(FileRest.FILES_DELETES).contentType(MediaType.APPLICATION_JSON_UTF8)
+            .body(Flux.fromIterable(refs), FileRef.class).exchange()
+            .expectStatus().isOk().expectBody().consumeWith(log::trace);
         });
     }
 }

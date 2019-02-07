@@ -91,6 +91,11 @@ export class ContentComponent implements OnInit {
                   $('#directions').summernote('insertImage', component.imgServerUrl + fileRef.uri);
                 }
               });
+            },
+            onMediaDelete : function (target) {
+              // This callback isn't called when Media are deleted by a keyboard.
+              // So. we need another way to delete images on the backend.
+              component.logger.trace('onMediaDelete:', target.attr('src'));
             }
           }
         });

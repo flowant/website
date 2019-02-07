@@ -90,14 +90,14 @@ public class UserRestTest extends BaseRestTest {
         return Arrays.asList(UserMaker.smallRandom(), UserMaker.largeRandom());
     }
 
-    @Test
+    // @Test // used at an early development stage.
     public void testGetAllEmpty() {
         webTestClient.get().uri(UserRest.USER).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(List.class).consumeWith(log::trace).isEqualTo(Lists.emptyList());
     }
 
-    @Test
+    // @Test // used at an early development stage.
     public void testGetAll() {
         Flux<User> users = Flux.range(1, 5).map(i ->UserMaker.largeRandom()).cache();
         userRepository.saveAll(users).blockLast();

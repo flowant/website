@@ -87,6 +87,10 @@ public class FileStorage {
         return deleteById(id.toString());
     }
 
+    public static Mono<Boolean> deleteAll(Flux<FileRef> files) {
+        return files.collectList().flatMap(FileStorage::deleteAll);
+    }
+
     public static Mono<Boolean> deleteAll(List<FileRef> files) {
         taskExecutor.execute(() -> {
             files.forEach(fileRef -> {

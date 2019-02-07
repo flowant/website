@@ -87,14 +87,14 @@ public class ContentRestTest extends BaseRestTest {
         return Arrays.asList(ContentMaker.smallRandom(), ContentMaker.largeRandom());
     }
 
-    @Test
+    // @Test // used at an early development stage.
     public void testGetAllEmpty() {
         webTestClient.get().uri(ContentRest.CONTENT).accept(MediaType.APPLICATION_JSON_UTF8).exchange()
                 .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(List.class).consumeWith(log::trace).isEqualTo(Lists.emptyList());
     }
 
-    @Test
+    // @Test // used at an early development stage.
     public void testGetAll() {
         Flux<Content> contents = Flux.range(1, 5).map(i -> ContentMaker.largeRandom()).cache();
         contentRepository.saveAll(contents).blockLast();
