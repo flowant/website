@@ -3,7 +3,6 @@ package org.flowant.website.rest;
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.FileRef;
 import org.flowant.website.model.Tag;
-import org.flowant.website.rest.FileRest;
 import org.flowant.website.storage.FileStorage;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,6 +12,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.test.web.reactive.server.WebTestClient.ListBodySpec;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -36,9 +37,7 @@ public class FileRestTest extends BaseRestTest {
         respSpec.expectStatus().is4xxClientError().expectBody().consumeWith(log::trace);
     }
 
-    @Test
-    @Parameters({"1", "3"})
-    public void testPosts(int count) {
+    public static ListBodySpec<FileRef> postFiles(int count, WebTestClient webTestClient) {
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
 
         for (int i = 1; i <= count; i++) {
@@ -48,9 +47,16 @@ public class FileRestTest extends BaseRestTest {
             parts.add(FileRest.ATTACHMENT, entity);
         }
 
-        webTestClient.post().uri(FileRest.FILES).contentType(MediaType.MULTIPART_FORM_DATA)
-        .body(BodyInserters.fromMultipartData(parts)).exchange()
-        .expectStatus().isOk().expectBodyList(FileRef.class).hasSize(count).consumeWith(body -> {
+        return webTestClient.post().uri(FileRest.FILES).contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(parts)).exchange()
+                .expectStatus().isOk().expectBodyList(FileRef.class).hasSize(count);
+    }
+
+    @Test
+    @Parameters({"1", "3"})
+    public void testPosts(int count) {
+        postFiles(count, webTestClient).consumeWith(body -> {
+            // log.trace(body); // use if Http requests need to be debugged.
             body.getResponseBody().forEach(fileRef -> {
                 log.trace("post files response:{}", fileRef);
                 StepVerifier.create(FileStorage.findById(fileRef.getId()))

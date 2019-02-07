@@ -29,4 +29,9 @@ public class FileRef {
     long length; //TODO should be filled before being inserted to DB
     @NonNull
     CRUZonedTime cruTime;
+
+    public FileRef setLength(long length) {
+        this.length = length;
+        return this;
+    }
 }

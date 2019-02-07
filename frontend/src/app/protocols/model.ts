@@ -23,7 +23,7 @@ export class Content {
   id: string = uuid.v4();
   title: string = "Please type a title here.";
   extend: Extend = new Extend();
-  fileRefs?: (FileRefsEntity)[] | null;
+  fileRefs?: (FileRefs)[] = [];
   sentences: string = "Please type directions here.";;
   tags?: (TagsEntity)[] | null;
   review: Review = new Review();
@@ -41,7 +41,7 @@ export class Extend {
   cookDuration: string;
 }
 
-export class FileRefsEntity {
+export class FileRefs {
   id: string;
   uri: string;
   contentType: string;

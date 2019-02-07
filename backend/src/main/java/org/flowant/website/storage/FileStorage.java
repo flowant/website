@@ -1,9 +1,11 @@
 package org.flowant.website.storage;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -12,9 +14,12 @@ import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.FileRef;
 import org.flowant.website.rest.FileRest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.log4j.Log4j2;
@@ -28,6 +33,13 @@ public class FileStorage {
     public static final String SEP_DIR = "/";
 
     static String root;
+
+    static TaskExecutor taskExecutor = taskExecutor();
+
+    @Bean
+    static TaskExecutor taskExecutor () {
+        return new ConcurrentTaskExecutor();
+    }
 
     @Value("${website.storage.root}")
     public void createPathIfNotExist(String root) throws IOException {
@@ -45,9 +57,9 @@ public class FileStorage {
                     .length(partFile.headers().getContentLength())
                     .filename(partFile.filename()).uri(FileRest.FILES + SEP_URL + id)
                     .build();
-            Path path = Paths.get(root + SEP_DIR + id);
-            return partFile.transferTo(path).cast(FileRef.class)
-            .concatWith(Mono.just(fileRef));
+            File file = getPath(id).toFile();
+            return partFile.transferTo(file).cast(FileRef.class)
+                    .concatWith(Mono.just(fileRef.setLength(file.length())));
         });
     }
 
@@ -56,7 +68,7 @@ public class FileStorage {
     }
 
     public static Mono<Resource> findById (String id) {
-        return exist(id) ? Mono.just(new FileSystemResource(root + SEP_DIR + id)) : Mono.empty();
+        return exist(id) ? Mono.just(new FileSystemResource(getPath(id))) : Mono.empty();
     }
 
     public static Mono<Resource> findById (UUID id) {
@@ -65,7 +77,7 @@ public class FileStorage {
 
     public static Mono<Boolean> deleteById(String id) {
         return exist(id) == false ? Mono.empty() :
-                Mono.fromCallable(() -> rmdirs(root + SEP_DIR + id)).onErrorResume(t -> {
+                Mono.fromCallable(() -> rmdirs(getPath(id))).onErrorResume(t -> {
                     log.error(ExceptionUtils.getStackTrace(t));
                     return Mono.just(Boolean.FALSE);
                 });
@@ -73,6 +85,32 @@ public class FileStorage {
 
     public static Mono<Boolean> deleteById(UUID id) {
         return deleteById(id.toString());
+    }
+
+    public static Mono<Boolean> deleteAll(List<FileRef> files) {
+        taskExecutor.execute(() -> {
+            files.forEach(fileRef -> {
+                String id = fileRef.getId().toString();
+                if (exist(id)) {
+                    try {
+                        rmdirs(getPath(id));
+                        log.debug("file is deleted, id: {}", id);
+                    } catch (IOException e) {
+                        log.error(e);
+                    }
+                }
+            });
+        });
+
+        return Mono.just(Boolean.TRUE);
+    }
+
+    public static Path getPath(UUID id) {
+        return getPath(id.toString());
+    }
+
+    public static Path getPath(String id) {
+        return Paths.get(root + SEP_DIR + id);
     }
 
     public static Path mkdirs(String path) throws IOException {

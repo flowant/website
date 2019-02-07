@@ -11,7 +11,6 @@ import org.flowant.website.BackendApplication;
 import org.flowant.website.model.Content;
 import org.flowant.website.model.Tag;
 import org.flowant.website.repository.ContentRepository;
-import org.flowant.website.rest.ContentRest;
 import org.flowant.website.util.test.ContentMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -128,6 +127,20 @@ public class ContentRestTest extends BaseRestTest {
     @Test
     public void testDelete() {
         Content content = ContentMaker.smallRandom();
+        contentRepository.save(content).block();
+
+        webTestClient.delete().uri(ContentRest.CONTENT__ID__, content.getId()).exchange()
+                .expectStatus().isOk().expectBody().consumeWith(r -> {
+                    log.trace(r::toString);
+                    StepVerifier.create(contentRepository.findById(content.getId())).expectNextCount(0).verifyComplete();
+                });
+    }
+
+    @Test
+    public void testDeleteWithFiles() {
+        Content content = ContentMaker.smallRandom();
+        FileRestTest.postFiles(3, webTestClient).consumeWith(body -> content.setFileRefs(body.getResponseBody()));
+
         contentRepository.save(content).block();
 
         webTestClient.delete().uri(ContentRest.CONTENT__ID__, content.getId()).exchange()

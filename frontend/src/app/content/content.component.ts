@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import * as $ from 'jquery';
-import { Content, Extend, Review, Reputation } from '../protocols/model';
+import { Content, FileRefs, Extend, Review, Reputation } from '../protocols/model';
 import { BackendService } from '../backend.service'
 import { NGXLogger } from 'ngx-logger';
 
@@ -16,6 +16,7 @@ declare var $: any;
 })
 export class ContentComponent implements OnInit {
 
+  imgServerUrl: string = this.backendService.getGatewayURL();
   content: Content;
 
   isReadonly: boolean;
@@ -56,7 +57,7 @@ export class ContentComponent implements OnInit {
     for (let i in this.content.extend.ingredients) {
       this.flatIngredients += this.content.extend.ingredients[i] + '\n';
     }
-    this.sentences();
+    this.renderSentences();
   }
 
   convertToContent(): void {
@@ -64,7 +65,7 @@ export class ContentComponent implements OnInit {
     this.content.sentences = $('#directions').summernote('code');
   }
 
-  sentences(): void {
+  renderSentences(): void {
     let component = this;
 
     $(document).ready(function() {
@@ -81,7 +82,17 @@ export class ContentComponent implements OnInit {
             ['para', ['ul', 'paragraph', 'height']],
             ['insert', ['link', 'picture', 'video']],
             ['fullscreen', ['fullscreen']]
-          ]
+          ],
+          callbacks: {
+            onImageUpload: function(files) {
+              component.backendService.addFiles(files).subscribe(fileRefs => {
+                for(let fileRef of fileRefs) {
+                  component.content.fileRefs.push(fileRef);
+                  $('#directions').summernote('insertImage', component.imgServerUrl + fileRef.uri);
+                }
+              });
+            }
+          }
         });
       }
     });
@@ -91,6 +102,12 @@ export class ContentComponent implements OnInit {
     this.convertToContent();
     this.logger.trace('onSave:', this.content);
     this.backendService.addContent(this.content)
+      .subscribe(() => {});
+  }
+
+  onDelete(): void {
+    this.logger.trace('onDelete:', this.content);
+    this.backendService.deleteContent(this.content)
       .subscribe(() => {});
   }
 

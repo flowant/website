@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.Content;
 import org.flowant.website.repository.BackendContentRepository;
+import org.flowant.website.storage.FileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -63,7 +64,10 @@ public class ContentRest {
     }
 
     @DeleteMapping(value = CONTENT__ID__)
-    public Mono<ResponseEntity<Void>> delete(@PathVariable(value = ID) String id) {
-        return contentRepository.deleteById(UUID.fromString(id)).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
+        return contentRepository.findById(UUID.fromString(id))
+                .doOnNext(content-> FileStorage.deleteAll(content.getFileRefs()))
+                .then(contentRepository.deleteById(UUID.fromString(id))
+                .map(ResponseEntity::ok));
     }
 }
