@@ -24,7 +24,7 @@ export class Content {
   title: string = "Please type a title here.";
   extend: Extend = new Extend();
   fileRefs?: (FileRefsEntity)[] | null;
-  sentences: string;
+  sentences: string = "Please type directions here.";;
   tags?: (TagsEntity)[] | null;
   review: Review = new Review();
   cruTime: CruTime = new CruTime();
@@ -34,7 +34,7 @@ export class Extend {
   ingredients?: (string)[] | null = ["Please type ingredients in separated lines.", "e.g., 6 ounces mozzarella cheese, shredded."];
   prepareTime: string = "10m30s";
   cookTime: string = "1h10m";
-  servings: number = 1;
+  servings: number = 0;
   calory: number = 0;
   nutritionFacts: string;
   prepareDuration: string;

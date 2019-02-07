@@ -43,7 +43,6 @@ export class ContentComponent implements OnInit {
     observable.subscribe(c => {
       this.content = c;
       this.convertFromContent();
-      this.sentences();
       this.logger.trace('getContent:', c);
     });
   }
@@ -57,10 +56,12 @@ export class ContentComponent implements OnInit {
     for (let i in this.content.extend.ingredients) {
       this.flatIngredients += this.content.extend.ingredients[i] + '\n';
     }
+    this.sentences();
   }
 
   convertToContent(): void {
     this.content.extend.ingredients = this.flatIngredients.split('\n');
+    this.content.sentences = $('#directions').summernote('code');
   }
 
   sentences(): void {
@@ -68,14 +69,10 @@ export class ContentComponent implements OnInit {
 
     $(document).ready(function() {
       if(component.isReadonly) {
-        // $('#directions').summernote({
-        //   airMode: true,
-        // });
-        // $('#directions').summernote('insertText', component.content.sentences);
         $('#directions').html(component.content.sentences);
       } else {
         $('#directions').summernote({
-          // height: 300,
+          placeholder: component.content.sentences,
           toolbar: [
             ['style', ['style']],
             ['font', ['bold', 'italic', 'underline', 'clear']],
