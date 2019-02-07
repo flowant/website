@@ -106,14 +106,21 @@ export class ContentComponent implements OnInit {
 
   // see summernote's onMediaDelete event handler
   deleteUnusedFile() {
+    if (this.content.fileRefs.length == 0) {
+      return;
+    }
+
     const [used, unused] =
         this.content.fileRefs.reduce((result, element) => {
           result[this.content.sentences.indexOf(element.uri) !== -1 ? 0 : 1].push(element);
           return result;
         }, [[], []]);
     this.content.fileRefs = used;
-    this.backendService.deleteFiles(unused)
-      .subscribe(() => {});
+
+    if (unused.length > 0) {
+      this.backendService.deleteFiles(unused)
+          .subscribe(() => {});
+    }
   }
 
   onSave(): void {
