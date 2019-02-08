@@ -56,7 +56,7 @@ export class TagsEntity {
 
 export class Review {
   reputation: Reputation = new Reputation();
-  replies?: (RepliesEntity)[] | null;
+  replies?: (Reply)[] | null;
 }
 
 export class Reputation {
@@ -65,8 +65,10 @@ export class Reputation {
   reported: number = 0;
 }
 
-export class RepliesEntity {
-  content: string = "Please type a title here.";
+export class Reply {
+  replierId: string;
+  replierName: string;
+  content: string = "Please type messages here.";
   reputation: Reputation = new Reputation();
   cruTime: CruTime;
 }

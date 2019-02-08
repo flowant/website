@@ -11,6 +11,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { SearchContentComponent } from './search-content/search-content.component';
 import { MessagesComponent } from './messages/messages.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ReviewComponent } from './review/review.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     ProfileComponent,
     SearchContentComponent,
     MessagesComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    ReviewComponent
   ],
   imports: [
     BrowserModule,

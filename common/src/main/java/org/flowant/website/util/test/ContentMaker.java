@@ -26,6 +26,8 @@ public class ContentMaker {
 
     static String sentences = "sentences";
     static String content = "content";
+    static UUID replierId = UUID.randomUUID();
+    static String replierName = "replierName";
 
     static int rating = 10;
     static int liked = 200;
@@ -46,14 +48,15 @@ public class ContentMaker {
     public static Content large(UUID id) {
         int cs = id.hashCode() / 1000000;
         return Content.builder().id(id).title(title + id)
-                .extend(new Recipe(List.of(ingredients + id, ingredients + id), prepareTime, cookTime,
-                        servings + cs, calory + cs, nutritionFacts + id))
+                .extend(new Recipe(List.of(ingredients + id, ingredients + id, ingredients + id),
+                        prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))
                 .fileRefs(List.of(FileMaker.largeRandom()))
                 .sentences(sentences + id)
-                .tags(List.of(Tag.of(name + id)))
-                .review(new Review(Reputation.of(rating + cs, liked + cs, reported + cs),
-                        List.of(new Reply(content + id, Reputation.of(rating + cs, liked + cs, reported + cs),
-                                CRUZonedTime.now()))))
+                .tags(List.of(Tag.of(name + id), Tag.of(name + id + 1), Tag.of(name + id + 2)))
+                .review(new Review(Reputation.of(rating + cs, liked + cs, reported + cs), List.of(
+                        new Reply(replierId, replierName, content + id, Reputation.of(rating + cs, liked + cs, reported + cs), CRUZonedTime.now()),
+                        new Reply(replierId, replierName, null, Reputation.of(rating + cs, liked + cs, reported + cs), CRUZonedTime.now()),
+                        new Reply(replierId, replierName, content + id, Reputation.of(rating + cs, liked + cs, reported + cs), CRUZonedTime.now()))))
                 .cruTime(CRUZonedTime.now())
                 .build();
     }

@@ -1,5 +1,7 @@
 package org.flowant.website.model;
 
+import java.util.UUID;
+
 import org.springframework.data.cassandra.core.mapping.UserDefinedType;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @UserDefinedType
 public class Reply {
+    @NonNull
+    UUID replierId;
+    @NonNull
+    String replierName;
     String content;
     @NonNull
     Reputation reputation;
