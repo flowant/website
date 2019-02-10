@@ -3,16 +3,20 @@ package org.flowant.website.repository;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
 @Component
-@ToString
+@Getter @Setter @ToString
+@ConfigurationProperties(prefix = "website.cassandra")
 @Log4j2
 public class CassandraKeyspaceInitializer {
     @Value("${spring.data.cassandra.contactPoints}")
@@ -24,8 +28,7 @@ public class CassandraKeyspaceInitializer {
     @Value("${spring.data.cassandra.keyspace-name}")
     private String keyspaceName;
 
-    @Value("${website.cql-create-keyspace}")
-    private String cqlCreateKeySpace;
+    String cqlCreateKeySpace;
 
     @PostConstruct
     public void createKeySpaceIfNotExist() {

@@ -10,7 +10,6 @@ import org.flowant.website.model.PostalAddress;
 import org.flowant.website.model.Tag;
 import org.flowant.website.model.User;
 import org.flowant.website.model.ZonedDate;
-import org.junit.Assert;
 
 public class UserMaker {
 
@@ -54,24 +53,6 @@ public class UserMaker {
 
     public static User largeRandom() {
         return large(UUID.randomUUID());
-    }
-
-    public static User assertEqual(User expected, User actual) {
-        Assert.assertEquals(expected.getId(), actual.getId());
-        Assert.assertEquals(expected.getAddress(), actual.getAddress());
-        Assert.assertEquals(expected.getFirstname(), actual.getFirstname());
-        Assert.assertEquals(expected.getLastname(), actual.getLastname());
-        Assert.assertEquals(expected.getUsername(), actual.getUsername());
-        Assert.assertEquals(expected.getEmail(), actual.getEmail());
-        Assert.assertEquals(expected.getBirthdate(), actual.getBirthdate());
-        Assert.assertEquals(expected.getPassword(), actual.getPassword());
-        Assert.assertEquals(expected.getPhone(), actual.getPhone());
-        Assert.assertEquals(expected.getGender(), actual.getGender());
-        AssertUtil.assertListEquals(expected.getAuthorities(), actual.getAuthorities());
-        AssertUtil.assertListEquals(expected.getFollowers(), actual.getFollowers());
-        AssertUtil.assertListEquals(expected.getFollowings(), actual.getFollowings());
-        AssertUtil.assertListEquals(expected.getInterests(), actual.getInterests());
-        return actual;
     }
 
 }

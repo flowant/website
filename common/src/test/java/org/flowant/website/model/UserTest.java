@@ -1,5 +1,6 @@
 package org.flowant.website.model;
 
+import org.flowant.website.util.test.AssertUtil;
 import org.flowant.website.util.test.UserMaker;
 import org.junit.Test;
 
@@ -12,6 +13,9 @@ public class UserTest {
     public void testMaker() {
         log.debug("User:{}", UserMaker.smallRandom()::toString);
         log.debug("User:{}", UserMaker.largeRandom()::toString);
+
+        User user = UserMaker.largeRandom();
+        AssertUtil.assertEquals(user, user);
     }
 
 }

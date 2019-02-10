@@ -6,11 +6,7 @@ import java.util.UUID;
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.Content;
 import org.flowant.website.model.Recipe;
-import org.flowant.website.model.Reply;
-import org.flowant.website.model.Reputation;
-import org.flowant.website.model.Review;
 import org.flowant.website.model.Tag;
-import org.junit.Assert;
 
 public class ContentMaker {
     static String title = "title";
@@ -26,6 +22,8 @@ public class ContentMaker {
 
     static String sentences = "sentences";
     static String content = "content";
+
+    static UUID reputationId = UUID.randomUUID();
     static UUID replierId = UUID.randomUUID();
     static String replierName = "replierName";
 
@@ -36,9 +34,7 @@ public class ContentMaker {
     static String name = "name";
 
     public static Content small(UUID id) {
-        int cs = id.hashCode() / 1000000;
-        return Content.of(id, title + id,
-                Review.of(Reputation.of(rating + cs, liked + cs, reported + cs)), CRUZonedTime.now());
+        return Content.of(id, title + id, reputationId, CRUZonedTime.now());
     }
 
     public static Content smallRandom() {
@@ -52,11 +48,8 @@ public class ContentMaker {
                         prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))
                 .fileRefs(List.of(FileMaker.largeRandom()))
                 .sentences(sentences + id)
+                .reputationId(reputationId)
                 .tags(List.of(Tag.of(name + id), Tag.of(name + id + 1), Tag.of(name + id + 2)))
-                .review(new Review(Reputation.of(rating + cs, liked + cs, reported + cs), List.of(
-                        new Reply(replierId, replierName, content + id, Reputation.of(rating + cs, liked + cs, reported + cs), CRUZonedTime.now()),
-                        new Reply(replierId, replierName, null, Reputation.of(rating + cs, liked + cs, reported + cs), CRUZonedTime.now()),
-                        new Reply(replierId, replierName, content + id, Reputation.of(rating + cs, liked + cs, reported + cs), CRUZonedTime.now()))))
                 .cruTime(CRUZonedTime.now())
                 .build();
     }
@@ -65,15 +58,4 @@ public class ContentMaker {
         return large(UUID.randomUUID());
     }
 
-    public static Content assertEqual(Content excepted, Content actual) {
-        Assert.assertEquals(excepted.getId(), actual.getId());
-        Assert.assertEquals(excepted.getSentences(), actual.getSentences());
-        Assert.assertEquals(excepted.getTitle(), actual.getTitle());
-        Assert.assertEquals(excepted.getExtend(), actual.getExtend());
-        AssertUtil.assertListEquals(excepted.getFileRefs(), actual.getFileRefs());
-        AssertUtil.assertListEquals(excepted.getTags(), actual.getTags());
-        Assert.assertEquals(excepted.getReview().getReputation(), excepted.getReview().getReputation());
-        AssertUtil.assertListEquals(excepted.getReview().getReplies(), excepted.getReview().getReplies());
-        return actual;
-    }
 }

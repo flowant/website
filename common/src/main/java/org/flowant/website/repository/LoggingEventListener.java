@@ -7,9 +7,11 @@ import org.springframework.data.cassandra.core.mapping.event.AfterLoadEvent;
 import org.springframework.data.cassandra.core.mapping.event.AfterSaveEvent;
 import org.springframework.data.cassandra.core.mapping.event.BeforeDeleteEvent;
 import org.springframework.data.cassandra.core.mapping.event.BeforeSaveEvent;
+import org.springframework.stereotype.Component;
 
 import lombok.extern.log4j.Log4j2;
 
+@Component
 @Log4j2
 public class LoggingEventListener extends AbstractCassandraEventListener<Object> {
 

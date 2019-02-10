@@ -3,7 +3,10 @@ package org.flowant.website.model;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.Table;
+
+import com.datastax.driver.core.DataType.Name;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,20 +17,19 @@ import lombok.RequiredArgsConstructor;
 
 @Builder
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName="of")
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Reply implements Model {
+public class ReplyReputation implements Model {
     @Id @NonNull
     UUID id;
-    @NonNull
-    UUID replierId;
-    @NonNull
-    String replierName;
-    String comment;
-    @NonNull
-    UUID reputationId;
-    @NonNull
-    CRUZonedTime cruTime;
+    @CassandraType(type=Name.COUNTER)
+    long liked;
+    @CassandraType(type=Name.COUNTER)
+    long disliked;
+    @CassandraType(type=Name.COUNTER)
+    long reported;
+    @CassandraType(type=Name.COUNTER)
+    long reputed;
 }

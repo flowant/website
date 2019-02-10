@@ -1,7 +1,7 @@
 package org.flowant.website.repository;
 
-import org.flowant.website.model.Content;
-import org.flowant.website.util.test.ContentMaker;
+import org.flowant.website.model.Review;
+import org.flowant.website.util.test.ReviewMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,10 +10,10 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ContentRepositoryTest extends BaseRepositoryTest<Content, ContentRepository> {
+public class ReviewRepositoryTest extends BaseRepositoryTest<Review, ReviewRepository> {
 
     @Test
     public void crud() {
-        testCrud(ContentMaker::smallRandom, ContentMaker::largeRandom);
+        testCrud(ReviewMaker::smallRandom, ReviewMaker::largeRandom);
     }
 }

@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Content {
+public class Content implements Model {
     @Id @NonNull
     UUID id;
     @NonNull
@@ -29,7 +29,8 @@ public class Content {
     String sentences;
     List<Tag> tags;
     @NonNull
-    Review review;
+    UUID reputationId;
+    List<UUID> popularReviewIds;
     @NonNull
     CRUZonedTime cruTime;
 }
