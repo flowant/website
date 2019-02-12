@@ -8,14 +8,14 @@ import org.flowant.website.model.Review;
 
 public class ReviewMaker {
 
+    static UUID containerId = UUID.randomUUID();
     static UUID reviewerId = UUID.randomUUID();
     static String reviewerName = "reviewerName";
     static String comment = "comment";
-    static UUID reputationId = UUID.randomUUID();
     static List<UUID> popularReplyIds = List.of(UUID.randomUUID(), UUID.randomUUID());
 
     public static Review small(UUID id) {
-        return Review.of(id, reviewerId, reviewerName + id, reputationId, CRUZonedTime.now());
+        return Review.of(id, containerId, reviewerId, reviewerName + id, CRUZonedTime.now());
     }
 
     public static Review smallRandom() {

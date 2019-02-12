@@ -1,5 +1,7 @@
 package org.flowant.website.repository;
 
+import java.util.UUID;
+
 import org.flowant.website.model.User;
 import org.flowant.website.util.test.UserMaker;
 import org.junit.Test;
@@ -12,11 +14,11 @@ import reactor.test.StepVerifier;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class UserRepositoryTest extends BaseRepositoryTest<User, UserRepository> {
+public class UserRepositoryTest extends BaseRepositoryTest<User, UUID, UserRepository> {
 
     @Test
     public void crud() {
-        testCrud(UserMaker::smallRandom, UserMaker::largeRandom);
+        testCrud(User::getId, UserMaker::smallRandom, UserMaker::largeRandom);
     }
 
     @Test

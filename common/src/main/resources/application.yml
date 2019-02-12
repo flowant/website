@@ -8,7 +8,7 @@ spring:
 
 website:
   cassandra:
-    cqlCreateKeyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+    cqlCreateKeySpace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
 
 ---
 spring:

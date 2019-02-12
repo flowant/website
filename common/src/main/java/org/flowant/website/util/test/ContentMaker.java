@@ -23,7 +23,6 @@ public class ContentMaker {
     static String sentences = "sentences";
     static String content = "content";
 
-    static UUID reputationId = UUID.randomUUID();
     static UUID replierId = UUID.randomUUID();
     static String replierName = "replierName";
 
@@ -34,7 +33,7 @@ public class ContentMaker {
     static String name = "name";
 
     public static Content small(UUID id) {
-        return Content.of(id, title + id, reputationId, CRUZonedTime.now());
+        return Content.of(id, title + id, CRUZonedTime.now());
     }
 
     public static Content smallRandom() {
@@ -48,7 +47,6 @@ public class ContentMaker {
                         prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))
                 .fileRefs(List.of(FileMaker.largeRandom()))
                 .sentences(sentences + id)
-                .reputationId(reputationId)
                 .tags(List.of(Tag.of(name + id), Tag.of(name + id + 1), Tag.of(name + id + 2)))
                 .cruTime(CRUZonedTime.now())
                 .build();

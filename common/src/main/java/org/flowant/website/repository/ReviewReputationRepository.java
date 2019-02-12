@@ -25,4 +25,7 @@ public interface ReviewReputationRepository extends ReactiveCrudRepository<Revie
     default Mono<ReviewReputation> save(ReviewReputation rr) {
         return accumulate(rr);
     };
+
+    @Query("SELECT WRITETIME (reputed) from reviewreputation WHERE id = ?0")
+    Mono<Long> writetimeMicros(UUID id);
 }

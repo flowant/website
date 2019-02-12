@@ -1,5 +1,7 @@
 package org.flowant.website.repository;
 
+import java.util.UUID;
+
 import org.flowant.website.model.Content;
 import org.flowant.website.util.test.ContentMaker;
 import org.junit.Test;
@@ -10,10 +12,10 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ContentRepositoryTest extends BaseRepositoryTest<Content, ContentRepository> {
+public class ContentRepositoryTest extends BaseRepositoryTest<Content, UUID, ContentRepository> {
 
     @Test
     public void crud() {
-        testCrud(ContentMaker::smallRandom, ContentMaker::largeRandom);
+        testCrud(Content::getId, ContentMaker::smallRandom, ContentMaker::largeRandom);
     }
 }

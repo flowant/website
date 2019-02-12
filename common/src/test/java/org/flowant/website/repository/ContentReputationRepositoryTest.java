@@ -14,7 +14,7 @@ import reactor.test.StepVerifier;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
 public class ContentReputationRepositoryTest extends
-        BaseRepositoryTest<ContentReputation, ContentReputationRepository> {
+        BaseRepositoryTest<ContentReputation, UUID, ContentReputationRepository> {
 
     @Test
     public void saveNewCounter() {

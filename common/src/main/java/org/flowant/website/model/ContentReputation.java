@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class ContentReputation implements Model {
+public class ContentReputation {
     @Id @NonNull
     UUID id;
     @CassandraType(type=Name.COUNTER)

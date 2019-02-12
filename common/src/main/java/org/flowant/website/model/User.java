@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class User implements UserDetails, Model {
+public class User implements UserDetails {
     private static final long serialVersionUID = 3027599136204429983L;
 
     @Id @NonNull
@@ -42,6 +42,7 @@ public class User implements UserDetails, Model {
     List<Authority> authorities;
     List<UUID> followers;
     List<UUID> followings;
+    // TODO likes and dislikes: contents, Reviews, Replys
     List<Tag> interests; //TODO to be updated by user activities;
     @NonNull
     CRUZonedTime cruTime;//TODO updated time

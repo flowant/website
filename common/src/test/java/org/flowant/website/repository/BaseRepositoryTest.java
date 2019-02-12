@@ -2,10 +2,9 @@ package org.flowant.website.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.flowant.website.model.Model;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -20,7 +19,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @Log4j2
-public class BaseRepositoryTest <Entity extends Model, Repository extends ReactiveCrudRepository<Entity, UUID>> {
+public class BaseRepositoryTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>> {
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
@@ -61,26 +60,26 @@ public class BaseRepositoryTest <Entity extends Model, Repository extends Reacti
         });
     }
 
-    public void save(Entity entity) {
+    public void save(Entity entity, Function<Entity, ID> getId) {
         deleteAfterTest(entity);
 
-        Flux<Entity> saveThenFind = repo.save(entity).thenMany(repo.findById(entity.getId()));
+        Flux<Entity> saveThenFind = repo.save(entity).thenMany(repo.findById(getId.apply(entity)));
         StepVerifier.create(saveThenFind).expectNext(entity).verifyComplete();
     }
 
-    public void saveAllFindAllById(Supplier<Entity> supplier) {
+    public void saveAllFindAllById(Supplier<Entity> supplier, Function<Entity, ID> getId) {
         Flux<Entity> entities = Flux.range(1, 5).map(i -> supplier.get());
         entities = deleteAfterTest(entities);
 
         Flux<Entity> saveAllThenFind = repo.saveAll(entities)
-                .thenMany(repo.findAllById(entities.map(Entity::getId)));
+                .thenMany(repo.findAllById(entities.map(getId)));
         StepVerifier.create(saveAllThenFind).expectNextCount(5).verifyComplete();
     }
 
-    public void testCrud(Supplier<Entity> small, Supplier<Entity> large) {
-        save(small.get());
-        save(large.get());
-        saveAllFindAllById(large);
+    public void testCrud(Function<Entity, ID> getId, Supplier<Entity> small, Supplier<Entity> large) {
+        save(small.get(), getId);
+        save(large.get(), getId);
+        saveAllFindAllById(large, getId);
     }
 
 }

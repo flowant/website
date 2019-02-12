@@ -1,5 +1,7 @@
 package org.flowant.website.repository;
 
+import java.util.UUID;
+
 import org.flowant.website.model.Review;
 import org.flowant.website.util.test.ReviewMaker;
 import org.junit.Test;
@@ -10,10 +12,11 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReviewRepositoryTest extends BaseRepositoryTest<Review, ReviewRepository> {
+public class ReviewRepositoryTest extends BaseRepositoryTest<Review, UUID, ReviewRepository> {
 
     @Test
     public void crud() {
-        testCrud(ReviewMaker::smallRandom, ReviewMaker::largeRandom);
+        testCrud(Review::getId, ReviewMaker::smallRandom, ReviewMaker::largeRandom);
     }
+
 }

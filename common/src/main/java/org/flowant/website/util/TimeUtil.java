@@ -7,4 +7,8 @@ public class TimeUtil {
         LocalDateTime t = LocalDateTime.now();
         return t.withNano((t.getNano() / 1000000) * 1000000);
     }
+
+    public static long currentTimeMicros() {
+        return System.currentTimeMillis() * 1000;
+    }
 }

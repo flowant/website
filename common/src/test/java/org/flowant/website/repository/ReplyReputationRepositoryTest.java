@@ -14,7 +14,7 @@ import reactor.test.StepVerifier;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
 public class ReplyReputationRepositoryTest extends
-        BaseRepositoryTest<ReplyReputation, ReplyReputationRepository> {
+        BaseRepositoryTest<ReplyReputation, UUID, ReplyReputationRepository> {
 
     @Test
     public void saveNewCounter() {
@@ -27,12 +27,12 @@ public class ReplyReputationRepositoryTest extends
 
     @Test
     public void accumulateCounter() {
-        ReplyReputation cr = ReplyReputation.of(UUID.randomUUID());
-        deleteAfterTest(cr);
-        ReplyReputation acc = ReplyReputation.of(cr.getId(), 1, 2, 3, 4);
+        ReplyReputation rr = ReplyReputation.of(UUID.randomUUID());
+        deleteAfterTest(rr);
+        ReplyReputation acc = ReplyReputation.of(rr.getId(), 1, 2, 3, 4);
         deleteAfterTest(acc);
 
-        Mono<ReplyReputation> saveThenFind = repo.save(cr).then(repo.accumulate(acc)).then(repo.findById(cr.getId()));
+        Mono<ReplyReputation> saveThenFind = repo.save(rr).then(repo.accumulate(acc)).then(repo.findById(rr.getId()));
         StepVerifier.create(saveThenFind).expectNext(acc).verifyComplete();
     }
 
