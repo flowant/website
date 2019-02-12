@@ -24,7 +24,7 @@ public class UserRepositoryTest extends BaseRepositoryTest<User, UUID, UserRepos
     @Test
     public void findByUsername() {
         User user = UserMaker.largeRandom();
-        deleteAfterTest(user);
+        registerToBeDeleted(user);
 
         Flux<User> saveThenFind = repo.save(user).thenMany(repo.findByUsername(user.getUsername()));
         StepVerifier.create(saveThenFind).expectNextMatches(u -> user.getUsername().equals(u.getUsername()))

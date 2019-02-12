@@ -23,7 +23,7 @@ public class ReviewReputationRepositoryTest extends
     @Test
     public void saveNewCounter() {
         ReviewReputation rr = ReviewReputation.of(UUID.randomUUID());
-        deleteAfterTest(rr);
+        registerToBeDeleted(rr);
 
         Mono<ReviewReputation> saveThenFind = repo.save(rr).then(repo.findById(rr.getId()));
         StepVerifier.create(saveThenFind).expectNext(rr).verifyComplete();
@@ -32,9 +32,9 @@ public class ReviewReputationRepositoryTest extends
     @Test
     public void accumulateCounter() {
         ReviewReputation rr = ReviewReputation.of(UUID.randomUUID());
-        deleteAfterTest(rr);
+        registerToBeDeleted(rr);
         ReviewReputation acc = ReviewReputation.of(rr.getId(), 1, 2, 3, 4);
-        deleteAfterTest(acc);
+        registerToBeDeleted(acc);
 
         Mono<ReviewReputation> saveThenFind = repo.save(rr).then(repo.accumulate(acc)).then(repo.findById(rr.getId()));
         StepVerifier.create(saveThenFind).expectNext(acc).verifyComplete();

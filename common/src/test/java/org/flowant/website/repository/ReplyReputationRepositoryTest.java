@@ -19,7 +19,7 @@ public class ReplyReputationRepositoryTest extends
     @Test
     public void saveNewCounter() {
         ReplyReputation rr = ReplyReputation.of(UUID.randomUUID());
-        deleteAfterTest(rr);
+        registerToBeDeleted(rr);
 
         Mono<ReplyReputation> saveThenFind = repo.save(rr).then(repo.findById(rr.getId()));
         StepVerifier.create(saveThenFind).expectNext(rr).verifyComplete();
@@ -28,9 +28,9 @@ public class ReplyReputationRepositoryTest extends
     @Test
     public void accumulateCounter() {
         ReplyReputation rr = ReplyReputation.of(UUID.randomUUID());
-        deleteAfterTest(rr);
+        registerToBeDeleted(rr);
         ReplyReputation acc = ReplyReputation.of(rr.getId(), 1, 2, 3, 4);
-        deleteAfterTest(acc);
+        registerToBeDeleted(acc);
 
         Mono<ReplyReputation> saveThenFind = repo.save(rr).then(repo.accumulate(acc)).then(repo.findById(rr.getId()));
         StepVerifier.create(saveThenFind).expectNext(acc).verifyComplete();

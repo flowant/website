@@ -121,6 +121,10 @@ public class FileStorage {
         return mkdirs(Paths.get(path));
     }
 
+    public static boolean exist(UUID id) {
+        return exist(id.toString());
+    }
+
     public static boolean exist(String id) {
         return Files.exists(Paths.get(root + SEP_DIR + id));
     }

@@ -5,16 +5,20 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
+import org.flowant.website.util.test.DeleteAfterTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-public class BaseRestTest {
+public class BaseRestWithRepositoryTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>> 
+    extends DeleteAfterTest <Entity, ID, Repository> {
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
@@ -37,4 +41,8 @@ public class BaseRestTest {
             .mutateWith(mockUser().roles(ROLE_WRITER));
     }
 
+    @After
+    public void after() {
+        deleteRegistered();
+    }
 }

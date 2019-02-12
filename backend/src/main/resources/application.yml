@@ -16,7 +16,8 @@ spring:
           jwk-set-uri: http://localhost:9093/.well-known/jwks.json
 
 website:
-  cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+  cassandra:
+    cqlCreateKeySpace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
   storage:
     root: /home/flowant/work/storage
 

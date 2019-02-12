@@ -12,7 +12,8 @@ spring:
       port: 9042
 
 website:
-  cql-create-keyspace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+  cassandra:
+    cqlCreateKeySpace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
   oauth2-client:
     facebook:
       client:

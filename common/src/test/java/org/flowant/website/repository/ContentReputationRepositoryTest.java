@@ -19,7 +19,7 @@ public class ContentReputationRepositoryTest extends
     @Test
     public void saveNewCounter() {
         ContentReputation cr = ContentReputation.of(UUID.randomUUID());
-        deleteAfterTest(cr);
+        registerToBeDeleted(cr);
 
         Mono<ContentReputation> saveThenFind = repo.save(cr).then(repo.findById(cr.getId()));
         StepVerifier.create(saveThenFind).expectNext(cr).verifyComplete();
@@ -28,9 +28,9 @@ public class ContentReputationRepositoryTest extends
     @Test
     public void accumulateCounter() {
         ContentReputation cr = ContentReputation.of(UUID.randomUUID());
-        deleteAfterTest(cr);
+        registerToBeDeleted(cr);
         ContentReputation acc = ContentReputation.of(cr.getId(), 1, 2, 3, 4, 5, 6);
-        deleteAfterTest(acc);
+        registerToBeDeleted(acc);
 
         Mono<ContentReputation> saveThenFind = repo.save(cr).then(repo.accumulate(acc)).then(repo.findById(cr.getId()));
         StepVerifier.create(saveThenFind).expectNext(acc).verifyComplete();
