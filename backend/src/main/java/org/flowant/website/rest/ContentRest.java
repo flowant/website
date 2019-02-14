@@ -22,9 +22,9 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class ContentRest extends BaseRepositoryRest<Content, BackendContentRepository> {
-    final static String ID = "id";
-    final static String CONTENT = "/content";
-    final static String CONTENT__ID__ = "/content/{id}";
+    public final static String ID = "id";
+    public final static String CONTENT = "/content";
+    public final static String CONTENT__ID__ = "/content/{id}";
 
     @Autowired
     private BackendContentRepository contentRepository;

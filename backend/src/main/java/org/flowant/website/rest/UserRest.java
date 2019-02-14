@@ -18,9 +18,9 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class UserRest extends BaseRepositoryRest<User, BackendUserRepository> {
-    final static String ID = "id";
-    final static String USER = "/user";
-    final static String USER__ID__ = "/user/{id}";
+    public final static String ID = "id";
+    public final static String USER = "/user";
+    public final static String USER__ID__ = "/user/{id}";
 
     @GetMapping(value = USER)
     public Flux<User> getAll() {

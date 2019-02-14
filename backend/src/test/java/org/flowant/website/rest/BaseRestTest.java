@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.client.WebClient;
 
 public class BaseRestTest {
 
@@ -23,9 +24,9 @@ public class BaseRestTest {
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
-    ApplicationContext context;
+    protected ApplicationContext context;
 
-    WebTestClient webTestClient;
+    protected WebTestClient webTestClient;
 
     @Before
     public void before() {
