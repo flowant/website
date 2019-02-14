@@ -34,7 +34,7 @@ public class BaseRestWithRepositoryTest <Entity, ID, Repository extends Reactive
     extends DeleteAfterTest <Entity, ID, Repository> {
 
     public final static String __ID__ = "/{id}";
-    
+
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
