@@ -16,15 +16,15 @@ public interface ContentReputationRepository extends ReactiveCrudRepository<Cont
             "WHERE id = ?0";
 
     @Query(UPDATE_COUTERS)
-    Mono<ContentReputation> accumulate(UUID id, long viewed, long rated,
+    Mono<Object> accumulate(UUID id, long viewed, long rated,
             long liked, long disliked, long reported,long reputed);
 
-    default Mono<ContentReputation> accumulate(ContentReputation cr) {
+    default Mono<Void> accumulate(ContentReputation cr) {
         return accumulate(cr.getId(), cr.getViewed(), cr.getRated(),
-                cr.getLiked(), cr.getDisliked(), cr.getReported(), cr.getReputed());
+                cr.getLiked(), cr.getDisliked(), cr.getReported(), cr.getReputed()).then();
     };
 
     default Mono<ContentReputation> save(ContentReputation cr) {
-        return accumulate(cr);
+        return accumulate(cr).then(findById(cr.getId()));
     };
 }

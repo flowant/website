@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class User implements UserDetails {
+public class User implements UserDetails, HasCruTime {
     private static final long serialVersionUID = 3027599136204429983L;
 
     @Id @NonNull

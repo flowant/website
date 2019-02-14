@@ -4,13 +4,10 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.Content;
 import org.flowant.website.repository.BackendContentRepository;
 import org.flowant.website.storage.FileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +21,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ContentRest {
+public class ContentRest extends BaseRepositoryRest<Content, BackendContentRepository> {
     final static String ID = "id";
     final static String CONTENT = "/content";
-    final static String CONTENT_STREAM = "/content/stream";
     final static String CONTENT__ID__ = "/content/{id}";
 
     @Autowired
@@ -35,32 +31,22 @@ public class ContentRest {
 
     @GetMapping(value = CONTENT)
     public Flux<Content> getAll() {
-        return contentRepository.findAll().doOnNext(content -> content.getCruTime().readNow());
-    }
-
-    @GetMapping(value = CONTENT_STREAM, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<Content> getAllStream() {
-        return contentRepository.findAll().doOnNext(content -> content.getCruTime().readNow());
+        return super.getAll();
     }
 
     @PostMapping(value = CONTENT)
     public Mono<ResponseEntity<Content>> post(@Valid @RequestBody Content content) {
-        content.setCruTime(CRUZonedTime.now());
-        return contentRepository.save(content).map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return super.post(content);
     }
 
     @PutMapping(value = CONTENT)
     public Mono<ResponseEntity<Content>> put(@Valid @RequestBody Content content) {
-        content.getCruTime().updatedNow();
-        return contentRepository.save(content).map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return super.put(content);
     }
 
     @GetMapping(value = CONTENT__ID__)
     public Mono<ResponseEntity<Content>> getById(@PathVariable(value = ID) String id) {
-        return contentRepository.findById(UUID.fromString(id)).doOnNext(content -> content.getCruTime().readNow())
-                .map(ResponseEntity::ok).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return super.getById(id);
     }
 
     // If File Server is separated, we can use FILES_DELETES end point instead of FileStorage.deleteAll

@@ -17,12 +17,9 @@ public class ReplyReputationRepositoryTest extends
         BaseRepositoryTest<ReplyReputation, UUID, ReplyReputationRepository> {
 
     @Test
-    public void saveNewCounter() {
-        ReplyReputation rr = ReplyReputation.of(UUID.randomUUID());
-        registerToBeDeleted(rr);
-
-        Mono<ReplyReputation> saveThenFind = repo.save(rr).then(repo.findById(rr.getId()));
-        StepVerifier.create(saveThenFind).expectNext(rr).verifyComplete();
+    public void crud() {
+        save(ReplyReputation.of(UUID.randomUUID()), ReplyReputation::getId);
+        save(ReplyReputation.of(UUID.randomUUID(), 1, 2, 3, 4), ReplyReputation::getId);
     }
 
     @Test

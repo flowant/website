@@ -15,14 +15,14 @@ public interface ReplyReputationRepository extends ReactiveCrudRepository<ReplyR
             "reputed = reputed + ?4 WHERE id = ?0";
 
     @Query(UPDATE_COUTERS)
-    Mono<ReplyReputation> accumulate(UUID id, long liked, long disliked, long reported,long reputed);
+    Mono<Object> accumulate(UUID id, long liked, long disliked, long reported,long reputed);
 
-    default Mono<ReplyReputation> accumulate(ReplyReputation rr) {
+    default Mono<Void> accumulate(ReplyReputation rr) {
         return accumulate(rr.getId(), rr.getLiked(), rr.getDisliked(),
-                rr.getReported(), rr.getReputed());
+                rr.getReported(), rr.getReputed()).then();
     };
 
     default Mono<ReplyReputation> save(ReplyReputation rr) {
-        return accumulate(rr);
+        return accumulate(rr).then(findById(rr.getId()));
     };
 }

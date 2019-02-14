@@ -17,12 +17,9 @@ public class ContentReputationRepositoryTest extends
         BaseRepositoryTest<ContentReputation, UUID, ContentReputationRepository> {
 
     @Test
-    public void saveNewCounter() {
-        ContentReputation cr = ContentReputation.of(UUID.randomUUID());
-        registerToBeDeleted(cr);
-
-        Mono<ContentReputation> saveThenFind = repo.save(cr).then(repo.findById(cr.getId()));
-        StepVerifier.create(saveThenFind).expectNext(cr).verifyComplete();
+    public void crud() {
+        save(ContentReputation.of(UUID.randomUUID()), ContentReputation::getId);
+        save(ContentReputation.of(UUID.randomUUID(), 1, 2, 3, 4, 5, 6), ContentReputation::getId);
     }
 
     @Test

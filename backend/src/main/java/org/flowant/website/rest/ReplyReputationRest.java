@@ -2,8 +2,8 @@ package org.flowant.website.rest;
 
 import javax.validation.Valid;
 
-import org.flowant.website.model.User;
-import org.flowant.website.repository.BackendUserRepository;
+import org.flowant.website.model.ReplyReputation;
+import org.flowant.website.repository.BackendReplyReputationRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,32 +17,34 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class UserRest extends BaseRepositoryRest<User, BackendUserRepository> {
-    final static String ID = "id";
-    final static String USER = "/user";
-    final static String USER__ID__ = "/user/{id}";
+public class ReplyReputationRest extends
+        BaseCounterRepositoryRest<ReplyReputation, BackendReplyReputationRepository> {
 
-    @GetMapping(value = USER)
-    public Flux<User> getAll() {
+    final static String ID = "id";
+    final static String REPLY_REPUTATION = "/reply_reputation";
+    final static String REPLY_REPUTATION__ID__ = REPLY_REPUTATION + "/{id}";
+
+    @GetMapping(value = REPLY_REPUTATION)
+    public Flux<ReplyReputation> getAll() {
         return super.getAll();
     }
 
-    @PostMapping(value = USER)
-    public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
+    @PostMapping(value = REPLY_REPUTATION)
+    public Mono<ResponseEntity<ReplyReputation>> post(@Valid @RequestBody ReplyReputation user) {
         return super.post(user);
     }
 
-    @PutMapping(value = USER)
-    public Mono<ResponseEntity<User>> put(@Valid @RequestBody User user) {
+    @PutMapping(value = REPLY_REPUTATION)
+    public Mono<ResponseEntity<ReplyReputation>> put(@Valid @RequestBody ReplyReputation user) {
         return super.put(user);
     }
 
-    @GetMapping(value = USER__ID__)
-    public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
+    @GetMapping(value = REPLY_REPUTATION__ID__)
+    public Mono<ResponseEntity<ReplyReputation>> getById(@PathVariable(value = ID) String id) {
         return super.getById(id);
     }
 
-    @DeleteMapping(value = USER__ID__)
+    @DeleteMapping(value = REPLY_REPUTATION__ID__)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         return super.deleteById(id);
     }

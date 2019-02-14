@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Reply {
+public class Reply implements HasCruTime {
     @Id @NonNull
     UUID id;
     @NonNull @Indexed

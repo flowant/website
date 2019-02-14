@@ -21,6 +21,10 @@ public class AssertUtil {
 
     @SuppressWarnings("unchecked")
     public static <T> T assertEquals(T expected, T actual) {
+        Assert.assertNotNull(expected);
+        Assert.assertNotNull(actual);
+        Assert.assertEquals(expected.getClass(), actual.getClass());
+
         Method[] methods = expected.getClass().getDeclaredMethods();
 
         for (Method method : methods) {

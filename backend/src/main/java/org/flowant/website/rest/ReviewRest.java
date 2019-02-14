@@ -2,8 +2,8 @@ package org.flowant.website.rest;
 
 import javax.validation.Valid;
 
-import org.flowant.website.model.User;
-import org.flowant.website.repository.BackendUserRepository;
+import org.flowant.website.model.Review;
+import org.flowant.website.repository.BackendReviewRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,33 +17,34 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class UserRest extends BaseRepositoryRest<User, BackendUserRepository> {
+public class ReviewRest extends BaseRepositoryRest<Review, BackendReviewRepository> {
     final static String ID = "id";
-    final static String USER = "/user";
-    final static String USER__ID__ = "/user/{id}";
+    final static String REVIEW = "/review";
+    final static String REVIEW__ID__ = REVIEW + "/{id}";
 
-    @GetMapping(value = USER)
-    public Flux<User> getAll() {
+    @GetMapping(value = REVIEW)
+    public Flux<Review> getAll() {
         return super.getAll();
     }
 
-    @PostMapping(value = USER)
-    public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
-        return super.post(user);
+    @PostMapping(value = REVIEW)
+    public Mono<ResponseEntity<Review>> post(@Valid @RequestBody Review review) {
+        return super.post(review);
     }
 
-    @PutMapping(value = USER)
-    public Mono<ResponseEntity<User>> put(@Valid @RequestBody User user) {
-        return super.put(user);
+    @PutMapping(value = REVIEW)
+    public Mono<ResponseEntity<Review>> put(@Valid @RequestBody Review review) {
+        return super.put(review);
     }
 
-    @GetMapping(value = USER__ID__)
-    public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
+    @GetMapping(value = REVIEW__ID__)
+    public Mono<ResponseEntity<Review>> getById(@PathVariable(value = ID) String id) {
         return super.getById(id);
     }
 
-    @DeleteMapping(value = USER__ID__)
+    @DeleteMapping(value = REVIEW__ID__)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         return super.deleteById(id);
     }
+
 }

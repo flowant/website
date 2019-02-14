@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.flowant.website.model.ReviewReputation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import junitparams.JUnitParamsRunner;
@@ -17,16 +16,10 @@ import reactor.test.StepVerifier;
 public class ReviewReputationRepositoryTest extends
         BaseRepositoryTest<ReviewReputation, UUID, ReviewReputationRepository> {
 
-    @Autowired
-    ReviewRepository reviewRepo;
-
     @Test
-    public void saveNewCounter() {
-        ReviewReputation rr = ReviewReputation.of(UUID.randomUUID());
-        registerToBeDeleted(rr);
-
-        Mono<ReviewReputation> saveThenFind = repo.save(rr).then(repo.findById(rr.getId()));
-        StepVerifier.create(saveThenFind).expectNext(rr).verifyComplete();
+    public void crud() {
+        save(ReviewReputation.of(UUID.randomUUID()), ReviewReputation::getId);
+        save(ReviewReputation.of(UUID.randomUUID(), 1, 2, 3, 4), ReviewReputation::getId);
     }
 
     @Test

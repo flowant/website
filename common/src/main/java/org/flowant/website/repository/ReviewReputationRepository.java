@@ -15,15 +15,16 @@ public interface ReviewReputationRepository extends ReactiveCrudRepository<Revie
             "reputed = reputed + ?4 WHERE id = ?0";
 
     @Query(UPDATE_COUTERS)
-    Mono<ReviewReputation> accumulate(UUID id, long liked, long disliked, long reported,long reputed);
+    Mono<Object> accumulate(UUID id, long liked, long disliked, long reported,long reputed);
 
-    default Mono<ReviewReputation> accumulate(ReviewReputation rr) {
+    default Mono<Void> accumulate(ReviewReputation rr) {
         return accumulate(rr.getId(), rr.getLiked(), rr.getDisliked(),
-                rr.getReported(), rr.getReputed());
+                rr.getReported(), rr.getReputed()).then();
     };
 
+    @Override
     default Mono<ReviewReputation> save(ReviewReputation rr) {
-        return accumulate(rr);
+        return accumulate(rr).then(findById(rr.getId()));
     };
 
     @Query("SELECT WRITETIME (reputed) from reviewreputation WHERE id = ?0")
