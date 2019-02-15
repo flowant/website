@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface HasId {
     UUID getId();
-    void setId(UUID id);
+    HasId setId(UUID id);
 }

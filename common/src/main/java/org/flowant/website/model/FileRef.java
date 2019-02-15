@@ -10,14 +10,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Builder
 @Data
+@Accessors(chain=true)
 @AllArgsConstructor
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @UserDefinedType
-public class FileRef {
+public class FileRef implements HasId {
     @NonNull
     UUID id; // to be used key in case of using external storage
     @NonNull
@@ -29,9 +31,4 @@ public class FileRef {
     long length; //TODO should be filled before being inserted to DB
     @NonNull
     CRUZonedTime cruTime;
-
-    public FileRef setLength(long length) {
-        this.length = length;
-        return this;
-    }
 }

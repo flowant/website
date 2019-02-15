@@ -14,9 +14,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Builder
 @Data
+@Accessors(chain=true)
 @AllArgsConstructor
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor

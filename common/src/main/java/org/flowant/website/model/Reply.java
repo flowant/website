@@ -12,14 +12,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Builder
 @Data
+@Accessors(chain=true)
 @AllArgsConstructor
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Reply implements HasCruTime {
+public class Reply implements HasId, HasCruTime {
     @Id @NonNull
     UUID id;
     @NonNull @Indexed

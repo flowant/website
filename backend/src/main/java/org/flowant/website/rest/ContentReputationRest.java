@@ -20,9 +20,9 @@ import reactor.core.publisher.Mono;
 public class ContentReputationRest extends
         BaseCounterRepositoryRest<ContentReputation, BackendContentReputationRepository> {
 
-    final static String ID = "id";
-    final static String CONTENT_REPUTATION = "/content_reputation";
-    final static String CONTENT_REPUTATION__ID__ = CONTENT_REPUTATION + "/{id}";
+    public final static String ID = "id";
+    public final static String CONTENT_REPUTATION = "/content_reputation";
+    public final static String CONTENT_REPUTATION__ID__ = CONTENT_REPUTATION + "/{id}";
 
     @GetMapping(value = CONTENT_REPUTATION)
     public Flux<ContentReputation> getAll() {

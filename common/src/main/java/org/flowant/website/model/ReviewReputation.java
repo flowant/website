@@ -14,14 +14,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Builder
 @Data
+@Accessors(chain=true)
 @AllArgsConstructor(staticName="of")
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class ReviewReputation {
+public class ReviewReputation implements HasId {
     @Id @NonNull
     UUID id;
     @CassandraType(type=Name.COUNTER)

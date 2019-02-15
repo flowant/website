@@ -18,9 +18,9 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class ReviewRest extends BaseRepositoryRest<Review, BackendReviewRepository> {
-    final static String ID = "id";
-    final static String REVIEW = "/review";
-    final static String REVIEW__ID__ = REVIEW + "/{id}";
+    public final static String ID = "id";
+    public final static String REVIEW = "/review";
+    public final static String REVIEW__ID__ = REVIEW + "/{id}";
 
     @GetMapping(value = REVIEW)
     public Flux<Review> getAll() {

@@ -18,9 +18,9 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class ReplyRest extends BaseRepositoryRest<Reply, BackendReplyRepository> {
-    final static String ID = "id";
-    final static String REPLY = "/reply";
-    final static String REPLY__ID__ = REPLY + "/{id}";
+    public final static String ID = "id";
+    public final static String REPLY = "/reply";
+    public final static String REPLY__ID__ = REPLY + "/{id}";
 
     @GetMapping(value = REPLY)
     public Flux<Reply> getAll() {

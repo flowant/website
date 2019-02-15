@@ -20,9 +20,9 @@ import reactor.core.publisher.Mono;
 public class ReviewReputationRest extends
         BaseCounterRepositoryRest<ReviewReputation, BackendReviewReputationRepository> {
 
-    final static String ID = "id";
-    final static String REVIEW_REPUTATION = "/review_reputation";
-    final static String REVIEW_REPUTATION__ID__ = REVIEW_REPUTATION + "/{id}";
+    public final static String ID = "id";
+    public final static String REVIEW_REPUTATION = "/review_reputation";
+    public final static String REVIEW_REPUTATION__ID__ = REVIEW_REPUTATION + "/{id}";
 
     @GetMapping(value = REVIEW_REPUTATION)
     public Flux<ReviewReputation> getAll() {
