@@ -5,6 +5,8 @@ import java.util.UUID;
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.FileRef;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 public class FileMaker {
 
     static UUID id;
@@ -18,7 +20,7 @@ public class FileMaker {
     }
 
     public static FileRef largeRandom() {
-        return large(UUID.randomUUID());
+        return large(UUIDs.timeBased());
     }
 
 }

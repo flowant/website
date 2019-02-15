@@ -18,4 +18,5 @@ public class ContentRepositoryTest extends BaseRepositoryTest<Content, UUID, Con
     public void crud() {
         testCrud(Content::getId, ContentMaker::smallRandom, ContentMaker::largeRandom);
     }
+
 }

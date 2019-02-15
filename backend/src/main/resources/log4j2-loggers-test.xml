@@ -5,6 +5,6 @@
     <AppenderRef ref="Console" />
   </AsyncRoot>
   <AsyncLogger name="org.flowant" level="trace" />
-  <AsyncLogger name="org.springframework.web" level="trace" />
+  <AsyncLogger name="org.springframework.web" level="debug" />
   <AsyncLogger name="org.springframework.security" level="debug" />
 </Loggers>

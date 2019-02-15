@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
@@ -24,7 +26,7 @@ public class UserRestTest extends BaseRestWithRepositoryTest<User, UUID, Backend
                 UserMaker::smallRandom, UserMaker::largeRandom,
                 (User user) -> {
                     user.setFirstname("newFirstname");
-                    user.setFollowers(List.of(UUID.randomUUID(), UUID.randomUUID()));
+                    user.setFollowers(List.of(UUIDs.timeBased(), UUIDs.timeBased()));
                     return user;}
                 );
     }

@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 import junitparams.JUnitParamsRunner;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -18,13 +20,13 @@ public class ContentReputationRepositoryTest extends
 
     @Test
     public void crud() {
-        save(ContentReputation.of(UUID.randomUUID()), ContentReputation::getId);
-        save(ContentReputation.of(UUID.randomUUID(), 1, 2, 3, 4, 5, 6), ContentReputation::getId);
+        save(ContentReputation.of(UUIDs.timeBased()), ContentReputation::getId);
+        save(ContentReputation.of(UUIDs.timeBased(), 1, 2, 3, 4, 5, 6), ContentReputation::getId);
     }
 
     @Test
     public void accumulateCounter() {
-        ContentReputation cr = ContentReputation.of(UUID.randomUUID());
+        ContentReputation cr = ContentReputation.of(UUIDs.timeBased());
         registerToBeDeleted(cr);
         ContentReputation acc = ContentReputation.of(cr.getId(), 1, 2, 3, 4, 5, 6);
         registerToBeDeleted(acc);

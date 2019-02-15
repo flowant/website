@@ -17,31 +17,31 @@ public class LoggingEventListener extends AbstractCassandraEventListener<Object>
 
     @Override
     public void onBeforeSave(BeforeSaveEvent<Object> event) {
-        log.debug("onBeforeSave: {}, {}", event::getSource, event::getStatement);
+        log.trace("onBeforeSave: {}, {}", event::getSource, event::getStatement);
     }
 
     @Override
     public void onAfterSave(AfterSaveEvent<Object> event) {
-        log.debug("onAfterSave: {}", event.getSource());
+        log.trace("onAfterSave: {}", event.getSource());
     }
 
     @Override
     public void onBeforeDelete(BeforeDeleteEvent<Object> event) {
-        log.debug("onBeforeDelete: {}", event.getSource());
+        log.trace("onBeforeDelete: {}", event.getSource());
     }
 
     @Override
     public void onAfterDelete(AfterDeleteEvent<Object> event) {
-        log.debug("onAfterDelete: {}", event.getSource());
+        log.trace("onAfterDelete: {}", event.getSource());
     }
 
     @Override
     public void onAfterLoad(AfterLoadEvent<Object> event) {
-        log.debug("onAfterLoad: {}", event.getSource());
+        log.trace("onAfterLoad: {}", event.getSource());
     }
 
     @Override
     public void onAfterConvert(AfterConvertEvent<Object> event) {
-        log.debug("onAfterConvert: {}", event.getSource());
+        log.trace("onAfterConvert: {}", event.getSource());
     }
 }

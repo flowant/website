@@ -22,6 +22,8 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -50,7 +52,7 @@ public class FileStorage {
 
     public static Flux<FileRef> saveAll(Flux<FilePart> files) {
         return files.flatMap(partFile -> {
-            UUID id = UUID.randomUUID();
+            UUID id = UUIDs.timeBased();
             FileRef fileRef = FileRef.builder()
                     .id(id).cruTime(CRUZonedTime.now())
                     .contentType(partFile.headers().getContentType().toString())

@@ -5,10 +5,12 @@ import java.util.UUID;
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.Reply;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 public class ReplyMaker {
 
-    static UUID containerId = UUID.randomUUID();
-    static UUID replierId = UUID.randomUUID();
+    static UUID containerId = UUIDs.timeBased();
+    static UUID replierId = UUIDs.timeBased();
     static String replierName = "replierName";
     static String comment = "comment";
 
@@ -17,7 +19,7 @@ public class ReplyMaker {
     }
 
     public static Reply smallRandom() {
-        return small(UUID.randomUUID());
+        return small(UUIDs.timeBased());
     }
 
     public static Reply large(UUID id) {
@@ -27,7 +29,7 @@ public class ReplyMaker {
     }
 
     public static Reply largeRandom() {
-        return large(UUID.randomUUID());
+        return large(UUIDs.timeBased());
     }
 
 }

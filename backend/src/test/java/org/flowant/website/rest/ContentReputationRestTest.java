@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
@@ -19,7 +21,7 @@ public class ContentReputationRestTest extends BaseRestWithRepositoryTest<Conten
     @Test
     public void testCrud() {
         super.testCrud(ContentReputationRest.CONTENT_REPUTATION, ContentReputation.class, ContentReputation::getId,
-                () -> ContentReputation.of(UUID.randomUUID()), () -> ContentReputation.of(UUID.randomUUID(), 1, 2, 3, 4, 5, 6),
+                () -> ContentReputation.of(UUIDs.timeBased()), () -> ContentReputation.of(UUIDs.timeBased(), 1, 2, 3, 4, 5, 6),
                 (ContentReputation cr) -> {
                     cr.setLiked(1);
                     return cr;

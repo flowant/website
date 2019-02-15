@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
@@ -130,4 +131,12 @@ public class BaseIntegrationTest extends BaseRestTest {
                 .exchange()
                 .expectStatus().isOk();
     }
+
+    public Consumer<Content> postContent = c -> post(c, Content.class);
+    public Consumer<ContentReputation> postContentReputation = cr -> post(cr, ContentReputation.class);
+    public Consumer<User> postUser = u -> post(u, User.class);
+    public Consumer<Review> postReview = rv -> post(rv, Review.class);
+    public Consumer<ReviewReputation> postReviewReputation = rvr -> post(rvr, ReviewReputation.class);
+    public Consumer<Reply> postReply = rp -> post(rp, Reply.class);
+    public Consumer<ReplyReputation> postReplyReputation = rpr -> post(rpr, ReplyReputation.class);
 }

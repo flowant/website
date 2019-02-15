@@ -5,7 +5,6 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -24,6 +23,8 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
+
+import com.datastax.driver.core.utils.UUIDs;
 
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
@@ -110,7 +111,7 @@ public class BaseRestWithRepositoryTest <Entity, ID, Repository extends Reactive
     }
 
     public void testGetNotExist() {
-        webTestClient.get().uri(baseUrl + __ID__, UUID.randomUUID())
+        webTestClient.get().uri(baseUrl + __ID__, UUIDs.timeBased())
                 .exchange()
                 .expectStatus().isNotFound().expectBody().consumeWith(log::trace);
     }

@@ -31,6 +31,8 @@ public class Review implements HasId, HasCruTime {
     UUID reviewerId;
     @NonNull
     String reviewerName;
+    @NonNull
+    Reputing reputing;
     String comment;
     List<UUID> popularReplyIds;
     @NonNull

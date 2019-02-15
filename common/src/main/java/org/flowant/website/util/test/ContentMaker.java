@@ -8,6 +8,8 @@ import org.flowant.website.model.Content;
 import org.flowant.website.model.Recipe;
 import org.flowant.website.model.Tag;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 public class ContentMaker {
     static String title = "title";
 
@@ -23,7 +25,7 @@ public class ContentMaker {
     static String sentences = "sentences";
     static String content = "content";
 
-    static UUID replierId = UUID.randomUUID();
+    static UUID replierId = UUIDs.timeBased();
     static String replierName = "replierName";
 
     static int rating = 10;
@@ -37,7 +39,7 @@ public class ContentMaker {
     }
 
     public static Content smallRandom() {
-        return small(UUID.randomUUID());
+        return small(UUIDs.timeBased());
     }
 
     public static Content large(UUID id) {
@@ -53,7 +55,7 @@ public class ContentMaker {
     }
 
     public static Content largeRandom() {
-        return large(UUID.randomUUID());
+        return large(UUIDs.timeBased());
     }
 
 }

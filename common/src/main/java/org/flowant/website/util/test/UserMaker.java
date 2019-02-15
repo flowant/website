@@ -11,6 +11,8 @@ import org.flowant.website.model.Tag;
 import org.flowant.website.model.User;
 import org.flowant.website.model.ZonedDate;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 public class UserMaker {
 
     static String username = "username";
@@ -36,7 +38,7 @@ public class UserMaker {
     }
 
     public static User smallRandom() {
-        return small(UUID.randomUUID());
+        return small(UUIDs.timeBased());
     }
 
     public static User large(UUID id) {
@@ -45,14 +47,14 @@ public class UserMaker {
                 .address(PostalAddress.of(address + id, city + id, state + id, country + id,
                         zipCode + id))
                 .birthdate(ZonedDate.now()).firstname(firstname + id).lastname(lastname + id)
-                .phone(Phone.of(82, id.hashCode())).followers(List.of(UUID.randomUUID()))
+                .phone(Phone.of(82, id.hashCode())).followers(List.of(UUIDs.timeBased()))
                 .authorities(List.of(Authority.of("ROLE_USER"), Authority.of("MEMBER")))
-                .followings(List.of(UUID.randomUUID())).interests(List.of(Tag.of(name + id)))
+                .followings(List.of(UUIDs.timeBased())).interests(List.of(Tag.of(name + id)))
                 .cruTime(CRUZonedTime.now()).build();
     }
 
     public static User largeRandom() {
-        return large(UUID.randomUUID());
+        return large(UUIDs.timeBased());
     }
 
 }
