@@ -11,6 +11,8 @@ import org.flowant.website.model.Tag;
 import com.datastax.driver.core.utils.UUIDs;
 
 public class ContentMaker {
+
+    static UUID containerId = UUIDs.timeBased();
     static String title = "title";
 
     static String ingredients = "ingredients";
@@ -35,7 +37,7 @@ public class ContentMaker {
     static String name = "name";
 
     public static Content small(UUID id) {
-        return Content.of(id, title + id, CRUZonedTime.now());
+        return Content.of(id, containerId, title + id, CRUZonedTime.now());
     }
 
     public static Content smallRandom() {
@@ -44,7 +46,7 @@ public class ContentMaker {
 
     public static Content large(UUID id) {
         int cs = id.hashCode() / 1000000;
-        return Content.builder().id(id).title(title + id)
+        return Content.builder().id(id).containerId(containerId).title(title + id)
                 .extend(new Recipe(List.of(ingredients + id, ingredients + id, ingredients + id),
                         prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))
                 .fileRefs(List.of(FileMaker.largeRandom()))

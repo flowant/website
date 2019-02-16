@@ -21,7 +21,7 @@ public class BaseRepositoryRest <Entity extends HasCruTime, Repository extends R
     public final static String ID = "id";
 
     @Autowired
-    private Repository repo;
+    protected Repository repo;
 
     public Flux<Entity> getAll() {
         return repo.findAll().doOnNext(entity -> entity.getCruTime().readNow());

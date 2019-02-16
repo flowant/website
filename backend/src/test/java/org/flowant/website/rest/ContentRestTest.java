@@ -12,8 +12,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 import junitparams.JUnitParamsRunner;
 import lombok.extern.log4j.Log4j2;
+import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 @RunWith(JUnitParamsRunner.class)
@@ -46,5 +49,24 @@ public class ContentRestTest extends BaseRestWithRepositoryTest<Content, UUID, B
                     content.getFileRefs().forEach(fileRef -> Assert.assertFalse(FileStorage.exist(fileRef.getId())));
                     StepVerifier.create(repo.findById(content.getId())).expectNextCount(0).verifyComplete();
                 });
+    }
+
+    @Test
+    public void getPagination() {
+        UUID containerId = UUIDs.timeBased();
+        Flux<Content> contents = Flux.range(1, 10).map(i -> ContentMaker.smallRandom()
+                .setContainerId(containerId)).cache();
+        repo.saveAll(contents).blockLast();
+        registerToBeDeleted(contents);
+
+        webTestClient.get().uri(uriBuilder -> uriBuilder.path(ContentRest.CONTENT)
+                .queryParam("cid", containerId.toString()).queryParam("page", "0")
+                .queryParam("size", "3").build())
+                .exchange()
+                .expectStatus().isOk().expectBodyList(Content.class).consumeWith(r -> {
+                    log.trace(r.getResponseHeaders()::toString);
+                    r.getResponseBody().forEach(log::trace);
+                });
+        //TODO check link header and get all data
     }
 }
