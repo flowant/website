@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.http.MediaType;
@@ -35,6 +37,7 @@ public class BaseRestWithRepositoryTest <Entity, ID, Repository extends Reactive
     extends DeleteAfterTest <Entity, ID, Repository> {
 
     public final static String __ID__ = "/{id}";
+    public final static String SCHEME = "http";
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
@@ -46,6 +49,12 @@ public class BaseRestWithRepositoryTest <Entity, ID, Repository extends Reactive
     ApplicationContext context;
 
     WebTestClient webTestClient;
+
+    @Value("${server.address}")
+    protected String host;
+
+    @LocalServerPort
+    protected int port;
 
     String baseUrl;
     Class<Entity> entityClass;

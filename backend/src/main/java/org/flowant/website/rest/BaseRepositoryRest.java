@@ -19,6 +19,10 @@ import reactor.core.publisher.Mono;
 public class BaseRepositoryRest <Entity extends HasCruTime, Repository extends ReactiveCrudRepository<Entity, UUID>> {
 
     public final static String ID = "id";
+    public final static String PAGE = "page";
+    public final static String SIZE = "size";
+    public final static String CID = "cid"; // ContainerId
+    public final static String PS = "ps"; // pagingState
 
     @Autowired
     protected Repository repo;

@@ -25,8 +25,6 @@ import org.flowant.website.rest.ReviewRest;
 import org.flowant.website.rest.UserRest;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -38,13 +36,7 @@ import reactor.core.publisher.Mono;
 
 @Log4j2
 public class BaseIntegrationTest extends BaseRestTest {
-    public final static String __ID__ = "/{id}";
-
-    @Value("${server.address}")
-    private String address;
-
-    @LocalServerPort
-    private int port;
+    public final static String __ID__ = "{id}";
 
     @Data
     @RequiredArgsConstructor(staticName="of")
@@ -62,14 +54,16 @@ public class BaseIntegrationTest extends BaseRestTest {
     public void before() {
         super.before();
 
-        address = "http://" + address + ":";
-        apiInfo.put(User.class.getSimpleName(), ApiInfo.of(address + port + UserRest.USER, User.class));
-        apiInfo.put(Content.class.getSimpleName(), ApiInfo.of(address + port + ContentRest.CONTENT, Content.class));
-        apiInfo.put(Review.class.getSimpleName(), ApiInfo.of(address + port + ReviewRest.REVIEW, Review.class));
-        apiInfo.put(Reply.class.getSimpleName(), ApiInfo.of(address + port + ReplyRest.REPLY, Reply.class));
-        apiInfo.put(ContentReputation.class.getSimpleName(), ApiInfo.of(address + port + ContentReputationRest.CONTENT_REPUTATION, ContentReputation.class));
-        apiInfo.put(ReviewReputation.class.getSimpleName(), ApiInfo.of(address + port + ReviewReputationRest.REVIEW_REPUTATION, ReviewReputation.class));
-        apiInfo.put(ReplyReputation.class.getSimpleName(), ApiInfo.of(address + port + ReplyReputationRest.REPLY_REPUTATION, ReplyReputation.class));
+        apiInfo.put(User.class.getSimpleName(), ApiInfo.of(UserRest.USER, User.class));
+        apiInfo.put(Content.class.getSimpleName(), ApiInfo.of(ContentRest.CONTENT, Content.class));
+        apiInfo.put(Review.class.getSimpleName(), ApiInfo.of(ReviewRest.REVIEW, Review.class));
+        apiInfo.put(Reply.class.getSimpleName(), ApiInfo.of(ReplyRest.REPLY, Reply.class));
+        apiInfo.put(ContentReputation.class.getSimpleName(), ApiInfo.of(
+                ContentReputationRest.CONTENT_REPUTATION, ContentReputation.class));
+        apiInfo.put(ReviewReputation.class.getSimpleName(), ApiInfo.of(
+                ReviewReputationRest.REVIEW_REPUTATION, ReviewReputation.class));
+        apiInfo.put(ReplyReputation.class.getSimpleName(), ApiInfo.of(
+                ReplyReputationRest.REPLY_REPUTATION, ReplyReputation.class));
     }
 
     @After
@@ -84,7 +78,9 @@ public class BaseIntegrationTest extends BaseRestTest {
         ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
         info.getDeleteAfterTest().add(data);
 
-        T resp = WebClient.create().post().uri(info.getUrl()).contentType(MediaType.APPLICATION_JSON_UTF8)
+        T resp = WebClient.create().post().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
+                .host(host).port(port).path(info.getUrl()).build())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(data), cls)
                 .exchange().block().bodyToMono(cls).block();
         log.trace("post:{}, return:{}", data, resp);
@@ -96,7 +92,9 @@ public class BaseIntegrationTest extends BaseRestTest {
         ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
         info.getDeleteAfterTest().add(data);
 
-        T resp = WebClient.create().put().uri(info.getUrl()).contentType(MediaType.APPLICATION_JSON_UTF8)
+        T resp = WebClient.create().put().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
+                .host(host).port(port).path(info.getUrl()).build())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(data), cls)
                 .exchange().block().bodyToMono(cls).block();
         log.trace("put:{}, return:{}", data, resp);
@@ -111,7 +109,8 @@ public class BaseIntegrationTest extends BaseRestTest {
         String classSimpleName = cls.getSimpleName();
         ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
 
-        T resp = WebClient.create().get().uri(info.getUrl() + __ID__, id)
+        T resp = WebClient.create().get().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
+                .host(host).port(port).path(info.getUrl()).pathSegment(__ID__).build(id))
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .exchange().block().bodyToMono(cls).block();
         log.trace("getById:{}, return:{}", id, resp);
@@ -127,7 +126,8 @@ public class BaseIntegrationTest extends BaseRestTest {
         ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
 
         log.trace("deleteById:{}", id);
-        webTestClient.delete().uri(info.getUrl() + __ID__, id)
+        webTestClient.delete().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
+                .host(host).port(port).path(info.getUrl()).pathSegment(__ID__).build(id))
                 .exchange()
                 .expectStatus().isOk();
     }
