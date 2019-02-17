@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.ReviewReputation;
 import org.flowant.website.repository.BackendReviewReputationRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,14 +19,21 @@ import junitparams.JUnitParamsRunner;
                 classes=BackendApplication.class)
 public class ReviewReputationRestTest extends BaseRestWithRepositoryTest<ReviewReputation, UUID, BackendReviewReputationRepository> {
 
-    @Test
-    public void testCrud() {
-        super.testCrud(ReviewReputationRest.REVIEW_REPUTATION, ReviewReputation.class, ReviewReputation::getId,
+    @Before
+    public void before() {
+        super.before();
+
+        setTestParams(ReviewReputationRest.REVIEW_REPUTATION, ReviewReputation.class, ReviewReputation::getId,
                 () -> ReviewReputation.of(UUIDs.timeBased()), () -> ReviewReputation.of(UUIDs.timeBased(), 1, 2, 3, 4),
                 (ReviewReputation cr) -> {
                     cr.setLiked(1);
                     return cr;
                 });
+    }
+
+    @Test
+    public void testCrud() {
+        super.testCrud();
     }
 
 }

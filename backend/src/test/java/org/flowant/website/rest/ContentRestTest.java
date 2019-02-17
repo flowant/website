@@ -1,11 +1,7 @@
 package org.flowant.website.rest;
 
-import static org.flowant.website.rest.BaseRepositoryRest.CID;
-import static org.flowant.website.rest.BaseRepositoryRest.PAGE;
-import static org.flowant.website.rest.BaseRepositoryRest.SIZE;
-
-import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.Content;
@@ -13,17 +9,13 @@ import org.flowant.website.repository.BackendContentRepository;
 import org.flowant.website.storage.FileStorage;
 import org.flowant.website.util.test.ContentMaker;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.WebClient;
-
-import com.datastax.driver.core.utils.UUIDs;
 
 import junitparams.JUnitParamsRunner;
 import lombok.extern.log4j.Log4j2;
-import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 @RunWith(JUnitParamsRunner.class)
@@ -32,14 +24,21 @@ import reactor.test.StepVerifier;
 @Log4j2
 public class ContentRestTest extends BaseRestWithRepositoryTest<Content, UUID, BackendContentRepository> {
 
-    @Test
-    public void testCrud() {
-        super.testCrud(ContentRest.CONTENT, Content.class, Content::getId,
+    @Before
+    public void before() {
+        super.before();
+
+        setTestParams(ContentRest.CONTENT, Content.class, Content::getId,
                 ContentMaker::smallRandom, ContentMaker::largeRandom,
                 (Content c) -> {
                     c.setTitle("newTitle");
-                    return c;}
-                );
+                    return c;
+                });
+    }
+
+    @Test
+    public void testCrud() {
+        super.testCrud();
     }
 
     @Test
@@ -59,25 +58,13 @@ public class ContentRestTest extends BaseRestWithRepositoryTest<Content, UUID, B
     }
 
     @Test
-    public void getPagination() {
-        UUID containerId = UUIDs.timeBased();
-        Flux<Content> contents = Flux.range(1, 10).map(i -> ContentMaker.smallRandom()
-                .setContainerId(containerId)).cache();
-        repo.saveAll(contents).blockLast();
-        registerToBeDeleted(contents);
-
-        ClientResponse resp = WebClient.create().get().uri(uriBuilder ->
-            uriBuilder.scheme(SCHEME).host(host).port(port)
-                .path(ContentRest.CONTENT)
-                .queryParam(CID, containerId.toString()).queryParam(PAGE, "0")
-                .queryParam(SIZE, "3").build())
-                .exchange().block();
-
-        Optional<String> nextUrl = LinkUtil.getNextUrl(resp.headers().asHttpHeaders());
-        log.trace("nextUrl:{}", nextUrl);
-
-        resp.bodyToFlux(Content.class).subscribe(log::trace);
-        //TODO check link header and get all data
+    public void testPagination() {
+        Function<UUID, Content> supplier = (containerId) ->
+                ContentMaker.largeRandom().setContainerId(containerId);
+        pagination(10, 1, supplier);
+        pagination(10, 3, supplier);
+        pagination(10, 5, supplier);
+        pagination(10, 11, supplier);
     }
 
     @Test

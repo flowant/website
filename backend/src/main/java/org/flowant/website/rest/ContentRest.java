@@ -1,8 +1,5 @@
 package org.flowant.website.rest;
 
-import static org.flowant.website.rest.LinkUtil.nextLinkHeader;
-import static org.flowant.website.rest.LinkUtil.pageable;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +9,6 @@ import org.flowant.website.model.Content;
 import org.flowant.website.repository.BackendContentRepository;
 import org.flowant.website.storage.FileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ContentRest extends BaseRepositoryRest<Content, BackendContentRepository> {
+public class ContentRest extends PageableRepositoryRest<Content, BackendContentRepository> {
     public final static String ID = "id";
     public final static String CONTENT = "/content";
     public final static String CONTENT__ID__ = "/content/{id}";
@@ -41,11 +37,7 @@ public class ContentRest extends BaseRepositoryRest<Content, BackendContentRepos
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
-        return repo.findAllByContainerId(UUID.fromString(containerId), pageable(page, size, pagingState))
-                .map(slice -> ResponseEntity.ok()
-                        .headers(nextLinkHeader(containerId, uriBuilder.path(CONTENT), slice))
-                        .body(slice.getContent()))
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilder.path(CONTENT));
     }
 
     @PostMapping(value = CONTENT)

@@ -7,6 +7,7 @@ import org.flowant.website.BackendApplication;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.BackendUserRepository;
 import org.flowant.website.util.test.UserMaker;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,15 +21,22 @@ import junitparams.JUnitParamsRunner;
                 classes=BackendApplication.class)
 public class UserRestTest extends BaseRestWithRepositoryTest<User, UUID, BackendUserRepository> {
 
-    @Test
-    public void testCrud() {
-        super.testCrud(UserRest.USER, User.class, User::getId,
+    @Before
+    public void before() {
+        super.before();
+
+        setTestParams(UserRest.USER, User.class, User::getId,
                 UserMaker::smallRandom, UserMaker::largeRandom,
                 (User user) -> {
                     user.setFirstname("newFirstname");
                     user.setFollowers(List.of(UUIDs.timeBased(), UUIDs.timeBased()));
-                    return user;}
-                );
+                    return user;
+                });
+    }
+
+    @Test
+    public void testCrud() {
+        super.testCrud();
     }
 
 }

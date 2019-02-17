@@ -1,5 +1,7 @@
 package org.flowant.website.rest;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.flowant.website.model.Reply;
@@ -11,20 +13,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ReplyRest extends BaseRepositoryRest<Reply, BackendReplyRepository> {
+public class ReplyRest extends PageableRepositoryRest<Reply, BackendReplyRepository> {
     public final static String ID = "id";
     public final static String REPLY = "/reply";
     public final static String REPLY__ID__ = REPLY + "/{id}";
 
     @GetMapping(value = REPLY)
-    public Flux<Reply> getAll() {
-        return super.getAll();
+    public Mono<ResponseEntity<List<Reply>>> getAllByContainerId(@RequestParam(CID) String containerId,
+            @RequestParam(PAGE) int page, @RequestParam(SIZE) int size,
+            @RequestParam(value = PS, required = false) String pagingState,
+            UriComponentsBuilder uriBuilder) {
+
+        return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilder.path(REPLY));
     }
 
     @PostMapping(value = REPLY)

@@ -1,5 +1,7 @@
 package org.flowant.website.rest;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.flowant.website.model.Review;
@@ -11,20 +13,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ReviewRest extends BaseRepositoryRest<Review, BackendReviewRepository> {
+public class ReviewRest extends PageableRepositoryRest<Review, BackendReviewRepository> {
     public final static String ID = "id";
     public final static String REVIEW = "/review";
     public final static String REVIEW__ID__ = REVIEW + "/{id}";
 
     @GetMapping(value = REVIEW)
-    public Flux<Review> getAll() {
-        return super.getAll();
+    public Mono<ResponseEntity<List<Review>>> getAllByContainerId(@RequestParam(CID) String containerId,
+            @RequestParam(PAGE) int page, @RequestParam(SIZE) int size,
+            @RequestParam(value = PS, required = false) String pagingState,
+            UriComponentsBuilder uriBuilder) {
+
+        return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilder.path(REVIEW));
     }
 
     @PostMapping(value = REVIEW)
