@@ -5,6 +5,7 @@ import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
 import static org.flowant.website.rest.PageableRepositoryRest.PS;
 import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ public class LinkUtil {
         return header;
     }
 
-    public static Optional<String> getNextUrl(HttpHeaders headers) {
+    public static Optional<URI> getNextUrl(HttpHeaders headers) {
         List<String> links = headers.get(HttpHeaders.LINK);
         if (links == null) {
             return Optional.empty();
@@ -59,7 +60,7 @@ public class LinkUtil {
         if (optValue.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(parseNextUrl(optValue.get()));
+        return Optional.of(URI.create(parseNextUrl(optValue.get())));
     }
 
     protected static String parseNextUrl(String value) {

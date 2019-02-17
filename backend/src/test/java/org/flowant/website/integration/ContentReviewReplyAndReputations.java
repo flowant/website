@@ -2,6 +2,8 @@ package org.flowant.website.integration;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.UUID;
+
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
@@ -20,6 +22,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.datastax.driver.core.utils.UUIDs;
+
 import junitparams.JUnitParamsRunner;
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
@@ -33,11 +37,14 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
     int cntContents = 3;
     int cntUsers = 3;
     int cntRepliesPerReview = 3;
+    int pageSize = 3;
 
     @Test
     public void ContentAndReputaations() {
         // Post test data
-        Flux<Content> contents = Flux.range(1, cntUsers).map(i -> ContentMaker.largeRandom()).cache();
+        UUID containerId = UUIDs.timeBased();
+
+        Flux<Content> contents = Flux.range(1, cntUsers).map(i -> ContentMaker.largeRandom().setContainerId(containerId)).cache();
         Flux<ContentReputation> contentReputations = contents.map(c -> ReputationMaker.randomContentReputation(c.getId())).cache();
         contents.subscribe(log::trace);
         contentReputations.subscribe(log::trace);
@@ -47,6 +54,9 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         contentReputations.subscribe(postContentReputation);
 
         // Get test data
+        EntitiesAndNextLink<Content> resp = getPageByContainerId(containerId, Content.class, pageSize);
+        log.trace(resp);
+//        resp.getEntities().map(Content::getId)
         // get sorted by reputation
 
     }

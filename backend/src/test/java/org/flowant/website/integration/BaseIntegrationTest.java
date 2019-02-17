@@ -1,9 +1,15 @@
 package org.flowant.website.integration;
 
+import static org.flowant.website.rest.PageableRepositoryRest.CID;
+import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
+import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -18,6 +24,7 @@ import org.flowant.website.model.User;
 import org.flowant.website.rest.BaseRestTest;
 import org.flowant.website.rest.ContentReputationRest;
 import org.flowant.website.rest.ContentRest;
+import org.flowant.website.rest.LinkUtil;
 import org.flowant.website.rest.ReplyReputationRest;
 import org.flowant.website.rest.ReplyRest;
 import org.flowant.website.rest.ReviewReputationRest;
@@ -26,12 +33,16 @@ import org.flowant.website.rest.UserRest;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Log4j2
@@ -115,6 +126,28 @@ public class BaseIntegrationTest extends BaseRestTest {
                 .exchange().block().bodyToMono(cls).block();
         log.trace("getById:{}, return:{}", id, resp);
         return resp;
+    }
+
+    @Data
+    @Accessors(chain=true)
+    @AllArgsConstructor(staticName="of")
+    public static class EntitiesAndNextLink <T> {
+        Flux<T> entities;
+        Optional<URI> next;
+    }
+
+    public <T> EntitiesAndNextLink<T> getPageByContainerId(UUID containerId, Class<T> cls, int pageSize) {
+        String classSimpleName = cls.getSimpleName();
+        ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
+
+        ClientResponse resp = WebClient.create().get().uri(uriBuilder ->
+            uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())
+                .queryParam(CID, containerId.toString()).queryParam(PAGE, "0")
+                .queryParam(SIZE, String.valueOf(pageSize)).build())
+                .exchange().block();
+
+        return EntitiesAndNextLink.of(resp.bodyToFlux(cls),
+                LinkUtil.getNextUrl(resp.headers().asHttpHeaders()));
     }
 
     public <T> void deleteById(UUID id, Class<T> cls) {

@@ -198,14 +198,13 @@ public class BaseRestWithRepositoryTest <Entity, ID, Repository extends Reactive
         registerToBeDeleted(contents);
 
         ClientResponse resp = WebClient.create().get().uri(uriBuilder ->
-            uriBuilder.scheme(SCHEME).host(host).port(port)
-                .path(baseUrl)
+            uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl)
                 .queryParam(CID, containerId.toString()).queryParam(PAGE, "0")
                 .queryParam(SIZE, String.valueOf(pageSize)).build())
                 .exchange().block();
 
         List<Entity> list = new ArrayList<>();
-        Optional<String> nextUrl;
+        Optional<URI> nextUrl;
 
         while(true) {
             list.addAll(resp.bodyToFlux(entityClass).collectList().block());
@@ -214,7 +213,7 @@ public class BaseRestWithRepositoryTest <Entity, ID, Repository extends Reactive
                 break;
             }
             log.trace("nextUrl:{}", nextUrl);
-            resp = WebClient.create().get().uri(URI.create(nextUrl.get())).exchange().block();
+            resp = WebClient.create().get().uri(nextUrl.get()).exchange().block();
         }
         Assert.assertTrue(contents.all(c -> list.contains(c)).block());
     }
