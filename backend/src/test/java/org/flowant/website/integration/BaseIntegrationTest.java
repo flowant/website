@@ -15,26 +15,29 @@ import java.util.function.Consumer;
 
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
-import org.flowant.website.model.HasId;
+import org.flowant.website.model.HasIdentity;
+import org.flowant.website.model.HasMapId;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
 import org.flowant.website.model.User;
-import org.flowant.website.rest.BaseRestTest;
 import org.flowant.website.rest.ContentReputationRest;
 import org.flowant.website.rest.ContentRest;
 import org.flowant.website.rest.LinkUtil;
 import org.flowant.website.rest.ReplyReputationRest;
 import org.flowant.website.rest.ReplyRest;
+import org.flowant.website.rest.RestTest;
 import org.flowant.website.rest.ReviewReputationRest;
 import org.flowant.website.rest.ReviewRest;
 import org.flowant.website.rest.UserRest;
 import org.junit.After;
 import org.junit.Before;
+import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,20 +49,20 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Log4j2
-public class BaseIntegrationTest extends BaseRestTest {
+public class BaseIntegrationTest extends RestTest {
     public final static String __ID__ = "{id}";
 
     @Data
     @RequiredArgsConstructor(staticName="of")
-    static class ApiInfo<T extends HasId> {
+    static class ApiInfo<T extends HasIdentity> {
         @NonNull
         String url;
         @NonNull
         Class<T> cls;
-        List<HasId> deleteAfterTest = new ArrayList<>();
+        List<HasIdentity> deleteAfterTest = new ArrayList<>();
     }
 
-    Map<String, ApiInfo<? extends HasId>> apiInfo = new HashMap<>();
+    Map<String, ApiInfo<? extends HasIdentity>> apiInfo = new HashMap<>();
 
     @Before
     public void before() {
@@ -80,13 +83,19 @@ public class BaseIntegrationTest extends BaseRestTest {
     @After
     public void after() {
         apiInfo.forEach((name, info) -> {
-            info.deleteAfterTest.forEach((HasId data) -> deleteById(data.getId(), info.cls));
+            info.deleteAfterTest.forEach((HasIdentity data) -> {
+                if (data instanceof HasMapId) {
+                    deleteById(HasMapId.class.cast(data).getMapId(), info.cls);
+                } else {
+                    deleteById(data.getIdentity(), info.cls);
+                }
+            });
         });
     }
 
-    public <T extends HasId> T post(T data, Class<T> cls) {
+    public <T extends HasIdentity> T post(T data, Class<T> cls) {
         String classSimpleName = cls.getSimpleName();
-        ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
+        ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
         info.getDeleteAfterTest().add(data);
 
         T resp = WebClient.create().post().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
@@ -98,9 +107,9 @@ public class BaseIntegrationTest extends BaseRestTest {
         return resp;
     }
 
-    public <T extends HasId> T put(T data, Class<T> cls) {
+    public <T extends HasIdentity> T put(T data, Class<T> cls) {
         String classSimpleName = cls.getSimpleName();
-        ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
+        ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
         info.getDeleteAfterTest().add(data);
 
         T resp = WebClient.create().put().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
@@ -112,16 +121,22 @@ public class BaseIntegrationTest extends BaseRestTest {
         return resp;
     }
 
-    public <T> T getById(UUID id, Class<T> cls) {
-        return getById(id.toString(), cls);
+    public <ID> URI getUri(ID id, UriBuilder builder) {
+        builder.pathSegment("{" + HasMapId.IDENTITY + "}");
+        if (id instanceof MapId) {
+            builder.pathSegment("{" + HasMapId.CONTAINER_ID + "}");
+            return builder.build((MapId) id);
+        } else {
+            return builder.build(id);
+        }
     }
 
-    public <T> T getById(String id, Class<T> cls) {
+    public <T, ID> T getById(ID id, Class<T> cls) {
         String classSimpleName = cls.getSimpleName();
-        ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
+        ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
 
-        T resp = WebClient.create().get().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
-                .host(host).port(port).path(info.getUrl()).pathSegment(__ID__).build(id))
+        T resp = WebClient.create().get().uri(uriBuilder -> getUri(id,
+                uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())))
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .exchange().block().bodyToMono(cls).block();
         log.trace("getById:{}, return:{}", id, resp);
@@ -138,7 +153,7 @@ public class BaseIntegrationTest extends BaseRestTest {
 
     public <T> EntitiesAndNextLink<T> getPageByContainerId(UUID containerId, Class<T> cls, int pageSize) {
         String classSimpleName = cls.getSimpleName();
-        ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
+        ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
 
         ClientResponse resp = WebClient.create().get().uri(uriBuilder ->
             uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())
@@ -150,17 +165,13 @@ public class BaseIntegrationTest extends BaseRestTest {
                 LinkUtil.getNextUrl(resp.headers().asHttpHeaders()));
     }
 
-    public <T> void deleteById(UUID id, Class<T> cls) {
-        deleteById(id.toString(), cls);
-    }
-
-    public <T> void deleteById(String id, Class<T> cls) {
+    public <T, ID> void deleteById(ID id, Class<T> cls) {
         String classSimpleName = cls.getSimpleName();
-        ApiInfo<? extends HasId> info = apiInfo.get(classSimpleName);
+        ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
 
         log.trace("deleteById:{}", id);
-        webTestClient.delete().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
-                .host(host).port(port).path(info.getUrl()).pathSegment(__ID__).build(id))
+        webTestClient.delete().uri(uriBuilder -> getUri(id,
+                uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())))
                 .exchange()
                 .expectStatus().isOk();
     }

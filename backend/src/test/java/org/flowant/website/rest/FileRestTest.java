@@ -32,7 +32,7 @@ import reactor.test.StepVerifier;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes=BackendApplication.class)
 @Log4j2
-public class FileRestTest extends BaseRestTest {
+public class FileRestTest extends RestTest {
     @Test
     public void testPostMalformed() {
         ResponseSpec respSpec = webTestClient.post().uri(FileRest.FILES).contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -62,9 +62,9 @@ public class FileRestTest extends BaseRestTest {
             // log.trace(body); // use if Http requests need to be debugged.
             body.getResponseBody().forEach(fileRef -> {
                 log.trace("post files response:{}", fileRef);
-                StepVerifier.create(FileStorage.findById(fileRef.getId()))
+                StepVerifier.create(FileStorage.findById(fileRef.getIdentity()))
                         .expectNextCount(1).verifyComplete();
-                FileStorage.deleteById(fileRef.getId()).subscribe();
+                FileStorage.deleteById(fileRef.getIdentity()).subscribe();
             });
         });
     }
@@ -88,11 +88,11 @@ public class FileRestTest extends BaseRestTest {
         .body(BodyInserters.fromMultipartData(parts)).exchange()
         .expectStatus().isOk().expectBodyList(FileRef.class).hasSize(1).consumeWith(body -> {
             body.getResponseBody().forEach(fileRef -> {
-                webTestClient.get().uri(FileRest.FILES__ID__, fileRef.getId()).exchange()
+                webTestClient.get().uri(FileRest.FILES__ID__, fileRef.getIdentity()).exchange()
                 .expectStatus().isOk()
                 .expectBody().consumeWith( s -> {
                     Assert.assertTrue(0 < s.getResponseBodyContent().length);
-                    FileStorage.deleteById(fileRef.getId()).subscribe();
+                    FileStorage.deleteById(fileRef.getIdentity()).subscribe();
                 });
             });
         });
@@ -117,11 +117,11 @@ public class FileRestTest extends BaseRestTest {
         .body(BodyInserters.fromMultipartData(parts)).exchange()
         .expectStatus().isOk().expectBodyList(FileRef.class).hasSize(1).consumeWith(body -> {
             body.getResponseBody().forEach(fileRef -> {
-                webTestClient.delete().uri(FileRest.FILES__ID__, fileRef.getId()).exchange()
+                webTestClient.delete().uri(FileRest.FILES__ID__, fileRef.getIdentity()).exchange()
                 .expectStatus().isOk()
                 .expectBody().consumeWith(s -> {
                     log.trace(s);
-                    FileStorage.findById(fileRef.getId()).subscribe(res -> Assert.assertFalse(res.exists()));
+                    FileStorage.findById(fileRef.getIdentity()).subscribe(res -> Assert.assertFalse(res.exists()));
                 });
             });
         });

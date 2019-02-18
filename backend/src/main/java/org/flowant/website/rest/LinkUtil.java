@@ -10,29 +10,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.cassandra.core.query.CassandraPageRequest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpHeaders;
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.datastax.driver.core.PagingState;
-
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 public class LinkUtil {
-
-    public static Pageable pageable(int page, int size, @Nullable String pagingState) {
-        log.trace("getAllPaging, page:{}, size:{}, pagingState:{}", page, size, pagingState);
-        PageRequest pageRequest = PageRequest.of(page, size);
-        if (pagingState != null) {
-            pageRequest = CassandraPageRequest.of(pageRequest, PagingState.fromString(pagingState));
-        }
-        return pageRequest;
-    }
 
     public static HttpHeaders nextLinkHeader(String containerId, UriComponentsBuilder uriBuilder, Slice<?> slice) {
         if (slice.hasNext() == false) {

@@ -33,7 +33,7 @@ public class UserMaker {
     static String name = "name";
 
     public static User small(UUID id) {
-        return User.builder().id(id).username(username + id).password(password + id)
+        return User.builder().identity(id).username(username + id).password(password + id)
                 .email(email + id).cruTime(CRUZonedTime.now()).build();
     }
 
@@ -42,7 +42,7 @@ public class UserMaker {
     }
 
     public static User large(UUID id) {
-        return User.builder().id(id).username(username + id).password(password + id)
+        return User.builder().identity(id).username(username + id).password(password + id)
                 .email(email + id)
                 .address(PostalAddress.of(address + id, city + id, state + id, country + id,
                         zipCode + id))

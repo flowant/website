@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.cassandra.core.mapping.MapId;
 
 import junitparams.JUnitParamsRunner;
 import lombok.extern.log4j.Log4j2;
@@ -22,13 +23,13 @@ import reactor.test.StepVerifier;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes=BackendApplication.class)
 @Log4j2
-public class ContentRestTest extends BaseRestWithRepositoryTest<Content, UUID, BackendContentRepository> {
+public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, BackendContentRepository> {
 
     @Before
     public void before() {
         super.before();
 
-        setTestParams(ContentRest.CONTENT, Content.class, Content::getId,
+        setTestParams(ContentRest.CONTENT, Content.class, Content::getMapId,
                 ContentMaker::smallRandom, ContentMaker::largeRandom,
                 (Content c) -> {
                     c.setTitle("newTitle");
@@ -49,11 +50,12 @@ public class ContentRestTest extends BaseRestWithRepositoryTest<Content, UUID, B
         repo.save(content).block();
         registerToBeDeleted(content); // in case of fails
 
-        webTestClient.delete().uri(ContentRest.CONTENT__ID__, content.getId()).exchange()
+        webTestClient.delete().uri(ContentRest.CONTENT_ID_CID, content.getIdentity(), content.getContainerId())
+                .exchange()
                 .expectStatus().isOk().expectBody().consumeWith(r -> {
                     log.trace(r::toString);
-                    content.getFileRefs().forEach(fileRef -> Assert.assertFalse(FileStorage.exist(fileRef.getId())));
-                    StepVerifier.create(repo.findById(content.getId())).expectNextCount(0).verifyComplete();
+                    content.getFileRefs().forEach(fileRef -> Assert.assertFalse(FileStorage.exist(fileRef.getIdentity())));
+                    StepVerifier.create(repo.findById(content.getMapId())).expectNextCount(0).verifyComplete();
                 });
     }
 

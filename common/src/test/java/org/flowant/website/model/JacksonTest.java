@@ -27,6 +27,7 @@ public class JacksonTest {
     public <T> void testWithJson(T t) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+
         String json = objectMapper.writeValueAsString(t);
         log.debug("Json:{}", json);
         Object obj = objectMapper.readValue(json, t.getClass());

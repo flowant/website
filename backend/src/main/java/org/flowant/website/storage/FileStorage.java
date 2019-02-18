@@ -52,14 +52,14 @@ public class FileStorage {
 
     public static Flux<FileRef> saveAll(Flux<FilePart> files) {
         return files.flatMap(partFile -> {
-            UUID id = UUIDs.timeBased();
+            UUID identity = UUIDs.timeBased();
             FileRef fileRef = FileRef.builder()
-                    .id(id).cruTime(CRUZonedTime.now())
+                    .identity(identity).cruTime(CRUZonedTime.now())
                     .contentType(partFile.headers().getContentType().toString())
                     .length(partFile.headers().getContentLength())
-                    .filename(partFile.filename()).uri(FileRest.FILES + SEP_URL + id)
+                    .filename(partFile.filename()).uri(FileRest.FILES + SEP_URL + identity)
                     .build();
-            File file = getPath(id).toFile();
+            File file = getPath(identity).toFile();
             return partFile.transferTo(file).cast(FileRef.class)
                     .concatWith(Mono.just(fileRef.setLength(file.length())));
         });
@@ -96,7 +96,7 @@ public class FileStorage {
     public static Mono<Boolean> deleteAll(List<FileRef> files) {
         taskExecutor.execute(() -> {
             files.forEach(fileRef -> {
-                String id = fileRef.getId().toString();
+                String id = fileRef.getIdentity().toString();
                 if (exist(id)) {
                     try {
                         rmdirs(getPath(id));

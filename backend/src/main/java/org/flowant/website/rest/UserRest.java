@@ -1,5 +1,7 @@
 package org.flowant.website.rest;
 
+import java.util.UUID;
+
 import javax.validation.Valid;
 
 import org.flowant.website.model.User;
@@ -17,7 +19,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class UserRest extends BaseRepositoryRest<User, BackendUserRepository> {
+public class UserRest extends RepositoryRest<User, UUID, BackendUserRepository> {
     public final static String ID = "id";
     public final static String USER = "/user";
     public final static String USER__ID__ = "/user/{id}";
@@ -39,11 +41,11 @@ public class UserRest extends BaseRepositoryRest<User, BackendUserRepository> {
 
     @GetMapping(value = USER__ID__)
     public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
-        return super.getById(id);
+        return super.getById(UUID.fromString(id));
     }
 
     @DeleteMapping(value = USER__ID__)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
-        return super.deleteById(id);
+        return super.deleteById(UUID.fromString(id));
     }
 }

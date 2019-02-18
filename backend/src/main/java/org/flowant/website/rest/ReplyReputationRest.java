@@ -18,11 +18,10 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class ReplyReputationRest extends
-        BaseCounterRepositoryRest<ReplyReputation, BackendReplyReputationRepository> {
+        ReputationRepositoryRest<ReplyReputation, BackendReplyReputationRepository> {
 
-    public final static String ID = "id";
     public final static String REPLY_REPUTATION = "/reply_reputation";
-    public final static String REPLY_REPUTATION__ID__ = REPLY_REPUTATION + "/{id}";
+    public final static String REPLY_REPUTATION__ID__ = REPLY_REPUTATION + PATH_SEG_ID;
 
     @GetMapping(value = REPLY_REPUTATION)
     public Flux<ReplyReputation> getAll() {

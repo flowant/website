@@ -1,5 +1,6 @@
 package org.flowant.website.repository;
 
+import java.util.Comparator;
 import java.util.UUID;
 
 import org.flowant.website.model.Reply;
@@ -7,6 +8,7 @@ import org.flowant.website.util.test.ReplyMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.cassandra.core.mapping.MapId;
 
 import com.datastax.driver.core.utils.UUIDs;
 
@@ -15,11 +17,11 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReplyRepositoryTest extends PageableRepositoryTest<Reply, UUID, ReplyRepository> {
+public class ReplyRepositoryTest extends PageableRepositoryTest<Reply, MapId, ReplyRepository> {
 
     @Test
     public void crud() {
-        testCrud(Reply::getId, ReplyMaker::smallRandom, ReplyMaker::largeRandom);
+        testCrud(Reply::getMapId, Reply::getIdentity, ReplyMaker::smallRandom, ReplyMaker::largeRandom);
     }
 
     @Test
@@ -27,5 +29,11 @@ public class ReplyRepositoryTest extends PageableRepositoryTest<Reply, UUID, Rep
         UUID containerId = UUIDs.timeBased();
         Flux<Reply> entities = Flux.range(1, 10).map(i -> ReplyMaker.smallRandom().setContainerId(containerId));
         findAllByContainerIdPageable(containerId, entities);
+    }
+
+    @Test
+    public void ordered() {
+        testOrdered(Reply::getMapId, Comparator.comparing(Reply::getIdentity).reversed(),
+                (id) -> ReplyMaker.smallRandom().setContainerId(id));
     }
 }

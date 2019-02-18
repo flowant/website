@@ -16,22 +16,23 @@ import reactor.test.StepVerifier;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
 public class ContentReputationRepositoryTest extends
-        BaseRepositoryTest<ContentReputation, UUID, ContentReputationRepository> {
+        RepositoryTest<ContentReputation, UUID, ContentReputationRepository> {
 
     @Test
     public void crud() {
-        save(ContentReputation.of(UUIDs.timeBased()), ContentReputation::getId);
-        save(ContentReputation.of(UUIDs.timeBased(), 1, 2, 3, 4, 5, 6), ContentReputation::getId);
+        save(ContentReputation.of(UUIDs.timeBased()), ContentReputation::getIdentity);
+        save(ContentReputation.of(UUIDs.timeBased(), 1, 2, 3, 4, 5, 6), ContentReputation::getIdentity);
     }
 
     @Test
     public void accumulateCounter() {
         ContentReputation cr = ContentReputation.of(UUIDs.timeBased());
         registerToBeDeleted(cr);
-        ContentReputation acc = ContentReputation.of(cr.getId(), 1, 2, 3, 4, 5, 6);
+        ContentReputation acc = ContentReputation.of(cr.getIdentity(), 1, 2, 3, 4, 5, 6);
         registerToBeDeleted(acc);
 
-        Mono<ContentReputation> saveThenFind = repo.save(cr).then(repo.accumulate(acc)).then(repo.findById(cr.getId()));
+        Mono<ContentReputation> saveThenFind = repo.save(cr).then(repo.accumulate(acc))
+                .then(repo.findById(cr.getIdentity()));
         StepVerifier.create(saveThenFind).expectNext(acc).verifyComplete();
     }
 

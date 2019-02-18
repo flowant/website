@@ -23,11 +23,11 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class User implements UserDetails, HasId, HasCruTime {
+public class User implements UserDetails, HasIdentity, HasCruTime {
     private static final long serialVersionUID = 3027599136204429983L;
 
     @Id @NonNull
-    UUID id;
+    UUID identity;
     @NonNull @Indexed //TODO username should be unique
     String username;
     @NonNull

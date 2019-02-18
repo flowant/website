@@ -1,5 +1,6 @@
 package org.flowant.website.repository;
 
+import java.util.Comparator;
 import java.util.UUID;
 
 import org.flowant.website.model.Review;
@@ -7,6 +8,7 @@ import org.flowant.website.util.test.ReviewMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.cassandra.core.mapping.MapId;
 
 import com.datastax.driver.core.utils.UUIDs;
 
@@ -15,11 +17,11 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReviewRepositoryTest extends PageableRepositoryTest<Review, UUID, ReviewRepository> {
+public class ReviewRepositoryTest extends PageableRepositoryTest<Review, MapId, ReviewRepository> {
 
     @Test
     public void crud() {
-        testCrud(Review::getId, ReviewMaker::smallRandom, ReviewMaker::largeRandom);
+        testCrud(Review::getMapId, Review::getIdentity, ReviewMaker::smallRandom, ReviewMaker::largeRandom);
     }
 
     @Test
@@ -27,5 +29,11 @@ public class ReviewRepositoryTest extends PageableRepositoryTest<Review, UUID, R
         UUID containerId = UUIDs.timeBased();
         Flux<Review> entities = Flux.range(1, 10).map(i -> ReviewMaker.smallRandom().setContainerId(containerId));
         findAllByContainerIdPageable(containerId, entities);
+    }
+
+    @Test
+    public void ordered() {
+        testOrdered(Review::getMapId, Comparator.comparing(Review::getIdentity).reversed(),
+                (id) -> ReviewMaker.smallRandom().setContainerId(id));
     }
 }

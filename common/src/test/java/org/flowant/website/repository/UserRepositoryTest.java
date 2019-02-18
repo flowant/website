@@ -25,13 +25,13 @@ import reactor.test.StepVerifier;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
 @Log4j2
-public class UserRepositoryTest extends BaseRepositoryTest<User, UUID, UserRepository> {
+public class UserRepositoryTest extends RepositoryTest<User, UUID, UserRepository> {
 
     static final String lastname = "Jee";
 
     @Test
     public void crud() {
-        testCrud(User::getId, UserMaker::smallRandom, UserMaker::largeRandom);
+        testCrud(User::getIdentity, User::getIdentity, UserMaker::smallRandom, UserMaker::largeRandom);
     }
 
     @Test

@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.flowant.website.model.Review;
 import org.flowant.website.repository.BackendReviewRepository;
+import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +21,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ReviewRest extends PageableRepositoryRest<Review, BackendReviewRepository> {
-    public final static String ID = "id";
+public class ReviewRest extends PageableRepositoryRest<Review, MapId, BackendReviewRepository> {
+
     public final static String REVIEW = "/review";
-    public final static String REVIEW__ID__ = REVIEW + "/{id}";
+    public final static String REVIEW_ID_CID = REVIEW + PATH_SEG_ID_CID;
 
     @GetMapping(value = REVIEW)
     public Mono<ResponseEntity<List<Review>>> getAllByContainerId(@RequestParam(CID) String containerId,
@@ -44,14 +45,18 @@ public class ReviewRest extends PageableRepositoryRest<Review, BackendReviewRepo
         return super.put(review);
     }
 
-    @GetMapping(value = REVIEW__ID__)
-    public Mono<ResponseEntity<Review>> getById(@PathVariable(value = ID) String id) {
-        return super.getById(id);
+    @GetMapping(value = REVIEW_ID_CID)
+    public Mono<ResponseEntity<Review>> getById(@PathVariable(value = ID) String id,
+            @PathVariable(value = CID) String cid) {
+
+        return super.getById(toMapId(id, cid));
     }
 
-    @DeleteMapping(value = REVIEW__ID__)
-    public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
-        return super.deleteById(id);
+    @DeleteMapping(value = REVIEW_ID_CID)
+    public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
+            @PathVariable(value = CID) String cid) {
+
+        return super.deleteById(toMapId(id, cid));
     }
 
 }

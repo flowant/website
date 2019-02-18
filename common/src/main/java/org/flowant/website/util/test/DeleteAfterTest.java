@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Log4j2
-public class DeleteAfterTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>> {
+public abstract class DeleteAfterTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>> {
     @Autowired
     protected Repository repo;
 

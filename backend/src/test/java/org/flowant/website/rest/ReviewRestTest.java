@@ -11,19 +11,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.cassandra.core.mapping.MapId;
 
 import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes=BackendApplication.class)
-public class ReviewRestTest extends BaseRestWithRepositoryTest<Review, UUID, BackendReviewRepository> {
+public class ReviewRestTest extends RestWithRepositoryTest<Review, MapId, BackendReviewRepository> {
 
     @Before
     public void before() {
         super.before();
 
-        setTestParams(ReviewRest.REVIEW, Review.class, Review::getId,
+        setTestParams(ReviewRest.REVIEW, Review.class, Review::getMapId,
                 ReviewMaker::smallRandom, ReviewMaker::largeRandom,
                 (Review r) -> {
                     r.setComment("newComment");

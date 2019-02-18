@@ -16,22 +16,23 @@ import reactor.test.StepVerifier;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
 public class ReplyReputationRepositoryTest extends
-        BaseRepositoryTest<ReplyReputation, UUID, ReplyReputationRepository> {
+        RepositoryTest<ReplyReputation, UUID, ReplyReputationRepository> {
 
     @Test
     public void crud() {
-        save(ReplyReputation.of(UUIDs.timeBased()), ReplyReputation::getId);
-        save(ReplyReputation.of(UUIDs.timeBased(), 1, 2, 3, 4), ReplyReputation::getId);
+        save(ReplyReputation.of(UUIDs.timeBased()), ReplyReputation::getIdentity);
+        save(ReplyReputation.of(UUIDs.timeBased(), 1, 2, 3, 4), ReplyReputation::getIdentity);
     }
 
     @Test
     public void accumulateCounter() {
         ReplyReputation rr = ReplyReputation.of(UUIDs.timeBased());
         registerToBeDeleted(rr);
-        ReplyReputation acc = ReplyReputation.of(rr.getId(), 1, 2, 3, 4);
+        ReplyReputation acc = ReplyReputation.of(rr.getIdentity(), 1, 2, 3, 4);
         registerToBeDeleted(acc);
 
-        Mono<ReplyReputation> saveThenFind = repo.save(rr).then(repo.accumulate(acc)).then(repo.findById(rr.getId()));
+        Mono<ReplyReputation> saveThenFind = repo.save(rr).then(repo.accumulate(acc))
+                .then(repo.findById(rr.getIdentity()));
         StepVerifier.create(saveThenFind).expectNext(acc).verifyComplete();
     }
 

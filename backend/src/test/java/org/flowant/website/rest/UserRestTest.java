@@ -19,13 +19,13 @@ import junitparams.JUnitParamsRunner;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes=BackendApplication.class)
-public class UserRestTest extends BaseRestWithRepositoryTest<User, UUID, BackendUserRepository> {
+public class UserRestTest extends RestWithRepositoryTest<User, UUID, BackendUserRepository> {
 
     @Before
     public void before() {
         super.before();
 
-        setTestParams(UserRest.USER, User.class, User::getId,
+        setTestParams(UserRest.USER, User.class, User::getIdentity,
                 UserMaker::smallRandom, UserMaker::largeRandom,
                 (User user) -> {
                     user.setFirstname("newFirstname");

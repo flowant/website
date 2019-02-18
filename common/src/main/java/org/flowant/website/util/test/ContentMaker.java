@@ -46,7 +46,7 @@ public class ContentMaker {
 
     public static Content large(UUID id) {
         int cs = id.hashCode() / 1000000;
-        return Content.builder().id(id).containerId(containerId).title(title + id)
+        return Content.builder().identity(id).containerId(containerId).title(title + id)
                 .extend(new Recipe(List.of(ingredients + id, ingredients + id, ingredients + id),
                         prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))
                 .fileRefs(List.of(FileMaker.largeRandom()))

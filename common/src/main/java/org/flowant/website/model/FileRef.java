@@ -19,9 +19,9 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @UserDefinedType
-public class FileRef implements HasId {
+public class FileRef implements HasIdentity {
     @NonNull
-    UUID id; // to be used key in case of using external storage
+    UUID identity; // to be used key in case of using external storage
     @NonNull
     String uri; //TODO can be external links or internal storage url
     @NonNull

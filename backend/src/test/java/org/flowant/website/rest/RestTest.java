@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-public class BaseRestTest {
+public abstract class RestTest {
 
     public final static String SCHEME = "http";
 

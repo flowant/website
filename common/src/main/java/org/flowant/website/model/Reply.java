@@ -2,8 +2,9 @@ package org.flowant.website.model;
 
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.cassandra.core.mapping.Indexed;
+import org.springframework.data.cassandra.core.cql.Ordering;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
@@ -21,10 +22,12 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Reply implements HasId, HasCruTime {
-    @Id @NonNull
-    UUID id;
-    @NonNull @Indexed
+public class Reply implements HasMapId, HasCruTime {
+    @NonNull
+    @PrimaryKeyColumn(ordinal = 1, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
+    UUID identity;
+    @NonNull
+    @PrimaryKeyColumn(ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     UUID containerId;
     @NonNull
     UUID replierId;

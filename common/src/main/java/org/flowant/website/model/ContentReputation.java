@@ -23,9 +23,9 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class ContentReputation implements HasId {
+public class ContentReputation implements HasIdentity {
     @Id @NonNull
-    UUID id;
+    UUID identity;
     @CassandraType(type=Name.COUNTER)
     long viewed;
     @CassandraType(type=Name.COUNTER)

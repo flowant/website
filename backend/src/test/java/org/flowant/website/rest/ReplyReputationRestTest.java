@@ -17,13 +17,13 @@ import junitparams.JUnitParamsRunner;
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes=BackendApplication.class)
-public class ReplyReputationRestTest extends BaseRestWithRepositoryTest<ReplyReputation, UUID, BackendReplyReputationRepository> {
+public class ReplyReputationRestTest extends RestWithRepositoryTest<ReplyReputation, UUID, BackendReplyReputationRepository> {
 
     @Before
     public void before() {
         super.before();
 
-        setTestParams(ReplyReputationRest.REPLY_REPUTATION, ReplyReputation.class, ReplyReputation::getId,
+        setTestParams(ReplyReputationRest.REPLY_REPUTATION, ReplyReputation.class, ReplyReputation::getIdentity,
                 () -> ReplyReputation.of(UUIDs.timeBased()), () -> ReplyReputation.of(UUIDs.timeBased(), 1, 2, 3, 4),
                 (ReplyReputation cr) -> {
                     cr.setLiked(1);
