@@ -8,6 +8,7 @@ import org.springframework.data.cassandra.core.mapping.MapId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface HasMapId extends HasIdentity, HasContainerId {
+
     public static final String IDENTITY = "identity";
     public static final String CONTAINER_ID = "containerId";
 
@@ -27,4 +28,5 @@ public interface HasMapId extends HasIdentity, HasContainerId {
         }
         return this;
     }
+
 }

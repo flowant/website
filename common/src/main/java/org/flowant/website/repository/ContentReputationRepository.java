@@ -3,27 +3,28 @@ package org.flowant.website.repository;
 import java.util.UUID;
 
 import org.flowant.website.model.ContentReputation;
+import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ContentReputationRepository extends IdentityRepository<ContentReputation, UUID> {
+public interface ContentReputationRepository extends MapIdRepository<ContentReputation, MapId> {
 
-    static final String UPDATE_COUTERS = "UPDATE contentreputation " +
-            "SET viewed = viewed + ?1, rated = rated + ?2, liked = liked + ?3, " +
-            "disliked = disliked + ?4, reported = reported + ?5, reputed = reputed + ?6 " +
-            "WHERE identity = ?0";
+    static final String ACCUMULATE = "UPDATE contentreputation " +
+            "SET viewed = viewed + ?2, rated = rated + ?3, liked = liked + ?4, " +
+            "disliked = disliked + ?5, reported = reported + ?6, reputed = reputed + ?7 " +
+            "WHERE identity = ?0 and containerid = ?1";
 
-    @Query(UPDATE_COUTERS)
-    Mono<Object> accumulate(UUID id, long viewed, long rated,
+    @Query(ACCUMULATE)
+    Mono<Object> accumulate(UUID id, UUID containerId, long viewed, long rated,
             long liked, long disliked, long reported,long reputed);
 
     default Mono<Void> accumulate(ContentReputation cr) {
-        return accumulate(cr.getIdentity(), cr.getViewed(), cr.getRated(),
+        return accumulate(cr.getIdentity(), cr.getContainerId(), cr.getViewed(), cr.getRated(),
                 cr.getLiked(), cr.getDisliked(), cr.getReported(), cr.getReputed()).then();
     };
 
     default Mono<ContentReputation> save(ContentReputation cr) {
-        return accumulate(cr).then(findById(cr.getIdentity()));
+        return accumulate(cr).then(findById(cr.getMapId()).flatMap(RelationshipService::updateReputation));
     };
 }

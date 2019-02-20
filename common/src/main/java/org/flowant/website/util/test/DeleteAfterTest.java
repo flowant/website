@@ -2,18 +2,12 @@ package org.flowant.website.util.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-
-import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Log4j2
-public abstract class DeleteAfterTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>> {
-    @Autowired
-    protected Repository repo;
+public class DeleteAfterTest <Entity> {
 
     protected List<Entity> toBeDeletedEntities = new ArrayList<Entity>();
 
@@ -37,10 +31,7 @@ public abstract class DeleteAfterTest <Entity, ID, Repository extends ReactiveCr
         return cached;
     }
 
-    public void deleteRegistered() {
-        toBeDeletedEntities.forEach(entity -> {
-            log.trace("delete entity:{}", entity);
-            repo.delete(entity).subscribe();
-        });
+    public void deleteRegistered(Consumer<Entity> deleter) {
+        toBeDeletedEntities.forEach(deleter);
     }
 }

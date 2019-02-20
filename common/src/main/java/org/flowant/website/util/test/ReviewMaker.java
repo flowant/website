@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.flowant.website.model.CRUZonedTime;
-import org.flowant.website.model.Reputing;
+import org.flowant.website.model.Reputation;
 import org.flowant.website.model.Review;
 
 import com.datastax.driver.core.utils.UUIDs;
@@ -19,7 +19,7 @@ public class ReviewMaker {
 
     public static Review small(UUID id) {
         return Review.of(id, containerId, reviewerId, reviewerName + id,
-                Reputing.of(1, 1, 1, 1), CRUZonedTime.now());
+                Reputation.of(1, 1, 1, 1, 1, 1), CRUZonedTime.now());
     }
 
     public static Review smallRandom() {

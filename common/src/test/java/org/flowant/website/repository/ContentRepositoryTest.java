@@ -21,7 +21,7 @@ public class ContentRepositoryTest extends PageableRepositoryTest<Content, MapId
 
     @Test
     public void crud() {
-        testCrud(Content::getMapId, Content::getIdentity, ContentMaker::smallRandom, ContentMaker::largeRandom);
+        testCrud(Content::getMapId, ContentMaker::smallRandom, ContentMaker::largeRandom);
     }
 
     @Test

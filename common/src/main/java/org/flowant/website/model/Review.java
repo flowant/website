@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Review implements HasMapId, HasCruTime {
+public class Review implements HasMapId, HasReputation, HasCruTime {
     @NonNull
     @PrimaryKeyColumn(ordinal = 1, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     UUID identity;
@@ -35,9 +35,10 @@ public class Review implements HasMapId, HasCruTime {
     @NonNull
     String reviewerName;
     @NonNull
-    Reputing reputing;
+    Reputation reputing; // reputing content
     String comment;
     List<UUID> popularReplyIds;
+    Reputation reputation;
     @NonNull
     CRUZonedTime cruTime;
 }

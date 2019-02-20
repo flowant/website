@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.flowant.website.model.HasMapId;
+import org.flowant.website.model.HasReputation;
 import org.junit.Assert;
 import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +22,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @Log4j2
-public abstract class PageableRepositoryTest <Entity, ID, Repository extends PageableRepository<Entity, ID>>
+public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReputation, ID, Repository extends PageableRepository<Entity, ID>>
         extends RepositoryTest<Entity, ID, Repository> {
 
     UUID containerId;
@@ -38,7 +40,7 @@ public abstract class PageableRepositoryTest <Entity, ID, Repository extends Pag
 
     public void findAllByContainerIdPageable(UUID containerId, Flux<Entity> entities) {
         this.containerId = containerId;
-        entities = registerToBeDeleted(entities);
+        entities = cleaner.registerToBeDeleted(entities);
         repo.saveAll(entities).blockLast();
 
         List<Entity> actual = new ArrayList<>();
@@ -63,7 +65,7 @@ public abstract class PageableRepositoryTest <Entity, ID, Repository extends Pag
         // Entities's clusterKey is timeuuid. Entities are created by ascending order
         Flux<Entity> entities = Flux.range(1, 10).map(i -> supplier.apply(containerId)).cache();
 
-        entities = registerToBeDeleted(entities);
+        entities = cleaner.registerToBeDeleted(entities);
         repo.saveAll(entities).blockLast();
 
         // expected list is sorted by descending order

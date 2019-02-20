@@ -21,7 +21,7 @@ public class ReplyRepositoryTest extends PageableRepositoryTest<Reply, MapId, Re
 
     @Test
     public void crud() {
-        testCrud(Reply::getMapId, Reply::getIdentity, ReplyMaker::smallRandom, ReplyMaker::largeRandom);
+        testCrud(Reply::getMapId, ReplyMaker::smallRandom, ReplyMaker::largeRandom);
     }
 
     @Test

@@ -21,7 +21,7 @@ public class ReviewRepositoryTest extends PageableRepositoryTest<Review, MapId, 
 
     @Test
     public void crud() {
-        testCrud(Review::getMapId, Review::getIdentity, ReviewMaker::smallRandom, ReviewMaker::largeRandom);
+        testCrud(Review::getMapId, ReviewMaker::smallRandom, ReviewMaker::largeRandom);
     }
 
     @Test

@@ -30,7 +30,8 @@ public class AssertUtil {
         for (Method method : methods) {
             String name = method.getName();
 
-            if (name.startsWith("get") && !name.startsWith("getCru")) {
+            if (name.startsWith("get") && !name.startsWith("getCru")
+                    && !name.startsWith("getReputation")) {
                 log.trace("assertEquals: method name:{}", name);
                 try {
                     Class<?> cls = method.getReturnType();

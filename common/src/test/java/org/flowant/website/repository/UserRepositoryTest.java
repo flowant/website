@@ -31,13 +31,13 @@ public class UserRepositoryTest extends RepositoryTest<User, UUID, UserRepositor
 
     @Test
     public void crud() {
-        testCrud(User::getIdentity, User::getIdentity, UserMaker::smallRandom, UserMaker::largeRandom);
+        testCrud(User::getIdentity, UserMaker::smallRandom, UserMaker::largeRandom);
     }
 
     @Test
     public void findByUsername() {
         User user = UserMaker.largeRandom();
-        registerToBeDeleted(user);
+        cleaner.registerToBeDeleted(user);
 
         Flux<User> saveThenFind = repo.save(user).thenMany(repo.findByUsername(user.getUsername()));
         StepVerifier.create(saveThenFind).expectNextMatches(u -> user.getUsername().equals(u.getUsername()))
@@ -47,7 +47,7 @@ public class UserRepositoryTest extends RepositoryTest<User, UUID, UserRepositor
     @Test
     public void queryOptions() {
         User user = UserMaker.largeRandom();
-        registerToBeDeleted(user);
+        cleaner.registerToBeDeleted(user);
 
         repo.save(user).block();
 
@@ -76,7 +76,7 @@ public class UserRepositoryTest extends RepositoryTest<User, UUID, UserRepositor
     @Test
     public void sliceAndPageable() {
         Flux<User> users = Flux.range(1, 10).map(i -> UserMaker.smallRandom().setLastname(lastname)).cache();
-        registerToBeDeleted(users);
+        cleaner.registerToBeDeleted(users);
         repo.saveAll(users).blockLast();
 
         Slice<User> slice = getAllPaging(0, 3, null).block();
@@ -94,7 +94,7 @@ public class UserRepositoryTest extends RepositoryTest<User, UUID, UserRepositor
     @Test
     public void sliceAndPageablePrev() {
         Flux<User> users = Flux.range(1, 10).map(i -> UserMaker.smallRandom().setLastname(lastname)).cache();
-        registerToBeDeleted(users);
+        cleaner.registerToBeDeleted(users);
         repo.saveAll(users).blockLast();
 
         Slice<User> slice = getAllPaging(0, 3, null).block();

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.Indexed;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 
@@ -23,8 +24,9 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Content implements HasMapId, HasCruTime {
+public class Content implements HasMapId, HasReputation, HasCruTime {
     @NonNull
+    @Indexed
     @PrimaryKeyColumn(ordinal = 1, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     UUID identity;
     @NonNull
@@ -37,6 +39,7 @@ public class Content implements HasMapId, HasCruTime {
     String sentences;
     List<Tag> tags;
     List<UUID> popularReviewIds;
+    Reputation reputation;
     @NonNull
     CRUZonedTime cruTime;
 }
