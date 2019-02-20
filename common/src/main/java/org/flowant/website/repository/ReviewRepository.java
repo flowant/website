@@ -12,7 +12,7 @@ import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ReviewRepository extends PageableRepository<Review, MapId> {
+public interface ReviewRepository extends PageableRepository<Review> {
 
     static final String UPDATE_REPUTATION = "UPDATE review SET reputation = ?2 " + 
             "WHERE identity = ?0 and containerId = ?1";
@@ -25,5 +25,9 @@ public interface ReviewRepository extends PageableRepository<Review, MapId> {
         return updateReputationById((UUID) id.get(IDENTITY), (UUID) id.get(CONTAINER_ID), reputation)
                 .thenReturn(reputation);
     }
+
+    @Override
+    @Query("delete from review where containerid = ?0")
+    Mono<Object> deleteAllByContainerId(UUID containerId);
 
 }

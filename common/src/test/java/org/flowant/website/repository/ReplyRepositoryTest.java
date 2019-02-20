@@ -8,7 +8,6 @@ import org.flowant.website.util.test.ReplyMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.cassandra.core.mapping.MapId;
 
 import com.datastax.driver.core.utils.UUIDs;
 
@@ -17,7 +16,7 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReplyRepositoryTest extends PageableRepositoryTest<Reply, MapId, ReplyRepository> {
+public class ReplyRepositoryTest extends PageableRepositoryTest<Reply, ReplyRepository> {
 
     @Test
     public void crud() {
@@ -36,4 +35,10 @@ public class ReplyRepositoryTest extends PageableRepositoryTest<Reply, MapId, Re
         testOrdered(Reply::getMapId, Comparator.comparing(Reply::getIdentity).reversed(),
                 (id) -> ReplyMaker.smallRandom().setContainerId(id));
     }
+
+    @Test
+    public void testDeleteAllByContainerId() {
+        super.testDeleteAllByContainerId(ReplyMaker.largeRandom(), Reply::getContainerId);
+    }
+
 }

@@ -23,24 +23,24 @@ public class ReputationMaker {
         return randomContentReputation(IdMaker.randomMapId());
     }
 
-    public static ContentReputation randomContentReputation(MapId id) {
-        return ContentReputation.of(id, randomReputation());
+    public static ContentReputation randomContentReputation(MapId mapId) {
+        return ContentReputation.of(mapId, randomReputation());
     }
 
     public static ReviewReputation randomReviewReputation() {
         return randomReviewReputation(IdMaker.randomMapId());
     }
 
-    public static ReviewReputation randomReviewReputation(MapId id) {
-        return ReviewReputation.of(id, randomReputation());
+    public static ReviewReputation randomReviewReputation(MapId mapId) {
+        return ReviewReputation.of(mapId, randomReputation());
     }
 
     public static ReplyReputation randomReplyReputation() {
         return randomReplyReputation(IdMaker.randomMapId());
     }
 
-    public static ReplyReputation randomReplyReputation(MapId id) {
-        return ReplyReputation.of(id, randomReputation());
+    public static ReplyReputation randomReplyReputation(MapId mapId) {
+        return ReplyReputation.of(mapId, randomReputation());
     }
 
     public static <T> T emptyTypeReputation(BiFunction<MapId, Reputation, T> supplier) {

@@ -14,7 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @NoRepositoryBean
-public interface PageableRepository<T extends HasMapId & HasReputation, ID> extends MapIdRepository<T, ID> {
+public interface PageableRepository<T extends HasMapId & HasReputation> extends MapIdRepository<T> {
 
     Mono<Slice<T>> findAllByContainerId(UUID containerId, Pageable pageable);
 

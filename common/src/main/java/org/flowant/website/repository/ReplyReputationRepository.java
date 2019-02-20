@@ -3,12 +3,11 @@ package org.flowant.website.repository;
 import java.util.UUID;
 
 import org.flowant.website.model.ReplyReputation;
-import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ReplyReputationRepository extends MapIdRepository<ReplyReputation, MapId> {
+public interface ReplyReputationRepository extends MapIdRepository<ReplyReputation> {
 
     static final String ACCUMULATE = "UPDATE replyreputation " +
             "SET viewed = viewed + ?2, rated = rated + ?3, liked = liked + ?4, " +
@@ -27,5 +26,9 @@ public interface ReplyReputationRepository extends MapIdRepository<ReplyReputati
     default Mono<ReplyReputation> save(ReplyReputation rr) {
         return accumulate(rr).then(findById(rr.getMapId()).flatMap(RelationshipService::updateReputation));
     };
+
+    @Override
+    @Query("delete from replyreputation where containerid = ?0")
+    Mono<Object> deleteAllByContainerId(UUID containerId);
 
 }

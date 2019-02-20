@@ -9,6 +9,7 @@ import java.util.function.Function;
 import org.flowant.website.model.HasMapId;
 import org.flowant.website.model.HasReputation;
 import org.junit.Assert;
+import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,8 +23,8 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @Log4j2
-public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReputation, ID, Repository extends PageableRepository<Entity, ID>>
-        extends RepositoryTest<Entity, ID, Repository> {
+public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReputation, Repository extends PageableRepository<Entity>>
+        extends MapIdRepositoryTest<Entity, Repository> {
 
     UUID containerId;
 
@@ -58,7 +59,7 @@ public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReput
         Assert.assertTrue(entities.all(actual::contains).block());
     }
 
-    public void testOrdered(Function<Entity, ID> getId, Comparator<Entity> comparator,
+    public void testOrdered(Function<Entity, MapId> getId, Comparator<Entity> comparator,
             Function<UUID, Entity> supplier) {
 
         UUID containerId = UUIDs.timeBased();

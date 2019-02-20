@@ -1,17 +1,17 @@
 package org.flowant.website.repository;
 
 import org.flowant.website.model.ReviewReputation;
+import org.flowant.website.util.test.ReputationMaker;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.cassandra.core.mapping.MapId;
 
 import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReviewReputationRepositoryTest extends RepositoryTest<ReviewReputation, MapId, ReviewReputationRepository> {
+public class ReviewReputationRepositoryTest extends MapIdRepositoryTest<ReviewReputation, ReviewReputationRepository> {
 
     @Before
     public void before() {
@@ -21,6 +21,11 @@ public class ReviewReputationRepositoryTest extends RepositoryTest<ReviewReputat
     @Test
     public void testAccumulation() {
         super.testAccumulation(ReviewReputation::getMapId, ReviewReputation::of);
+    }
+
+    @Test
+    public void testDeleteAllByContainerId() {
+        super.testDeleteAllByContainerId(ReputationMaker.randomReviewReputation(), ReviewReputation::getContainerId);
     }
 
 }

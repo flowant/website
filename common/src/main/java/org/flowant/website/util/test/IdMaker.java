@@ -20,4 +20,11 @@ public class IdMaker {
         return BasicMapId.id().with(IDENTITY, UUIDs.timeBased()).with(CONTAINER_ID, UUIDs.timeBased());
     }
 
+    public static UUID toIdentity(MapId mapId) {
+        return (UUID) mapId.get(IDENTITY);
+    }
+
+    public static UUID toContainerId(MapId mapId) {
+        return (UUID) mapId.get(CONTAINER_ID);
+    }
 }
