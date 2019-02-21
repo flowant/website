@@ -1,5 +1,10 @@
 package org.flowant.website.integration;
 
+import java.util.Comparator;
+import java.util.UUID;
+
+import org.flowant.website.model.Content;
+import org.flowant.website.model.ContentReputation;
 import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.repository.ContentReputationRepository;
 import org.flowant.website.repository.MapIdRepository;
@@ -26,11 +31,13 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import junitparams.JUnitParamsRunner;
+import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
+@Log4j2
 public class IntegrationTest {
 
     @ClassRule
@@ -46,45 +53,40 @@ public class IntegrationTest {
     @Autowired
     ReplyRepository repoReply;
     @Autowired
-    ContentReputationRepository repoContentReputation;
+    ContentReputationRepository repoContentRpt;
     @Autowired
-    ReviewReputationRepository repoReviewReputation;
+    ReviewReputationRepository repoReviewRpt;
     @Autowired
-    ReplyReputationRepository repoReplyReputation;
+    ReplyReputationRepository repoReplyRpt;
     @Autowired
     UserRepository repoUser;
 
     Flux<MapIdRepository<?>> repos;
 
-    MapId toBeDeletedMapId;
+    Flux<MapId> toBeDeletedMapIds;
 
     @Before
     public void before() {
         repos = Flux.just(repoContent, repoReview, repoReply,
-                repoContentReputation, repoReviewReputation, repoReplyReputation).cache();
+                repoContentRpt, repoReviewRpt, repoReplyRpt).cache();
     }
 
     @After
     public void after() {
-        repos.subscribe(repo -> repo.deleteById(toBeDeletedMapId).subscribe());
+        repos.subscribe(repo -> toBeDeletedMapIds.flatMap(repo::deleteById).subscribe());
     }
 
     @Test
-    public void testDeleteChildren() {
-        deleteChildren();
-    }
-
     public void deleteChildren() {
-
         MapId mapId = IdMaker.randomMapId();
-        toBeDeletedMapId = mapId;
+        toBeDeletedMapIds = Flux.just(mapId);
 
         repoContent.save(ContentMaker.large(mapId)).block();
         repoReview.save(ReviewMaker.large(mapId)).block();
         repoReply.save(ReplyMaker.large(mapId)).block();
-        repoContentReputation.save(ReputationMaker.randomContentReputation(mapId)).block();
-        repoReviewReputation.save(ReputationMaker.randomReviewReputation(mapId)).block();
-        repoReplyReputation.save(ReputationMaker.randomReplyReputation(mapId)).block();
+        repoContentRpt.save(ReputationMaker.randomContentReputation(mapId)).block();
+        repoReviewRpt.save(ReputationMaker.randomReviewReputation(mapId)).block();
+        repoReplyRpt.save(ReputationMaker.randomReplyReputation(mapId)).block();
 
         repos.doOnNext(repo -> StepVerifier.create(repo.findById(mapId)).expectNextCount(1)
                 .verifyComplete()).blockLast();
@@ -95,4 +97,28 @@ public class IntegrationTest {
                 .verifyComplete()).blockLast();
     }
 
+    @Test
+    public void sortByReputation() {
+        UUID containerId = IdMaker.randomUUID();
+        Flux<Content> contents = Flux.range(1, 10).map(i -> ContentMaker.largeRandom().setContainerId(containerId)).cache();
+        toBeDeletedMapIds = contents.map(Content::getMapId);
+        repoContent.saveAll(contents).blockLast();
+
+        Flux<ContentReputation> reputations = contents.map(c -> ReputationMaker.randomContentReputation(c.getMapId())).cache();
+        reputations.flatMap(repoContentRpt::save).blockLast();
+
+        log.trace("repoContent:");
+        repoContent.findAllByContainerId(containerId)
+                .sort(Comparator.comparing(Content::getReputation).reversed())
+                .doOnNext(log::trace).blockLast();
+
+        log.trace("repoContentRpt");
+        Flux<MapId> ids = repoContentRpt.findAllByContainerId(containerId)
+                .sort(Comparator.comparing(ContentReputation::getLiked).reversed())
+                .doOnNext(log::trace).map(ContentReputation::getMapId);
+
+        // Sequences of Publisher and results are not the same.
+        // we cannot get sorted content using sorted Publisher
+        repoContent.findAllById(ids).doOnNext(log::trace).blockLast();
+    }
 }

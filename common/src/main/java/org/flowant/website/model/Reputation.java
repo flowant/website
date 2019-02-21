@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor(staticName="of")
 @NoArgsConstructor
 @UserDefinedType
-public class Reputation {
+public class Reputation implements Comparable<Reputation> {
     long viewed;
     long rated;
     long liked;
@@ -29,4 +29,10 @@ public class Reputation {
         return of(first.viewed + second.viewed, first.rated + second.rated, first.liked + second.liked,
                 first.disliked + second.disliked, first.reported + second.reported, first.reputed + second.reputed);
     }
+
+    @Override
+    public int compareTo(Reputation reputation) {
+        return Long.compare(this.getLiked(), reputation.getLiked());
+    }
+
 }
