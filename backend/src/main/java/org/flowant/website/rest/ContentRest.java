@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.flowant.website.model.Content;
 import org.flowant.website.repository.BackendContentRepository;
 import org.flowant.website.storage.FileStorage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,13 +22,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ContentRest extends PageableRepositoryRest<Content, MapId, BackendContentRepository> {
+public class ContentRest extends PageableRepositoryRest<Content, BackendContentRepository> {
 
     public final static String CONTENT = "/content";
-    public final static String CONTENT_ID_CID = CONTENT + PATH_SEG_ID_CID;
-
-    @Autowired
-    private BackendContentRepository contentRepository;
 
     @GetMapping(value = CONTENT)
     public Mono<ResponseEntity<List<Content>>> getAllByContainerId(@RequestParam(CID) String containerId,
@@ -50,22 +45,21 @@ public class ContentRest extends PageableRepositoryRest<Content, MapId, BackendC
         return super.put(content);
     }
 
-    @GetMapping(value = CONTENT_ID_CID)
+    @GetMapping(value = CONTENT + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Content>> getById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
-
         return super.getById(toMapId(id, cid));
     }
 
     // If File Server is separated, we can use FILES_DELETES end point instead of FileStorage.deleteAll
-    @DeleteMapping(value = CONTENT_ID_CID)
+    @DeleteMapping(value = CONTENT + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
         MapId mapId = toMapId(id, cid);
-        return contentRepository.findById(mapId)
+        return repo.findById(mapId)
                 .doOnNext(content-> FileStorage.deleteAll(content.getFileRefs()))
-                .then(contentRepository.deleteById(mapId)
+                .then(repo.deleteById(mapId)
                 .map(ResponseEntity::ok));
     }
 }

@@ -51,8 +51,7 @@ public class UserRepositoryTest extends RepositoryTest<User, UUID, UserRepositor
 
         repo.save(user).block();
 
-        //TODO check
-        QueryOptions options = QueryOptions.builder().readTimeout(1).build();
+        QueryOptions options = QueryOptions.builder().readTimeout(1000).build();
         log.trace(repo.findByUsername(user.getUsername(), options).blockLast());
     }
 

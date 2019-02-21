@@ -31,10 +31,7 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, Back
 
         setTestParams(ContentRest.CONTENT, Content.class, Content::getMapId,
                 ContentMaker::smallRandom, ContentMaker::largeRandom,
-                (Content c) -> {
-                    c.setTitle("newTitle");
-                    return c;
-                });
+                c -> c.setTitle("newTitle"));
     }
 
     @Test
@@ -48,9 +45,10 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, Back
         FileRestTest.postFiles(3, webTestClient).consumeWith(body -> content.setFileRefs(body.getResponseBody()));
 
         repo.save(content).block();
-        registerToBeDeleted(content); // in case of fails
+        cleaner.registerToBeDeleted(content); // in case of fails
 
-        webTestClient.delete().uri(ContentRest.CONTENT_ID_CID, content.getIdentity(), content.getContainerId())
+        webTestClient.delete().uri(ContentRest.CONTENT + ContentRest.PATH_SEG_ID_CID,
+                content.getIdentity(), content.getContainerId())
                 .exchange()
                 .expectStatus().isOk().expectBody().consumeWith(r -> {
                     log.trace(r::toString);
@@ -75,4 +73,5 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, Back
         Assert.assertEquals("http://127.0.0.1:38399/content?cid=b5a468c0-3264-11e9-8573-9352a7858433&page=2&size=3&ps=0018001010b5a86062326411e985739352a785843300f07ffffffc009a1b1e4a88b456bfc3fc6bdb87bba5bd0004",
                 LinkUtil.parseNextUrl(value));
     }
+
 }

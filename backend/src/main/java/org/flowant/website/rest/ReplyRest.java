@@ -6,7 +6,6 @@ import javax.validation.Valid;
 
 import org.flowant.website.model.Reply;
 import org.flowant.website.repository.BackendReplyRepository;
-import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +20,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ReplyRest extends PageableRepositoryRest<Reply, MapId, BackendReplyRepository> {
+public class ReplyRest extends PageableRepositoryRest<Reply, BackendReplyRepository> {
 
     public final static String REPLY = "/reply";
-    public final static String REPLY_ID_CID = REPLY + PATH_SEG_ID_CID;
 
     @GetMapping(value = REPLY)
     public Mono<ResponseEntity<List<Reply>>> getAllByContainerId(@RequestParam(CID) String containerId,
@@ -45,14 +43,14 @@ public class ReplyRest extends PageableRepositoryRest<Reply, MapId, BackendReply
         return super.put(reply);
     }
 
-    @GetMapping(value = REPLY_ID_CID)
+    @GetMapping(value = REPLY + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Reply>> getById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
         return super.getById(toMapId(id, cid));
     }
 
-    @DeleteMapping(value = REPLY_ID_CID)
+    @DeleteMapping(value = REPLY + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 

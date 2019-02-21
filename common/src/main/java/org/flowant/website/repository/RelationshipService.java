@@ -10,6 +10,7 @@ import org.flowant.website.model.ReputationCounter;
 import org.flowant.website.model.ReviewReputation;
 import org.flowant.website.util.test.IdMaker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.stereotype.Component;
 
@@ -30,9 +31,12 @@ public class RelationshipService {
     static Flux<MapIdRepository<?>> repoChildren;
 
     @Autowired
-    RelationshipService(ContentRepository repoContent, ReviewRepository repoReview, ReplyRepository repoReply,
-            ContentReputationRepository repoContentRpt, ReviewReputationRepository repoReviewRpt,
-            ReplyReputationRepository repoReplyRpt) {
+    RelationshipService(@Qualifier("contentRepository") ContentRepository repoContent,
+            @Qualifier("reviewRepository") ReviewRepository repoReview,
+            @Qualifier("replyRepository") ReplyRepository repoReply,
+            @Qualifier("contentReputationRepository") ContentReputationRepository repoContentRpt,
+            @Qualifier("reviewReputationRepository") ReviewReputationRepository repoReviewRpt,
+            @Qualifier("replyReputationRepository") ReplyReputationRepository repoReplyRpt) {
 
         RelationshipService.repoContent = repoContent;
         RelationshipService.repoReview = repoReview;

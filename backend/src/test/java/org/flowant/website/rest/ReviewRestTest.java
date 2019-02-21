@@ -26,10 +26,7 @@ public class ReviewRestTest extends RestWithRepositoryTest<Review, MapId, Backen
 
         setTestParams(ReviewRest.REVIEW, Review.class, Review::getMapId,
                 ReviewMaker::smallRandom, ReviewMaker::largeRandom,
-                (Review r) -> {
-                    r.setComment("newComment");
-                    return r;
-                });
+                r -> r.setComment("newComment"));
     }
 
     @Test

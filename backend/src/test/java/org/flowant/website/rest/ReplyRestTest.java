@@ -26,10 +26,7 @@ public class ReplyRestTest extends RestWithRepositoryTest<Reply, MapId, BackendR
 
         setTestParams(ReplyRest.REPLY, Reply.class, Reply::getMapId,
                 ReplyMaker::smallRandom, ReplyMaker::largeRandom,
-                (Reply r) -> {
-                    r.setComment("newComment");
-                    return r;
-                });
+                r -> r.setComment("newComment"));
     }
 
     @Test

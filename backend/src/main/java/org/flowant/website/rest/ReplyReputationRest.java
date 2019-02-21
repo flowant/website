@@ -17,11 +17,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ReplyReputationRest extends
-        ReputationRepositoryRest<ReplyReputation, BackendReplyReputationRepository> {
+public class ReplyReputationRest extends MapIdRepositoryRest<ReplyReputation, BackendReplyReputationRepository> {
 
     public final static String REPLY_REPUTATION = "/reply_reputation";
-    public final static String REPLY_REPUTATION__ID__ = REPLY_REPUTATION + PATH_SEG_ID;
 
     @GetMapping(value = REPLY_REPUTATION)
     public Flux<ReplyReputation> getAll() {
@@ -38,13 +36,17 @@ public class ReplyReputationRest extends
         return super.put(user);
     }
 
-    @GetMapping(value = REPLY_REPUTATION__ID__)
-    public Mono<ResponseEntity<ReplyReputation>> getById(@PathVariable(value = ID) String id) {
-        return super.getById(id);
+    @GetMapping(value = REPLY_REPUTATION + PATH_SEG_ID_CID)
+    public Mono<ResponseEntity<ReplyReputation>> getById(@PathVariable(value = ID) String id,
+            @PathVariable(value = CID) String cid) {
+
+        return super.getById(toMapId(id, cid));
     }
 
-    @DeleteMapping(value = REPLY_REPUTATION__ID__)
-    public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
-        return super.deleteById(id);
+    @DeleteMapping(value = REPLY_REPUTATION + PATH_SEG_ID_CID)
+    public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
+            @PathVariable(value = CID) String cid) {
+
+        return super.deleteById(toMapId(id, cid));
     }
 }

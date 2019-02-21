@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.flowant.website.model.HasCruTime;
+import org.flowant.website.model.HasMapId;
+import org.flowant.website.model.HasReputation;
 import org.flowant.website.repository.PageableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import reactor.core.publisher.Mono;
 
-public abstract class PageableRepositoryRest <Entity extends HasCruTime, ID, Repository extends PageableRepository<Entity, ID>>
-        extends RepositoryRest <Entity, ID, Repository> {
+public abstract class PageableRepositoryRest <Entity extends HasMapId & HasReputation & HasCruTime, Repository extends PageableRepository<Entity>>
+        extends CruTimeRepositoryRest <Entity, Repository> {
 
     public final static String PAGE = "page";
     public final static String SIZE = "size";

@@ -9,7 +9,7 @@ import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
-import org.flowant.website.model.Reputing;
+import org.flowant.website.model.Reputation;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
 import org.flowant.website.model.User;
@@ -45,7 +45,7 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         UUID containerId = UUIDs.timeBased();
 
         Flux<Content> contents = Flux.range(1, cntUsers).map(i -> ContentMaker.largeRandom().setContainerId(containerId)).cache();
-        Flux<ContentReputation> contentReputations = contents.map(c -> ReputationMaker.randomContentReputation(c.getIdentity())).cache();
+        Flux<ContentReputation> contentReputations = contents.map(c -> ReputationMaker.randomContentReputation(c.getMapId())).cache();
         contents.subscribe(log::trace);
         contentReputations.subscribe(log::trace);
 
@@ -67,7 +67,8 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         // Post test data
 
         Mono<Content> content = Mono.just(ContentMaker.largeRandom()).cache();
-        Mono<ContentReputation> contentReputation = content.map(c -> ContentReputation.of(c.getIdentity())).cache();
+        Mono<ContentReputation> contentReputation = content.map(c ->
+                ReputationMaker.emptyContentReputation(c.getMapId())).cache();
 
         Flux<User> users = Flux.range(1, cntUsers).map(i -> UserMaker.largeRandom()).cache();
 
@@ -76,8 +77,8 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
                 .setReviewerId(user.getIdentity())
                 .setContainerId(content.block().getIdentity())).cache();
 
-        Flux<ReviewReputation> reviewReputations = reviews.map(review ->
-                ReputationMaker.randomReviewReputation(review.getIdentity())).cache();
+        Flux<ReviewReputation> reviewReputations = reviews.map(r ->
+                ReputationMaker.randomReviewReputation(r.getMapId())).cache();
 
         // make cntRepliesPerReview replies per review.
         Flux<Reply> replies = reviews.flatMap(review ->
@@ -85,8 +86,8 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
                 .map(i -> ReplyMaker.largeRandom().setContainerId(review.getIdentity()))
                 .cast(Reply.class)).cache();
 
-        Flux<ReplyReputation> replyReputations = replies.map(reply ->
-                ReputationMaker.randomReplyReputation(reply.getIdentity())).cache();
+        Flux<ReplyReputation> replyReputations = replies.map(r ->
+                ReputationMaker.randomReplyReputation(r.getMapId())).cache();
 
         content.subscribe(log::trace);
         contentReputation.subscribe(log::trace);
@@ -106,12 +107,12 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         replyReputations.subscribe(postReplyReputation);
 
         // Reviews have reputing of content
-        reviews.map(r -> ReputationMaker.toContentReputation(r.getContainerId(), r.getReputing()))
+        reviews.map(r -> ContentReputation.of(content.block().getMapId(), r.getReputing()))
                 .subscribe(postContentReputation);
 
         // Posting or putting some Reputation means accumulating Cassandra's counter values.
-        reviews.map(r -> r.getReputing()).reduce((r1, r2) -> Reputing.of(r1, r2)).subscribe(r ->
-            assertEquals(r.getLiking(), getById(content.block().getMapId(), ContentReputation.class).getLiked()));
+        reviews.map(r -> r.getReputing()).reduce((r1, r2) -> Reputation.of(r1, r2)).subscribe(r ->
+            assertEquals(r.getLiked(), getById(content.block().getMapId(), ContentReputation.class).getLiked()));
 
         // Get test data
 

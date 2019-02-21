@@ -1,6 +1,6 @@
 package org.flowant.website.rest;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.flowant.website.BackendApplication;
@@ -29,7 +29,7 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, BackendUser
                 UserMaker::smallRandom, UserMaker::largeRandom,
                 (User user) -> {
                     user.setFirstname("newFirstname");
-                    user.setFollowers(List.of(UUIDs.timeBased(), UUIDs.timeBased()));
+                    user.setFollowers(Set.of(UUIDs.timeBased(), UUIDs.timeBased()));
                     return user;
                 });
     }

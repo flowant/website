@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.FileRef;
-import org.flowant.website.model.Tag;
 import org.flowant.website.storage.FileStorage;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,7 +35,7 @@ public class FileRestTest extends RestTest {
     @Test
     public void testPostMalformed() {
         ResponseSpec respSpec = webTestClient.post().uri(FileRest.FILES).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(Tag.of("notFile")), Tag.class).exchange();
+                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just("notFile"), String.class).exchange();
         respSpec.expectStatus().is4xxClientError().expectBody().consumeWith(log::trace);
     }
 

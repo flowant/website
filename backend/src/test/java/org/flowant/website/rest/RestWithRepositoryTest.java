@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.flowant.website.model.HasMapId;
-import org.flowant.website.model.Tag;
 import org.flowant.website.repository.PageableRepository;
 import org.flowant.website.util.test.AssertUtil;
 import org.flowant.website.util.test.DeleteAfterTest;
@@ -50,8 +50,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @Log4j2
-public abstract class RestWithRepositoryTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>>
-    extends DeleteAfterTest <Entity, ID, Repository> {
+public abstract class RestWithRepositoryTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>> {
 
     public final static String __ID__ = "/{id}";
     public final static String SCHEME = "http";
@@ -61,6 +60,9 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Autowired
+    Repository repo;
 
     @Autowired
     ApplicationContext context;
@@ -80,6 +82,19 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
     Supplier<Entity> largeEntity;
     Function<Entity, Entity> modifyEntity;
 
+    protected DeleteAfterTest<Entity> cleaner = new DeleteAfterTest<>();
+
+    Consumer<Entity> deleter = entity -> repo.delete(entity).subscribe();
+
+    public void setDeleter(Consumer<Entity> deleter) {
+        this.deleter = deleter;
+    }
+
+    @After
+    public void after() {
+        cleaner.deleteRegistered(deleter);
+    }
+
     @Before
     public void before() {
         webTestClient = WebTestClient
@@ -88,11 +103,6 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
             .configureClient()
             .build().mutateWith(csrf())
             .mutateWith(mockUser().roles(ROLE_WRITER));
-    }
-
-    @After
-    public void after() {
-        deleteRegistered();
     }
 
     public void setTestParams(String baseUrl, Class<Entity> entityClass, Function<Entity, ID> getEntityId, Supplier<Entity> smallEntity,
@@ -136,13 +146,13 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
 
     public void testInsertMalformed() {
         ResponseSpec respSpec = webTestClient.post().uri(baseUrl).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(Tag.of("notEntity")), Tag.class)
+                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just("notEntity"), String.class)
                 .exchange();
-        respSpec.expectStatus().is5xxServerError().expectBody().consumeWith(log::trace);
+        respSpec.expectStatus().is4xxClientError().expectBody().consumeWith(log::trace);
     }
 
     public void testInsert(Entity entity) {
-        registerToBeDeleted(entity);
+        cleaner.registerToBeDeleted(entity);
 
         webTestClient.post().uri(baseUrl).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(entity), entityClass)
@@ -168,7 +178,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
 
     public void testGetId(Entity entity) {
         repo.save(entity).block();
-        registerToBeDeleted(entity);
+        cleaner.registerToBeDeleted(entity);
 
         webTestClient.get().uri(getUri(entity)).accept(MediaType.APPLICATION_JSON_UTF8)
                 .exchange()
@@ -182,7 +192,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
     public void testPut(Entity entity) {
         repo.save(entity).block();
         Entity modifiedEntity = modifyEntity.apply(entity);
-        registerToBeDeleted(modifiedEntity);
+        cleaner.registerToBeDeleted(modifiedEntity);
 
         webTestClient.put().uri(baseUrl).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(modifiedEntity), entityClass)
@@ -196,7 +206,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
 
     public void testDelete(Entity entity) {
         repo.save(entity).block();
-        registerToBeDeleted(entity); // in case of fails
+        cleaner.registerToBeDeleted(entity); // in case of fails
 
         webTestClient.delete().uri(getUri(entity))
                 .exchange()
@@ -214,7 +224,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
 
         Flux<Entity> contents = Flux.range(1, cntEntities).map(i -> supplier.apply(containerId)).cache();
         repo.saveAll(contents).blockLast();
-        registerToBeDeleted(contents);
+        cleaner.registerToBeDeleted(contents);
 
         ClientResponse resp = WebClient.create().get().uri(uriBuilder ->
             uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl)

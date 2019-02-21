@@ -19,6 +19,14 @@ public class ReputationMaker {
                 r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE));
     }
 
+    public static ContentReputation emptyContentReputation() {
+        return ContentReputation.of(IdMaker.randomUUID(), IdMaker.randomUUID());
+    }
+
+    public static ContentReputation emptyContentReputation(MapId mapId) {
+        return ContentReputation.of(IdMaker.toIdentity(mapId), IdMaker.toContainerId(mapId));
+    }
+
     public static ContentReputation randomContentReputation() {
         return randomContentReputation(IdMaker.randomMapId());
     }
@@ -27,12 +35,28 @@ public class ReputationMaker {
         return ContentReputation.of(mapId, randomReputation());
     }
 
+    public static ReviewReputation emptyReviewReputation() {
+        return ReviewReputation.of(IdMaker.randomUUID(), IdMaker.randomUUID());
+    }
+
+    public static ReviewReputation emptyReviewReputation(MapId mapId) {
+        return ReviewReputation.of(IdMaker.toIdentity(mapId), IdMaker.toContainerId(mapId));
+    }
+
     public static ReviewReputation randomReviewReputation() {
         return randomReviewReputation(IdMaker.randomMapId());
     }
 
     public static ReviewReputation randomReviewReputation(MapId mapId) {
         return ReviewReputation.of(mapId, randomReputation());
+    }
+
+    public static ReplyReputation emptyReplyReputation() {
+        return ReplyReputation.of(IdMaker.randomUUID(), IdMaker.randomUUID());
+    }
+
+    public static ReplyReputation emptyReplyReputation(MapId mapId) {
+        return ReplyReputation.of(IdMaker.toIdentity(mapId), IdMaker.toContainerId(mapId));
     }
 
     public static ReplyReputation randomReplyReputation() {
