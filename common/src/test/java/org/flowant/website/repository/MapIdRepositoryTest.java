@@ -20,5 +20,6 @@ public abstract class MapIdRepositoryTest <Entity extends HasMapId, Repository e
                 .then(repo.findById(entity.getMapId()));
         StepVerifier.create(saveAndDeleteAndFind).expectNextCount(0).verifyComplete();
     }
+
 }
 

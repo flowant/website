@@ -1,12 +1,12 @@
 package org.flowant.website.util.test;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.Content;
 import org.flowant.website.model.Recipe;
-import org.flowant.website.model.Tag;
 import org.springframework.data.cassandra.core.mapping.MapId;
 
 public class ContentMaker {
@@ -32,7 +32,7 @@ public class ContentMaker {
     static int liked = 200;
     static int reported = 1000;
 
-    static String name = "name";
+    static String tag = "tag";
 
     public static Content small(MapId mapId) {
         UUID id = IdMaker.toIdentity(mapId);
@@ -46,12 +46,15 @@ public class ContentMaker {
     public static Content large(MapId mapId) {
         UUID id = IdMaker.toIdentity(mapId);
         int cs = id.hashCode() / 1000000;
-        return Content.builder().identity(id).containerId(IdMaker.toContainerId(mapId)).title(title + id)
+        return Content.builder()
+                .identity(id)
+                .containerId(IdMaker.toContainerId(mapId))
+                .title(title + id)
                 .extend(new Recipe(List.of(ingredients + id, ingredients + id, ingredients + id),
                         prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))
                 .fileRefs(List.of(FileMaker.largeRandom()))
                 .sentences(sentences + id)
-                .tags(List.of(Tag.of(name + id), Tag.of(name + id + 1), Tag.of(name + id + 2)))
+                .tags(Set.of(tag + id, tag + id + 1, tag + id + 2))
                 .cruTime(CRUZonedTime.now())
                 .build();
     }

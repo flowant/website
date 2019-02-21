@@ -1,6 +1,7 @@
 package org.flowant.website.model;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.cassandra.core.cql.Ordering;
@@ -26,7 +27,6 @@ import lombok.experimental.Accessors;
 @Table
 public class Content implements HasMapId, HasReputation, HasCruTime {
     @NonNull
-    @Indexed
     @PrimaryKeyColumn(ordinal = 1, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     UUID identity;
     @NonNull
@@ -37,7 +37,8 @@ public class Content implements HasMapId, HasReputation, HasCruTime {
     Recipe extend; // TODO how to extend gracefully?
     List<FileRef> fileRefs;
     String sentences;
-    List<Tag> tags;
+    @Indexed
+    Set<String> tags;
     List<UUID> popularReviewIds;
     Reputation reputation;
     @NonNull

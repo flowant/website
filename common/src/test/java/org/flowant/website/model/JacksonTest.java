@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.flowant.website.model.Content;
-import org.flowant.website.model.Tag;
-import org.flowant.website.model.User;
 import org.flowant.website.util.test.ContentMaker;
 import org.flowant.website.util.test.UserMaker;
 import org.junit.Test;
@@ -32,11 +29,6 @@ public class JacksonTest {
         log.debug("Json:{}", json);
         Object obj = objectMapper.readValue(json, t.getClass());
         log.debug("ToString:{}", obj);
-    }
-
-    @Test
-    public void testTagWithJson() throws JsonGenerationException, JsonMappingException, IOException {
-        testWithJson(Tag.of("name"));
     }
 
     @Test

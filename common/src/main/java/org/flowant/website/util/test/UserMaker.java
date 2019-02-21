@@ -1,13 +1,13 @@
 package org.flowant.website.util.test;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.flowant.website.model.Authority;
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.Phone;
 import org.flowant.website.model.PostalAddress;
-import org.flowant.website.model.Tag;
 import org.flowant.website.model.User;
 import org.flowant.website.model.ZonedDate;
 
@@ -29,12 +29,16 @@ public class UserMaker {
     static String zipCode = "zipCode";
     static String detailCode = "detailCode";
 
-    // Tag
-    static String name = "name";
+    static String tag = "tag";
 
     public static User small(UUID id) {
-        return User.builder().identity(id).username(username + id).password(password + id)
-                .email(email + id).cruTime(CRUZonedTime.now()).build();
+        return User.builder()
+                .identity(id)
+                .username(username + id)
+                .password(password + id)
+                .email(email + id)
+                .cruTime(CRUZonedTime.now())
+                .build();
     }
 
     public static User smallRandom() {
@@ -42,15 +46,22 @@ public class UserMaker {
     }
 
     public static User large(UUID id) {
-        return User.builder().identity(id).username(username + id).password(password + id)
+        return User.builder()
+                .identity(id)
+                .username(username + id)
+                .password(password + id)
                 .email(email + id)
-                .address(PostalAddress.of(address + id, city + id, state + id, country + id,
-                        zipCode + id))
-                .birthdate(ZonedDate.now()).firstname(firstname + id).lastname(lastname + id)
-                .phone(Phone.of(82, id.hashCode())).followers(List.of(UUIDs.timeBased()))
+                .address(PostalAddress.of(address + id, city + id, state + id, country + id, zipCode + id))
+                .birthdate(ZonedDate.now())
+                .firstname(firstname + id)
+                .lastname(lastname + id)
+                .phone(Phone.of(82, id.hashCode()))
                 .authorities(List.of(Authority.of("ROLE_USER"), Authority.of("MEMBER")))
-                .followings(List.of(UUIDs.timeBased())).interests(List.of(Tag.of(name + id)))
-                .cruTime(CRUZonedTime.now()).build();
+                .followers(Set.of(UUIDs.timeBased()))
+                .followings(Set.of(UUIDs.timeBased()))
+                .interests(Set.of(tag + id))
+                .cruTime(CRUZonedTime.now())
+                .build();
     }
 
     public static User largeRandom() {

@@ -1,6 +1,7 @@
 package org.flowant.website.model;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -42,10 +43,10 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     Phone phone;
     PostalAddress address;
     List<Authority> authorities;
-    List<UUID> followers;
-    List<UUID> followings;
+    Set<UUID> followers;
+    Set<UUID> followings;
     // TODO likes and dislikes: contents, Reviews, Replys
-    List<Tag> interests; //TODO to be updated by user activities;
+    Set<String> interests; //TODO to be updated by user activities;
     @NonNull
     CRUZonedTime cruTime;//TODO updated time
     @Builder.Default

@@ -26,26 +26,26 @@ import reactor.test.StepVerifier;
 public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReputation, Repository extends PageableRepository<Entity>>
         extends MapIdRepositoryTest<Entity, Repository> {
 
-    UUID containerId;
+    Function <Pageable, Mono<Slice<Entity>>> findPaging;
 
-    public Mono<Slice<Entity>> getAllPaging(int page, int size, @Nullable String pagingState) {
-        Pageable pageable = PageableUtil.pageable(page, size, pagingState);
-        return repo.findAllByContainerId(containerId, pageable);
-    }
-
-    public Mono<Slice<Entity>> getAllPaging(Pageable pageable) {
+    private Mono<Slice<Entity>> getPaging(Pageable pageable) {
         log.trace("getAllPaging, pageable:{}", pageable);
         CassandraPageRequest cpr = CassandraPageRequest.class.cast(pageable);
-        return getAllPaging(cpr.getPageNumber(), cpr.getPageSize(), cpr.getPagingState().toString());
+        return getPaging(cpr.getPageNumber(), cpr.getPageSize(), cpr.getPagingState().toString());
     }
 
-    public void findAllByContainerIdPageable(UUID containerId, Flux<Entity> entities) {
-        this.containerId = containerId;
+    private Mono<Slice<Entity>> getPaging(int page, int size, @Nullable String pagingState) {
+        Pageable pageable = PageableUtil.pageable(page, size, pagingState);
+        return findPaging.apply(pageable);
+    }
+
+    public void saveAndGetPaging(Flux<Entity> entities, Function <Pageable, Mono<Slice<Entity>>> findPaging) {
+        this.findPaging = findPaging;
         entities = cleaner.registerToBeDeleted(entities);
         repo.saveAll(entities).blockLast();
 
         List<Entity> actual = new ArrayList<>();
-        Slice<Entity> slice = getAllPaging(0, 3, null).block();
+        Slice<Entity> slice = getPaging(0, 3, null).block();
         while(true) {
             if (slice.hasContent()) {
                 slice.forEach(log::trace);
@@ -54,9 +54,13 @@ public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReput
             if (!slice.hasNext()) {
                 break;
             }
-            slice = getAllPaging(slice.nextPageable()).block();
+            slice = getPaging(slice.nextPageable()).block();
         }
         Assert.assertTrue(entities.all(actual::contains).block());
+    }
+
+    public void findAllByContainerIdPageable(UUID containerId, Flux<Entity> entities) {
+        saveAndGetPaging(entities, pageable -> repo.findAllByContainerId(containerId, pageable));
     }
 
     public void testOrdered(Function<Entity, MapId> getId, Comparator<Entity> comparator,
@@ -75,4 +79,5 @@ public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReput
         Flux<Entity> findAllByContainerId = repo.findAllByContainerId(containerId);
         StepVerifier.create(findAllByContainerId).expectNextSequence(sortedList).verifyComplete();
     }
+
 }
