@@ -6,6 +6,4 @@ public interface HasIdentity {
 
     UUID getIdentity();
 
-    HasIdentity setIdentity(UUID identity);
-
 }

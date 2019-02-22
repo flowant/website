@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reply;
 import org.flowant.website.repository.ReplyRepository;
 import org.springframework.http.ResponseEntity;
@@ -47,14 +48,14 @@ public class ReplyRest extends PageableRepositoryRest<Reply, ReplyRepository> {
     public Mono<ResponseEntity<Reply>> getById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
-        return super.getById(toMapId(id, cid));
+        return super.getById(IdCid.of(id, cid));
     }
 
     @DeleteMapping(value = REPLY + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
-        return super.deleteById(toMapId(id, cid));
+        return super.deleteById(IdCid.of(id, cid));
     }
 
 }

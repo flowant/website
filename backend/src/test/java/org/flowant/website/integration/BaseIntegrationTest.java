@@ -15,8 +15,9 @@ import java.util.function.Consumer;
 
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
+import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.HasIdentity;
-import org.flowant.website.model.HasMapId;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;
@@ -33,7 +34,6 @@ import org.flowant.website.rest.ReviewRest;
 import org.flowant.website.rest.UserRest;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -84,8 +84,8 @@ public abstract class BaseIntegrationTest extends RestTest {
     public void after() {
         apiInfo.forEach((name, info) -> {
             info.deleteAfterTest.forEach((HasIdentity data) -> {
-                if (data instanceof HasMapId) {
-                    deleteById(HasMapId.class.cast(data).getMapId(), info.cls);
+                if (data instanceof HasIdCid) {
+                    deleteById(HasIdCid.class.cast(data).getIdCid(), info.cls);
                 } else {
                     deleteById(data.getIdentity(), info.cls);
                 }
@@ -128,10 +128,11 @@ public abstract class BaseIntegrationTest extends RestTest {
     }
 
     public <ID> URI getUri(ID id, UriBuilder builder) {
-        builder.pathSegment("{" + HasMapId.IDENTITY + "}");
-        if (id instanceof MapId) {
-            builder.pathSegment("{" + HasMapId.CONTAINER_ID + "}");
-            return builder.build((MapId) id);
+        builder.pathSegment("{id}");
+        if (id instanceof IdCid) {
+            builder.pathSegment("{cid}");
+            IdCid idCid = IdCid.class.cast(id);
+            return builder.build(idCid.getIdentity(), idCid.getContainerId());
         } else {
             return builder.build(id);
         }

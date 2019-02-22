@@ -4,6 +4,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import org.flowant.website.BackendApplication;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reply;
 import org.flowant.website.repository.ReplyRepository;
 import org.flowant.website.util.test.ReplyMaker;
@@ -11,19 +12,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.cassandra.core.mapping.MapId;
 
 import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
-public class ReplyRestTest extends RestWithRepositoryTest<Reply, MapId, ReplyRepository> {
+public class ReplyRestTest extends RestWithRepositoryTest<Reply, IdCid, ReplyRepository> {
 
     @Before
     public void before() {
         super.before();
 
-        setTestParams(ReplyRest.REPLY, Reply.class, Reply::getMapId,
+        setTestParams(ReplyRest.REPLY, Reply.class, Reply::getIdCid,
                 ReplyMaker::smallRandom, ReplyMaker::largeRandom,
                 r -> r.setComment("newComment"));
     }
@@ -35,7 +35,7 @@ public class ReplyRestTest extends RestWithRepositoryTest<Reply, MapId, ReplyRep
 
     @Test
     public void testPagination() {
-        Function<UUID, Reply> supplier = (containerId) -> ReplyMaker.largeRandom().setContainerId(containerId);
+        Function<UUID, Reply> supplier = (containerId) -> ReplyMaker.largeRandom(containerId);
         pagination(10, 1, supplier);
         pagination(10, 3, supplier);
         pagination(10, 5, supplier);

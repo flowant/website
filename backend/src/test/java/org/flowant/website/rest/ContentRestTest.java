@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.Content;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.storage.FileStorage;
 import org.flowant.website.util.test.ContentMaker;
@@ -13,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.cassandra.core.mapping.MapId;
 
 import junitparams.JUnitParamsRunner;
 import lombok.extern.log4j.Log4j2;
@@ -23,13 +23,13 @@ import reactor.test.StepVerifier;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes=BackendApplication.class)
 @Log4j2
-public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, ContentRepository> {
+public class ContentRestTest extends RestWithRepositoryTest<Content, IdCid, ContentRepository> {
 
     @Before
     public void before() {
         super.before();
 
-        setTestParams(ContentRest.CONTENT, Content.class, Content::getMapId,
+        setTestParams(ContentRest.CONTENT, Content.class, Content::getIdCid,
                 ContentMaker::smallRandom, ContentMaker::largeRandom,
                 c -> c.setTitle("newTitle"));
     }
@@ -54,13 +54,13 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, Cont
                 .expectBody().consumeWith(r -> {
                     log.trace(r::toString);
                     content.getFileRefs().forEach(fileRef -> Assert.assertFalse(FileStorage.exist(fileRef.getIdentity())));
-                    StepVerifier.create(repo.findById(content.getMapId())).expectNextCount(0).verifyComplete();
+                    StepVerifier.create(repo.findById(content.getIdCid())).expectNextCount(0).verifyComplete();
                 });
     }
 
     @Test
     public void testPagination() {
-        Function<UUID, Content> supplier = (containerId) -> ContentMaker.largeRandom().setContainerId(containerId);
+        Function<UUID, Content> supplier = (containerId) -> ContentMaker.largeRandom(containerId);
         pagination(10, 1, supplier);
         pagination(10, 3, supplier);
         pagination(10, 5, supplier);

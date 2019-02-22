@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.IdCid;
-import org.reactivestreams.Publisher;
 import org.springframework.data.cassandra.repository.ReactiveCassandraRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

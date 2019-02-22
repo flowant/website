@@ -3,6 +3,7 @@ package org.flowant.website.rest;
 import javax.validation.Valid;
 
 import org.flowant.website.model.ContentReputation;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.repository.ContentReputationRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ContentReputationRest extends MapIdRepositoryRest<ContentReputation, ContentReputationRepository> {
+public class ContentReputationRest extends IdCidRepositoryRest<ContentReputation, ContentReputationRepository> {
 
     public final static String CONTENT_REPUTATION = "/content_reputation";
 
@@ -40,13 +41,13 @@ public class ContentReputationRest extends MapIdRepositoryRest<ContentReputation
     public Mono<ResponseEntity<ContentReputation>> getById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
-        return super.getById(toMapId(id, cid));
+        return super.getById(IdCid.of(id, cid));
     }
 
     @DeleteMapping(value = CONTENT_REPUTATION + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
-        return super.deleteById(toMapId(id, cid));
+        return super.deleteById(IdCid.of(id, cid));
     }
 }

@@ -32,6 +32,10 @@ public class IdCid implements HasIdentity, HasContainerId, Serializable {
     @PrimaryKeyColumn(ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     UUID containerId;
 
+    public static IdCid of(String identity, String containerId) {
+        return of(UUID.fromString(identity), UUID.fromString(containerId));
+    }
+
     public static IdCid random() {
         return IdCid.of(IdMaker.randomUUID(), IdMaker.randomUUID());
     }

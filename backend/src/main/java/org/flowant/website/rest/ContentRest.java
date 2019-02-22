@@ -5,9 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.flowant.website.model.Content;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.storage.FileStorage;
-import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +48,7 @@ public class ContentRest extends PageableRepositoryRest<Content, ContentReposito
     @GetMapping(value = CONTENT + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Content>> getById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
-        return super.getById(toMapId(id, cid));
+        return super.getById(IdCid.of(id, cid));
     }
 
     // If File Server is separated, we can use FILES_DELETES end point instead of FileStorage.deleteAll
@@ -56,10 +56,10 @@ public class ContentRest extends PageableRepositoryRest<Content, ContentReposito
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
-        MapId mapId = toMapId(id, cid);
-        return repo.findById(mapId)
+        IdCid idCid = IdCid.of(id, cid);
+        return repo.findById(idCid)
                 .doOnNext(content-> FileStorage.deleteAll(content.getFileRefs()))
-                .then(repo.deleteById(mapId)
+                .then(repo.deleteById(idCid)
                 .map(ResponseEntity::ok));
     }
 }

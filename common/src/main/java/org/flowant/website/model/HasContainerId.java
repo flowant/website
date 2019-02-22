@@ -6,6 +6,4 @@ public interface HasContainerId {
 
     UUID getContainerId();
 
-    HasContainerId setContainerId(UUID containerId);
-
 }

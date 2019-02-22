@@ -1,14 +1,14 @@
 package org.flowant.website.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.cassandra.repository.ReactiveCassandraRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public abstract class RepositoryRest <T, ID, R extends ReactiveCrudRepository<T, ID>> {
+public abstract class RepositoryRest <T, ID, R extends ReactiveCassandraRepository<T, ID>> {
 
     public final static String ID = "id";
     public final static String PATH_SEG_ID = "/{id}";

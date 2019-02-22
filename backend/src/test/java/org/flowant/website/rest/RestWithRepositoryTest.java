@@ -17,8 +17,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.flowant.website.model.HasMapId;
-import org.flowant.website.repository.PageableRepository;
+import org.flowant.website.model.IdCid;
+import org.flowant.website.repository.ReputationRepository;
 import org.flowant.website.util.test.AssertUtil;
 import org.flowant.website.util.test.DeleteAfterTest;
 import org.junit.After;
@@ -30,8 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.cassandra.core.mapping.MapId;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.cassandra.repository.ReactiveCassandraRepository;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
@@ -50,7 +49,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @Log4j2
-public abstract class RestWithRepositoryTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>> {
+public abstract class RestWithRepositoryTest <Entity, ID, Repository extends ReactiveCassandraRepository<Entity, ID>> {
 
     public final static String __ID__ = "/{id}";
     public final static String SCHEME = "http";
@@ -134,11 +133,12 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
         ID id = getEntityId.apply(entity);
 
         UriBuilder builder = UriComponentsBuilder.fromPath(baseUrl);
-        builder.pathSegment("{" + HasMapId.IDENTITY + "}");
+        builder.pathSegment("{id}");
 
-        if (id instanceof MapId) {
-            builder.pathSegment("{" + HasMapId.CONTAINER_ID + "}");
-            return builder.build((MapId) id);
+        if (id instanceof IdCid) {
+            builder.pathSegment("{cid}");
+            IdCid idCid = IdCid.class.cast(id);
+            return builder.build(idCid.getIdentity(), idCid.getContainerId());
         } else {
             return builder.build(id);
         }
@@ -241,7 +241,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
     public void pagination(int cntEntities, int pageSize, Function<UUID, Entity> supplier) {
         UUID containerId = UUIDs.timeBased();
 
-        Assert.assertTrue(repo instanceof PageableRepository);
+        Assert.assertTrue(repo instanceof ReputationRepository);
 
         Flux<Entity> contents = Flux.range(1, cntEntities).map(i -> supplier.apply(containerId)).cache();
         repo.saveAll(contents).blockLast();

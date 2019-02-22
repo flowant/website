@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.flowant.website.model.HasCruTime;
-import org.flowant.website.model.HasMapId;
+import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.HasReputation;
-import org.flowant.website.repository.PageableRepository;
+import org.flowant.website.repository.ReputationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import reactor.core.publisher.Mono;
 
-public abstract class PageableRepositoryRest <Entity extends HasMapId & HasReputation & HasCruTime, Repository extends PageableRepository<Entity>>
+public abstract class PageableRepositoryRest <Entity extends HasIdCid & HasReputation & HasCruTime, Repository extends ReputationRepository<Entity>>
         extends CruTimeRepositoryRest <Entity, Repository> {
 
     public final static String PAGE = "page";
@@ -31,7 +31,7 @@ public abstract class PageableRepositoryRest <Entity extends HasMapId & HasReput
     public Mono<ResponseEntity<List<Entity>>> getAllByContainerId(String containerId,
             int page, int size, String pagingState, UriComponentsBuilder uriBuilder) {
 
-        return repo.findAllByContainerId(UUID.fromString(containerId), pageable(page, size, pagingState))
+        return repo.findAllByIdCidContainerId(UUID.fromString(containerId), pageable(page, size, pagingState))
                 .map(slice -> ResponseEntity.ok()
                         .headers(nextLinkHeader(containerId, uriBuilder, slice))
                         .body(slice.getContent()))
