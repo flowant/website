@@ -15,7 +15,10 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class Authority implements GrantedAuthority {
+
     private static final long serialVersionUID = -4710371112263760289L;
+
     @NonNull
     String authority;
+
 }

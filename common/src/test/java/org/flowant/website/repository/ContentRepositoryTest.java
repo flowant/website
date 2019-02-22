@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.flowant.website.model.Content;
+import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.ContentMaker;
-import org.flowant.website.util.test.IdMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,24 +20,24 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ContentRepositoryTest extends PageableRepositoryTest<Content, ContentRepository> {
+public class ContentRepositoryTest extends ReputationRepositoryTest<Content, ContentRepository> {
 
     @Test
     public void crud() {
-        testCrud(Content::getMapId, ContentMaker::smallRandom, ContentMaker::largeRandom);
+        testCrud(Content::getIdCid, ContentMaker::smallRandom, ContentMaker::largeRandom);
     }
 
     @Test
     public void pageable() {
         UUID containerId = UUIDs.timeBased();
-        Flux<Content> entities = Flux.range(1, 10).map(i -> ContentMaker.smallRandom().setContainerId(containerId));
+        Flux<Content> entities = Flux.range(1, 10).map(i -> ContentMaker.smallRandom(containerId));
         findAllByContainerIdPageable(containerId, entities);
     }
 
     @Test
     public void ordered() {
-        testOrdered(Content::getMapId, Comparator.comparing(Content::getIdentity).reversed(),
-                (id) -> ContentMaker.smallRandom().setContainerId(id));
+        testOrdered(Content::getIdCid, Comparator.comparing(Content::getIdentity).reversed(),
+                ContentMaker::smallRandom);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ContentRepositoryTest extends PageableRepositoryTest<Content, Conte
     }
 
     @Test
-    public void findByTagPageable() {
+    public void findAllByTagPageable() {
         String tag = IdMaker.randomUUID().toString();
         Flux<Content> contents = Flux.range(1, 10)
                 .map(i -> ContentMaker.largeRandom().setTags(Set.of(tag))).cache();

@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-import org.flowant.website.model.HasMapId;
+import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.HasReputation;
+import org.flowant.website.model.IdCid;
 import org.junit.Assert;
-import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -23,8 +23,8 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @Log4j2
-public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReputation, Repository extends PageableRepository<Entity>>
-        extends MapIdRepositoryTest<Entity, Repository> {
+public abstract class ReputationRepositoryTest <Entity extends HasIdCid & HasReputation, Repository extends ReputationRepository<Entity>>
+        extends IdCidRepositoryTest<Entity, Repository> {
 
     Function <Pageable, Mono<Slice<Entity>>> findPaging;
 
@@ -60,10 +60,10 @@ public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReput
     }
 
     public void findAllByContainerIdPageable(UUID containerId, Flux<Entity> entities) {
-        saveAndGetPaging(entities, pageable -> repo.findAllByContainerId(containerId, pageable));
+        saveAndGetPaging(entities, pageable -> repo.findAllByIdCidContainerId(containerId, pageable));
     }
 
-    public void testOrdered(Function<Entity, MapId> getId, Comparator<Entity> comparator,
+    public void testOrdered(Function<Entity, IdCid> getId, Comparator<Entity> comparator,
             Function<UUID, Entity> supplier) {
 
         UUID containerId = UUIDs.timeBased();
@@ -76,8 +76,8 @@ public abstract class PageableRepositoryTest <Entity extends HasMapId & HasReput
         // expected list is sorted by descending order
         List<Entity> sortedList = entities.collectSortedList(comparator).block();
 
-        Flux<Entity> findAllByContainerId = repo.findAllByContainerId(containerId);
-        StepVerifier.create(findAllByContainerId).expectNextSequence(sortedList).verifyComplete();
+        Flux<Entity> findAllByIdCidContainerId = repo.findAllByIdCidContainerId(containerId);
+        StepVerifier.create(findAllByIdCidContainerId).expectNextSequence(sortedList).verifyComplete();
     }
 
 }

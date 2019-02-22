@@ -1,33 +1,30 @@
 package org.flowant.website.repository;
 
-import static org.flowant.website.model.HasMapId.CONTAINER_ID;
-import static org.flowant.website.model.HasMapId.IDENTITY;
-
 import java.util.UUID;
 
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reputation;
 import org.flowant.website.model.Review;
-import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ReviewRepository extends PageableRepository<Review> {
+public interface ReviewRepository extends ReputationRepository<Review> {
 
     static final String UPDATE_REPUTATION = "UPDATE review SET reputation = ?2 " + 
             "WHERE identity = ?0 and containerId = ?1";
 
     @Query(UPDATE_REPUTATION)
-    Mono<Object> updateReputationById(UUID id, UUID containerId, Reputation reputation);
+    Mono<Object> updateReputationById(UUID identity, UUID containerId, Reputation reputation);
 
     @Override
-    default Mono<Reputation> updateReputationById(MapId id, Reputation reputation) {
-        return updateReputationById((UUID) id.get(IDENTITY), (UUID) id.get(CONTAINER_ID), reputation)
+    default Mono<Reputation> updateReputationById(IdCid idCid, Reputation reputation) {
+        return updateReputationById(idCid.getIdentity(), idCid.getContainerId(), reputation)
                 .thenReturn(reputation);
     }
 
     @Override
     @Query("delete from review where containerid = ?0")
-    Mono<Object> deleteAllByContainerId(UUID containerId);
+    Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
 }

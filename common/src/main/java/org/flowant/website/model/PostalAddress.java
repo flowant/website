@@ -16,8 +16,10 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class PostalAddress {
+
     @NonNull
     String address;
+
     /* delivery address line can be parsed as follows
     String primaryNumber;
     String direction;
@@ -25,13 +27,18 @@ public class PostalAddress {
     String streetSuffix;
     String unit;
     */
+
     @NonNull
     String city;
+
     @NonNull
     String state;
+
     @NonNull
     String country;
+
     @NonNull
     String zipCode;
     String detailCode; /* e.g., +4 zip code */
+
 }

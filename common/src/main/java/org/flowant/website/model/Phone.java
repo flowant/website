@@ -17,7 +17,9 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class Phone {
+
     int countryCode;
+
     long nationalNumber;
 
     public static Phone of(int countryCode, long nationalNumber) {
@@ -28,4 +30,5 @@ public class Phone {
         PhoneNumber number = PhoneNumberUtil.getInstance().parse(numberToParse, defaultCountry);
         return Phone.of(number.getCountryCode(), number.getNationalNumber());
     }
+
 }

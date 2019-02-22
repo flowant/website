@@ -18,12 +18,16 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class CRUZonedTime {
+
     @NonNull
     ZoneId zoneId;
+
     @NonNull
     LocalDateTime created; // TODO auto fill
+
     @NonNull
     LocalDateTime read; // TODO auto fill
+
     @NonNull
     LocalDateTime updated; // TODO auto fill
 
@@ -46,4 +50,5 @@ public class CRUZonedTime {
         updated = TimeUtil.nowMillisecond();
         return this;
     }
+
 }

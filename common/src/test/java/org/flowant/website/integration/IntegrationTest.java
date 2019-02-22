@@ -5,16 +5,17 @@ import java.util.UUID;
 
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.repository.ContentReputationRepository;
-import org.flowant.website.repository.MapIdRepository;
+import org.flowant.website.repository.IdCidRepository;
 import org.flowant.website.repository.ReplyRepository;
 import org.flowant.website.repository.ReplyReputationRepository;
 import org.flowant.website.repository.ReviewRepository;
 import org.flowant.website.repository.ReviewReputationRepository;
 import org.flowant.website.repository.UserRepository;
+import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.ContentMaker;
-import org.flowant.website.util.test.IdMaker;
 import org.flowant.website.util.test.ReplyMaker;
 import org.flowant.website.util.test.ReputationMaker;
 import org.flowant.website.util.test.ReviewMaker;
@@ -26,7 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -61,9 +61,9 @@ public class IntegrationTest {
     @Autowired
     UserRepository repoUser;
 
-    Flux<MapIdRepository<?>> repos;
+    Flux<IdCidRepository<?>> repos;
 
-    Flux<MapId> toBeDeletedMapIds;
+    Flux<IdCid> toBeDeletedIdCids;
 
     @Before
     public void before() {
@@ -73,13 +73,13 @@ public class IntegrationTest {
 
     @After
     public void after() {
-        repos.subscribe(repo -> toBeDeletedMapIds.flatMap(repo::deleteById).subscribe());
+        repos.subscribe(repo -> toBeDeletedIdCids.flatMap(repo::deleteById).subscribe());
     }
 
     @Test
     public void deleteChildren() {
-        MapId mapId = IdMaker.randomMapId();
-        toBeDeletedMapIds = Flux.just(mapId);
+        IdCid mapId = IdCid.random();
+        toBeDeletedIdCids = Flux.just(mapId);
 
         repoContent.save(ContentMaker.large(mapId)).block();
         repoReview.save(ReviewMaker.large(mapId)).block();
@@ -100,22 +100,22 @@ public class IntegrationTest {
     @Test
     public void sortByReputation() {
         UUID containerId = IdMaker.randomUUID();
-        Flux<Content> contents = Flux.range(1, 10).map(i -> ContentMaker.largeRandom().setContainerId(containerId)).cache();
-        toBeDeletedMapIds = contents.map(Content::getMapId);
+        Flux<Content> contents = Flux.range(1, 10).map(i -> ContentMaker.largeRandom(containerId)).cache();
+        toBeDeletedIdCids = contents.map(Content::getIdCid);
         repoContent.saveAll(contents).blockLast();
 
-        Flux<ContentReputation> reputations = contents.map(c -> ReputationMaker.randomContentReputation(c.getMapId())).cache();
+        Flux<ContentReputation> reputations = contents.map(c -> ReputationMaker.randomContentReputation(c.getIdCid())).cache();
         reputations.flatMap(repoContentRpt::save).blockLast();
 
         log.trace("repoContent:");
-        repoContent.findAllByContainerId(containerId)
+        repoContent.findAllByIdCidContainerId(containerId)
                 .sort(Comparator.comparing(Content::getReputation).reversed())
                 .doOnNext(log::trace).blockLast();
 
         log.trace("repoContentRpt");
-        Flux<MapId> ids = repoContentRpt.findAllByContainerId(containerId)
+        Flux<IdCid> ids = repoContentRpt.findAllByIdCidContainerId(containerId)
                 .sort(Comparator.comparing(ContentReputation::getLiked).reversed())
-                .doOnNext(log::trace).map(ContentReputation::getMapId);
+                .doOnNext(log::trace).map(ContentReputation::getIdCid);
 
         // Sequences of Publisher and results are not the same.
         // we cannot get sorted content using sorted Publisher

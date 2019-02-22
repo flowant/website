@@ -20,15 +20,21 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class FileRef implements HasIdentity {
+
     @NonNull
     UUID identity; // to be used key in case of using external storage
+
     @NonNull
     String uri; //TODO can be external links or internal storage url
+
     @NonNull
     String contentType;
+
     @NonNull
     String filename; // client's filename
     long length; //TODO should be filled before being inserted to DB
+
     @NonNull
     CRUZonedTime cruTime;
+
 }

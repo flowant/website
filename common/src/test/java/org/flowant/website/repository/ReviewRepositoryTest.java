@@ -16,24 +16,24 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReviewRepositoryTest extends PageableRepositoryTest<Review, ReviewRepository> {
+public class ReviewRepositoryTest extends ReputationRepositoryTest<Review, ReviewRepository> {
 
     @Test
     public void crud() {
-        testCrud(Review::getMapId, ReviewMaker::smallRandom, ReviewMaker::largeRandom);
+        testCrud(Review::getIdCid, ReviewMaker::smallRandom, ReviewMaker::largeRandom);
     }
 
     @Test
     public void pageable() {
         UUID containerId = UUIDs.timeBased();
-        Flux<Review> entities = Flux.range(1, 10).map(i -> ReviewMaker.smallRandom().setContainerId(containerId));
+        Flux<Review> entities = Flux.range(1, 10).map(i -> ReviewMaker.smallRandom(containerId));
         findAllByContainerIdPageable(containerId, entities);
     }
 
     @Test
     public void ordered() {
-        testOrdered(Review::getMapId, Comparator.comparing(Review::getIdentity).reversed(),
-                (id) -> ReviewMaker.smallRandom().setContainerId(id));
+        testOrdered(Review::getIdCid, Comparator.comparing(Review::getIdentity).reversed(),
+                ReviewMaker::smallRandom);
     }
 
     @Test

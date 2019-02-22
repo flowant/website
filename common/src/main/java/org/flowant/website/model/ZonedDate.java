@@ -17,12 +17,15 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class ZonedDate {
+
     @NonNull
     ZoneId zoneId;
+
     @NonNull
     LocalDate localDate;
 
     public static ZonedDate now() {
         return ZonedDate.of(ZoneId.systemDefault(), LocalDate.now());
     }
+
 }

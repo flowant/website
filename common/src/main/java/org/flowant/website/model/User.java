@@ -29,32 +29,51 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
 
     @Id @NonNull
     UUID identity;
+
     @NonNull @Indexed //TODO username should be unique
     String username;
+
     @NonNull
     String password;
+
     @NonNull
     String email;
+
     String firstname;
+
     String lastname;
+
     @Builder.Default
     Gender gender = Gender.UNDEFINED;
+
     ZonedDate birthdate;
+
     Phone phone;
+
     PostalAddress address;
+
     List<Authority> authorities;
+
     Set<UUID> followers;
+
     Set<UUID> followings;
+
     // TODO likes and dislikes: contents, Reviews, Replys
     Set<String> interests; //TODO to be updated by user activities;
+
     @NonNull
     CRUZonedTime cruTime;//TODO updated time
+
     @Builder.Default
     boolean accountNonExpired = true;
+
     @Builder.Default
     boolean accountNonLocked = true;;
+
     @Builder.Default
     boolean credentialsNonExpired = true;
+
     @Builder.Default
     boolean enabled = true;
+
 }

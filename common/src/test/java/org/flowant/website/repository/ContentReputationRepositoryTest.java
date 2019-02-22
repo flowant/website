@@ -11,8 +11,7 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ContentReputationRepositoryTest extends
-        MapIdRepositoryTest<ContentReputation, ContentReputationRepository> {
+public class ContentReputationRepositoryTest extends IdCidRepositoryTest<ContentReputation, ContentReputationRepository> {
 
     @Before
     public void before() {
@@ -21,7 +20,7 @@ public class ContentReputationRepositoryTest extends
 
     @Test
     public void testAccumulation() {
-        super.testAccumulation(ContentReputation::getMapId, ContentReputation::of);
+        super.testAccumulation(ContentReputation::getIdCid, ContentReputation::of);
     }
 
     @Test

@@ -7,7 +7,7 @@ import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ReviewReputationRepository extends MapIdRepository<ReviewReputation> {
+public interface ReviewReputationRepository extends IdCidRepository<ReviewReputation> {
 
     static final String ACCUMULATE = "UPDATE reviewreputation " +
             "SET viewed = viewed + ?2, rated = rated + ?3, liked = liked + ?4, " +
@@ -15,7 +15,7 @@ public interface ReviewReputationRepository extends MapIdRepository<ReviewReputa
             "WHERE identity = ?0 and containerid = ?1";
 
     @Query(ACCUMULATE)
-    Mono<Object> accumulate(UUID id, UUID containerId, long viewed, long rated,
+    Mono<Object> accumulate(UUID identity, UUID containerId, long viewed, long rated,
             long liked, long disliked, long reported,long reputed);
 
     default Mono<Void> accumulate(ReviewReputation rr) {
@@ -25,14 +25,11 @@ public interface ReviewReputationRepository extends MapIdRepository<ReviewReputa
 
     @Override
     default Mono<ReviewReputation> save(ReviewReputation rr) {
-        return accumulate(rr).then(findById(rr.getMapId()).flatMap(RelationshipService::updateReputation));
+        return accumulate(rr).then(findById(rr.getIdCid()).flatMap(RelationshipService::updateReputation));
     };
 
     @Override
     @Query("delete from reviewreputation where containerid = ?0")
-    Mono<Object> deleteAllByContainerId(UUID containerId);
-
-    @Query("SELECT WRITETIME (reputed) from reviewreputation WHERE id = ?0")
-    Mono<Long> writetimeMicros(UUID id);
+    Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
 }

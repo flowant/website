@@ -7,7 +7,7 @@ import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ReplyReputationRepository extends MapIdRepository<ReplyReputation> {
+public interface ReplyReputationRepository extends IdCidRepository<ReplyReputation> {
 
     static final String ACCUMULATE = "UPDATE replyreputation " +
             "SET viewed = viewed + ?2, rated = rated + ?3, liked = liked + ?4, " +
@@ -15,7 +15,7 @@ public interface ReplyReputationRepository extends MapIdRepository<ReplyReputati
             "WHERE identity = ?0 and containerid = ?1";
 
     @Query(ACCUMULATE)
-    Mono<Object> accumulate(UUID id, UUID containerId, long viewed, long rated,
+    Mono<Object> accumulate(UUID identity, UUID containerId, long viewed, long rated,
             long liked, long disliked, long reported,long reputed);
 
     default Mono<Void> accumulate(ReplyReputation rr) {
@@ -24,11 +24,11 @@ public interface ReplyReputationRepository extends MapIdRepository<ReplyReputati
     };
 
     default Mono<ReplyReputation> save(ReplyReputation rr) {
-        return accumulate(rr).then(findById(rr.getMapId()).flatMap(RelationshipService::updateReputation));
+        return accumulate(rr).then(findById(rr.getIdCid()).flatMap(RelationshipService::updateReputation));
     };
 
     @Override
     @Query("delete from replyreputation where containerid = ?0")
-    Mono<Object> deleteAllByContainerId(UUID containerId);
+    Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
 }

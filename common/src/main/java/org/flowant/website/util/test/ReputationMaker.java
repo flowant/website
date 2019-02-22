@@ -6,10 +6,10 @@ import java.util.Random;
 import java.util.function.BiFunction;
 
 import org.flowant.website.model.ContentReputation;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Reputation;
 import org.flowant.website.model.ReviewReputation;
-import org.springframework.data.cassandra.core.mapping.MapId;
 
 public class ReputationMaker {
 
@@ -21,67 +21,67 @@ public class ReputationMaker {
     }
 
     public static ContentReputation emptyContentReputation() {
-        return ContentReputation.of(IdMaker.randomUUID(), IdMaker.randomUUID());
+        return ContentReputation.of(IdCid.random());
     }
 
-    public static ContentReputation emptyContentReputation(MapId mapId) {
-        return ContentReputation.of(IdMaker.toIdentity(mapId), IdMaker.toContainerId(mapId));
+    public static ContentReputation emptyContentReputation(IdCid idCid) {
+        return ContentReputation.of(idCid);
     }
 
     public static ContentReputation randomContentReputation() {
-        return randomContentReputation(IdMaker.randomMapId());
+        return randomContentReputation(IdCid.random());
     }
 
-    public static ContentReputation randomContentReputation(MapId mapId) {
-        return ContentReputation.of(mapId, randomReputation());
+    public static ContentReputation randomContentReputation(IdCid idCid) {
+        return ContentReputation.of(idCid, randomReputation());
     }
 
     public static ReviewReputation emptyReviewReputation() {
-        return ReviewReputation.of(IdMaker.randomUUID(), IdMaker.randomUUID());
+        return ReviewReputation.of(IdCid.random());
     }
 
-    public static ReviewReputation emptyReviewReputation(MapId mapId) {
-        return ReviewReputation.of(IdMaker.toIdentity(mapId), IdMaker.toContainerId(mapId));
+    public static ReviewReputation emptyReviewReputation(IdCid idCid) {
+        return ReviewReputation.of(idCid);
     }
 
     public static ReviewReputation randomReviewReputation() {
-        return randomReviewReputation(IdMaker.randomMapId());
+        return randomReviewReputation(IdCid.random());
     }
 
-    public static ReviewReputation randomReviewReputation(MapId mapId) {
-        return ReviewReputation.of(mapId, randomReputation());
+    public static ReviewReputation randomReviewReputation(IdCid idCid) {
+        return ReviewReputation.of(idCid, randomReputation());
     }
 
     public static ReplyReputation emptyReplyReputation() {
-        return ReplyReputation.of(IdMaker.randomUUID(), IdMaker.randomUUID());
+        return ReplyReputation.of(IdCid.random());
     }
 
-    public static ReplyReputation emptyReplyReputation(MapId mapId) {
-        return ReplyReputation.of(IdMaker.toIdentity(mapId), IdMaker.toContainerId(mapId));
+    public static ReplyReputation emptyReplyReputation(IdCid idCid) {
+        return ReplyReputation.of(idCid);
     }
 
     public static ReplyReputation randomReplyReputation() {
-        return randomReplyReputation(IdMaker.randomMapId());
+        return randomReplyReputation(IdCid.random());
     }
 
-    public static ReplyReputation randomReplyReputation(MapId mapId) {
-        return ReplyReputation.of(mapId, randomReputation());
+    public static ReplyReputation randomReplyReputation(IdCid idCid) {
+        return ReplyReputation.of(idCid, randomReputation());
     }
 
-    public static <T> T emptyTypeReputation(BiFunction<MapId, Reputation, T> supplier) {
-        return supplier.apply(IdMaker.randomMapId(), new Reputation());
+    public static <T> T emptyTypeReputation(BiFunction<IdCid, Reputation, T> supplier) {
+        return supplier.apply(IdCid.random(), new Reputation());
     }
 
-    public static <T> T emptyTypeReputation(MapId id, BiFunction<MapId, Reputation, T> supplier) {
-        return supplier.apply(id, new Reputation());
+    public static <T> T emptyTypeReputation(IdCid idCid, BiFunction<IdCid, Reputation, T> supplier) {
+        return supplier.apply(idCid, new Reputation());
     }
 
-    public static <T> T randomTypeReputation(BiFunction<MapId, Reputation, T> supplier) {
-        return supplier.apply(IdMaker.randomMapId(), randomReputation());
+    public static <T> T randomTypeReputation(BiFunction<IdCid, Reputation, T> supplier) {
+        return supplier.apply(IdCid.random(), randomReputation());
     }
 
-    public static <T> T randomTypeReputation(MapId id, BiFunction<MapId, Reputation, T> supplier) {
-        return supplier.apply(id, randomReputation());
+    public static <T> T randomTypeReputation(IdCid idCid, BiFunction<IdCid, Reputation, T> supplier) {
+        return supplier.apply(idCid, randomReputation());
     }
 
 }

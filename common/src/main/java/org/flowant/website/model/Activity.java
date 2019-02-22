@@ -14,8 +14,11 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class Activity {
+
     @NonNull
     String action;
+
     @NonNull
     CRUZonedTime cruTime;
+
 }

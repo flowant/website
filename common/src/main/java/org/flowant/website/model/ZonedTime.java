@@ -18,8 +18,10 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class ZonedTime {
+
     @NonNull
     ZoneId zoneId;
+
     @NonNull
     LocalDateTime time;
 

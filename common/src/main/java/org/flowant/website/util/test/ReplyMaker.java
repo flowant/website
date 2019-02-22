@@ -3,8 +3,9 @@ package org.flowant.website.util.test;
 import java.util.UUID;
 
 import org.flowant.website.model.CRUZonedTime;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reply;
-import org.springframework.data.cassandra.core.mapping.MapId;
+import org.flowant.website.util.IdMaker;
 
 public class ReplyMaker {
 
@@ -12,24 +13,32 @@ public class ReplyMaker {
     static String replierName = "replierName";
     static String comment = "comment";
 
-    public static Reply small(MapId mapId) {
-        UUID id = IdMaker.toIdentity(mapId);
-        return Reply.of(id, IdMaker.toContainerId(mapId), replierId, replierName + id, CRUZonedTime.now());
+    public static Reply small(IdCid idCid) {
+        UUID id = idCid.getIdentity();
+        return Reply.of(idCid, replierId, replierName + id, CRUZonedTime.now());
+    }
+
+    public static Reply smallRandom(UUID containerId) {
+        return small(IdCid.random(containerId));
     }
 
     public static Reply smallRandom() {
-        return small(IdMaker.randomMapId());
+        return small(IdCid.random());
     }
 
-    public static Reply large(MapId mapId) {
-        UUID id = IdMaker.toIdentity(mapId);
-        Reply reply = small(mapId);
+    public static Reply large(IdCid idCid) {
+        UUID id = idCid.getIdentity();
+        Reply reply = small(idCid);
         reply.setComment(comment + id);
         return reply;
     }
 
+    public static Reply largeRandom(UUID containerId) {
+        return large(IdCid.random(containerId));
+    }
+
     public static Reply largeRandom() {
-        return large(IdMaker.randomMapId());
+        return large(IdCid.random());
     }
 
 }

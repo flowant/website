@@ -6,18 +6,17 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.flowant.website.model.HasReputation;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reputation;
 import org.flowant.website.model.ReputationCounter;
 import org.flowant.website.util.test.DeleteAfterTest;
-import org.flowant.website.util.test.IdMaker;
 import org.flowant.website.util.test.ReputationMaker;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.cassandra.core.mapping.MapId;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.cassandra.repository.ReactiveCassandraRepository;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -25,7 +24,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-public abstract class RepositoryTest <Entity, ID, Repository extends ReactiveCrudRepository<Entity, ID>> {
+public abstract class RepositoryTest <Entity, ID, Repository extends ReactiveCassandraRepository<Entity, ID>> {
 
     @Autowired
     Repository repo;
@@ -71,19 +70,19 @@ public abstract class RepositoryTest <Entity, ID, Repository extends ReactiveCru
         saveAllFindAllById(large, getId);
     }
 
-    public void testAccumulation(Function<Entity, ID> getId, BiFunction<MapId, Reputation, Entity> supplier) {
+    public void testAccumulation(Function<Entity, ID> getId, BiFunction<IdCid, Reputation, Entity> supplier) {
         save(ReputationMaker.emptyTypeReputation(supplier), getId);
         save(ReputationMaker.randomTypeReputation(supplier), getId);
         accumulateCounter(getId, supplier);
     }
 
-    public void accumulateCounter(Function<Entity, ID> getId, BiFunction<MapId, Reputation, Entity> supplier) {
-        MapId mapId = IdMaker.randomMapId();
+    public void accumulateCounter(Function<Entity, ID> getId, BiFunction<IdCid, Reputation, Entity> supplier) {
+        IdCid idCid = IdCid.random();
 
-        Entity entity = ReputationMaker.emptyTypeReputation(mapId, supplier);
+        Entity entity = ReputationMaker.emptyTypeReputation(idCid, supplier);
         cleaner.registerToBeDeleted(entity);
 
-        Entity acc = ReputationMaker.randomTypeReputation(mapId, supplier);
+        Entity acc = ReputationMaker.randomTypeReputation(idCid, supplier);
         cleaner.registerToBeDeleted(acc);
 
         Mono<Entity> saveThenFind = repo.save(entity).then(repo.save(acc))
@@ -95,7 +94,7 @@ public abstract class RepositoryTest <Entity, ID, Repository extends ReactiveCru
 
         StepVerifier.create(findReputationFromUpdatedParent)
                 .consumeNextWith(hasReputation -> Assert.assertEquals(acc,
-                        supplier.apply(mapId, hasReputation.getReputation())))
+                        supplier.apply(idCid, hasReputation.getReputation())))
                 .verifyComplete();
     }
 

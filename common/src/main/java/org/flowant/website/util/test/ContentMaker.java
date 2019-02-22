@@ -6,8 +6,9 @@ import java.util.UUID;
 
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.Content;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Recipe;
-import org.springframework.data.cassandra.core.mapping.MapId;
+import org.flowant.website.util.IdMaker;
 
 public class ContentMaker {
 
@@ -34,21 +35,24 @@ public class ContentMaker {
 
     static String tag = "tag";
 
-    public static Content small(MapId mapId) {
-        UUID id = IdMaker.toIdentity(mapId);
-        return Content.of(id, IdMaker.toContainerId(mapId), title + id, CRUZonedTime.now());
+    public static Content small(IdCid idCid) {
+        UUID id = idCid.getIdentity();
+        return Content.of(idCid, title + id, CRUZonedTime.now());
+    }
+
+    public static Content smallRandom(UUID containerId) {
+        return small(IdCid.random(containerId));
     }
 
     public static Content smallRandom() {
-        return small(IdMaker.randomMapId());
+        return small(IdCid.random());
     }
 
-    public static Content large(MapId mapId) {
-        UUID id = IdMaker.toIdentity(mapId);
+    public static Content large(IdCid idCid) {
+        UUID id = idCid.getIdentity();
         int cs = id.hashCode() / 1000000;
         return Content.builder()
-                .identity(id)
-                .containerId(IdMaker.toContainerId(mapId))
+                .idCid(idCid)
                 .title(title + id)
                 .extend(new Recipe(List.of(ingredients + id, ingredients + id, ingredients + id),
                         prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))
@@ -59,8 +63,12 @@ public class ContentMaker {
                 .build();
     }
 
+    public static Content largeRandom(UUID containerId) {
+        return large(IdCid.random(containerId));
+    }
+
     public static Content largeRandom() {
-        return large(IdMaker.randomMapId());
+        return large(IdCid.random());
     }
 
 }

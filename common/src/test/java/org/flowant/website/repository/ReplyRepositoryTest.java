@@ -16,24 +16,24 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReplyRepositoryTest extends PageableRepositoryTest<Reply, ReplyRepository> {
+public class ReplyRepositoryTest extends ReputationRepositoryTest<Reply, ReplyRepository> {
 
     @Test
     public void crud() {
-        testCrud(Reply::getMapId, ReplyMaker::smallRandom, ReplyMaker::largeRandom);
+        testCrud(Reply::getIdCid, ReplyMaker::smallRandom, ReplyMaker::largeRandom);
     }
 
     @Test
     public void pageable() {
         UUID containerId = UUIDs.timeBased();
-        Flux<Reply> entities = Flux.range(1, 10).map(i -> ReplyMaker.smallRandom().setContainerId(containerId));
+        Flux<Reply> entities = Flux.range(1, 10).map(i -> ReplyMaker.smallRandom(containerId));
         findAllByContainerIdPageable(containerId, entities);
     }
 
     @Test
     public void ordered() {
-        testOrdered(Reply::getMapId, Comparator.comparing(Reply::getIdentity).reversed(),
-                (id) -> ReplyMaker.smallRandom().setContainerId(id));
+        testOrdered(Reply::getIdCid, Comparator.comparing(Reply::getIdentity).reversed(),
+                ReplyMaker::smallRandom);
     }
 
     @Test

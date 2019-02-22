@@ -2,9 +2,7 @@ package org.flowant.website.model;
 
 import java.util.UUID;
 
-import org.springframework.data.cassandra.core.cql.Ordering;
-import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
-import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
@@ -22,19 +20,23 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Reply implements HasMapId, HasReputation, HasCruTime {
+public class Reply implements HasIdCid, HasReputation, HasCruTime {
+
     @NonNull
-    @PrimaryKeyColumn(ordinal = 1, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
-    UUID identity;
-    @NonNull
-    @PrimaryKeyColumn(ordinal = 0, type = PrimaryKeyType.PARTITIONED)
-    UUID containerId;
+    @PrimaryKey
+    IdCid idCid;
+
     @NonNull
     UUID replierId;
+
     @NonNull
     String replierName;
+
     String comment;
+
     Reputation reputation;
+
     @NonNull
     CRUZonedTime cruTime;
+
 }

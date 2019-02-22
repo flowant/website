@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.flowant.website.model.CRUZonedTime;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Review;
-import org.springframework.data.cassandra.core.mapping.MapId;
+import org.flowant.website.util.IdMaker;
 
 public class ReviewMaker {
 
@@ -14,26 +15,34 @@ public class ReviewMaker {
     static String comment = "comment";
     static List<UUID> popularReplyIds = List.of(IdMaker.randomUUID(), IdMaker.randomUUID());
 
-    public static Review small(MapId mapId) {
-        UUID id = IdMaker.toIdentity(mapId);
-        return Review.of(id, IdMaker.toContainerId(mapId), reviewerId, reviewerName + id,
+    public static Review small(IdCid idCid) {
+        UUID id = idCid.getIdentity();
+        return Review.of(idCid, reviewerId, reviewerName + id,
                 ReputationMaker.randomReputation(), CRUZonedTime.now());
     }
 
-    public static Review smallRandom() {
-        return small(IdMaker.randomMapId());
+    public static Review smallRandom(UUID containerId) {
+        return small(IdCid.random(containerId));
     }
 
-    public static Review large(MapId mapId) {
-        UUID id = IdMaker.toIdentity(mapId);
-        Review review = small(mapId);
+    public static Review smallRandom() {
+        return small(IdCid.random());
+    }
+
+    public static Review large(IdCid idCid) {
+        UUID id = idCid.getIdentity();
+        Review review = small(idCid);
         review.setComment(comment + id);
         review.setPopularReplyIds(popularReplyIds);
         return review;
     }
 
+    public static Review largeRandom(UUID containerId) {
+        return large(IdCid.random(containerId));
+    }
+
     public static Review largeRandom() {
-        return large(IdMaker.randomMapId());
+        return large(IdCid.random());
     }
 
 }

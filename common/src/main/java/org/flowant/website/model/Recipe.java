@@ -18,11 +18,18 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class Recipe {
+
     @NonNull
     List<String> ingredients;
+
     String prepareTime;
+
     String cookTime;
+
     int servings;
+
     int calory; //TODO calculate with servings
+
     String nutritionFacts;//TODO calculate with servings
+
 }

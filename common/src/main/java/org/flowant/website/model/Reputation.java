@@ -13,11 +13,17 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @UserDefinedType
 public class Reputation implements Comparable<Reputation> {
+
     long viewed;
+
     long rated;
+
     long liked;
+
     long disliked;
+
     long reported;
+
     long reputed;
 
     public static Reputation of(ReputationCounter r) {
