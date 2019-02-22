@@ -14,7 +14,8 @@ public abstract class MapIdRepositoryRest <T extends HasMapId, R extends MapIdRe
     public final static String PATH_SEG_ID_CID = "/{id}/{cid}";
 
     public static MapId toMapId(String identity, String containerId) {
-        return BasicMapId.id().with(HasMapId.IDENTITY, UUID.fromString(identity))
+        return BasicMapId.id()
+                .with(HasMapId.IDENTITY, UUID.fromString(identity))
                 .with(HasMapId.CONTAINER_ID, UUID.fromString(containerId));
     }
 

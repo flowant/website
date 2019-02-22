@@ -21,21 +21,25 @@ public abstract class RepositoryRest <T, ID, R extends ReactiveCrudRepository<T,
     }
 
     public Mono<ResponseEntity<T>> post(T entity) {
-        return repo.save(entity).map(ResponseEntity::ok)
+        return repo.save(entity)
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     public Mono<ResponseEntity<T>> put(T entity) {
-        return repo.save(entity).map(ResponseEntity::ok)
+        return repo.save(entity)
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     public Mono<ResponseEntity<T>> getById(ID id) {
-        return repo.findById(id).map(ResponseEntity::ok)
+        return repo.findById(id)
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     public Mono<ResponseEntity<Void>> deleteById(ID id) {
-        return repo.deleteById(id).map(ResponseEntity::ok);
+        return repo.deleteById(id)
+                .map(ResponseEntity::ok);
     }
 }

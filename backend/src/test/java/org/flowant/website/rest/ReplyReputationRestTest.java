@@ -13,8 +13,7 @@ import org.springframework.data.cassandra.core.mapping.MapId;
 import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-                classes=BackendApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
 public class ReplyReputationRestTest extends RestWithRepositoryTest<ReplyReputation, MapId, BackendReplyReputationRepository> {
 
     @Before

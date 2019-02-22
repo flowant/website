@@ -145,19 +145,28 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
     }
 
     public void testInsertMalformed() {
-        ResponseSpec respSpec = webTestClient.post().uri(baseUrl).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just("notEntity"), String.class)
+        ResponseSpec respSpec = webTestClient.post()
+                .uri(baseUrl)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just("notEntity"), String.class)
                 .exchange();
-        respSpec.expectStatus().is4xxClientError().expectBody().consumeWith(log::trace);
+
+        respSpec.expectStatus().is4xxClientError()
+                .expectBody().consumeWith(log::trace);
     }
 
     public void testInsert(Entity entity) {
         cleaner.registerToBeDeleted(entity);
 
-        webTestClient.post().uri(baseUrl).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(entity), entityClass)
+        webTestClient.post()
+                .uri(baseUrl)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(entity), entityClass)
                 .exchange()
-                .expectStatus().isOk().expectBody(entityClass).consumeWith(r -> {
+                .expectStatus().isOk()
+                .expectBody(entityClass).consumeWith(r -> {
                     log.trace(r);
                     AssertUtil.assertEquals(entity, r.getResponseBody());
                     AssertUtil.assertEquals(entity, repo.findById(getEntityId.apply(entity)).block());
@@ -165,24 +174,31 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
     }
 
     public void testGetNotExist() {
-        webTestClient.get().uri(baseUrl + __ID__, UUIDs.timeBased())
+        webTestClient.get()
+                .uri(baseUrl + __ID__, UUIDs.timeBased())
                 .exchange()
-                .expectStatus().isNotFound().expectBody().consumeWith(log::trace);
+                .expectStatus().isNotFound()
+                .expectBody().consumeWith(log::trace);
     }
 
     public void testGetMalformedId() {
-        webTestClient.get().uri(baseUrl + __ID__, "notExist")
+        webTestClient.get()
+                .uri(baseUrl + __ID__, "notExist")
                 .exchange()
-                .expectStatus().isNotFound().expectBody().consumeWith(log::trace);
+                .expectStatus().isNotFound()
+                .expectBody().consumeWith(log::trace);
     }
 
     public void testGetId(Entity entity) {
         repo.save(entity).block();
         cleaner.registerToBeDeleted(entity);
 
-        webTestClient.get().uri(getUri(entity)).accept(MediaType.APPLICATION_JSON_UTF8)
+        webTestClient.get()
+                .uri(getUri(entity))
+                .accept(MediaType.APPLICATION_JSON_UTF8)
                 .exchange()
-                .expectStatus().isOk().expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBody(entityClass).consumeWith( r -> {
                     log.trace(r);
                     AssertUtil.assertEquals(entity, r.getResponseBody());
@@ -194,10 +210,14 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
         Entity modifiedEntity = modifyEntity.apply(entity);
         cleaner.registerToBeDeleted(modifiedEntity);
 
-        webTestClient.put().uri(baseUrl).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(modifiedEntity), entityClass)
+        webTestClient.put()
+                .uri(baseUrl)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(modifiedEntity), entityClass)
                 .exchange()
-                .expectStatus().isOk().expectBody(entityClass).consumeWith( r -> {
+                .expectStatus().isOk()
+                .expectBody(entityClass).consumeWith( r -> {
                     log.trace(r::toString);
                     AssertUtil.assertEquals(modifiedEntity, r.getResponseBody());
                     AssertUtil.assertEquals(modifiedEntity, repo.findById(getEntityId.apply(entity)).block());
@@ -208,12 +228,13 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
         repo.save(entity).block();
         cleaner.registerToBeDeleted(entity); // in case of fails
 
-        webTestClient.delete().uri(getUri(entity))
+        webTestClient.delete()
+                .uri(getUri(entity))
                 .exchange()
-                .expectStatus().isOk().expectBody().consumeWith(r -> {
+                .expectStatus().isOk()
+                .expectBody().consumeWith(r -> {
                     log.trace(r::toString);
-                    StepVerifier.create(repo.findById(getEntityId.apply(entity)))
-                            .expectNextCount(0).verifyComplete();
+                    StepVerifier.create(repo.findById(getEntityId.apply(entity))).expectNextCount(0).verifyComplete();
                 });
     }
 
@@ -226,10 +247,10 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
         repo.saveAll(contents).blockLast();
         cleaner.registerToBeDeleted(contents);
 
-        ClientResponse resp = WebClient.create().get().uri(uriBuilder ->
-            uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl)
-                .queryParam(CID, containerId.toString()).queryParam(PAGE, "0")
-                .queryParam(SIZE, String.valueOf(pageSize)).build())
+        ClientResponse resp = WebClient.create().get()
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl)
+                        .queryParam(CID, containerId.toString()).queryParam(PAGE, "0")
+                        .queryParam(SIZE, String.valueOf(pageSize)).build())
                 .exchange().block();
 
         List<Entity> list = new ArrayList<>();

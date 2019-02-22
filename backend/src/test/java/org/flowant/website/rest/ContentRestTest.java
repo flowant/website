@@ -47,10 +47,11 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, Back
         repo.save(content).block();
         cleaner.registerToBeDeleted(content); // in case of fails
 
-        webTestClient.delete().uri(ContentRest.CONTENT + ContentRest.PATH_SEG_ID_CID,
-                content.getIdentity(), content.getContainerId())
+        webTestClient.delete()
+                .uri(ContentRest.CONTENT + ContentRest.PATH_SEG_ID_CID, content.getIdentity(), content.getContainerId())
                 .exchange()
-                .expectStatus().isOk().expectBody().consumeWith(r -> {
+                .expectStatus().isOk()
+                .expectBody().consumeWith(r -> {
                     log.trace(r::toString);
                     content.getFileRefs().forEach(fileRef -> Assert.assertFalse(FileStorage.exist(fileRef.getIdentity())));
                     StepVerifier.create(repo.findById(content.getMapId())).expectNextCount(0).verifyComplete();
@@ -59,8 +60,7 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, Back
 
     @Test
     public void testPagination() {
-        Function<UUID, Content> supplier = (containerId) ->
-                ContentMaker.largeRandom().setContainerId(containerId);
+        Function<UUID, Content> supplier = (containerId) -> ContentMaker.largeRandom().setContainerId(containerId);
         pagination(10, 1, supplier);
         pagination(10, 3, supplier);
         pagination(10, 5, supplier);

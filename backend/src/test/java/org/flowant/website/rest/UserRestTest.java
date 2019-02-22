@@ -17,8 +17,7 @@ import com.datastax.driver.core.utils.UUIDs;
 import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-                classes=BackendApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
 public class UserRestTest extends RestWithRepositoryTest<User, UUID, BackendUserRepository> {
 
     @Before
@@ -27,11 +26,7 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, BackendUser
 
         setTestParams(UserRest.USER, User.class, User::getIdentity,
                 UserMaker::smallRandom, UserMaker::largeRandom,
-                (User user) -> {
-                    user.setFirstname("newFirstname");
-                    user.setFollowers(Set.of(UUIDs.timeBased(), UUIDs.timeBased()));
-                    return user;
-                });
+                user -> user.setFirstname("newFirstname").setFollowers(Set.of(UUIDs.timeBased(), UUIDs.timeBased())));
     }
 
     @Test

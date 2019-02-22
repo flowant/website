@@ -16,8 +16,7 @@ import org.springframework.data.cassandra.core.mapping.MapId;
 import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-                classes=BackendApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
 public class ReviewRestTest extends RestWithRepositoryTest<Review, MapId, BackendReviewRepository> {
 
     @Before
@@ -36,8 +35,7 @@ public class ReviewRestTest extends RestWithRepositoryTest<Review, MapId, Backen
 
     @Test
     public void testPagination() {
-        Function<UUID, Review> supplier = (containerId) ->
-                ReviewMaker.largeRandom().setContainerId(containerId);
+        Function<UUID, Review> supplier = (containerId) -> ReviewMaker.largeRandom().setContainerId(containerId);
         pagination(10, 1, supplier);
         pagination(10, 3, supplier);
         pagination(10, 5, supplier);

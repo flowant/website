@@ -15,24 +15,29 @@ public abstract class CruTimeRepositoryRest <T extends HasMapId & HasCruTime, R 
         extends MapIdRepositoryRest<T, R> {
 
     public Flux<T> getAll() {
-        return repo.findAll().doOnNext(entity -> entity.getCruTime().readNow());
+        return repo.findAll()
+                .doOnNext(entity -> entity.getCruTime().readNow());
     }
 
     public Mono<ResponseEntity<T>> post(T entity) {
         entity.setCruTime(CRUZonedTime.now());
-        return repo.save(entity).map(ResponseEntity::ok)
+        return repo.save(entity)
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     public Mono<ResponseEntity<T>> put(T entity) {
         entity.getCruTime().updatedNow();
-        return repo.save(entity).map(ResponseEntity::ok)
+        return repo.save(entity)
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     public Mono<ResponseEntity<T>> getById(MapId id) {
-        return repo.findById(id).doOnNext(entity -> entity.getCruTime().readNow())
-                .map(ResponseEntity::ok).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return repo.findById(id)
+                .doOnNext(entity -> entity.getCruTime().readNow())
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
 }

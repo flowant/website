@@ -54,13 +54,17 @@ public class FileStorage {
         return files.flatMap(partFile -> {
             UUID identity = UUIDs.timeBased();
             FileRef fileRef = FileRef.builder()
-                    .identity(identity).cruTime(CRUZonedTime.now())
+                    .identity(identity)
+                    .cruTime(CRUZonedTime.now())
                     .contentType(partFile.headers().getContentType().toString())
                     .length(partFile.headers().getContentLength())
-                    .filename(partFile.filename()).uri(FileRest.FILES + SEP_URL + identity)
+                    .filename(partFile.filename())
+                    .uri(FileRest.FILES + SEP_URL + identity)
                     .build();
+
             File file = getPath(identity).toFile();
-            return partFile.transferTo(file).cast(FileRef.class)
+            return partFile.transferTo(file)
+                    .cast(FileRef.class)
                     .concatWith(Mono.just(fileRef.setLength(file.length())));
         });
     }
@@ -78,11 +82,10 @@ public class FileStorage {
     }
 
     public static Mono<Boolean> deleteById(String id) {
-        return exist(id) == false ? Mono.empty() :
-                Mono.fromCallable(() -> rmdirs(getPath(id))).onErrorResume(t -> {
-                    log.error(ExceptionUtils.getStackTrace(t));
-                    return Mono.just(Boolean.FALSE);
-                });
+        return exist(id) == false ? Mono.empty() : Mono.fromCallable(() -> rmdirs(getPath(id))).onErrorResume(t -> {
+            log.error(ExceptionUtils.getStackTrace(t));
+            return Mono.just(Boolean.FALSE);
+        });
     }
 
     public static Mono<Boolean> deleteById(UUID id) {

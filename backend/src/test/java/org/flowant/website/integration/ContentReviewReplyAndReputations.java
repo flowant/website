@@ -44,8 +44,11 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         // Post test data
         UUID containerId = UUIDs.timeBased();
 
-        Flux<Content> contents = Flux.range(1, cntUsers).map(i -> ContentMaker.largeRandom().setContainerId(containerId)).cache();
-        Flux<ContentReputation> contentReputations = contents.map(c -> ReputationMaker.randomContentReputation(c.getMapId())).cache();
+        Flux<Content> contents = Flux.range(1, cntUsers)
+                .map(i -> ContentMaker.largeRandom().setContainerId(containerId)).cache();
+        Flux<ContentReputation> contentReputations = contents
+                .map(c -> ReputationMaker.randomContentReputation(c.getMapId())).cache();
+
         contents.subscribe(log::trace);
         contentReputations.subscribe(log::trace);
 
@@ -67,8 +70,8 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         // Post test data
 
         Mono<Content> content = Mono.just(ContentMaker.largeRandom()).cache();
-        Mono<ContentReputation> contentReputation = content.map(c ->
-                ReputationMaker.emptyContentReputation(c.getMapId())).cache();
+        Mono<ContentReputation> contentReputation =
+                content.map(c -> ReputationMaker.emptyContentReputation(c.getMapId())).cache();
 
         Flux<User> users = Flux.range(1, cntUsers).map(i -> UserMaker.largeRandom()).cache();
 

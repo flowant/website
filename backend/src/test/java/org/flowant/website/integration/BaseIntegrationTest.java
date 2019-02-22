@@ -49,11 +49,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Log4j2
-public class BaseIntegrationTest extends RestTest {
+public abstract class BaseIntegrationTest extends RestTest {
     public final static String __ID__ = "{id}";
 
     @Data
-    @RequiredArgsConstructor(staticName="of")
+    @RequiredArgsConstructor(staticName = "of")
     static class ApiInfo<T extends HasIdentity> {
         @NonNull
         String url;
@@ -72,12 +72,12 @@ public class BaseIntegrationTest extends RestTest {
         apiInfo.put(Content.class.getSimpleName(), ApiInfo.of(ContentRest.CONTENT, Content.class));
         apiInfo.put(Review.class.getSimpleName(), ApiInfo.of(ReviewRest.REVIEW, Review.class));
         apiInfo.put(Reply.class.getSimpleName(), ApiInfo.of(ReplyRest.REPLY, Reply.class));
-        apiInfo.put(ContentReputation.class.getSimpleName(), ApiInfo.of(
-                ContentReputationRest.CONTENT_REPUTATION, ContentReputation.class));
-        apiInfo.put(ReviewReputation.class.getSimpleName(), ApiInfo.of(
-                ReviewReputationRest.REVIEW_REPUTATION, ReviewReputation.class));
-        apiInfo.put(ReplyReputation.class.getSimpleName(), ApiInfo.of(
-                ReplyReputationRest.REPLY_REPUTATION, ReplyReputation.class));
+        apiInfo.put(ContentReputation.class.getSimpleName(),
+                ApiInfo.of(ContentReputationRest.CONTENT_REPUTATION, ContentReputation.class));
+        apiInfo.put(ReviewReputation.class.getSimpleName(),
+                ApiInfo.of(ReviewReputationRest.REVIEW_REPUTATION, ReviewReputation.class));
+        apiInfo.put(ReplyReputation.class.getSimpleName(),
+                ApiInfo.of(ReplyReputationRest.REPLY_REPUTATION, ReplyReputation.class));
     }
 
     @After
@@ -98,11 +98,14 @@ public class BaseIntegrationTest extends RestTest {
         ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
         info.getDeleteAfterTest().add(data);
 
-        T resp = WebClient.create().post().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
-                .host(host).port(port).path(info.getUrl()).build())
+        T resp = WebClient.create().post()
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl()).build())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(data), cls)
-                .exchange().block().bodyToMono(cls).block();
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(data), cls)
+                .exchange().block()
+                .bodyToMono(cls).block();
+
         log.trace("post:{}, return:{}", data, resp);
         return resp;
     }
@@ -112,11 +115,14 @@ public class BaseIntegrationTest extends RestTest {
         ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
         info.getDeleteAfterTest().add(data);
 
-        T resp = WebClient.create().put().uri(uriBuilder -> uriBuilder.scheme(SCHEME)
-                .host(host).port(port).path(info.getUrl()).build())
+        T resp = WebClient.create().put()
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl()).build())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).body(Mono.just(data), cls)
-                .exchange().block().bodyToMono(cls).block();
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(data), cls)
+                .exchange().block()
+                .bodyToMono(cls).block();
+
         log.trace("put:{}, return:{}", data, resp);
         return resp;
     }
@@ -135,18 +141,20 @@ public class BaseIntegrationTest extends RestTest {
         String classSimpleName = cls.getSimpleName();
         ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
 
-        T resp = WebClient.create().get().uri(uriBuilder -> getUri(id,
-                uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())))
+        T resp = WebClient.create().get()
+                .uri(uriBuilder -> getUri(id, uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())))
                 .accept(MediaType.APPLICATION_JSON_UTF8)
-                .exchange().block().bodyToMono(cls).block();
+                .exchange().block()
+                .bodyToMono(cls).block();
+
         log.trace("getById:{}, return:{}", id, resp);
         return resp;
     }
 
     @Data
-    @Accessors(chain=true)
-    @AllArgsConstructor(staticName="of")
-    public static class EntitiesAndNextLink <T> {
+    @Accessors(chain = true)
+    @AllArgsConstructor(staticName = "of")
+    public static class EntitiesAndNextLink<T> {
         Flux<T> entities;
         Optional<URI> next;
     }
@@ -155,14 +163,13 @@ public class BaseIntegrationTest extends RestTest {
         String classSimpleName = cls.getSimpleName();
         ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
 
-        ClientResponse resp = WebClient.create().get().uri(uriBuilder ->
-            uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())
-                .queryParam(CID, containerId.toString()).queryParam(PAGE, "0")
-                .queryParam(SIZE, String.valueOf(pageSize)).build())
+        ClientResponse resp = WebClient.create().get()
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())
+                        .queryParam(CID, containerId.toString()).queryParam(PAGE, "0")
+                        .queryParam(SIZE, String.valueOf(pageSize)).build())
                 .exchange().block();
 
-        return EntitiesAndNextLink.of(resp.bodyToFlux(cls),
-                LinkUtil.getNextUrl(resp.headers().asHttpHeaders()));
+        return EntitiesAndNextLink.of(resp.bodyToFlux(cls), LinkUtil.getNextUrl(resp.headers().asHttpHeaders()));
     }
 
     public <T, ID> void deleteById(ID id, Class<T> cls) {
@@ -170,8 +177,8 @@ public class BaseIntegrationTest extends RestTest {
         ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
 
         log.trace("deleteById:{}", id);
-        webTestClient.delete().uri(uriBuilder -> getUri(id,
-                uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())))
+        webTestClient.delete()
+                .uri(uriBuilder -> getUri(id, uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl())))
                 .exchange()
                 .expectStatus().isOk();
     }
