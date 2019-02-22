@@ -5,7 +5,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import org.flowant.website.model.User;
-import org.flowant.website.repository.BackendUserRepository;
+import org.flowant.website.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +19,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class UserRest extends RepositoryRest<User, UUID, BackendUserRepository> {
+public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
     public final static String ID = "id";
     public final static String USER = "/user";
     public final static String USER__ID__ = "/user/{id}";

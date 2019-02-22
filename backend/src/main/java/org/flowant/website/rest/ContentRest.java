@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.flowant.website.model.Content;
-import org.flowant.website.repository.BackendContentRepository;
+import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.storage.FileStorage;
 import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ContentRest extends PageableRepositoryRest<Content, BackendContentRepository> {
+public class ContentRest extends PageableRepositoryRest<Content, ContentRepository> {
 
     public final static String CONTENT = "/content";
 

@@ -2,7 +2,7 @@ package org.flowant.website.rest;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.ContentReputation;
-import org.flowant.website.repository.BackendContentReputationRepository;
+import org.flowant.website.repository.ContentReputationRepository;
 import org.flowant.website.util.test.ReputationMaker;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
-public class ContentReputationRestTest extends RestWithRepositoryTest<ContentReputation, MapId, BackendContentReputationRepository> {
+public class ContentReputationRestTest extends RestWithRepositoryTest<ContentReputation, MapId, ContentReputationRepository> {
 
     @Before
     public void before() {

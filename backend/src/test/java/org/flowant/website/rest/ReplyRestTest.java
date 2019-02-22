@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.Reply;
-import org.flowant.website.repository.BackendReplyRepository;
+import org.flowant.website.repository.ReplyRepository;
 import org.flowant.website.util.test.ReplyMaker;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
-public class ReplyRestTest extends RestWithRepositoryTest<Reply, MapId, BackendReplyRepository> {
+public class ReplyRestTest extends RestWithRepositoryTest<Reply, MapId, ReplyRepository> {
 
     @Before
     public void before() {

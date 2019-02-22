@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.Review;
-import org.flowant.website.repository.BackendReviewRepository;
+import org.flowant.website.repository.ReviewRepository;
 import org.flowant.website.util.test.ReviewMaker;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
-public class ReviewRestTest extends RestWithRepositoryTest<Review, MapId, BackendReviewRepository> {
+public class ReviewRestTest extends RestWithRepositoryTest<Review, MapId, ReviewRepository> {
 
     @Before
     public void before() {

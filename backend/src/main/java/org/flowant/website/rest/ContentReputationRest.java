@@ -3,7 +3,7 @@ package org.flowant.website.rest;
 import javax.validation.Valid;
 
 import org.flowant.website.model.ContentReputation;
-import org.flowant.website.repository.BackendContentReputationRepository;
+import org.flowant.website.repository.ContentReputationRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ContentReputationRest extends MapIdRepositoryRest<ContentReputation, BackendContentReputationRepository> {
+public class ContentReputationRest extends MapIdRepositoryRest<ContentReputation, ContentReputationRepository> {
 
     public final static String CONTENT_REPUTATION = "/content_reputation";
 

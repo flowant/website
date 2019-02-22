@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.User;
-import org.flowant.website.repository.BackendUserRepository;
+import org.flowant.website.repository.UserRepository;
 import org.flowant.website.util.test.UserMaker;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
-public class UserRestTest extends RestWithRepositoryTest<User, UUID, BackendUserRepository> {
+public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserRepository> {
 
     @Before
     public void before() {

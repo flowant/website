@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.flowant.website.model.Reply;
-import org.flowant.website.repository.BackendReplyRepository;
+import org.flowant.website.repository.ReplyRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ReplyRest extends PageableRepositoryRest<Reply, BackendReplyRepository> {
+public class ReplyRest extends PageableRepositoryRest<Reply, ReplyRepository> {
 
     public final static String REPLY = "/reply";
 

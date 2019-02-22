@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.Content;
-import org.flowant.website.repository.BackendContentRepository;
+import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.storage.FileStorage;
 import org.flowant.website.util.test.ContentMaker;
 import org.junit.Assert;
@@ -23,7 +23,7 @@ import reactor.test.StepVerifier;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes=BackendApplication.class)
 @Log4j2
-public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, BackendContentRepository> {
+public class ContentRestTest extends RestWithRepositoryTest<Content, MapId, ContentRepository> {
 
     @Before
     public void before() {

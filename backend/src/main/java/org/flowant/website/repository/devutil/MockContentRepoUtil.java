@@ -7,7 +7,7 @@ import javax.annotation.PreDestroy;
 
 import org.flowant.website.event.MockDataGenerateEvent;
 import org.flowant.website.model.Content;
-import org.flowant.website.repository.BackendContentRepository;
+import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.util.test.ContentMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j2;
 public class MockContentRepoUtil {
 
     @Autowired
-    BackendContentRepository contentRepository;
+    ContentRepository contentRepository;
     List<Content> mocks = new ArrayList<>();
 
     public Content saveContent(Content content) {
