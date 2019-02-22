@@ -12,6 +12,7 @@ import org.flowant.website.model.ReviewReputation;
 import org.springframework.data.cassandra.core.mapping.MapId;
 
 public class ReputationMaker {
+
     static Random r = new Random();
 
     public static Reputation randomReputation() {

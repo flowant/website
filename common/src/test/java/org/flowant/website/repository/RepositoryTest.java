@@ -93,8 +93,9 @@ public abstract class RepositoryTest <Entity, ID, Repository extends ReactiveCru
         Mono<? extends HasReputation> findReputationFromUpdatedParent =
                 RelationshipService.findReputation((ReputationCounter) entity);
 
-        StepVerifier.create(findReputationFromUpdatedParent).consumeNextWith(hasReputation ->
-                Assert.assertEquals(acc, supplier.apply(mapId, hasReputation.getReputation())))
+        StepVerifier.create(findReputationFromUpdatedParent)
+                .consumeNextWith(hasReputation -> Assert.assertEquals(acc,
+                        supplier.apply(mapId, hasReputation.getReputation())))
                 .verifyComplete();
     }
 

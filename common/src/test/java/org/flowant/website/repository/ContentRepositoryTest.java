@@ -48,8 +48,8 @@ public class ContentRepositoryTest extends PageableRepositoryTest<Content, Conte
     @Test
     public void findByTag() {
         String tag = IdMaker.randomUUID().toString();
-        Flux<Content> withTag = Flux.range(1, 5).map(i ->
-                ContentMaker.largeRandom().setTags(Set.of(tag))).cache();
+        Flux<Content> withTag = Flux.range(1, 5)
+                .map(i -> ContentMaker.largeRandom().setTags(Set.of(tag))).cache();
         cleaner.registerToBeDeleted(withTag);
 
         Flux<Content> withoutTag = Flux.range(1, 5).map(i -> ContentMaker.largeRandom()).cache();
@@ -65,8 +65,8 @@ public class ContentRepositoryTest extends PageableRepositoryTest<Content, Conte
     @Test
     public void findByTagPageable() {
         String tag = IdMaker.randomUUID().toString();
-        Flux<Content> contents = Flux.range(1, 10).map(i ->
-                ContentMaker.largeRandom().setTags(Set.of(tag))).cache();
+        Flux<Content> contents = Flux.range(1, 10)
+                .map(i -> ContentMaker.largeRandom().setTags(Set.of(tag))).cache();
         cleaner.registerToBeDeleted(contents);
         saveAndGetPaging(contents, pageable -> repo.findAllByTag(tag, pageable));
     }

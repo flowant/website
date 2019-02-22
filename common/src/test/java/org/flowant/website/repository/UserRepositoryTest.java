@@ -40,7 +40,8 @@ public class UserRepositoryTest extends RepositoryTest<User, UUID, UserRepositor
         cleaner.registerToBeDeleted(user);
 
         Flux<User> saveThenFind = repo.save(user).thenMany(repo.findByUsername(user.getUsername()));
-        StepVerifier.create(saveThenFind).expectNextMatches(u -> user.getUsername().equals(u.getUsername()))
+        StepVerifier.create(saveThenFind)
+                .expectNextMatches(u -> user.getUsername().equals(u.getUsername()))
                 .verifyComplete();
     }
 
@@ -68,8 +69,7 @@ public class UserRepositoryTest extends RepositoryTest<User, UUID, UserRepositor
     public Mono<Slice<User>> getAllPaging(Pageable pageable) {
         log.trace("getAllPaging, pageable:{}", pageable);
         CassandraPageRequest cpr = CassandraPageRequest.class.cast(pageable);
-        return getAllPaging(cpr.getPageNumber(), cpr.getPageSize(),
-                cpr.getPagingState().toString());
+        return getAllPaging(cpr.getPageNumber(), cpr.getPageSize(), cpr.getPagingState().toString());
     }
 
     @Test

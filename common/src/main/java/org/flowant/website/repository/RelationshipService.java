@@ -31,7 +31,8 @@ public class RelationshipService {
     static Flux<MapIdRepository<?>> repoChildren;
 
     @Autowired
-    RelationshipService(@Qualifier("contentRepository") ContentRepository repoContent,
+    RelationshipService(
+            @Qualifier("contentRepository") ContentRepository repoContent,
             @Qualifier("reviewRepository") ReviewRepository repoReview,
             @Qualifier("replyRepository") ReplyRepository repoReply,
             @Qualifier("contentReputationRepository") ContentReputationRepository repoContentRpt,
@@ -54,7 +55,9 @@ public class RelationshipService {
 
     // delete content and all children
     public static Mono<Void> deleteChildren(MapId mapId) {
-        return repoChildren.flatMap(repo -> repo.deleteAllByContainerId(IdMaker.toContainerId(mapId))).then();
+        return repoChildren
+                .flatMap(repo -> repo.deleteAllByContainerId(IdMaker.toContainerId(mapId)))
+                .then();
     }
 
     // Update counter values or create row if not exist from XReputationRepository to XRepository.

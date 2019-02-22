@@ -33,7 +33,11 @@ public class CassandraKeyspaceInitializer {
     @PostConstruct
     public void createKeySpaceIfNotExist() {
         String cql = String.format(cqlCreateKeySpace, keyspaceName);
-        try (Session session = Cluster.builder().addContactPoint(contactPoints).withPort(port).build().newSession()) {
+        try (Session session = Cluster.builder()
+                .addContactPoint(contactPoints)
+                .withPort(port)
+                .build()
+                .newSession()) {
             session.execute(cql);
         }
         log.debug("CassandraKeyspaceInitializer:{}, performed cql: {}", this::toString, () -> cql);

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.flowant.website.model.CRUZonedTime;
-import org.flowant.website.model.Reputation;
 import org.flowant.website.model.Review;
 import org.springframework.data.cassandra.core.mapping.MapId;
 
