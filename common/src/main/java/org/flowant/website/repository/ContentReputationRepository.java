@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 public interface ContentReputationRepository extends IdCidRepository<ContentReputation> {
 
-    static final String ACCUMULATE = "UPDATE contentreputation " +
+    String ACCUMULATE = "UPDATE contentreputation " +
             "SET viewed = viewed + ?2, rated = rated + ?3, liked = liked + ?4, " +
             "disliked = disliked + ?5, reported = reported + ?6, reputed = reputed + ?7 " +
             "WHERE identity = ?0 and containerid = ?1";

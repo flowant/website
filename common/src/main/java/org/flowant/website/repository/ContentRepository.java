@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 public interface ContentRepository extends ReputationRepository<Content> {
 
-    static final String UPDATE_REPUTATION = "UPDATE content SET reputation = ?2 " +
+    String UPDATE_REPUTATION = "UPDATE content SET reputation = ?2 " +
             "WHERE identity = ?0 and containerId = ?1";
 
     @Query(UPDATE_REPUTATION)

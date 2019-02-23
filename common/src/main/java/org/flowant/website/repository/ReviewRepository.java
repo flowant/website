@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 public interface ReviewRepository extends ReputationRepository<Review> {
 
-    static final String UPDATE_REPUTATION = "UPDATE review SET reputation = ?2 " + 
+    String UPDATE_REPUTATION = "UPDATE review SET reputation = ?2 " +
             "WHERE identity = ?0 and containerId = ?1";
 
     @Query(UPDATE_REPUTATION)

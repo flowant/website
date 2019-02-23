@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 public interface ReplyRepository extends ReputationRepository<Reply> {
 
-    static final String UPDATE_REPUTATION = "UPDATE reply SET reputation = ?2 " + 
+    String UPDATE_REPUTATION = "UPDATE reply SET reputation = ?2 " +
             "WHERE identity = ?0 and containerId = ?1";
 
     @Query(UPDATE_REPUTATION)
