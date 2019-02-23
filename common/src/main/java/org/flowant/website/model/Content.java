@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Content implements HasIdCid, HasReputation, HasCruTime {
+public class Content implements HasIdCid, HasReputation, HasCruTime, Comparable<Content> {
 
     @NonNull
     @PrimaryKey
@@ -47,5 +47,9 @@ public class Content implements HasIdCid, HasReputation, HasCruTime {
 
     @NonNull
     CRUZonedTime cruTime;
+
+    public int compareTo(Content content) {
+        return getIdentity().compareTo(content.getIdentity());
+    }
 
 }

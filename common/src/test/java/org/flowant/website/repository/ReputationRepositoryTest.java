@@ -1,83 +1,37 @@
 package org.flowant.website.repository;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-import org.flowant.website.model.HasIdCid;
-import org.flowant.website.model.HasReputation;
 import org.flowant.website.model.IdCid;
-import org.junit.Assert;
-import org.springframework.data.cassandra.core.query.CassandraPageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.lang.Nullable;
+import org.flowant.website.model.ReputationCounter;
+import org.flowant.website.util.IdMaker;
 
-import com.datastax.driver.core.utils.UUIDs;
-
-import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
-@Log4j2
-public abstract class ReputationRepositoryTest <Entity extends HasIdCid & HasReputation, Repository extends ReputationRepository<Entity>>
-        extends IdCidRepositoryTest<Entity, Repository> {
+public abstract class ReputationRepositoryTest <T extends ReputationCounter, R extends ReputationCounterRepository<T>>
+        extends IdCidRepositoryTest<T, R> {
 
-    Function <Pageable, Mono<Slice<Entity>>> findPaging;
+    public void popularChildren(int cntPopular, int cntTotal, Function<IdCid, T> supplier, Class<?> containerCls) {
 
-    private Mono<Slice<Entity>> getPaging(Pageable pageable) {
-        log.trace("getAllPaging, pageable:{}", pageable);
-        CassandraPageRequest cpr = CassandraPageRequest.class.cast(pageable);
-        return getPaging(cpr.getPageNumber(), cpr.getPageSize(), cpr.getPagingState().toString());
-    }
+        UUID containerId = IdMaker.randomUUID();
 
-    private Mono<Slice<Entity>> getPaging(int page, int size, @Nullable String pagingState) {
-        Pageable pageable = PageableUtil.pageable(page, size, pagingState);
-        return findPaging.apply(pageable);
-    }
+        Flux<T> reputations = Flux.range(1, cntTotal).map(i -> supplier.apply(IdCid.random(containerId))).cache();
+        reputations.flatMap(r -> repo.save(r)).blockLast();
+        cleaner.registerToBeDeleted(reputations);
 
-    public void saveAndGetPaging(Flux<Entity> entities, Function <Pageable, Mono<Slice<Entity>>> findPaging) {
-        this.findPaging = findPaging;
-        entities = cleaner.registerToBeDeleted(entities);
-        repo.saveAll(entities).blockLast();
+        Collection<ReputationCounter> popular = RelationshipService.popularChildren(cntPopular, containerId, containerCls).block();
 
-        List<Entity> actual = new ArrayList<>();
-        Slice<Entity> slice = getPaging(0, 3, null).block();
-        while(true) {
-            if (slice.hasContent()) {
-                slice.forEach(log::trace);
-                actual.addAll(slice.getContent());
-            }
-            if (!slice.hasNext()) {
-                break;
-            }
-            slice = getPaging(slice.nextPageable()).block();
+        List<T> expected = reputations.collectSortedList(Comparator.comparing(T::getLiked).reversed()).block();
+        for (int i = 0; i < cntPopular; i++) {
+            assertTrue(popular.contains(expected.get(i)));
         }
-        Assert.assertTrue(entities.all(actual::contains).block());
-    }
 
-    public void findAllByContainerIdPageable(UUID containerId, Flux<Entity> entities) {
-        saveAndGetPaging(entities, pageable -> repo.findAllByIdCidContainerId(containerId, pageable));
-    }
-
-    public void testOrdered(Function<Entity, IdCid> getId, Comparator<Entity> comparator,
-            Function<UUID, Entity> supplier) {
-
-        UUID containerId = UUIDs.timeBased();
-        // Entities's clusterKey is timeuuid. Entities are created by ascending order
-        Flux<Entity> entities = Flux.range(1, 10).map(i -> supplier.apply(containerId)).cache();
-
-        entities = cleaner.registerToBeDeleted(entities);
-        repo.saveAll(entities).blockLast();
-
-        // expected list is sorted by descending order
-        List<Entity> sortedList = entities.collectSortedList(comparator).block();
-
-        Flux<Entity> findAllByIdCidContainerId = repo.findAllByIdCidContainerId(containerId);
-        StepVerifier.create(findAllByIdCidContainerId).expectNextSequence(sortedList).verifyComplete();
     }
 
 }

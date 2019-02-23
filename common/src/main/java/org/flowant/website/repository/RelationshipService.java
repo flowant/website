@@ -1,14 +1,21 @@
 package org.flowant.website.repository;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.PriorityQueue;
+import java.util.UUID;
 
+import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
 import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.HasReputation;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.ReputationCounter;
+import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
+import org.flowant.website.model.WebSite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +25,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class RelationshipService {
 
+    // prevent out of memory
+    static int MAX_HEAP_SIZE = 1000;
+
     static ContentRepository repoContent;
     static ReviewRepository repoReview;
     static ReplyRepository repoReply;
@@ -26,6 +36,9 @@ public class RelationshipService {
     static ReplyReputationRepository repoReplyRpt;
 
     static HashMap<Class<?>, ReputationRepository<? extends HasReputation>> repoParent = new HashMap<>();
+
+    static HashMap<Class<?>, ReputationCounterRepository<? extends HasIdCid>> repoCounter = new HashMap<>();
+
     static Flux<IdCidRepository<?>> repoChildren;
 
     @Autowired
@@ -47,7 +60,12 @@ public class RelationshipService {
         repoParent.put(ReviewReputation.class, repoReview);
         repoParent.put(ReplyReputation.class, repoReply);
 
+        repoCounter.put(WebSite.class, repoContentRpt);
+        repoCounter.put(Content.class, repoReviewRpt);
+        repoCounter.put(Review.class, repoReplyRpt);
+
         repoChildren = Flux.just(repoReview, repoReply, repoContentRpt, repoReviewRpt, repoReplyRpt).cache();
+
     }
 
     // delete content and all children
@@ -74,6 +92,27 @@ public class RelationshipService {
     public static <T extends HasIdCid> Mono<Void> deleteParent(T entity) {
         ReputationRepository<?> repo = repoParent.get(entity.getClass());
         return repo.deleteById(entity.getIdCid());
+    }
+
+    // Be careful, it's very heavy IO bound function.
+    public static Mono<Collection<ReputationCounter>> popularChildren(int cntPopular, UUID containerId, Class<?> containerCls) {
+
+        ReputationCounterRepository<?> repo = repoCounter.get(containerCls);
+
+        int maxSize = Math.min(cntPopular + 1, MAX_HEAP_SIZE);
+
+        PriorityQueue<ReputationCounter> minHeap = new PriorityQueue<>(maxSize + 1,
+                Comparator.comparing(ReputationCounter::getLiked));
+
+        // TODO restrict amount of IO
+        return repo.findAllByIdCidContainerId(containerId)
+                .doOnNext(r -> {
+                    minHeap.add(r); // log n
+                    // This way is faster than using MinMaxPriorityQueue with max size although remove() is used.
+                    if (minHeap.size() == maxSize) {
+                        minHeap.remove(); // log n
+                    }
+                }).then(Mono.just(minHeap));
     }
 
 }

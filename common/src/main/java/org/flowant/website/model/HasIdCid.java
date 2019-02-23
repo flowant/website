@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public interface HasIdCid extends HasIdentity, HasContainerId, Comparable<HasIdCid> {
+public interface HasIdCid extends HasIdentity, HasContainerId {
 
     IdCid getIdCid();
 
@@ -18,10 +18,6 @@ public interface HasIdCid extends HasIdentity, HasContainerId, Comparable<HasIdC
     @JsonIgnore
     default UUID getIdentity() {
         return getIdCid().getIdentity();
-    }
-
-    default public int compareTo(HasIdCid hasIdCid) {
-        return getIdentity().compareTo(hasIdCid.getIdentity());
     }
 
 }

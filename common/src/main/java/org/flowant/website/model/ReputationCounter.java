@@ -1,6 +1,6 @@
 package org.flowant.website.model;
 
-public interface ReputationCounter extends HasIdCid {
+public interface ReputationCounter extends HasIdCid, Comparable<ReputationCounter>{
 
     long getViewed();
 
@@ -16,6 +16,10 @@ public interface ReputationCounter extends HasIdCid {
 
     default Reputation toReputation() {
         return Reputation.of(this);
+    }
+
+    default public int compareTo(ReputationCounter counter) {
+        return Long.compare(getLiked(), counter.getLiked());
     }
 
 }

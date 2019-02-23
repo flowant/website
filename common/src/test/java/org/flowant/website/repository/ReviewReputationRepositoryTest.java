@@ -1,5 +1,6 @@
 package org.flowant.website.repository;
 
+import org.flowant.website.model.Content;
 import org.flowant.website.model.ReviewReputation;
 import org.flowant.website.util.test.ReputationMaker;
 import org.junit.Before;
@@ -11,7 +12,7 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReviewReputationRepositoryTest extends IdCidRepositoryTest<ReviewReputation, ReviewReputationRepository> {
+public class ReviewReputationRepositoryTest extends ReputationRepositoryTest<ReviewReputation, ReviewReputationRepository> {
 
     @Before
     public void before() {
@@ -26,6 +27,11 @@ public class ReviewReputationRepositoryTest extends IdCidRepositoryTest<ReviewRe
     @Test
     public void testDeleteAllByContainerId() {
         super.testDeleteAllByContainerId(ReputationMaker.randomReviewReputation(), ReviewReputation::getContainerId);
+    }
+
+    @Test
+    public void testPopularChildren() {
+        super.popularChildren(5, 10, ReputationMaker::randomReviewReputation, Content.class);
     }
 
 }

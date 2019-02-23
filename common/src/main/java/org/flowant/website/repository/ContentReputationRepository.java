@@ -7,7 +7,7 @@ import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ContentReputationRepository extends IdCidRepository<ContentReputation> {
+public interface ContentReputationRepository extends ReputationCounterRepository<ContentReputation> {
 
     String ACCUMULATE = "UPDATE contentreputation " +
             "SET viewed = viewed + ?2, rated = rated + ?3, liked = liked + ?4, " +

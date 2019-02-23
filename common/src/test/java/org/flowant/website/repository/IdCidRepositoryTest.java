@@ -9,13 +9,13 @@ import org.flowant.website.model.IdCid;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-public abstract class IdCidRepositoryTest <Entity extends HasIdCid, Repository extends IdCidRepository<Entity>>
-        extends RepositoryTest<Entity, IdCid, Repository> {
+public abstract class IdCidRepositoryTest <T extends HasIdCid, R extends IdCidRepository<T>>
+        extends RepositoryTest<T, IdCid, R> {
 
-    public void testDeleteAllByContainerId(Entity entity, Function<Entity, UUID> getContainerId) {
+    public void testDeleteAllByContainerId(T entity, Function<T, UUID> getContainerId) {
         cleaner.registerToBeDeleted(entity);
 
-        Mono<Entity> saveAndDeleteAndFind = repo.save(entity)
+        Mono<T> saveAndDeleteAndFind = repo.save(entity)
                 .then(repo.deleteAllByIdCidContainerId(getContainerId.apply(entity)))
                 .then(repo.findById(entity.getIdCid()));
         StepVerifier.create(saveAndDeleteAndFind).expectNextCount(0).verifyComplete();

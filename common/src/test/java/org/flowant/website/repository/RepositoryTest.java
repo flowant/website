@@ -24,10 +24,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-public abstract class RepositoryTest <Entity, ID, Repository extends ReactiveCassandraRepository<Entity, ID>> {
+public abstract class RepositoryTest <T, ID, R extends ReactiveCassandraRepository<T, ID>> {
 
     @Autowired
-    Repository repo;
+    R repo;
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
@@ -35,11 +35,11 @@ public abstract class RepositoryTest <Entity, ID, Repository extends ReactiveCas
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
-    protected DeleteAfterTest<Entity> cleaner = new DeleteAfterTest<>();
+    protected DeleteAfterTest<T> cleaner = new DeleteAfterTest<>();
 
-    Consumer<Entity> deleter = entity -> repo.delete(entity).subscribe();
+    Consumer<T> deleter = entity -> repo.delete(entity).subscribe();
 
-    public void setDeleter(Consumer<Entity> deleter) {
+    public void setDeleter(Consumer<T> deleter) {
         this.deleter = deleter;
     }
 
@@ -48,44 +48,44 @@ public abstract class RepositoryTest <Entity, ID, Repository extends ReactiveCas
         cleaner.deleteRegistered(deleter);
     }
 
-    public void save(Entity entity, Function<Entity, ID> getId) {
+    public void save(T entity, Function<T, ID> getId) {
         cleaner.registerToBeDeleted(entity);
 
-        Flux<Entity> saveThenFind = repo.save(entity).thenMany(repo.findById(getId.apply(entity)));
+        Flux<T> saveThenFind = repo.save(entity).thenMany(repo.findById(getId.apply(entity)));
         StepVerifier.create(saveThenFind).expectNext(entity).verifyComplete();
     }
 
-    public void saveAllFindAllById(Supplier<Entity> supplier, Function<Entity, ID> getId) {
-        Flux<Entity> entities = Flux.range(1, 5).map(i -> supplier.get());
+    public void saveAllFindAllById(Supplier<T> supplier, Function<T, ID> getId) {
+        Flux<T> entities = Flux.range(1, 5).map(i -> supplier.get());
         entities = cleaner.registerToBeDeleted(entities);
 
-        Flux<Entity> saveAllThenFind = repo.saveAll(entities)
+        Flux<T> saveAllThenFind = repo.saveAll(entities)
                 .thenMany(repo.findAllById(entities.map(getId)));
         StepVerifier.create(saveAllThenFind).expectNextCount(5).verifyComplete();
     }
 
-    public void testCrud(Function<Entity, ID> getId, Supplier<Entity> small, Supplier<Entity> large) {
+    public void testCrud(Function<T, ID> getId, Supplier<T> small, Supplier<T> large) {
         save(small.get(), getId);
         save(large.get(), getId);
         saveAllFindAllById(large, getId);
     }
 
-    public void testAccumulation(Function<Entity, ID> getId, BiFunction<IdCid, Reputation, Entity> supplier) {
+    public void testAccumulation(Function<T, ID> getId, BiFunction<IdCid, Reputation, T> supplier) {
         save(ReputationMaker.emptyTypeReputation(supplier), getId);
         save(ReputationMaker.randomTypeReputation(supplier), getId);
         accumulateCounter(getId, supplier);
     }
 
-    public void accumulateCounter(Function<Entity, ID> getId, BiFunction<IdCid, Reputation, Entity> supplier) {
+    public void accumulateCounter(Function<T, ID> getId, BiFunction<IdCid, Reputation, T> supplier) {
         IdCid idCid = IdCid.random();
 
-        Entity entity = ReputationMaker.emptyTypeReputation(idCid, supplier);
+        T entity = ReputationMaker.emptyTypeReputation(idCid, supplier);
         cleaner.registerToBeDeleted(entity);
 
-        Entity acc = ReputationMaker.randomTypeReputation(idCid, supplier);
+        T acc = ReputationMaker.randomTypeReputation(idCid, supplier);
         cleaner.registerToBeDeleted(acc);
 
-        Mono<Entity> saveThenFind = repo.save(entity).then(repo.save(acc))
+        Mono<T> saveThenFind = repo.save(entity).then(repo.save(acc))
                 .then(repo.findById(getId.apply(entity)));
         StepVerifier.create(saveThenFind).expectNext(acc).verifyComplete();
 

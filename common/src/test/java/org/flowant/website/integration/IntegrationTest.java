@@ -63,7 +63,7 @@ public class IntegrationTest {
 
     Flux<IdCidRepository<?>> repos;
 
-    Flux<IdCid> toBeDeletedIdCids;
+    Flux<IdCid> toBeDeletedIdCids = Flux.empty();
 
     @Before
     public void before() {
@@ -78,22 +78,22 @@ public class IntegrationTest {
 
     @Test
     public void deleteChildren() {
-        IdCid mapId = IdCid.random();
-        toBeDeletedIdCids = Flux.just(mapId);
+        IdCid idCid = IdCid.random();
+        toBeDeletedIdCids = Flux.just(idCid);
 
-        repoContent.save(ContentMaker.large(mapId)).block();
-        repoReview.save(ReviewMaker.large(mapId)).block();
-        repoReply.save(ReplyMaker.large(mapId)).block();
-        repoContentRpt.save(ReputationMaker.randomContentReputation(mapId)).block();
-        repoReviewRpt.save(ReputationMaker.randomReviewReputation(mapId)).block();
-        repoReplyRpt.save(ReputationMaker.randomReplyReputation(mapId)).block();
+        repoContent.save(ContentMaker.large(idCid)).block();
+        repoReview.save(ReviewMaker.large(idCid)).block();
+        repoReply.save(ReplyMaker.large(idCid)).block();
+        repoContentRpt.save(ReputationMaker.randomContentReputation(idCid)).block();
+        repoReviewRpt.save(ReputationMaker.randomReviewReputation(idCid)).block();
+        repoReplyRpt.save(ReputationMaker.randomReplyReputation(idCid)).block();
 
-        repos.doOnNext(repo -> StepVerifier.create(repo.findById(mapId)).expectNextCount(1)
+        repos.doOnNext(repo -> StepVerifier.create(repo.findById(idCid)).expectNextCount(1)
                 .verifyComplete()).blockLast();
 
-        repoContent.deleteContentWithChildren(mapId).block();
+        repoContent.deleteContentWithChildren(idCid).block();
 
-        repos.doOnNext(repo -> StepVerifier.create(repo.findById(mapId)).expectNextCount(0)
+        repos.doOnNext(repo -> StepVerifier.create(repo.findById(idCid)).expectNextCount(0)
                 .verifyComplete()).blockLast();
     }
 
@@ -121,4 +121,5 @@ public class IntegrationTest {
         // we cannot get sorted content using sorted Publisher
         repoContent.findAllById(ids).doOnNext(log::trace).blockLast();
     }
+
 }

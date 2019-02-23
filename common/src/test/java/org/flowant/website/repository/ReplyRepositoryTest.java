@@ -16,7 +16,7 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReplyRepositoryTest extends ReputationRepositoryTest<Reply, ReplyRepository> {
+public class ReplyRepositoryTest extends HasReputationRepositoryTest<Reply, ReplyRepository> {
 
     @Test
     public void crud() {
