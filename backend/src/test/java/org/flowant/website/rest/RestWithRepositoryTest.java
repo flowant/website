@@ -249,7 +249,8 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
 
         ClientResponse resp = WebClient.create().get()
                 .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl)
-                        .queryParam(CID, containerId.toString()).queryParam(PAGE, "0")
+                        .queryParam(CID, containerId.toString())
+                        .queryParam(PAGE, "0")
                         .queryParam(SIZE, String.valueOf(pageSize)).build())
                 .exchange().block();
 

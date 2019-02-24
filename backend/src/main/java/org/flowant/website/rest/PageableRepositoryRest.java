@@ -33,8 +33,9 @@ public abstract class PageableRepositoryRest <Entity extends HasIdCid & HasReput
 
         return repo.findAllByIdCidContainerId(UUID.fromString(containerId), pageable(page, size, pagingState))
                 .map(slice -> ResponseEntity.ok()
-                        .headers(nextLinkHeader(containerId, uriBuilder, slice))
+                        .headers(nextLinkHeader(CID, containerId, uriBuilder, slice))
                         .body(slice.getContent()))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
 }

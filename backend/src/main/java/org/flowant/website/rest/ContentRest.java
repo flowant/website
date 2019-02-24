@@ -27,8 +27,10 @@ public class ContentRest extends PageableRepositoryRest<Content, ContentReposito
     public final static String CONTENT = "/content";
 
     @GetMapping(value = CONTENT)
-    public Mono<ResponseEntity<List<Content>>> getAllByContainerId(@RequestParam(CID) String containerId,
-            @RequestParam(PAGE) int page, @RequestParam(SIZE) int size,
+    public Mono<ResponseEntity<List<Content>>> getAllByContainerId(
+            @RequestParam(CID) String containerId,
+            @RequestParam(PAGE) int page,
+            @RequestParam(SIZE) int size,
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 

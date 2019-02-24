@@ -1,6 +1,5 @@
 package org.flowant.website.rest;
 
-import static org.flowant.website.rest.PageableRepositoryRest.CID;
 import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
 import static org.flowant.website.rest.PageableRepositoryRest.PS;
 import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
@@ -17,13 +16,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 public class LinkUtil {
 
-    public static HttpHeaders nextLinkHeader(String containerId, UriComponentsBuilder uriBuilder, Slice<?> slice) {
+    public static HttpHeaders nextLinkHeader(String paramName, String paramValue, UriComponentsBuilder uriBuilder, Slice<?> slice) {
         if (slice.hasNext() == false) {
             return null;
         }
         CassandraPageRequest pageable = CassandraPageRequest.class.cast(slice.nextPageable());
         String url = uriBuilder
-                .queryParam(CID, containerId)
+                .queryParam(paramName, paramValue)
                 .queryParam(PAGE, pageable.getPageNumber())
                 .queryParam(SIZE, pageable.getPageSize())
                 .queryParam(PS, pageable.getPagingState())
