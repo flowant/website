@@ -34,6 +34,7 @@ public class Reply implements HasIdCid, HasReputation, HasCruTime {
 
     String comment;
 
+    @NonNull
     Reputation reputation;
 
     @NonNull

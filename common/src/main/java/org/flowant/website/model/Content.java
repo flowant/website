@@ -43,6 +43,7 @@ public class Content implements HasIdCid, HasReputation, HasCruTime, Comparable<
 
     List<UUID> popularReviewIds;
 
+    @NonNull
     Reputation reputation;
 
     @NonNull

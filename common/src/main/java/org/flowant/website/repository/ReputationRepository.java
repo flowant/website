@@ -9,7 +9,8 @@ import org.springframework.data.repository.NoRepositoryBean;
 import reactor.core.publisher.Mono;
 
 @NoRepositoryBean
-public interface ReputationRepository<T extends HasIdCid & HasReputation> extends IdCidRepository<T> {
+public interface ReputationRepository<T extends HasIdCid & HasReputation>
+        extends IdCidRepository<T> {
 
     Mono<Reputation> updateReputationById(IdCid idCid, Reputation reputation);
 

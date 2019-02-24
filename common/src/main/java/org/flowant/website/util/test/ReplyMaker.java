@@ -15,7 +15,7 @@ public class ReplyMaker {
 
     public static Reply small(IdCid idCid) {
         UUID id = idCid.getIdentity();
-        return Reply.of(idCid, replierId, replierName + id, CRUZonedTime.now());
+        return Reply.of(idCid, replierId, replierName + id, ReputationMaker.emptyReputation(), CRUZonedTime.now());
     }
 
     public static Reply smallRandom(UUID containerId) {

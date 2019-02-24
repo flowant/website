@@ -40,6 +40,7 @@ public class Review implements HasIdCid, HasReputation, HasCruTime {
 
     List<UUID> popularReplyIds;
 
+    @NonNull
     Reputation reputation;
 
     @NonNull

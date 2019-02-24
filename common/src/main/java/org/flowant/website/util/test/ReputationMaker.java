@@ -15,6 +15,10 @@ public class ReputationMaker {
 
     static Random r = new Random();
 
+    public static Reputation emptyReputation() {
+        return new Reputation();
+    }
+
     public static Reputation randomReputation() {
         return Reputation.of(r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE),
                 r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE));

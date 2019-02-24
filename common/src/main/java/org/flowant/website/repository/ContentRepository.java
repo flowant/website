@@ -12,18 +12,11 @@ import org.springframework.data.domain.Slice;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ContentRepository extends ReputationRepository<Content> {
-
-    String UPDATE_REPUTATION = "UPDATE content SET reputation = ?2 " +
-            "WHERE identity = ?0 and containerId = ?1";
-
-    @Query(UPDATE_REPUTATION)
-    Mono<Object> updateReputationById(UUID identity, UUID containerId, Reputation reputation);
+public interface ContentRepository extends ReputationRepository<Content>, ReputationFragment<Content> {
 
     @Override
     default Mono<Reputation> updateReputationById(IdCid idCid, Reputation reputation) {
-        return updateReputationById(idCid.getIdentity(), idCid.getContainerId(), reputation)
-                .thenReturn(reputation);
+        return updateReputationById(idCid, reputation, Content.class);
     }
 
     @Override

@@ -37,7 +37,7 @@ public class ContentMaker {
 
     public static Content small(IdCid idCid) {
         UUID id = idCid.getIdentity();
-        return Content.of(idCid, title + id, CRUZonedTime.now());
+        return Content.of(idCid, title + id, ReputationMaker.emptyReputation(), CRUZonedTime.now());
     }
 
     public static Content smallRandom(UUID containerId) {
@@ -59,6 +59,7 @@ public class ContentMaker {
                 .fileRefs(List.of(FileMaker.largeRandom()))
                 .sentences(sentences + id)
                 .tags(Set.of(tag + id, tag + id + 1, tag + id + 2))
+                .reputation(ReputationMaker.emptyReputation())
                 .cruTime(CRUZonedTime.now())
                 .build();
     }

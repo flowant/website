@@ -7,25 +7,13 @@ import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ReviewReputationRepository extends ReputationCounterRepository<ReviewReputation> {
-
-    String ACCUMULATE = "UPDATE reviewreputation " +
-            "SET viewed = viewed + ?2, rated = rated + ?3, liked = liked + ?4, " +
-            "disliked = disliked + ?5, reported = reported + ?6, reputed = reputed + ?7 " +
-            "WHERE identity = ?0 and containerid = ?1";
-
-    @Query(ACCUMULATE)
-    Mono<Object> accumulate(UUID identity, UUID containerId, long viewed, long rated,
-            long liked, long disliked, long reported,long reputed);
-
-    default Mono<Void> accumulate(ReviewReputation rr) {
-        return accumulate(rr.getIdentity(), rr.getContainerId(), rr.getViewed(), rr.getRated(),
-                rr.getLiked(), rr.getDisliked(), rr.getReported(), rr.getReputed()).then();
-    };
+public interface ReviewReputationRepository extends ReputationCounterRepository<ReviewReputation>,
+                                                    ReputationCounterFragment<ReviewReputation> {
 
     @Override
     default Mono<ReviewReputation> save(ReviewReputation rr) {
-        return accumulate(rr).then(findById(rr.getIdCid()).flatMap(RelationshipService::updateReputation));
+        return accumulate(rr, ReviewReputation.class)
+                .then(findById(rr.getIdCid()).flatMap(RelationshipService::updateReputation));
     };
 
     @Override

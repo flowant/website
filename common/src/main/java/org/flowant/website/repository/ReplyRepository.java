@@ -9,17 +9,11 @@ import org.springframework.data.cassandra.repository.Query;
 
 import reactor.core.publisher.Mono;
 
-public interface ReplyRepository extends ReputationRepository<Reply> {
-
-    String UPDATE_REPUTATION = "UPDATE reply SET reputation = ?2 " +
-            "WHERE identity = ?0 and containerId = ?1";
-
-    @Query(UPDATE_REPUTATION)
-    Mono<Object> updateReputationById(UUID identity, UUID containerId, Reputation reputation);
+public interface ReplyRepository extends ReputationRepository<Reply>, ReputationFragment<Reply> {
 
     @Override
     default Mono<Reputation> updateReputationById(IdCid idCid, Reputation reputation) {
-        return updateReputationById(idCid.getIdentity(), idCid.getContainerId(), reputation)
+        return updateReputationById(idCid, reputation, Reply.class)
                 .thenReturn(reputation);
     }
 

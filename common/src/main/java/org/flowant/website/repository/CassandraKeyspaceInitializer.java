@@ -19,6 +19,7 @@ import lombok.extern.log4j.Log4j2;
 @ConfigurationProperties(prefix = "website.cassandra")
 @Log4j2
 public class CassandraKeyspaceInitializer {
+
     @Value("${spring.data.cassandra.contactPoints}")
     private String contactPoints;
 
@@ -42,4 +43,5 @@ public class CassandraKeyspaceInitializer {
         }
         log.debug("CassandraKeyspaceInitializer:{}, performed cql: {}", this::toString, () -> cql);
     }
+
 }

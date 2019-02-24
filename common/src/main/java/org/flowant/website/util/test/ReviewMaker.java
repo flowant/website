@@ -18,7 +18,7 @@ public class ReviewMaker {
     public static Review small(IdCid idCid) {
         UUID id = idCid.getIdentity();
         return Review.of(idCid, reviewerId, reviewerName + id,
-                ReputationMaker.randomReputation(), CRUZonedTime.now());
+                ReputationMaker.randomReputation(), ReputationMaker.emptyReputation(), CRUZonedTime.now());
     }
 
     public static Review smallRandom(UUID containerId) {
