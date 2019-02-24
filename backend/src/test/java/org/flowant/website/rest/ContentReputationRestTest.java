@@ -26,6 +26,8 @@ public class ContentReputationRestTest extends RestWithRepositoryTest<ContentRep
                 ReputationMaker::emptyContentReputation,
                 ReputationMaker::randomContentReputation,
                 cr -> cr.setLiked(1));
+
+        setDeleter(entity -> repo.deleteWithParent(entity).subscribe());
     }
 
     @Test
