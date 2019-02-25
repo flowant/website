@@ -21,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RunWith(JUnitParamsRunner.class)
 public class JacksonTest {
+
     public <T> void testWithJson(T t) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -36,8 +37,9 @@ public class JacksonTest {
     public void testUser(User user) throws JsonGenerationException, JsonMappingException, IOException {
         testWithJson(user);
     }
+
     public static List<User> parametersForTestUser() {
-      return Arrays.asList(UserMaker.smallRandom(), UserMaker.largeRandom());
+        return Arrays.asList(UserMaker.smallRandom(), UserMaker.largeRandom());
     }
 
     @Test
@@ -45,8 +47,9 @@ public class JacksonTest {
     public void testContent(Content content) throws JsonGenerationException, JsonMappingException, IOException {
         testWithJson(content);
     }
+
     public static List<Content> parametersForTestContent() {
-      return Arrays.asList(ContentMaker.smallRandom(), ContentMaker.largeRandom());
+        return Arrays.asList(ContentMaker.smallRandom(), ContentMaker.largeRandom());
     }
 
 }

@@ -59,7 +59,7 @@ public class ContentMaker {
                 .fileRefs(List.of(FileMaker.largeRandom()))
                 .sentences(sentences + id)
                 .tags(Set.of(tag + id, tag + id + 1, tag + id + 2))
-                .reputation(ReputationMaker.emptyReputation())
+                .reputation(ReputationMaker.randomReputation())
                 .cruTime(CRUZonedTime.now())
                 .build();
     }
