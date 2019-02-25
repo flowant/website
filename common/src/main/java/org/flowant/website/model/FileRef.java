@@ -2,7 +2,8 @@ package org.flowant.website.model;
 
 import java.util.UUID;
 
-import org.springframework.data.cassandra.core.mapping.UserDefinedType;
+import org.springframework.data.cassandra.core.mapping.Element;
+import org.springframework.data.cassandra.core.mapping.Tuple;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,23 +19,30 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
-@UserDefinedType
+@Tuple
 public class FileRef implements HasIdentity {
 
     @NonNull
+    @Element(0)
     UUID identity; // to be used key in case of using external storage
 
     @NonNull
-    String uri; //TODO can be external links or internal storage url
+    @Element(1)
+    String uri;
 
     @NonNull
+    @Element(2)
     String contentType;
 
     @NonNull
+    @Element(3)
     String filename; // client's filename
-    long length; //TODO should be filled before being inserted to DB
+
+    @Element(4)
+    long length;
 
     @NonNull
+    @Element(5)
     CRUZonedTime cruTime;
 
 }
