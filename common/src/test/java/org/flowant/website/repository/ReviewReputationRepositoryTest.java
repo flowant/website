@@ -1,6 +1,7 @@
 package org.flowant.website.repository;
 
 import org.flowant.website.WebSiteConfig;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.model.ReviewReputation;
 import org.flowant.website.util.test.ReputationMaker;
 import org.junit.Before;
@@ -31,8 +32,9 @@ public class ReviewReputationRepositoryTest extends ReputationRepositoryTest<Rev
 
     @Test
     public void testPopularSubItems() {
+        IdCid idCid = IdCid.random();
         super.popularSubItems(WebSiteConfig.getMaxSubItems(ReviewReputation.class),
-                idCid -> ReviewReputation.of(idCid, ReputationMaker.randomReputationOverThreshold()));
+                idCid, ReviewReputation::of);
     }
 
 }

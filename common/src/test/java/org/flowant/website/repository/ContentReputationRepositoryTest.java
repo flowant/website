@@ -2,6 +2,7 @@ package org.flowant.website.repository;
 
 import org.flowant.website.WebSiteConfig;
 import org.flowant.website.model.ContentReputation;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.util.test.ReputationMaker;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,8 +32,9 @@ public class ContentReputationRepositoryTest extends ReputationRepositoryTest<Co
 
     @Test
     public void testPopularSubItems() {
+        IdCid idCid = IdCid.random();
         super.popularSubItems(WebSiteConfig.getMaxSubItems(ContentReputation.class),
-                idCid -> ContentReputation.of(idCid, ReputationMaker.randomReputationOverThreshold()));
+                idCid, ContentReputation::of);
     }
 
 }

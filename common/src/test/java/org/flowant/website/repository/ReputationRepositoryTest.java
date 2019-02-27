@@ -6,13 +6,16 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.IdScore;
+import org.flowant.website.model.Reputation;
 import org.flowant.website.model.ReputationCounter;
 import org.flowant.website.model.SubItem;
 import org.flowant.website.util.IdMaker;
+import org.flowant.website.util.test.ReputationMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +30,7 @@ public abstract class ReputationRepositoryTest <T extends ReputationCounter, R e
 
     // Do not use this function in test case, It's a heavy IO bound function.
     @SuppressWarnings("unused")
-    private void popularChildren(int cntPopular, int cntTotal, Function<IdCid, T> supplier, Class<?> containerCls) {
+    private void popularChildren(int cntPopular, int cntTotal, Function<IdCid, T> supplier, Class<?> reputationCls) {
 
         UUID containerId = IdMaker.randomUUID();
 
@@ -35,7 +38,7 @@ public abstract class ReputationRepositoryTest <T extends ReputationCounter, R e
         reputations.flatMap(r -> repo.save(r)).blockLast();
         cleaner.registerToBeDeleted(reputations);
 
-        Collection<ReputationCounter> popular = RelationshipService.findPopularSubItems(cntPopular, containerId, containerCls).block();
+        Collection<ReputationCounter> popular = RelationshipService.findPopularSubItems(cntPopular, containerId, reputationCls).block();
 
         List<T> expected = reputations.collectSortedList(Comparator.comparing(T::getLiked).reversed()).block();
         for (int i = 0; i < cntPopular; i++) {
@@ -44,15 +47,15 @@ public abstract class ReputationRepositoryTest <T extends ReputationCounter, R e
 
     }
 
-    public void popularSubItems(int cntPopular, Function<IdCid, T> supplier) {
+    public void popularSubItems(int cntPopular, IdCid ContainerIdCid, BiFunction<IdCid, Reputation, T> supplier) {
 
         int cntTotal = cntPopular * 3;
 
-        UUID containerId = IdMaker.randomUUID();
+        UUID containerId = ContainerIdCid.getIdentity();
         log.trace("popularSubItems, containerId:{}", containerId);
 
         Flux<T> reputations = Flux.range(1, cntTotal)
-                .map(i -> supplier.apply(IdCid.random(containerId)))
+                .map(i -> supplier.apply(IdCid.random(containerId), ReputationMaker.randomReputationOverThreshold()))
                 .cache();
 
         reputations.flatMap(r -> repo.save(r)).blockLast();
@@ -74,6 +77,8 @@ public abstract class ReputationRepositoryTest <T extends ReputationCounter, R e
             assertTrue(idScores.contains(expected.get(i).toIdScore()));
         }
 
+        // delete SubItemById
+        RelationshipService.deleteSubItemById(containerId).block();
     }
 
 }

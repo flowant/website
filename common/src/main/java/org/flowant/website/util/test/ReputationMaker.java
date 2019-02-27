@@ -43,7 +43,7 @@ public class ReputationMaker {
     }
 
     public static ContentReputation randomContentReputation(IdCid idCid) {
-        return ContentReputation.of(idCid, randomReputation());
+        return ContentReputation.of(idCid, randomReputationOverThreshold());
     }
 
     public static ReviewReputation emptyReviewReputation() {
@@ -59,7 +59,7 @@ public class ReputationMaker {
     }
 
     public static ReviewReputation randomReviewReputation(IdCid idCid) {
-        return ReviewReputation.of(idCid, randomReputation());
+        return ReviewReputation.of(idCid, randomReputationOverThreshold());
     }
 
     public static ReplyReputation emptyReplyReputation() {
@@ -75,7 +75,7 @@ public class ReputationMaker {
     }
 
     public static ReplyReputation randomReplyReputation(IdCid idCid) {
-        return ReplyReputation.of(idCid, randomReputation());
+        return ReplyReputation.of(idCid, randomReputationOverThreshold());
     }
 
     public static <T> T emptyTypeReputation(BiFunction<IdCid, Reputation, T> supplier) {
