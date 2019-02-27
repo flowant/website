@@ -38,7 +38,11 @@ public class Reputation implements Comparable<Reputation> {
 
     @Override
     public int compareTo(Reputation reputation) {
-        return Long.compare(this.getLiked(), reputation.getLiked());
+        return Long.compare(toScore(), reputation.toScore());
+    }
+
+    public long toScore() {
+        return ReputationCounter.toScore(getRated(), getLiked(), getDisliked(), getReported());
     }
 
 }

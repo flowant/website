@@ -13,7 +13,9 @@ public interface ContentReputationRepository extends ReputationCounterRepository
     @Override
     default Mono<ContentReputation> save(ContentReputation cr) {
         return accumulate(cr, ContentReputation.class)
-                .then(findById(cr.getIdCid()).flatMap(RelationshipService::updateReputation));
+                .then(findById(cr.getIdCid())
+                        .flatMap(RelationshipService::updateReputation)
+                        .flatMap(RelationshipService::updatePopularSubItems));
     };
 
     @Override

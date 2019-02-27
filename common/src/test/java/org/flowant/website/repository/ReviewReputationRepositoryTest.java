@@ -1,6 +1,6 @@
 package org.flowant.website.repository;
 
-import org.flowant.website.model.Content;
+import org.flowant.website.WebSiteConfig;
 import org.flowant.website.model.ReviewReputation;
 import org.flowant.website.util.test.ReputationMaker;
 import org.junit.Before;
@@ -16,7 +16,7 @@ public class ReviewReputationRepositoryTest extends ReputationRepositoryTest<Rev
 
     @Before
     public void before() {
-        setDeleter(entity -> repo.deleteWithParent(entity).subscribe());
+        setDeleter(entity -> repo.deleteWithReputation(entity).subscribe());
     }
 
     @Test
@@ -30,8 +30,9 @@ public class ReviewReputationRepositoryTest extends ReputationRepositoryTest<Rev
     }
 
     @Test
-    public void testPopularChildren() {
-        super.popularChildren(5, 10, ReputationMaker::randomReviewReputation, Content.class);
+    public void testPopularSubItems() {
+        super.popularSubItems(WebSiteConfig.getMaxSubItems(ReviewReputation.class),
+                idCid -> ReviewReputation.of(idCid, ReputationMaker.randomReputationOverThreshold()));
     }
 
 }

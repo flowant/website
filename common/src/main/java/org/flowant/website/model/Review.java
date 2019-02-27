@@ -1,6 +1,5 @@
 package org.flowant.website.model;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
@@ -37,8 +36,6 @@ public class Review implements HasIdCid, HasReputation, HasCruTime {
     Reputation reputing; // reputing content
 
     String comment;
-
-    List<UUID> popularReplyIds;
 
     @NonNull
     Reputation reputation;

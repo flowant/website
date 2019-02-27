@@ -24,6 +24,12 @@ public class ReputationMaker {
                 r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE));
     }
 
+    public static Reputation randomReputationOverThreshold() {
+        Random r = new Random();
+        // See Also, ReputationCounter.toScore. and ReputationCounter.isOverThreshold()
+        return Reputation.of(0, 0, 16 << r.nextInt(26), 0, 0, 0);
+    }
+
     public static ContentReputation emptyContentReputation() {
         return ContentReputation.of(IdCid.random());
     }

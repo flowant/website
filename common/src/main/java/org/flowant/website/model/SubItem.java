@@ -1,35 +1,34 @@
 package org.flowant.website.model;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
-@Builder
 @Data
 @Accessors(chain=true)
-@AllArgsConstructor
-@RequiredArgsConstructor(staticName="of")
+@AllArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class WebSite {
+public class SubItem {
 
     @NonNull
     @Id
     UUID identity;
 
-    Map<String, UUID> contentContainerIds; //TODO implement
+    @NonNull
+    List<IdScore> subItems;
 
-    List<TagCount> popularTagCounts; //TODO implement
+    public static SubItem of(UUID indentity) {
+        return of(indentity, new ArrayList<IdScore>());
+    }
 
 }

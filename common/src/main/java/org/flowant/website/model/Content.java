@@ -2,7 +2,6 @@ package org.flowant.website.model;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.data.cassandra.core.mapping.Indexed;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
@@ -40,8 +39,6 @@ public class Content implements HasIdCid, HasReputation, HasCruTime, Comparable<
 
     @Indexed
     Set<String> tags;
-
-    List<UUID> popularReviewIds;
 
     @NonNull
     Reputation reputation;

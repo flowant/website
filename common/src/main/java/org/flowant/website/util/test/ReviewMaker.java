@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.IdCid;
+import org.flowant.website.model.IdScore;
 import org.flowant.website.model.Review;
 import org.flowant.website.util.IdMaker;
 
@@ -13,7 +14,8 @@ public class ReviewMaker {
     static UUID reviewerId = IdMaker.randomUUID();
     static String reviewerName = "reviewerName";
     static String comment = "comment";
-    static List<UUID> popularReplyIds = List.of(IdMaker.randomUUID(), IdMaker.randomUUID());
+
+    static List<IdScore> popularSubItems = List.of(ReputationMaker.randomReplyReputation().toIdScore());
 
     public static Review small(IdCid idCid) {
         UUID id = idCid.getIdentity();
@@ -33,7 +35,6 @@ public class ReviewMaker {
         UUID id = idCid.getIdentity();
         Review review = small(idCid);
         review.setComment(comment + id);
-        review.setPopularReplyIds(popularReplyIds);
         return review;
     }
 

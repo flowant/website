@@ -14,8 +14,6 @@ import junitparams.JUnitParamsRunner;
 @SpringBootTest
 public class WebSiteRepositoryTest extends RepositoryTest<WebSite, UUID, WebSiteRepository> {
 
-    static final String lastname = "Jee";
-
     @Test
     public void crud() {
         WebSite webSite = WebSite.of(IdMaker.randomUUID());
