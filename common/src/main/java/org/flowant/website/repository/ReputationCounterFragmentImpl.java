@@ -16,20 +16,22 @@ public class ReputationCounterFragmentImpl<T extends ReputationCounter> implemen
     @Override
     public Mono<Boolean> accumulate(T entity, Class<T> entityClass) {
 
-      String cqlAccumulate = "UPDATE " + getTableName(operations, entityClass) +
+        //TODO Consider preparing the statement only once.
+
+        final String cqlAccumulate = "UPDATE " + getTableName(operations, entityClass) +
               " SET viewed = viewed + ?, rated = rated + ?, liked = liked + ?, " +
               " disliked = disliked + ?, reported = reported + ?, reputed = reputed + ? " +
               " WHERE identity = ? and containerid = ?";
 
-      return operations.getReactiveCqlOperations().execute(cqlAccumulate,
-              entity.getViewed(),
-              entity.getRated(),
-              entity.getLiked(),
-              entity.getDisliked(),
-              entity.getReported(),
-              entity.getReputed(),
-              entity.getIdentity(),
-              entity.getContainerId());
+        return operations.getReactiveCqlOperations().execute(cqlAccumulate,
+                entity.getViewed(),
+                entity.getRated(),
+                entity.getLiked(),
+                entity.getDisliked(),
+                entity.getReported(),
+                entity.getReputed(),
+                entity.getIdentity(),
+                entity.getContainerId());
     }
 
 }

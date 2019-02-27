@@ -17,7 +17,9 @@ public class ReputationFragmentImpl<T> implements ReputationFragment<T> {
     @Override
     public Mono<Reputation> updateReputationById(IdCid idCid, Reputation reputation, Class<T> entityClass) {
 
-        String cqlUpdateReputation = "UPDATE " + getTableName(operations, entityClass) +
+        // TODO Consider preparing the statement only once.
+
+        final String cqlUpdateReputation = "UPDATE " + getTableName(operations, entityClass) +
                 " SET reputation = {viewed: ?, rated: ?, liked: ?, disliked: ?, reported: ?, reputed: ?} " +
                 " WHERE identity = ? and containerId = ?";
 
