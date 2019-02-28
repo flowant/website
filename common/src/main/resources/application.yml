@@ -30,8 +30,8 @@ spring:
   data:
     cassandra:
       keyspace-name: backend_test
-#      schema-action: CREATE_IF_NOT_EXISTS
-      schema-action: recreate # should be recreated only if models are changed.
+      schema-action: CREATE_IF_NOT_EXISTS
+#      schema-action: recreate # should be recreated only if models are changed.
 
 logging:
   config: classpath:log4j2-spring-test.xml
