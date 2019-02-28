@@ -19,7 +19,7 @@ public interface ReplyReputationRepository extends ReputationCounterRepository<R
     };
 
     @Override
-    @Query("delete from replyreputation where containerid = ?0")
+    @Query("delete from replyreputation where cid = ?0")
     Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
 }

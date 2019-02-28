@@ -2,6 +2,7 @@ package org.flowant.website.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
+import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import com.datastax.driver.core.DataType.Name;
@@ -19,12 +20,15 @@ import lombok.experimental.Accessors;
 public class TagCounter {
 
     @Id
+    @Column("t")
     String tag;
 
     @CassandraType(type=Name.COUNTER)
+    @Column("s")
     long searched;
 
     @CassandraType(type=Name.COUNTER)
+    @Column("r")
     long referred;
 
 }

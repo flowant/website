@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
@@ -26,10 +27,13 @@ public class WebSite {
 
     @NonNull
     @Id
+    @Column("id")
     UUID identity;
 
+    @Column("cc")
     Map<String, UUID> contentContainerIds; //TODO implement
 
+    @Column("pt")
     List<TagCount> popularTagCounts; //TODO implement
 
 }

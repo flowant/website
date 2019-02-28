@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 public interface ContentRepository extends ReputationRepository<Content>, ReputationFragment<Content> {
 
-    public static final String FIND_BY_TAG = "select * from content where tags contains ?0";
+    public static final String FIND_BY_TAG = "select * from content where tg contains ?0";
 
     @Query(FIND_BY_TAG)
     Flux<Content> findAllByTag(String tag);
@@ -29,7 +29,7 @@ public interface ContentRepository extends ReputationRepository<Content>, Reputa
     }
 
     @Override
-    @Query("delete from content where containerid = ?0")
+    @Query("delete from content where cid = ?0")
     Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
     default Mono<Void> deleteByIdWithRelationship(IdCid idCid) {

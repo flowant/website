@@ -3,6 +3,7 @@ package org.flowant.website.model;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.Indexed;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
@@ -26,24 +27,32 @@ public class Content implements HasIdCid, HasReputation, HasCruTime, Comparable<
 
     @NonNull
     @PrimaryKey
+    @Column("ic")
     IdCid idCid;
 
     @NonNull
+    @Column("t")
     String title; // to be tags always
 
+    @Column("r")
     Recipe extend; // TODO how to extend gracefully?
 
+    @Column("fr")
     List<FileRef> fileRefs;
 
+    @Column("s")
     String sentences;
 
     @Indexed
+    @Column("tg")
     Set<String> tags;
 
     @NonNull
+    @Column("rp")
     Reputation reputation;
 
     @NonNull
+    @Column("ct")
     CRUZonedTime cruTime;
 
     public int compareTo(Content content) {

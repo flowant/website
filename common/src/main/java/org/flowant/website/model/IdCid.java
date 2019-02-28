@@ -25,11 +25,11 @@ public class IdCid implements HasIdentity, HasContainerId, Serializable {
     private static final long serialVersionUID = -264539125339801671L;
 
     @NonNull
-    @PrimaryKeyColumn(ordinal = 1, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
+    @PrimaryKeyColumn(name = "id", ordinal = 1, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     UUID identity;
 
     @NonNull
-    @PrimaryKeyColumn(ordinal = 0, type = PrimaryKeyType.PARTITIONED)
+    @PrimaryKeyColumn(name = "cid", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     UUID containerId;
 
     public static IdCid of(String identity, String containerId) {

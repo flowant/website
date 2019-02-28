@@ -19,9 +19,9 @@ public class ReputationCounterFragmentImpl<T extends ReputationCounter> implemen
         //TODO Consider preparing the statement only once.
 
         final String cqlAccumulate = "UPDATE " + getTableName(operations, entityClass) +
-              " SET viewed = viewed + ?, rated = rated + ?, liked = liked + ?, " +
-              " disliked = disliked + ?, reported = reported + ?, reputed = reputed + ? " +
-              " WHERE identity = ? and containerid = ?";
+              " SET v = v + ?, r = r + ?, l = l + ?, " +
+              " d = d + ?, rt = rt + ?, rp = rp + ? " +
+              " WHERE id = ? and cid = ?";
 
         return operations.getReactiveCqlOperations().execute(cqlAccumulate,
                 entity.getViewed(),

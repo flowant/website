@@ -20,8 +20,8 @@ public class ReputationFragmentImpl<T> implements ReputationFragment<T> {
         // TODO Consider preparing the statement only once.
 
         final String cqlUpdateReputation = "UPDATE " + getTableName(operations, entityClass) +
-                " SET reputation = {viewed: ?, rated: ?, liked: ?, disliked: ?, reported: ?, reputed: ?} " +
-                " WHERE identity = ? and containerId = ?";
+                " SET rp = {viewed: ?, rated: ?, liked: ?, disliked: ?, reported: ?, reputed: ?} " +
+                " WHERE id = ? and cid = ?";
 
         return operations.getReactiveCqlOperations().execute(cqlUpdateReputation,
                 reputation.getViewed(),
