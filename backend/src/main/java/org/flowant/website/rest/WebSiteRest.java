@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.flowant.website.model.User;
-import org.flowant.website.repository.UserRepository;
+import org.flowant.website.model.WebSite;
+import org.flowant.website.repository.WebSiteRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,32 +19,33 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
+public class WebSiteRest extends RepositoryRest<WebSite, UUID, WebSiteRepository> {
 
-    public final static String USER = "/user";
+    public final static String WEBSITE = "/website";
 
-    @GetMapping(value = USER)
-    public Flux<User> getAll() {
+    @GetMapping(value = WEBSITE)
+    public Flux<WebSite> getAll() {
         return super.getAll();
     }
 
-    @PostMapping(value = USER)
-    public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
-        return super.post(user);
+    @PostMapping(value = WEBSITE)
+    public Mono<ResponseEntity<WebSite>> post(@Valid @RequestBody WebSite webSite) {
+        return super.post(webSite);
     }
 
-    @PutMapping(value = USER)
-    public Mono<ResponseEntity<User>> put(@Valid @RequestBody User user) {
-        return super.put(user);
+    @PutMapping(value = WEBSITE)
+    public Mono<ResponseEntity<WebSite>> put(@Valid @RequestBody WebSite webSite) {
+        return super.put(webSite);
     }
 
-    @GetMapping(value = USER + PATH_SEG_ID)
-    public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
+    @GetMapping(value = WEBSITE + PATH_SEG_ID)
+    public Mono<ResponseEntity<WebSite>> getById(@PathVariable(value = ID) String id) {
         return super.getById(UUID.fromString(id));
     }
 
-    @DeleteMapping(value = USER + PATH_SEG_ID)
+    @DeleteMapping(value = WEBSITE + PATH_SEG_ID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         return super.deleteById(UUID.fromString(id));
     }
+
 }

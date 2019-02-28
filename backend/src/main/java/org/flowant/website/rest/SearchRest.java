@@ -32,9 +32,9 @@ public class SearchRest extends PageableRepositoryRest<Content, ContentRepositor
 
         return repo.findAllByTag(tag, pageable(page, size, pagingState))
               .map(slice -> ResponseEntity.ok()
-              .headers(nextLinkHeader(TAG, tag, uriBuilder.path(SEARCH), slice))
-              .body(slice.getContent()))
-        .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                      .headers(nextLinkHeader(TAG, tag, uriBuilder.path(SEARCH), slice))
+                      .body(slice.getContent()))
+              .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
 }

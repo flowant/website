@@ -61,7 +61,7 @@ public class ContentRest extends PageableRepositoryRest<Content, ContentReposito
         IdCid idCid = IdCid.of(id, cid);
         return repo.findById(idCid)
                 .doOnNext(content-> FileStorage.deleteAll(content.getFileRefs()))
-                .then(repo.deleteById(idCid)
+                .then(repo.deleteByIdWithRelationship(idCid)
                 .map(ResponseEntity::ok));
     }
 }

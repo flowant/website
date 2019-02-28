@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 @RestController
 public class ReviewReputationRest extends IdCidRepositoryRest<ReviewReputation, ReviewReputationRepository> {
 
-    public final static String REVIEW_REPUTATION = "/review_reputation";
+    public final static String REVIEW_REPUTATION = "/review_rpt";
 
     @GetMapping(value = REVIEW_REPUTATION)
     public Flux<ReviewReputation> getAll() {

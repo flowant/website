@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.flowant.website.model.HasCruTime;
 import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.HasReputation;
+import org.flowant.website.model.IdCid;
 import org.flowant.website.repository.ReputationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,12 @@ public abstract class PageableRepositoryRest <Entity extends HasIdCid & HasReput
                         .headers(nextLinkHeader(CID, containerId, uriBuilder, slice))
                         .body(slice.getContent()))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteById(IdCid idCid) {
+        return repo.deleteByIdWithRelationship(idCid)
+                .map(ResponseEntity::ok);
     }
 
 }

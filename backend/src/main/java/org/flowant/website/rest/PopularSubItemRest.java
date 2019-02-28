@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.flowant.website.model.User;
-import org.flowant.website.repository.UserRepository;
+import org.flowant.website.model.SubItem;
+import org.flowant.website.repository.SubItemRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,36 +15,31 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
+public class PopularSubItemRest extends RepositoryRest<SubItem, UUID, SubItemRepository> {
 
-    public final static String USER = "/user";
+    public final static String SUBITEM = "/popular_sub_item";
 
-    @GetMapping(value = USER)
-    public Flux<User> getAll() {
-        return super.getAll();
+    @PostMapping(value = SUBITEM)
+    public Mono<ResponseEntity<SubItem>> post(@Valid @RequestBody SubItem subItem) {
+        return super.post(subItem);
     }
 
-    @PostMapping(value = USER)
-    public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
-        return super.post(user);
+    @PutMapping(value = SUBITEM)
+    public Mono<ResponseEntity<SubItem>> put(@Valid @RequestBody SubItem subItem) {
+        return super.put(subItem);
     }
 
-    @PutMapping(value = USER)
-    public Mono<ResponseEntity<User>> put(@Valid @RequestBody User user) {
-        return super.put(user);
-    }
-
-    @GetMapping(value = USER + PATH_SEG_ID)
-    public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
+    @GetMapping(value = SUBITEM + PATH_SEG_ID)
+    public Mono<ResponseEntity<SubItem>> getById(@PathVariable(value = ID) String id) {
         return super.getById(UUID.fromString(id));
     }
 
-    @DeleteMapping(value = USER + PATH_SEG_ID)
+    @DeleteMapping(value = SUBITEM + PATH_SEG_ID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         return super.deleteById(UUID.fromString(id));
     }
+
 }
