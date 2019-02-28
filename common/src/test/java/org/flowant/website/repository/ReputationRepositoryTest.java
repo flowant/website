@@ -77,8 +77,6 @@ public abstract class ReputationRepositoryTest <T extends ReputationCounter, R e
             assertTrue(idScores.contains(expected.get(i).toIdScore()));
         }
 
-        // delete SubItemById
-        RelationshipService.deleteSubItemById(containerId).block();
     }
 
 }

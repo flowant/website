@@ -17,7 +17,7 @@ public class ReviewReputationRepositoryTest extends ReputationRepositoryTest<Rev
 
     @Before
     public void before() {
-        setDeleter(entity -> repo.deleteWithReputation(entity).subscribe());
+        setDeleter(entity -> repo.deleteTestdataWithRelationship(entity).subscribe());
     }
 
     @Test

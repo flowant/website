@@ -21,8 +21,4 @@ public interface IdCidRepository<T extends HasIdCid> extends ReactiveCassandraRe
 
     Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
-    default Mono<Void> deleteWithReputation(T entity) {
-        return delete(entity).then(RelationshipService.deleteReputation(entity));
-    }
-
 }

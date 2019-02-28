@@ -19,8 +19,6 @@ public abstract class IdCidRepositoryTest <T extends HasIdCid, R extends IdCidRe
                 .then(repo.deleteAllByIdCidContainerId(getContainerId.apply(entity)))
                 .then(repo.findById(entity.getIdCid()));
         StepVerifier.create(saveAndDeleteAndFind).expectNextCount(0).verifyComplete();
-
-        RelationshipService.deleteSubItemById(entity.getContainerId()).block();
     }
 
 }
