@@ -27,7 +27,7 @@ public class ReplyReputationRestTest extends RestWithRepositoryTest<ReplyReputat
                 ReputationMaker::randomReplyReputation,
                 rr -> rr.setLiked(1));
 
-        setDeleter(entity -> repo.deleteWithParent(entity).subscribe());
+        setDeleter(entity -> repo.deleteTestdataWithRelationship(entity).subscribe());
     }
 
     @Test
