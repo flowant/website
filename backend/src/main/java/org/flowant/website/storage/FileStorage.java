@@ -97,6 +97,11 @@ public class FileStorage {
     }
 
     public static Mono<Boolean> deleteAll(List<FileRef> files) {
+
+        if (files == null || files.size() == 0) {
+            return Mono.just(Boolean.TRUE);
+        }
+
         taskExecutor.execute(() -> {
             files.forEach(fileRef -> {
                 String id = fileRef.getIdentity().toString();
