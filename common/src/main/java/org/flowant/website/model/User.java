@@ -28,11 +28,13 @@ import lombok.experimental.Accessors;
 public class User implements UserDetails, HasIdentity, HasCruTime {
     private static final long serialVersionUID = 3027599136204429983L;
 
-    @Id @NonNull
+    @NonNull
+    @Id
     @Column("id")
     UUID identity;
 
-    @NonNull @Indexed //TODO username should be unique
+    @NonNull
+    @Indexed //TODO username should be unique
     @Column("un")
     String username;
 

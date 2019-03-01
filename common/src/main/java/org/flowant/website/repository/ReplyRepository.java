@@ -21,6 +21,7 @@ public interface ReplyRepository extends ReputationRepository<Reply>, Reputation
     @Query("delete from reply where cid = ?0")
     Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
+    @Override
     default Mono<Void> deleteByIdWithRelationship(IdCid idCid) {
         return deleteById(idCid)
                 .then(RelationshipService.deleteCounter(idCid, Reply.class));

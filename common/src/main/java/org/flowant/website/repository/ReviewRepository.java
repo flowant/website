@@ -23,6 +23,7 @@ public interface ReviewRepository extends ReputationRepository<Review>, Reputati
     @Query("delete from review where cid = ?0")
     Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
+    @Override
     default Mono<Void> deleteByIdWithRelationship(IdCid idCid) {
         UUID identity = idCid.getIdentity();
         return deleteById(idCid)

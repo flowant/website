@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class SubItem {
+public class SubItem implements HasIdentity {
 
     @NonNull
     @Id

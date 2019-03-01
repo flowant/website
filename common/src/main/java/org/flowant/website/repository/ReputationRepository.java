@@ -14,4 +14,6 @@ public interface ReputationRepository<T extends HasIdCid & HasReputation>
 
     Mono<Reputation> updateReputationById(IdCid idCid, Reputation reputation);
 
+    Mono<Void> deleteByIdWithRelationship(IdCid idCid);
+
 }

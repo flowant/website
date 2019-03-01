@@ -32,6 +32,7 @@ public interface ContentRepository extends ReputationRepository<Content>, Reputa
     @Query("delete from content where cid = ?0")
     Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
+    @Override
     default Mono<Void> deleteByIdWithRelationship(IdCid idCid) {
         UUID identity = idCid.getIdentity();
         return deleteById(idCid)

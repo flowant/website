@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class WebSite {
+public class WebSite implements HasIdentity {
 
     @NonNull
     @Id
