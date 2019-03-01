@@ -37,25 +37,37 @@ public class ContentRest extends PageableRepositoryRest<Content, ContentReposito
         return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilder.path(CONTENT));
     }
 
+    @GetMapping(value = CONTENT + POPULAR)
+    public Mono<ResponseEntity<List<Content>>> getPopularSubItemByContainerId(
+            @RequestParam(value = CID) String containerId) {
+
+        return super.getPopularSubItemByContainerId(containerId);
+    }
+
+    @GetMapping(value = CONTENT + PATH_SEG_ID_CID)
+    public Mono<ResponseEntity<Content>> getById(
+            @PathVariable(value = ID) String id,
+            @PathVariable(value = CID) String cid) {
+
+        return super.getById(IdCid.of(id, cid));
+    }
+
     @PostMapping(value = CONTENT)
     public Mono<ResponseEntity<Content>> post(@Valid @RequestBody Content content) {
+
         return super.post(content);
     }
 
     @PutMapping(value = CONTENT)
     public Mono<ResponseEntity<Content>> put(@Valid @RequestBody Content content) {
-        return super.put(content);
-    }
 
-    @GetMapping(value = CONTENT + PATH_SEG_ID_CID)
-    public Mono<ResponseEntity<Content>> getById(@PathVariable(value = ID) String id,
-            @PathVariable(value = CID) String cid) {
-        return super.getById(IdCid.of(id, cid));
+        return super.put(content);
     }
 
     // If File Server is separated, we can use FILES_DELETES end point instead of FileStorage.deleteAll
     @DeleteMapping(value = CONTENT + PATH_SEG_ID_CID)
-    public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
+    public Mono<ResponseEntity<Void>> deleteById(
+            @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
         IdCid idCid = IdCid.of(id, cid);

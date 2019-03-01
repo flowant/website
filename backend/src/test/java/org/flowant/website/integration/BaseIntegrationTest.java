@@ -22,16 +22,20 @@ import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
+import org.flowant.website.model.SubItem;
 import org.flowant.website.model.User;
+import org.flowant.website.model.WebSite;
 import org.flowant.website.rest.ContentReputationRest;
 import org.flowant.website.rest.ContentRest;
 import org.flowant.website.rest.LinkUtil;
+import org.flowant.website.rest.SubItemRest;
 import org.flowant.website.rest.ReplyReputationRest;
 import org.flowant.website.rest.ReplyRest;
 import org.flowant.website.rest.RestTest;
 import org.flowant.website.rest.ReviewReputationRest;
 import org.flowant.website.rest.ReviewRest;
 import org.flowant.website.rest.UserRest;
+import org.flowant.website.rest.WebSiteRest;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.http.MediaType;
@@ -67,6 +71,8 @@ public abstract class BaseIntegrationTest extends RestTest {
     public void before() {
         super.before();
 
+        apiInfo.put(WebSite.class.getSimpleName(), ApiInfo.of(WebSiteRest.WEBSITE, WebSite.class));
+        apiInfo.put(SubItem.class.getSimpleName(), ApiInfo.of(SubItemRest.SUBITEM, SubItem.class));
         apiInfo.put(User.class.getSimpleName(), ApiInfo.of(UserRest.USER, User.class));
         apiInfo.put(Content.class.getSimpleName(), ApiInfo.of(ContentRest.CONTENT, Content.class));
         apiInfo.put(Review.class.getSimpleName(), ApiInfo.of(ReviewRest.REVIEW, Review.class));

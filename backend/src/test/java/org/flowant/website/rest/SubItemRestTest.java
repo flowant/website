@@ -17,7 +17,7 @@ import junitparams.JUnitParamsRunner;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
-public class PopularSubItemRestTest extends RestWithRepositoryTest<SubItem, UUID, SubItemRepository> {
+public class SubItemRestTest extends RestWithRepositoryTest<SubItem, UUID, SubItemRepository> {
 
     @Before
     public void before() {
@@ -25,7 +25,7 @@ public class PopularSubItemRestTest extends RestWithRepositoryTest<SubItem, UUID
 
         SubItem subItem = SubItem.of(IdMaker.randomUUID(), List.of(IdScore.random()));
 
-        setTestParams(PopularSubItemRest.SUBITEM, SubItem.class, SubItem::getIdentity,
+        setTestParams(SubItemRest.SUBITEM, SubItem.class, SubItem::getIdentity,
                 () -> subItem, () -> subItem, s -> s);
     }
 

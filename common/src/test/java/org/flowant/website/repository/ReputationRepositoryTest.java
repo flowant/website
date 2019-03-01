@@ -3,7 +3,7 @@ package org.flowant.website.repository;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
@@ -40,7 +40,7 @@ public abstract class ReputationRepositoryTest <T extends ReputationCounter, R e
 
         Collection<ReputationCounter> popular = RelationshipService.findPopularSubItems(cntPopular, containerId, reputationCls).block();
 
-        List<T> expected = reputations.collectSortedList(Comparator.comparing(T::getLiked).reversed()).block();
+        List<T> expected = reputations.collectSortedList(Collections.reverseOrder(ReputationCounter::compare)).block();
         for (int i = 0; i < cntPopular; i++) {
             assertTrue(popular.contains(expected.get(i)));
         }
@@ -65,8 +65,7 @@ public abstract class ReputationRepositoryTest <T extends ReputationCounter, R e
 
         List<IdScore> idScores = subItem.getSubItems();
 
-        Comparator<ReputationCounter> com = ReputationCounter::compare;
-        List<T> expected = reputations.collectSortedList(com.reversed()).block();
+        List<T> expected = reputations.collectSortedList(Collections.reverseOrder(ReputationCounter::compare)).block();
 
         log.trace("actual, size:{}", idScores::size);
         idScores.forEach(log::trace);

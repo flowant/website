@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class PopularSubItemRest extends RepositoryRest<SubItem, UUID, SubItemRepository> {
+public class SubItemRest extends RepositoryRest<SubItem, UUID, SubItemRepository> {
 
-    public final static String SUBITEM = "/popular_sub_item";
+    public final static String SUBITEM = "/subitem";
 
     @PostMapping(value = SUBITEM)
     public Mono<ResponseEntity<SubItem>> post(@Valid @RequestBody SubItem subItem) {

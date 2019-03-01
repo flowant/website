@@ -12,6 +12,7 @@ import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Reputation;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
+import org.flowant.website.model.SubItem;
 import org.flowant.website.model.User;
 import org.flowant.website.util.test.ContentMaker;
 import org.flowant.website.util.test.ReplyMaker;
@@ -34,7 +35,7 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
 
-    int cntContents = 3;
+    int cntContents = 10;
     int cntUsers = 3;
     int cntRepliesPerReview = 3;
     int pageSize = 3;
@@ -44,7 +45,7 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         // Post test data
         UUID containerId = UUIDs.timeBased();
 
-        Flux<Content> contents = Flux.range(1, cntUsers)
+        Flux<Content> contents = Flux.range(1, cntContents)
                 .map(i -> ContentMaker.largeRandom(containerId)).cache();
         Flux<ContentReputation> contentReputations = contents
                 .map(c -> ReputationMaker.randomContentReputation(c.getIdCid())).cache();
@@ -59,9 +60,10 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         // Get test data
         EntitiesAndNextLink<Content> resp = getPageByContainerId(containerId, Content.class, pageSize);
         log.trace(resp);
-//        resp.getEntities().map(Content::getId)
-        // get sorted by reputation
 
+        // get sorted by reputation
+        SubItem popular = getById(containerId, SubItem.class);
+        log.trace("popular subItem:{}", popular);
     }
 
     @Test

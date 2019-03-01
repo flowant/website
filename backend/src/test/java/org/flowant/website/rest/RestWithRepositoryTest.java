@@ -3,13 +3,16 @@ package org.flowant.website.rest;
 import static org.flowant.website.BackendSecurityConfiguration.ROLE_WRITER;
 import static org.flowant.website.rest.PageableRepositoryRest.CID;
 import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
+import static org.flowant.website.rest.PageableRepositoryRest.POPULAR;
 import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,7 +20,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.flowant.website.model.IdCid;
+import org.flowant.website.model.ReputationCounter;
 import org.flowant.website.repository.ReputationRepository;
+import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.AssertUtil;
 import org.flowant.website.util.test.DeleteAfterTest;
 import org.junit.After;
@@ -258,4 +264,45 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
         }
         Assert.assertTrue(contents.all(c -> list.contains(c)).block());
     }
+
+    public void popularSubItem(int maxSubItems, Function<UUID, Entity> supplier,
+            Function<Flux<Entity>, Flux<ReputationCounter>> makeReputationAndSave) {
+
+        UUID containerId = IdMaker.randomUUID();
+        Flux<Entity> entities = Flux.range(1, maxSubItems * 2)
+                .map(i -> supplier.apply(containerId))
+                .cache();
+
+        repo.saveAll(entities).blockLast();
+        cleaner.registerToBeDeleted(entities);
+
+        Flux<ReputationCounter> reputations = makeReputationAndSave.apply(entities);
+
+        List<IdCid> expected = reputations
+                .sort(Collections.reverseOrder(ReputationCounter::compare))
+                .map(ReputationCounter::getIdCid)
+                .limitRequest(maxSubItems)
+                .collectList()
+                .block();
+
+        log.trace("expected:{}", expected);
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl + POPULAR)
+                        .queryParam(CID, containerId.toString()).build())
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBodyList(entityClass)
+                .consumeWith(r -> {
+                    log.trace(r);
+                    List<ID> actual = Flux.fromIterable(r.getResponseBody())
+                            .map(getEntityId)
+                            .collectList()
+                            .block();
+                    expected.forEach(idCid -> assertTrue(actual.contains(idCid)));
+                });
+    }
+
 }

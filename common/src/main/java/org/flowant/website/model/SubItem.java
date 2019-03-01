@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import reactor.core.publisher.Flux;
 
 @Data
 @Accessors(chain=true)
@@ -32,6 +33,10 @@ public class SubItem implements HasIdentity {
 
     public static SubItem of(UUID indentity) {
         return of(indentity, new ArrayList<IdScore>());
+    }
+
+    public Flux<IdCid> toIdCids() {
+        return Flux.fromIterable(subItems).map(idScore -> IdCid.of(idScore.getIdentity(), identity));
     }
 
 }

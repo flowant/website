@@ -3,8 +3,8 @@ package org.flowant.website;
 import java.util.HashMap;
 
 import javax.annotation.PostConstruct;
-import javax.swing.text.AbstractDocument.Content;
 
+import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;

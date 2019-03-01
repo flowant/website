@@ -10,12 +10,15 @@ import org.flowant.website.model.HasCruTime;
 import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.HasReputation;
 import org.flowant.website.model.IdCid;
+import org.flowant.website.model.SubItem;
 import org.flowant.website.repository.ReputationRepository;
+import org.flowant.website.repository.SubItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public abstract class PageableRepositoryRest <Entity extends HasIdCid & HasReputation & HasCruTime, Repository extends ReputationRepository<Entity>>
@@ -23,11 +26,12 @@ public abstract class PageableRepositoryRest <Entity extends HasIdCid & HasReput
 
     public final static String PAGE = "page";
     public final static String SIZE = "size";
-    public final static String CID = "cid"; // ContainerId
+    public final static String CID = "cid"; // containerId
     public final static String PS = "ps"; // pagingState
+    public final static String POPULAR = "/popular";
 
     @Autowired
-    protected Repository repo;
+    SubItemRepository repoSubItem;
 
     public Mono<ResponseEntity<List<Entity>>> getAllByContainerId(String containerId,
             int page, int size, String pagingState, UriComponentsBuilder uriBuilder) {
@@ -36,6 +40,17 @@ public abstract class PageableRepositoryRest <Entity extends HasIdCid & HasReput
                 .map(slice -> ResponseEntity.ok()
                         .headers(nextLinkHeader(CID, containerId, uriBuilder, slice))
                         .body(slice.getContent()))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    public Mono<ResponseEntity<List<Entity>>> getPopularSubItemByContainerId(String containerId) {
+
+        Flux<IdCid> idCids = repoSubItem.findById(UUID.fromString(containerId))
+                .flatMapMany(SubItem::toIdCids);
+
+        return repo.findAllById(idCids)
+                .collectList()
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

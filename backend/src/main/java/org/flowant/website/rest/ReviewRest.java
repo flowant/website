@@ -26,12 +26,29 @@ public class ReviewRest extends PageableRepositoryRest<Review, ReviewRepository>
     public final static String REVIEW = "/review";
 
     @GetMapping(value = REVIEW)
-    public Mono<ResponseEntity<List<Review>>> getAllByContainerId(@RequestParam(CID) String containerId,
-            @RequestParam(PAGE) int page, @RequestParam(SIZE) int size,
+    public Mono<ResponseEntity<List<Review>>> getAllByContainerId(
+            @RequestParam(CID) String containerId,
+            @RequestParam(PAGE) int page,
+            @RequestParam(SIZE) int size,
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
         return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilder.path(REVIEW));
+    }
+
+    @GetMapping(value = REVIEW + POPULAR)
+    public Mono<ResponseEntity<List<Review>>> getPopularSubItemByContainerId(
+            @RequestParam(value = CID) String containerId) {
+
+        return super.getPopularSubItemByContainerId(containerId);
+    }
+
+    @GetMapping(value = REVIEW + PATH_SEG_ID_CID)
+    public Mono<ResponseEntity<Review>> getById(
+            @PathVariable(value = ID) String id,
+            @PathVariable(value = CID) String cid) {
+
+        return super.getById(IdCid.of(id, cid));
     }
 
     @PostMapping(value = REVIEW)
@@ -44,15 +61,9 @@ public class ReviewRest extends PageableRepositoryRest<Review, ReviewRepository>
         return super.put(review);
     }
 
-    @GetMapping(value = REVIEW + PATH_SEG_ID_CID)
-    public Mono<ResponseEntity<Review>> getById(@PathVariable(value = ID) String id,
-            @PathVariable(value = CID) String cid) {
-
-        return super.getById(IdCid.of(id, cid));
-    }
-
     @DeleteMapping(value = REVIEW + PATH_SEG_ID_CID)
-    public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
+    public Mono<ResponseEntity<Void>> deleteById(
+            @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
         return super.deleteById(IdCid.of(id, cid));

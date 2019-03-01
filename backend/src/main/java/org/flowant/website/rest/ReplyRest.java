@@ -26,33 +26,46 @@ public class ReplyRest extends PageableRepositoryRest<Reply, ReplyRepository> {
     public final static String REPLY = "/reply";
 
     @GetMapping(value = REPLY)
-    public Mono<ResponseEntity<List<Reply>>> getAllByContainerId(@RequestParam(CID) String containerId,
-            @RequestParam(PAGE) int page, @RequestParam(SIZE) int size,
+    public Mono<ResponseEntity<List<Reply>>> getAllByContainerId(
+            @RequestParam(CID) String containerId,
+            @RequestParam(PAGE) int page,
+            @RequestParam(SIZE) int size,
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
         return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilder.path(REPLY));
     }
 
-    @PostMapping(value = REPLY)
-    public Mono<ResponseEntity<Reply>> post(@Valid @RequestBody Reply reply) {
-        return super.post(reply);
-    }
+    @GetMapping(value = REPLY + POPULAR)
+    public Mono<ResponseEntity<List<Reply>>> getPopularSubItemByContainerId(
+            @RequestParam(value = CID) String containerId) {
 
-    @PutMapping(value = REPLY)
-    public Mono<ResponseEntity<Reply>> put(@Valid @RequestBody Reply reply) {
-        return super.put(reply);
+        return super.getPopularSubItemByContainerId(containerId);
     }
 
     @GetMapping(value = REPLY + PATH_SEG_ID_CID)
-    public Mono<ResponseEntity<Reply>> getById(@PathVariable(value = ID) String id,
+    public Mono<ResponseEntity<Reply>> getById(
+            @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
         return super.getById(IdCid.of(id, cid));
     }
 
+    @PostMapping(value = REPLY)
+    public Mono<ResponseEntity<Reply>> post(@Valid @RequestBody Reply reply) {
+
+        return super.post(reply);
+    }
+
+    @PutMapping(value = REPLY)
+    public Mono<ResponseEntity<Reply>> put(@Valid @RequestBody Reply reply) {
+
+        return super.put(reply);
+    }
+
     @DeleteMapping(value = REPLY + PATH_SEG_ID_CID)
-    public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id,
+    public Mono<ResponseEntity<Void>> deleteById(
+            @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
 
         return super.deleteById(IdCid.of(id, cid));
