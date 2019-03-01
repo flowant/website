@@ -1,54 +1,139 @@
 package org.flowant.website.repository.devutil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.PreDestroy;
 
 import org.flowant.website.event.MockDataGenerateEvent;
 import org.flowant.website.model.Content;
+import org.flowant.website.model.ContentReputation;
+import org.flowant.website.model.Reply;
+import org.flowant.website.model.ReplyReputation;
+import org.flowant.website.model.Review;
+import org.flowant.website.model.ReviewReputation;
+import org.flowant.website.model.User;
 import org.flowant.website.repository.ContentRepository;
+import org.flowant.website.repository.ContentReputationRepository;
+import org.flowant.website.repository.RelationshipService;
+import org.flowant.website.repository.ReplyRepository;
+import org.flowant.website.repository.ReplyReputationRepository;
+import org.flowant.website.repository.ReviewRepository;
+import org.flowant.website.repository.ReviewReputationRepository;
+import org.flowant.website.repository.SubItemRepository;
+import org.flowant.website.repository.UserRepository;
+import org.flowant.website.repository.WebSiteRepository;
 import org.flowant.website.util.test.ContentMaker;
+import org.flowant.website.util.test.ReplyMaker;
+import org.flowant.website.util.test.ReputationMaker;
+import org.flowant.website.util.test.ReviewMaker;
+import org.flowant.website.util.test.UserMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.log4j.Log4j2;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 @Log4j2
 public class MockContentRepoUtil {
 
     @Autowired
-    ContentRepository contentRepository;
-    List<Content> mocks = new ArrayList<>();
+    WebSiteRepository repoWebSite;
+
+    @Autowired
+    ContentRepository repoContent;
+
+    @Autowired
+    ReviewRepository repoReview;
+
+    @Autowired
+    ReplyRepository repoReply;
+
+    @Autowired
+    ContentReputationRepository repoContentRpt;
+
+    @Autowired
+    ReviewReputationRepository repoReviewRpt;
+
+    @Autowired
+    ReplyReputationRepository repoReplyRpt;
+
+    @Autowired
+    SubItemRepository repoSubItem;
+
+    @Autowired
+    UserRepository repoUser;
+
+    Flux<Content> contents = Flux.empty();
+    Flux<User> users = Flux.empty();
+
+    int cntContents = 20;
+
+    int cntUsers = 10;
+
+    int cntRepliesPerReview = 3;
 
     public Content saveContent(Content content) {
-        contentRepository.save(content).block();
-        return content;
+
+        Mono<Content> con = Mono.just(content).cache();
+        con.flatMap(repoContent::save).block();
+
+        Mono<ContentReputation> contentReputation =
+                con.map(c -> ReputationMaker.emptyContentReputation(c.getIdCid())).cache();
+        contentReputation.flatMap(repoContentRpt::save).block();
+
+        // make one review per user at a content
+        Flux<Review> reviews = users
+                .map(user -> ReviewMaker.largeRandom(con.block().getIdentity())
+                .setReviewerId(user.getIdentity()))
+                .cache();
+        reviews.flatMap(repoReview::save).blockLast();
+
+        Flux<ReviewReputation> reviewReputations = reviews
+                .map(r -> ReputationMaker.randomReviewReputation(r.getIdCid()))
+                .cache();
+        reviewReputations.flatMap(repoReviewRpt::save).blockLast();
+
+        // make cntRepliesPerReview replies per review.
+        Flux<Reply> replies = reviews
+                .flatMap(review -> Flux.range(1, cntRepliesPerReview)
+                .map(i -> ReplyMaker.largeRandom(review.getIdentity()))
+                .cast(Reply.class))
+                .cache();
+        replies.flatMap(repoReply::save).blockLast();
+
+        Flux<ReplyReputation> replyReputations = replies
+                .map(r -> ReputationMaker.randomReplyReputation(r.getIdCid())).cache();
+        replyReputations.flatMap(repoReplyRpt::save).blockLast();
+
+        return con.block();
     }
 
-    public void saveMockContents(int cntContent) {
-        int count = contentRepository.count().block().intValue();
-        for (int i = count; i < cntContent; i++) {
-            Content content = ContentMaker.largeRandom();
-            mocks.add(saveContent(content));
-            log.debug("saved mock content:{}", content);
-        }
+    public void saveMockData() {
+
+        users = Flux.range(1, cntUsers).map(i -> UserMaker.largeRandom()).cache();
+        contents = Flux.range(1, cntContents).map(i -> ContentMaker.largeRandom()).cache();
+
+        repoUser.saveAll(users).blockLast();
+        contents.map(c -> saveContent(c)).blockLast();
     }
 
     @EventListener
     public void onApplicationEvent(MockDataGenerateEvent event) {
         log.debug(event::toString);
-        saveMockContents(20);
+        saveMockData();
     }
 
     @PreDestroy
     public void onPreDestroy() throws Exception {
-        if (mocks.size() > 0) {
-            contentRepository.deleteAll(mocks).block();
-            log.debug("Mock data are deleted before shutting down.");
-        }
+
+        contents.flatMap(c -> repoContent.deleteByIdWithRelationship(c.getIdCid())
+                    .then(RelationshipService.deleteSubItemById(c.getContainerId())))
+                    .blockLast();
+
+        repoUser.deleteAll(users).block();
+
+        log.debug("Mock data are deleted before shutting down.");
     }
 
 }
