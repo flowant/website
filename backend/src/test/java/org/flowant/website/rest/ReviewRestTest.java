@@ -10,6 +10,7 @@ import org.flowant.website.model.IdCid;
 import org.flowant.website.model.ReputationCounter;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
+import org.flowant.website.repository.RelationshipService;
 import org.flowant.website.repository.ReviewRepository;
 import org.flowant.website.repository.ReviewReputationRepository;
 import org.flowant.website.util.test.ReputationMaker;
@@ -30,8 +31,6 @@ public class ReviewRestTest extends RestWithRepositoryTest<Review, IdCid, Review
     @Before
     public void before() {
         super.before();
-
-        setDeleter(entity -> repo.deleteByIdWithRelationship(entity.getIdCid()).subscribe());
 
         setTestParams(ReviewRest.REVIEW, Review.class, Review::getIdCid,
                 ReviewMaker::smallRandom, ReviewMaker::largeRandom,
@@ -57,12 +56,18 @@ public class ReviewRestTest extends RestWithRepositoryTest<Review, IdCid, Review
 
     @Test
     public void testPopularSubItem() {
+
+        setDeleter(entity -> repo.deleteByIdWithRelationship(entity.getIdCid())
+                .then(RelationshipService.deleteSubItemById(entity.getContainerId()))
+                .subscribe());
+
         Function<Flux<Review>, Flux<ReputationCounter>> save = entities -> {
             Flux<ReviewReputation> rpts = entities
                     .map(entity -> ReputationMaker.randomReviewReputation(entity.getIdCid())).cache();
             rpts.flatMap(repoRpt::save).blockLast();
             return rpts.cast(ReputationCounter.class);
         };
+
         popularSubItem(WebSiteConfig.getMaxSubItems(Content.class), ReviewMaker::largeRandom, save);
     }
 

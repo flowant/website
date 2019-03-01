@@ -3,6 +3,7 @@ package org.flowant.website.integration;
 import static org.flowant.website.rest.PageableRepositoryRest.CID;
 import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
 import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
+import static org.flowant.website.rest.PageableRepositoryRest.POPULAR;
 import static org.flowant.website.rest.UriUtil.getUri;
 
 import java.net.URI;
@@ -143,6 +144,21 @@ public abstract class BaseIntegrationTest extends RestTest {
                 .bodyToMono(cls).block();
 
         log.trace("getById:{}, return:{}", id, resp);
+        return resp;
+    }
+
+    public <T> List<T> getPopularByContainerId(UUID id, Class<T> cls) {
+        String classSimpleName = cls.getSimpleName();
+        ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
+
+        List<T> resp = WebClient.create().get()
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl() + POPULAR)
+                        .queryParam(CID, id.toString()).build())
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange().block()
+                .bodyToFlux(cls).collectList().block();
+
+        log.trace("getPopularByContainerId:{}, return:{}", id, resp);
         return resp;
     }
 

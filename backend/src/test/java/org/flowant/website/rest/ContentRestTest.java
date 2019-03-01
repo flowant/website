@@ -12,6 +12,7 @@ import org.flowant.website.model.ReputationCounter;
 import org.flowant.website.model.WebSite;
 import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.repository.ContentReputationRepository;
+import org.flowant.website.repository.RelationshipService;
 import org.flowant.website.storage.FileStorage;
 import org.flowant.website.util.test.ContentMaker;
 import org.flowant.website.util.test.ReputationMaker;
@@ -80,6 +81,11 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, IdCid, Cont
 
     @Test
     public void testPopularSubItem() {
+
+        setDeleter(entity -> repo.deleteByIdWithRelationship(entity.getIdCid())
+                .then(RelationshipService.deleteSubItemById(entity.getContainerId()))
+                .subscribe());
+
         Function<Flux<Content>, Flux<ReputationCounter>> save = entities -> {
             Flux<ContentReputation> rpts = entities
                     .map(entity -> ReputationMaker.randomContentReputation(entity.getIdCid())).cache();

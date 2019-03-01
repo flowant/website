@@ -10,6 +10,7 @@ import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.ReputationCounter;
 import org.flowant.website.model.Review;
+import org.flowant.website.repository.RelationshipService;
 import org.flowant.website.repository.ReplyRepository;
 import org.flowant.website.repository.ReplyReputationRepository;
 import org.flowant.website.util.test.ReplyMaker;
@@ -55,6 +56,11 @@ public class ReplyRestTest extends RestWithRepositoryTest<Reply, IdCid, ReplyRep
 
     @Test
     public void testPopularSubItem() {
+
+        setDeleter(entity -> repo.deleteByIdWithRelationship(entity.getIdCid())
+                .then(RelationshipService.deleteSubItemById(entity.getContainerId()))
+                .subscribe());
+
         Function<Flux<Reply>, Flux<ReputationCounter>> save = entities -> {
             Flux<ReplyReputation> rpts = entities
                     .map(entity -> ReputationMaker.randomReplyReputation(entity.getIdCid())).cache();

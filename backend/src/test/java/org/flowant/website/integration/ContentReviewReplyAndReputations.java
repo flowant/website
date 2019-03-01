@@ -2,6 +2,7 @@ package org.flowant.website.integration;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.flowant.website.BackendApplication;
@@ -12,7 +13,6 @@ import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Reputation;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
-import org.flowant.website.model.SubItem;
 import org.flowant.website.model.User;
 import org.flowant.website.util.test.ContentMaker;
 import org.flowant.website.util.test.ReplyMaker;
@@ -41,7 +41,7 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
     int pageSize = 3;
 
     @Test
-    public void ContentAndReputaations() {
+    public void ContentAndReputations() {
         // Post test data
         UUID containerId = UUIDs.timeBased();
 
@@ -62,7 +62,7 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         log.trace(resp);
 
         // get sorted by reputation
-        SubItem popular = getById(containerId, SubItem.class);
+        List<Content> popular = getPopularByContainerId(containerId, Content.class);
         log.trace("popular subItem:{}", popular);
     }
 
@@ -77,7 +77,7 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
 
         Flux<User> users = Flux.range(1, cntUsers).map(i -> UserMaker.largeRandom()).cache();
 
-        // make one review per users at a content
+        // make one review per user at a content
         Flux<Review> reviews = users
                 .map(user -> ReviewMaker.largeRandom(content.block().getIdentity())
                 .setReviewerId(user.getIdentity()))
@@ -122,9 +122,14 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         reviews.map(r -> r.getReputing()).reduce((r1, r2) -> Reputation.of(r1, r2)).subscribe(r ->
             assertEquals(r.getLiked(), getById(content.block().getIdCid(), ContentReputation.class).getLiked()));
 
-        // Get test data
+        // Get popular reviews
+        List<Review> popular = getPopularByContainerId(content.block().getIdentity(), Review.class);
+        log.trace("popular reviews: {}", popular);
 
-        // listing review and reviewReputataion
+        popular.forEach(review -> {
+            List<Reply> popularReplies = getPopularByContainerId(review.getIdentity(), Reply.class);
+            log.trace("popular replies: {}", popularReplies);
+        });
 
     }
 }
