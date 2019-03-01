@@ -3,6 +3,7 @@ package org.flowant.website.integration;
 import static org.flowant.website.rest.PageableRepositoryRest.CID;
 import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
 import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
+import static org.flowant.website.rest.UriUtil.getUri;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
 import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.HasIdentity;
-import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;
@@ -37,7 +37,6 @@ import org.junit.Before;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -125,17 +124,6 @@ public abstract class BaseIntegrationTest extends RestTest {
 
         log.trace("put:{}, return:{}", data, resp);
         return resp;
-    }
-
-    public <ID> URI getUri(ID id, UriBuilder builder) {
-        builder.pathSegment("{id}");
-        if (id instanceof IdCid) {
-            builder.pathSegment("{cid}");
-            IdCid idCid = IdCid.class.cast(id);
-            return builder.build(idCid.getIdentity(), idCid.getContainerId());
-        } else {
-            return builder.build(id);
-        }
     }
 
     public <T, ID> T getById(ID id, Class<T> cls) {

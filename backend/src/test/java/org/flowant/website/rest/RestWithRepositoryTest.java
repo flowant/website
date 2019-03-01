@@ -17,7 +17,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.flowant.website.model.IdCid;
 import org.flowant.website.repository.ReputationRepository;
 import org.flowant.website.util.test.AssertUtil;
 import org.flowant.website.util.test.DeleteAfterTest;
@@ -131,17 +130,8 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
 
     public URI getUri(Entity entity) {
         ID id = getEntityId.apply(entity);
-
         UriBuilder builder = UriComponentsBuilder.fromPath(baseUrl);
-        builder.pathSegment("{id}");
-
-        if (id instanceof IdCid) {
-            builder.pathSegment("{cid}");
-            IdCid idCid = IdCid.class.cast(id);
-            return builder.build(idCid.getIdentity(), idCid.getContainerId());
-        } else {
-            return builder.build(id);
-        }
+        return UriUtil.getUri(id, builder);
     }
 
     public void testInsertMalformed() {
