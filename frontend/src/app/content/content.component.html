@@ -36,6 +36,23 @@
     Delete
   </button>
 
+  <div class="container-fluid p-1">
+    <div class="align-middle">
+      <span>Average</span>
+      <ngb-rating [rate]="getRated()" [readonly]="true">
+        <ng-template let-fill="fill">
+          <span class="rating-star" [class.rating-star-full]="fill === 100">
+            <span class="rating-star-half" [style.width.%]="fill">&#9733;</span>&#9733;
+          </span>
+        </ng-template>
+      </ngb-rating>
+      <span>{{getRated()}}</span>
+      <span>voted: {{content.reputation.reputed}}</span>
+      <span class="far fa-thumbs-up">{{content.reputation.liked}}</span>
+      <span class="far fa-thumbs-down">{{content.reputation.disliked}}</span>
+    </div>
+  </div>
+
   <app-review [idCid]="content.idCid"></app-review>
 
   <app-messages></app-messages>

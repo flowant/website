@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+.rating-star {
+  position: relative;
+  display: inline-block;
+  font-size: 1.5rem;
+  color: #b0c4de;
+}
+
+.rating-star-full {
+  color: gold;
+}
+
+.rating-star-half {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  color: gold;
+}

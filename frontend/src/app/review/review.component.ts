@@ -16,6 +16,8 @@ export class ReviewComponent implements OnInit {
 
   reviews : Review[];
 
+  ratingSelected = 0;
+
   constructor(private backendService: BackendService, private logger: NGXLogger) { }
 
   ngOnInit() {

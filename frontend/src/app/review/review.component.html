@@ -3,11 +3,14 @@
       <textarea class="form-control" placeholder="Please type a title here."></textarea>
     </div>
     <div class="row mt-1">
+
       <div class="col-5">
-        <button type="button" class="btn btn-default btn-sm p-0"
-            *ngFor="let rating of [100, 200, 300, 400, 500]">
-            <i class="fas fa-star"></i>
-        </button>
+        <ngb-rating [(rate)]="ratingSelected">
+          <ng-template let-fill="fill">
+            <span class="rating-star" [class.rating-star-full]="fill === 100">&#9733;</span>
+          </ng-template>
+        </ngb-rating>
+        <span>{{ratingSelected}}</span>
       </div>
       <div class="col-7">
         <button type="button" class="btn btn-outline-dark btn-sm">
@@ -23,49 +26,19 @@
     </div>
 </div>
 
-<div class="container-fluid p-1">
-  <div class="row">
-    <div class="col-5">
-      <p>Average</p>
-      <h3>4.3</h3>
-      <button type="button" class="btn btn-default btn-sm p-0"
-          *ngFor="let rating of [100, 200, 300, 400, 500]">
-          <i class="fas fa-star"></i>
-      </button>
-      <span class="far fa-thumbs-up">1,419</span>
-    </div>
-    <div class="col-7">
-      <p>234 by reviewers</p>
-      <div class="row" *ngFor="let rating of [10, 20, 30, 20, 20]; index as i">
-        <div class="col-2">
-          <span class="fas fa-star">{{i + 1}}</span>
-        </div>
-        <div class="col-8">
-          <div class="progress">
-            <div class="progress-bar" [ngStyle]="{'width': rating + '%'}">
-                {{i + 1}}
-            </div>
-          </div>
-        </div>
-        <div class="col-2">
-            <span>{{rating}}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <ul class="list-unstyled p-1">
   <li class="media" *ngFor="let review of reviews" >
     <img src="assets/img/img60x60.jpg" alt="John Doe" class="mr-1 mt-1 rounded-circle" style="width:60px;">
     <div class="media-body">
-      <div class="reply rating">
-        <button type="button" class="btn btn-default btn-sm p-0" *ngFor="let rating of [10, 20, 30, 20, 20]; index as i">
-          <i class="fas fa-star"></i>
-        </button>
-      </div>
-      <p>{{review.reviewName}}<small><i>{{review.cruTime.created}}</i></small></p>
+      <ngb-rating [(rate)]="review.reputing.rated" readonly=true>
+        <ng-template let-fill="fill">
+          <span class="rating-star" [class.rating-star-full]="fill === 100">&#9733;</span>
+        </ng-template>
+      </ngb-rating>
+      <p>{{review.reviewerName}}<small><i>{{review.cruTime.created}}</i></small></p>
       <p>{{review.comment}}</p>
+      <span class="far fa-thumbs-up">{{review.reputation.liked}}</span>
+      <span class="far fa-thumbs-down">{{review.reputation.disliked}}</span>
     </div>
   </li>
 </ul>

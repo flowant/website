@@ -148,4 +148,9 @@ export class ContentComponent implements OnInit {
     this.location.back();
   }
 
+  getRated(): string {
+    let avr = this.content.reputation.rated / this.content.reputation.reputed;
+    return avr.toFixed(1);
+  }
+
 }

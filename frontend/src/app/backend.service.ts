@@ -56,6 +56,7 @@ export class BackendService {
   //TODO
   /** GET ts from the server */
   getModels<T>(model: Model): Observable<T[]> {
+
     return this.http.get(Config.getUrl(model), baseOptions).pipe(
       map(r => JSON.parse(r.body, reviver)),
       tap(r => this.logger.trace('fetched ts:', r)),
