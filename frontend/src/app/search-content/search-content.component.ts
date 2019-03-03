@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Content, Extend } from '../protocols/model';
 import { BackendService } from '../backend.service'
+import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 @Component({
@@ -19,7 +20,7 @@ export class SearchContentComponent implements OnInit {
   }
 
   getContents(): void {
-    this.backendService.getContents()
+    this.backendService.getPopularItems<Content>(Model.Content, "56a1cd50-3c77-11e9-bf26-d571c84212ed")
       .subscribe(returned => this.contents = returned);
   }
 }

@@ -1,5 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Review } from '../protocols/model';
+import { IdCid, Review } from '../protocols/model';
+import { BackendService } from '../backend.service'
+import { Config, Model } from '../config';
+import { NGXLogger } from 'ngx-logger';
 
 @Component({
   selector: 'app-review',
@@ -8,13 +11,20 @@ import { Review } from '../protocols/model';
 })
 export class ReviewComponent implements OnInit {
 
-  @Input() review: Review;
+  @Input() idCid: IdCid;
   test:string = "width:20%";
-  constructor() { }
+
+  reviews : Review[];
+
+  constructor(private backendService: BackendService, private logger: NGXLogger) { }
 
   ngOnInit() {
+    this.getReviews();
   }
 
-  
+  getReviews(): void {
+    this.backendService.getPopularItems<Review>(Model.Review, this.idCid.identity)
+      .subscribe(returned => this.reviews = returned);
+  }
 
 }

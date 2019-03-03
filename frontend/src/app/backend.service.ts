@@ -3,8 +3,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { Content, reviver, FileRefs } from './protocols/model';
+import { IdCid, HasIdCid, reviver, FileRefs } from './protocols/model';
 import { MessageService } from './message.service';
+import { Config, Model } from './config';
 
 interface TextResponseOption {
   headers?: HttpHeaders | {
@@ -35,75 +36,57 @@ const baseOptions: TextResponseOption = {
 })
 export class BackendService {
 
-  gatewayUrl = 'http://localhost:9091/api';
-  contentUrl = this.gatewayUrl + '/content';
-  fileUrl = this.gatewayUrl + '/files';
-  fileDeletesUrl = this.fileUrl + '/deletes';
-
-  constructor(private http: HttpClient,
+  constructor(
+    private http: HttpClient,
     private messageService: MessageService,
     private logger: NGXLogger) { }
 
-  getGatewayURL(): string {
-    return this.gatewayUrl;
-  }
+  getPopularItems<T>(model: Model, containerId: string): Observable<T[]> {
 
-  /** GET contents from the server */
-  getContents(): Observable<Content[]> {
-    return this.http.get(this.contentUrl, baseOptions).pipe(
+    let option = {...baseOptions};
+    option.params = new HttpParams().set('cid', containerId);
+
+    return this.http.get(Config.getUrl(model) + Config.popularPath, option).pipe(
       map(r => JSON.parse(r.body, reviver)),
-      tap(r => this.logger.trace('fetched contents:', r)),
-      catchError(this.handleError('getContents', []))
+      tap(r => this.logger.trace('fetched popular items:', r)),
+      catchError(this.handleError('getPopulars', []))
     );
   }
 
-  /** GET content by id. Will 404 if id not found */
-  getContent(id: string): Observable<Content> {
-    const url = `${this.contentUrl}/${id}`;
+  //TODO
+  /** GET ts from the server */
+  getModels<T>(model: Model): Observable<T[]> {
+    return this.http.get(Config.getUrl(model), baseOptions).pipe(
+      map(r => JSON.parse(r.body, reviver)),
+      tap(r => this.logger.trace('fetched ts:', r)),
+      catchError(this.handleError('getModels', []))
+    );
+  }
+
+  getModel<T>(model: Model, idCid: IdCid): Observable<T> {
+    const url = Config.getUrl(model) + idCid.toPath();
     return this.http.get(url, baseOptions).pipe(
       map(r => JSON.parse(r.body, reviver)),
-      tap(r => this.logger.trace('fetched content:', r)),
-      catchError(this.handleError<Content>(`getContent id=${id}`)));
+      tap(m => this.logger.trace('got model:', m)),
+      catchError(this.handleError<T>(`getModel model=${model} idCid=${idCid}`)));
   }
 
-  // /* GET contents whose name contains search term */
-  // searchContents(term: string): Observable<Content[]> {
-  //   if (!term.trim()) {
-  //     // if not search term, return empty content array.
-  //     return of([]);
-  //   }
-  //   return this.http.get<Content[]>(`${this.contentUrl}/?name=${term}`).pipe(
-  //     tap(r => this.logger.trace('found contents matching:', term)),
-  //     catchError(this.handleError<Content[]>('searchContents', []))
-  //   );
-  // }
-
-  /** POST: add a new content to the server */
-  addContent(content: Content): Observable<Content> {
-    return this.http.post(this.contentUrl, content, writeOptions).pipe(
+  postModel<T>(model: Model, entity: T): Observable<T> {
+    return this.http.post(Config.getUrl(model), entity, writeOptions).pipe(
       map(r => JSON.parse(r.body, reviver)),
-      tap(c => this.logger.trace('added content:', c)),
-      catchError(this.handleError<Content>('addContent'))
+      tap(m => this.logger.trace('posted model:', m)),
+      catchError(this.handleError<T>('postModel'))
     );
   }
 
-  /** PUT: update the content on the server */
-  updateContent(content: Content): Observable<any> {
-    return this.http.put(this.contentUrl, content, writeOptions).pipe(
-      map(r => JSON.parse(r.body, reviver)),
-      tap(c => this.logger.trace('updated content:', c)),
-      catchError(this.handleError<any>('updateContent'))
-    );
-  }
-
-  /** DELETE: delete the content from the server */
-  deleteContent(content: Content | string): Observable<any> {
-    const id = typeof content === 'string' ? content : content.id;
-    const url = `${this.contentUrl}/${id}`;
+  /** DELETE: delete the t from the server */
+  deleteModel<T extends HasIdCid>(model: Model, entity: T | IdCid): Observable<any> {
+    const idCid = entity instanceof IdCid ? entity : entity.idCid;
+    const url = Config.getUrl(model) + idCid.toPath();
 
     return this.http.delete(url, writeOptions).pipe(
-      tap(r => this.logger.trace(`deleted content id:${id}, resp:`, r)),
-      catchError(this.handleError<string>('deleteContent'))
+      tap(r => this.logger.trace(`deleted model idCid:${idCid}, resp:`, r)),
+      catchError(this.handleError<string>('deleteModel'))
     );
   }
 
@@ -114,14 +97,14 @@ export class BackendService {
       uploadData.append('attachment', files[i], files[i].name);
     }
 
-    return this.http.post(this.fileUrl, uploadData, baseOptions).pipe(
+    return this.http.post(Config.fileUrl, uploadData, baseOptions).pipe(
       map(r => JSON.parse(r.body, reviver)),
       tap(r => this.logger.trace('added files:', r)),
       catchError(this.handleError<FileRefs[]>('addFiles', [])));
   }
 
   deleteFiles(files: FileRefs[]): Observable<any> {
-    return this.http.post(this.fileDeletesUrl, files, writeOptions).pipe(
+    return this.http.post(Config.fileDeletesUrl, files, writeOptions).pipe(
       tap(r => this.logger.trace('deleted files:', r)),
       catchError(this.handleError<FileRefs[]>('deleteFiles')));
   }

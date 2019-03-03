@@ -56,7 +56,7 @@
 </div>
 
 <ul class="list-unstyled p-1">
-  <li class="media" *ngFor="let reply of review.replies" >
+  <li class="media" *ngFor="let review of reviews" >
     <img src="assets/img/img60x60.jpg" alt="John Doe" class="mr-1 mt-1 rounded-circle" style="width:60px;">
     <div class="media-body">
       <div class="reply rating">
@@ -64,8 +64,8 @@
           <i class="fas fa-star"></i>
         </button>
       </div>
-      <p>{{reply.replierName}}<small><i>{{reply.cruTime.created}}</i></small></p>
-      <p>{{reply.content}}</p>
+      <p>{{review.reviewName}}<small><i>{{review.cruTime.created}}</i></small></p>
+      <p>{{review.comment}}</p>
     </div>
   </li>
 </ul>

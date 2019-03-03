@@ -6,6 +6,7 @@
 **/.gradle/
 **/.mvn/
 
+package-lock.json
 tree
 mvnw
 mvnw.cmd

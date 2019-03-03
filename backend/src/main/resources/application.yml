@@ -16,7 +16,7 @@ spring:
           jwk-set-uri: http://localhost:9093/.well-known/jwks.json
 
 website:
-  maxSubContentItems: 5
+  maxSubContentItems: 12
   maxSubReviewItems: 5
   maxSubReplyItems: 5
   cassandra:

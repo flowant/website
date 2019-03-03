@@ -7,12 +7,69 @@ spring:
   cloud:
     gateway:
       routes:
+      - id: website
+        uri: http://127.0.0.1:9092/website
+        predicates:
+        - Path=/api/website/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: subitem
+        uri: http://127.0.0.1:9092/subitem
+        predicates:
+        - Path=/api/subitem/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: search
+        uri: http://127.0.0.1:9092/search
+        predicates:
+        - Path=/api/search/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
       - id: content
         uri: http://127.0.0.1:9092/content
         predicates:
         - Path=/api/content/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: review
+        uri: http://127.0.0.1:9092/review
+        predicates:
+        - Path=/api/review/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: reply
+        uri: http://127.0.0.1:9092/reply
+        predicates:
+        - Path=/api/reply/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: content_rpt
+        uri: http://127.0.0.1:9092/content_rpt
+        predicates:
+        - Path=/api/content_rpt/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: review_rpt
+        uri: http://127.0.0.1:9092/review_rpt
+        predicates:
+        - Path=/api/review_rpt/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: reply_rpt
+        uri: http://127.0.0.1:9092/reply_rpt
+        predicates:
+        - Path=/api/reply_rpt/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
       - id: files
         uri: http://127.0.0.1:9092/files
         predicates:

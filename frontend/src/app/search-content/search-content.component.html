@@ -1,6 +1,6 @@
 <div class="grid grid-pad">
     <a *ngFor="let content of contents" class="col-1-4"
-        routerLink="/content/{{content.id}}">
+        routerLink="/content/{{content.idCid.identity}}/{{content.idCid.containerId}}">
       <div class="module hero">
         <h4>{{content.title}}</h4>
       </div>

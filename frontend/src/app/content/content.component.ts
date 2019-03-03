@@ -3,8 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import * as $ from 'jquery';
-import { Content, FileRefs, Extend, Review, Reputation } from '../protocols/model';
-import { BackendService } from '../backend.service'
+import { Content, IdCid, FileRefs, Extend, Review, Reputation } from '../protocols/model';
+import { BackendService } from '../backend.service';
+import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 declare var $: any;
@@ -16,11 +17,11 @@ declare var $: any;
 })
 export class ContentComponent implements OnInit {
 
-  imgServerUrl: string = this.backendService.getGatewayURL();
+  imgServerUrl: string = Config.gatewayUrl;
   content: Content;
 
   isReadonly: boolean;
-  id: string;
+  idCid: IdCid;
 
   flatIngredients: string = "";
 
@@ -30,9 +31,11 @@ export class ContentComponent implements OnInit {
     private route: ActivatedRoute,
     private logger: NGXLogger) {
 
-    this.id = this.route.snapshot.paramMap.get('id');
+    this.idCid = new IdCid(this.route.snapshot.paramMap.get('id'),
+        this.route.snapshot.paramMap.get('cid'));
+
     // TODO should depend on permission
-    this.isReadonly = this.id != null;
+    this.isReadonly = this.idCid != null;
   }
 
   ngOnInit() {
@@ -40,7 +43,7 @@ export class ContentComponent implements OnInit {
   }
 
   prepareContent(): void {
-    let observable = this.id ? this.backendService.getContent(this.id) : this.newContent();
+    let observable = this.idCid ? this.backendService.getModel<Content>(Model.Content, this.idCid) : this.newContent();
     observable.subscribe(c => {
       this.content = c;
       this.convertFromContent();
@@ -127,13 +130,13 @@ export class ContentComponent implements OnInit {
     this.convertToContent();
     this.deleteUnusedFile();
     this.logger.trace('onSave:', this.content);
-    this.backendService.addContent(this.content)
+    this.backendService.postModel<Content>(Model.Content, this.content)
       .subscribe(() => {});
   }
 
   onDelete(): void {
     this.logger.trace('onDelete:', this.content);
-    this.backendService.deleteContent(this.content)
+    this.backendService.deleteModel<Content>(Model.Content, this.content)
       .subscribe(() => {});
   }
 

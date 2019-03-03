@@ -1,5 +1,7 @@
 package org.flowant.website.repository.devutil;
 
+import java.util.UUID;
+
 import javax.annotation.PreDestroy;
 
 import org.flowant.website.event.MockDataGenerateEvent;
@@ -79,7 +81,7 @@ public class MockContentRepoUtil {
         con.flatMap(repoContent::save).block();
 
         Mono<ContentReputation> contentReputation =
-                con.map(c -> ReputationMaker.emptyContentReputation(c.getIdCid())).cache();
+                con.map(c -> ReputationMaker.randomContentReputation(c.getIdCid())).cache();
         contentReputation.flatMap(repoContentRpt::save).block();
 
         // make one review per user at a content
@@ -111,8 +113,10 @@ public class MockContentRepoUtil {
 
     public void saveMockData() {
 
+        UUID containerId = UUID.fromString("56a1cd50-3c77-11e9-bf26-d571c84212ed");
+
         users = Flux.range(1, cntUsers).map(i -> UserMaker.largeRandom()).cache();
-        contents = Flux.range(1, cntContents).map(i -> ContentMaker.largeRandom()).cache();
+        contents = Flux.range(1, cntContents).map(i -> ContentMaker.largeRandom(containerId)).cache();
 
         repoUser.saveAll(users).blockLast();
         contents.map(c -> saveContent(c)).blockLast();

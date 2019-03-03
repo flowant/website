@@ -1,6 +1,6 @@
-import * as uuid from 'uuid';
 import { LocalDateTime, ZoneId } from 'js-joda';
 import 'js-joda-timezone';
+import { v1 } from 'uuid';
 
 // deserialize class instances from json string.
 export function reviver(key, value): any {
@@ -19,14 +19,36 @@ export function reviver(key, value): any {
   }
 }
 
+export interface HasIdCid {
+  idCid: IdCid;
+}
+
+export class IdCid {
+  identity: string;
+  containerId: string;
+
+  constructor(identity: string, containerId: string) {
+    this.identity = identity;
+    this.containerId = containerId;
+  }
+
+  toPath(): string {
+    return `/${this.identity}/${this.containerId}`;
+  }
+
+  static random(): IdCid {
+    return new IdCid(v1(), v1());
+  }
+}
+
 export class Content {
-  id: string = uuid.v4();
+  idCid: IdCid = IdCid.random();
   title: string = "Please type a title here.";
   extend: Extend = new Extend();
   fileRefs?: (FileRefs)[] = [];
   sentences: string = "Please type directions here.";;
-  tags?: (TagsEntity)[] | null;
-  review: Review = new Review();
+  tags?: (string)[] | null; // Set type
+  reputation: Reputation = new Reputation();
   cruTime: CruTime = new CruTime();
 }
 
@@ -37,12 +59,10 @@ export class Extend {
   servings: number = 0;
   calory: number = 0;
   nutritionFacts: string;
-  prepareDuration: string;
-  cookDuration: string;
 }
 
 export class FileRefs {
-  id: string;
+  identity: string;
   uri: string;
   contentType: string;
   filename: string;
@@ -50,31 +70,37 @@ export class FileRefs {
   cruTime: CruTime;
 }
 
-export class TagsEntity {
-  name: string;
-}
-
 export class Review {
+  idCid: IdCid = IdCid.random();
+  reviewerId: string;
+  reviewerName: string;
+  reputing: Reputation = new Reputation();
+  comment: string = "Please type comments here.";;
   reputation: Reputation = new Reputation();
-  replies?: (Reply)[] | null;
+  cruTime: CruTime;
 }
 
 export class Reputation {
-  rating: number = 0;
+  idCid?: IdCid;
+  viewed: number = 0;
+  rated: number = 0;
   liked: number = 0;
+  disliked: number = 0;
   reported: number = 0;
+  reputed: number = 0;
 }
 
 export class Reply {
+  idCid: IdCid = IdCid.random();
   replierId: string;
   replierName: string;
-  content: string = "Please type messages here.";
+  content: string = "Please type comments here.";
   reputation: Reputation = new Reputation();
   cruTime: CruTime;
 }
 
 export class User {
-  id: string;
+  identity: string;
   username: string;
   password: string;
   email: string;
@@ -84,10 +110,10 @@ export class User {
   birthdate: Birthdate;
   phone: Phone;
   address: Address;
-  authorities?: (AuthoritiesEntity)[] | null;
-  followers?: (string)[] | null;
-  followings?: (string)[] | null;
-  interests?: (InterestsEntity)[] | null;
+  authorities?: (Authority)[] | null;
+  followers?: (string)[] | null; //TODO Set type
+  followings?: (string)[] | null; //TODO Set type
+  interests?: (string)[] | null; //TODO Set type
   cruTime: CruTime;
   accountNonExpired: boolean;
   accountNonLocked: boolean;
@@ -114,12 +140,8 @@ export class Address {
   detailCode?: null;
 }
 
-export class AuthoritiesEntity {
+export class Authority {
   authority: string;
-}
-
-export class InterestsEntity {
-  name: string;
 }
 
 export class CruTime {
