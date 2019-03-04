@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import * as $ from 'jquery';
-import { Content, IdCid, FileRefs, Extend, Review, Reputation } from '../protocols/model';
+import { Content, IdCid } from '../protocols/model';
 import { BackendService } from '../backend.service';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
@@ -31,8 +31,13 @@ export class ContentComponent implements OnInit {
     private route: ActivatedRoute,
     private logger: NGXLogger) {
 
-    this.idCid = new IdCid(this.route.snapshot.paramMap.get('id'),
-        this.route.snapshot.paramMap.get('cid'));
+    let identity = this.route.snapshot.paramMap.get('id');
+    let containerId = this.route.snapshot.paramMap.get('cid');
+
+    if (identity && containerId) {
+      this.idCid = new IdCid(this.route.snapshot.paramMap.get('id'),
+          this.route.snapshot.paramMap.get('cid'));
+    }
 
     // TODO should depend on permission
     this.isReadonly = this.idCid != null;

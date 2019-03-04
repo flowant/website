@@ -30,6 +30,7 @@ public class LinkUtil {
 
         HttpHeaders header = new HttpHeaders();
         header.add(HttpHeaders.LINK, "<" + url + ">; rel=\"next\"");
+        header.add("Access-Control-Expose-Headers", "Link");
         return header;
     }
 

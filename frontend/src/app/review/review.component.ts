@@ -15,7 +15,8 @@ export class ReviewComponent implements OnInit {
 
   review: Review;
 
-  reviews: Review[];
+  reviews: Review[] = new Array<Review>();
+  nextInfo: string;
 
   postedRpt: Reputation;
 
@@ -23,14 +24,26 @@ export class ReviewComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getReviews();
+    this.getPopularReviews();
     this.review = new Review();
     this.review.idCid = IdCid.random(this.content.idCid.identity);
   }
 
-  getReviews(): void {
+  getPopularReviews(): void {
     this.backendService.getPopularItems<Review>(Model.Review, this.content.idCid.identity)
-      .subscribe(returned => this.reviews = returned);
+      .subscribe(pupolarReviews => {
+        this.reviews = this.reviews.concat(pupolarReviews);
+        this.getNextReview();
+      });
+  }
+
+  getNextReview() {
+    this.backendService.getModels<Review>(Model.Review, this.nextInfo, this.content.idCid.identity)
+        .subscribe(respWithLink => {
+          this.reviews = this.reviews.concat(respWithLink.response);
+          this.nextInfo = respWithLink.getNextQueryParams();
+          this.logger.trace("nextInfo:", this.nextInfo);
+        });
   }
 
   onSave(): void {

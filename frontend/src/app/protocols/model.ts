@@ -172,3 +172,24 @@ export class CruTime {
   read: LocalDateTime = this.created;
   updated: LocalDateTime = this.created;
 }
+
+
+export class RespWithLink<T> {
+  response: T[];
+  link: string;
+  static parse = require('parse-link-header');
+
+  static of<T>(response: T[], link: string): RespWithLink<T> {
+    let respWithLink = new RespWithLink<T>();
+    respWithLink.response = response;
+    respWithLink.link = link;
+    return respWithLink;
+  }
+
+  getNextQueryParams(): string {
+    if(!this.link) return null;
+    var parsed = RespWithLink.parse(this.link);
+    let index = parsed.next.url.indexOf("?");
+    return parsed.next.url.substr(index);
+  }
+}

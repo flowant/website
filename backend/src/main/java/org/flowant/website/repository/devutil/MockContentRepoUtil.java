@@ -71,7 +71,7 @@ public class MockContentRepoUtil {
 
     int cntContents = 20;
 
-    int cntUsers = 10;
+    int cntUsers = 20;
 
     int cntRepliesPerReview = 3;
 
