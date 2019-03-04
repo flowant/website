@@ -1,26 +1,18 @@
 <div class="container-fluid p-1">
     <div class="row mt-1 ">
-      <textarea class="form-control" placeholder="Please type a title here."></textarea>
+      <textarea class="form-control" [(ngModel)]="review.comment" placeholder="Please type a title here."></textarea>
     </div>
     <div class="row mt-1">
-
       <div class="col-5">
-        <ngb-rating [(rate)]="ratingSelected">
+        <ngb-rating [(rate)]="review.reputing.rated">
           <ng-template let-fill="fill">
             <span class="rating-star" [class.rating-star-full]="fill === 100">&#9733;</span>
           </ng-template>
         </ngb-rating>
-        <span>{{ratingSelected}}</span>
       </div>
       <div class="col-7">
-        <button type="button" class="btn btn-outline-dark btn-sm">
-          <i class="far fa-thumbs-up"></i>Like
-        </button> 
-        <button type="button" class="btn btn-outline-dark btn-sm">
+        <button type="button" (click)="onSave()" class="btn btn-outline-dark btn-sm">
           <i class="far fa-save"></i>Save
-        </button>
-        <button type="button" class="btn btn-outline-dark btn-sm">
-          <i class="fas fa-biohazard"></i>Report
         </button>
       </div>
     </div>
@@ -37,8 +29,20 @@
       </ngb-rating>
       <p>{{review.reviewerName}}<small><i>{{review.cruTime.created}}</i></small></p>
       <p>{{review.comment}}</p>
-      <span class="far fa-thumbs-up">{{review.reputation.liked}}</span>
-      <span class="far fa-thumbs-down">{{review.reputation.disliked}}</span>
+      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+        <label ngbButtonLabel class="btn-outline-dark">
+          <input ngbButton type="radio" (click)="onRepute(review, 'liked')" value="liked">
+          <i class="far fa-thumbs-up"></i>{{review.reputation.liked}}
+        </label>
+        <label ngbButtonLabel class="btn-outline-dark">
+          <input ngbButton type="radio" (click)="onRepute(review, 'disliked')" value="disliked">
+          <i class="far fa-thumbs-down"></i>{{review.reputation.disliked}}
+        </label>
+        <label ngbButtonLabel class="btn-outline-dark">
+          <input ngbButton type="radio" (click)="onRepute(review, 'reported')" value="reported">
+          <i class="fas fa-biohazard"></i>{{review.reputation.reported}}
+        </label>
+      </div>
     </div>
   </li>
 </ul>

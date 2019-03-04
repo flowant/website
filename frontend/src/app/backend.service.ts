@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { IdCid, HasIdCid, reviver, FileRefs } from './protocols/model';
+import { IdCid, HasIdCid, Reputation, reviver, FileRefs } from './protocols/model';
 import { MessageService } from './message.service';
 import { Config, Model } from './config';
 
@@ -43,7 +43,7 @@ export class BackendService {
 
   getPopularItems<T>(model: Model, containerId: string): Observable<T[]> {
 
-    let option = {...baseOptions};
+    let option = Object.assign({}, baseOptions);
     option.params = new HttpParams().set('cid', containerId);
 
     return this.http.get(Config.getUrl(model) + Config.popularPath, option).pipe(
@@ -75,7 +75,7 @@ export class BackendService {
   postModel<T>(model: Model, entity: T): Observable<T> {
     return this.http.post(Config.getUrl(model), entity, writeOptions).pipe(
       map(r => JSON.parse(r.body, reviver)),
-      tap(m => this.logger.trace('posted model:', m)),
+      tap(m => this.logger.trace('posted model:', model, m)),
       catchError(this.handleError<T>('postModel'))
     );
   }
@@ -108,6 +108,17 @@ export class BackendService {
     return this.http.post(Config.fileDeletesUrl, files, writeOptions).pipe(
       tap(r => this.logger.trace('deleted files:', r)),
       catchError(this.handleError<FileRefs[]>('deleteFiles')));
+  }
+
+  onRepute(model: Model, idCid: IdCid, selected?: string, reputation?: Reputation): Observable<Reputation> {
+    // TODO check User Id and already clicked by user
+    this.logger.trace("onRepute:", model, selected, idCid);
+    let rpt = reputation ? reputation : new Reputation();
+    if (selected) {
+      rpt.select(selected);
+    }
+    rpt.idCid = idCid;
+    return this.postModel<Reputation>(Config.toRptModel(model), rpt);
   }
 
   /**

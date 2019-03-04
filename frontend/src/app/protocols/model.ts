@@ -36,9 +36,10 @@ export class IdCid {
     return `/${this.identity}/${this.containerId}`;
   }
 
-  static random(): IdCid {
-    return new IdCid(v1(), v1());
+  static random(containerId?: string): IdCid {
+    return new IdCid(v1(), containerId ? containerId : v1());
   }
+
 }
 
 export class Content {
@@ -71,13 +72,22 @@ export class FileRefs {
 }
 
 export class Review {
-  idCid: IdCid = IdCid.random();
+  idCid: IdCid;
   reviewerId: string;
   reviewerName: string;
   reputing: Reputation = new Reputation();
-  comment: string = "Please type comments here.";;
+  comment: string = "Please type comments here.";
   reputation: Reputation = new Reputation();
-  cruTime: CruTime;
+  cruTime: CruTime = new CruTime();
+}
+
+export class Reply {
+  idCid: IdCid;
+  replierId: string;
+  replierName: string;
+  comment: string = "Please type comments here.";
+  reputation: Reputation = new Reputation();
+  cruTime: CruTime = new CruTime();
 }
 
 export class Reputation {
@@ -88,15 +98,27 @@ export class Reputation {
   disliked: number = 0;
   reported: number = 0;
   reputed: number = 0;
-}
 
-export class Reply {
-  idCid: IdCid = IdCid.random();
-  replierId: string;
-  replierName: string;
-  content: string = "Please type comments here.";
-  reputation: Reputation = new Reputation();
-  cruTime: CruTime;
+  subtract(r: Reputation): Reputation {
+    let diff = Object.assign({}, this);
+    diff.viewed -= r.viewed;
+    diff.rated -= r.rated;
+    diff.liked -= r.liked;
+    diff.disliked -= r.disliked;
+    diff.reported -= r.reported;
+    diff.reputed -= r.reputed;
+    return diff;
+  }
+
+  select(key: string): Reputation {
+    //TODO assert this.hasOwnProperty('key')
+    this.liked = 0;
+    this.disliked = 0;
+    this.reported = 0;
+    this[key] = 1;
+    return this;
+  }
+
 }
 
 export class User {

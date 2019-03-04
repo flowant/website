@@ -153,4 +153,9 @@ export class ContentComponent implements OnInit {
     return avr.toFixed(1);
   }
 
+  onRepute(content: Content, selected: string) {
+    this.backendService.onRepute(Model.Content, content.idCid, selected)
+        .subscribe((rpt) => {content.reputation = rpt});
+  }
+
 }
