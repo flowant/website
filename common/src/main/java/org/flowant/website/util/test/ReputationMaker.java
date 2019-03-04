@@ -20,14 +20,14 @@ public class ReputationMaker {
     }
 
     public static Reputation randomReputation() {
-        return Reputation.of(r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE),
-                r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE));
+        return Reputation.of(r.nextInt(MAX_VALUE), r.nextInt(5), r.nextInt(MAX_VALUE),
+                r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE), 1);
     }
 
     public static Reputation randomReputationOverThreshold() {
         Random r = new Random();
         // See Also, ReputationCounter.toScore. and ReputationCounter.isOverThreshold()
-        return Reputation.of(0, 0, 16 << r.nextInt(26), 0, 0, 0);
+        return Reputation.of(r.nextInt(MAX_VALUE), r.nextInt(5), 16 << r.nextInt(26), r.nextInt(MAX_VALUE), r.nextInt(MAX_VALUE), 1);
     }
 
     public static ContentReputation emptyContentReputation() {

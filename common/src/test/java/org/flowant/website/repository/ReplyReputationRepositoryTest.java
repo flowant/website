@@ -1,5 +1,7 @@
 package org.flowant.website.repository;
 
+import static org.junit.Assert.assertEquals;
+
 import org.flowant.website.WebSiteConfig;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.ReplyReputation;
@@ -35,6 +37,19 @@ public class ReplyReputationRepositoryTest extends ReputationRepositoryTest<Repl
         IdCid idCid = IdCid.random();
         super.popularSubItems(WebSiteConfig.getMaxSubItems(ReplyReputation.class),
                 idCid, ReplyReputation::of);
+    }
+
+    @Test
+    public void testAccumulateNegative() {
+        ReplyReputation rr = ReputationMaker.randomReplyReputation();
+        cleaner.registerToBeDeleted(rr);
+        repo.save(rr).block();
+
+        ReplyReputation negative = ReputationMaker.emptyReplyReputation(rr.getIdCid());
+        negative.setViewed(-1);
+        repo.save(negative).block();
+
+        assertEquals(rr.getViewed() - 1, repo.findById(rr.getIdCid()).block().getViewed());
     }
 
 }
