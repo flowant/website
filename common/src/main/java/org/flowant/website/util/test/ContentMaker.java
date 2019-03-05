@@ -58,7 +58,7 @@ public class ContentMaker {
                         prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))
                 .fileRefs(List.of(FileMaker.largeRandom()))
                 .sentences(sentences + id)
-                .tags(Set.of(tag + id, tag + id + 1, tag + id + 2))
+                .tags(Set.of(tag, tag + id + 1, tag + id + 2))
                 .reputation(ReputationMaker.randomReputation())
                 .cruTime(CRUZonedTime.now())
                 .build();

@@ -10,7 +10,9 @@ export enum Model {
 }
 
 export class Config {
+
   static gatewayUrl = env.url.gateway;
+  static searchUrl = env.url.gateway + env.path.search;
   static contentUrl = env.url.gateway + env.path.content;
   static reviewUrl = env.url.gateway + env.path.review;
   static replyUrl = env.url.gateway + env.path.reply;
@@ -20,6 +22,9 @@ export class Config {
   static fileUrl = env.url.gateway + env.path.files;
   static fileDeletesUrl = Config.fileUrl + env.path.deletes;
   static popularPath = env.path.popular;
+
+  static defaultPage = "0";
+  static defaultSize = "12";
 
   static urlMap: Map<Model, string> = new Map([
     [Model.Content, Config.contentUrl],

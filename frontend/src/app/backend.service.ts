@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { IdCid, HasIdCid, Reputation, reviver, FileRefs, RespWithLink } from './protocols/model';
+import { IdCid, HasIdCid, Content, Reputation, reviver, FileRefs, RespWithLink } from './protocols/model';
 import { MessageService } from './message.service';
 import { Config, Model } from './config';
 
@@ -53,11 +53,25 @@ export class BackendService {
     );
   }
 
+  getSearch(nextInfo: string, tag?: string, page?: string, size?: string)
+      : Observable<RespWithLink<Content>> {
+
+    page = page ? page : Config.defaultPage;
+    size = size ? size: Config.defaultSize;
+
+    let queryParams: string = nextInfo ? nextInfo : `?tag=${tag}&page=${page}&size=${size}`;
+
+    return this.http.get(Config.searchUrl + queryParams, baseOptions).pipe(
+        map(r => RespWithLink.of<Content>(JSON.parse(r.body, reviver), r.headers.get("link"))),
+        tap(r => this.logger.trace('fetched mapped:', r)),
+        catchError(this.handleError<RespWithLink<Content>>(`getSearch query:${queryParams}`)));
+  }
+
   getModels<T>(model: Model, nextInfo: string, containerId?: string, page?: string, size?: string)
       : Observable<RespWithLink<T>> {
 
-    if (!page) { page = "0"; }
-    if (!size) { size = "12"; }
+    page = page ? page : Config.defaultPage;
+    size = size ? size: Config.defaultSize;
 
     let queryParams: string = nextInfo ? nextInfo : `?cid=${containerId}&page=${page}&size=${size}`;
 

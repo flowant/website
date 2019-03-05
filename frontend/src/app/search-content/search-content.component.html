@@ -1,19 +1,9 @@
 <div class="grid grid-pad">
-  <p> popular contents </p>
-  <a *ngFor="let content of popularContents" class="col-1-4"
+  <a *ngFor="let content of contents" class="col-1-4"
       routerLink="/content/{{content.idCid.identity}}/{{content.idCid.containerId}}">
     <div>
       <h4>{{content.title}}</h4>
     </div>
   </a>
-
-  <p> latest contents </p>
-  <a *ngFor="let content of latestContents" class="col-1-4"
-    routerLink="/content/{{content.idCid.identity}}/{{content.idCid.containerId}}">
-    <div>
-      <h4>{{content.title}}</h4>
-    </div>
-  </a>
-
-  <button type="button" (click)="getNextPage()" class="btn btn-primary btn-lg btn-block" [disabled]="!nextInfo">More</button>
+  <button type="button" (click)="getNext()" class="btn btn-primary btn-lg btn-block" [disabled]="!nextInfo">More</button>
 </div>

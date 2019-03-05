@@ -8,6 +8,7 @@ export const environment = {
     gateway: 'http://localhost:9091/api'
   },
   path: {
+    search: '/search',
     content: '/content',
     review: '/review',
     reply: '/reply',
