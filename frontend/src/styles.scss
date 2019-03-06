@@ -1,3 +1,5 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+
 .rating-star {
   position: relative;
   display: inline-block;
@@ -16,26 +18,8 @@
   color: gold;
 }
 
-#wrapper {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  align-items: stretch;
-}
-
-// Used for sidebar action
-.overlay {
-  display: none;
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 998;
-  opacity: 0;
-  transition: all 0.5s ease-in-out;
-}
-
-.overlay.active {
-  display: block;
-  opacity: 1;
+.btn-rating-number {
+  @extend .btn;
+  @extend .btn-light;
+  @extend .py-0;
 }

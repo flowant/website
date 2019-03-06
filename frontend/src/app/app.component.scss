@@ -1,3 +1,5 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+
 .scroll-to-top {
   position: fixed;
   right: 1rem;
@@ -9,4 +11,39 @@
   color: #fff;
   background: rgba(90, 92, 105, 0.5);
   line-height: 46px;
+}
+
+#wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  align-items: stretch;
+}
+
+#wrapper #content-wrapper {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#wrapper #content-wrapper #content {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 0 auto;
+  flex: 1 0 auto;
+}
+
+// Used for sidebar action
+.overlay {
+  display: none;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 998;
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+}
+
+.overlay.active {
+  display: block;
+  opacity: 1;
 }

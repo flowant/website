@@ -49,15 +49,15 @@
       <span>{{getRated()}}</span>
       <span>voted: {{content.reputation.reputed}}</span>
       <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
-        <label ngbButtonLabel class="btn-outline-secondary">
+        <label ngbButtonLabel class="btn-rating-number">
           <input ngbButton type="radio" (click)="onRepute(content, 'liked')" value="liked">
           <i class="far fa-thumbs-up"></i>{{content.reputation.liked}}
         </label>
-        <label ngbButtonLabel class="btn-outline-secondary">
+        <label ngbButtonLabel class="btn-rating-number">
           <input ngbButton type="radio" (click)="onRepute(content, 'disliked')" value="disliked">
           <i class="far fa-thumbs-down"></i>{{content.reputation.disliked}}
         </label>
-        <label ngbButtonLabel class="btn-outline-secondary">
+        <label ngbButtonLabel class="btn-rating-number">
           <input ngbButton type="radio" (click)="onRepute(content, 'reported')" value="reported">
           <i class="fas fa-biohazard"></i>{{content.reputation.reported}}
         </label>

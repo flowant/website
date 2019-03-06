@@ -1,4 +1,8 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+@import "src/styles.scss";
+
 #sidebar {
+  @extend .rounded-right;
   width: 200px;
   position: fixed;
   top: 0;
@@ -36,3 +40,17 @@
   background: gainsboro; // color: #7386D5;
 }
 */
+
+.sidebar-link {
+  @extend .btn;
+  @extend .btn-outline-secondary;
+  @extend .btn-block;
+  @extend .my-1;
+  text-align: left;
+  border-style: none;
+  // @extend .py-0;
+}
+
+span {
+  @extend .mx-1;
+}
