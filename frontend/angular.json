@@ -28,14 +28,14 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/bootstrap/scss/bootstrap.scss",
-              "src/assets/css/sb-admin-2.css"
+              "node_modules/bootstrap/scss/bootstrap.scss"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery.easing/jquery.easing.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
-              "src/assets/js/sb-admin-2.js",
+              "node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js",
+              "src/assets/js/website.js",
               "src/assets/js/summernote-bs4.min.js"
             ]
           },

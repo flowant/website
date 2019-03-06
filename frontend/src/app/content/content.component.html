@@ -29,10 +29,10 @@
   <label for="directions">Directions:</label>
   <div id="directions"></div>
 
-  <button type="button" (click)="onSave()" class="btn btn-outline-primary">
+  <button type="button" (click)="onSave()" class="btn btn-outline-secondary">
     Save
   </button>
-  <button type="button" (click)="onDelete()" class="btn btn-outline-primary">
+  <button type="button" (click)="onDelete()" class="btn btn-outline-secondary">
     Delete
   </button>
 
@@ -49,15 +49,15 @@
       <span>{{getRated()}}</span>
       <span>voted: {{content.reputation.reputed}}</span>
       <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
-        <label ngbButtonLabel class="btn-outline-dark">
+        <label ngbButtonLabel class="btn-outline-secondary">
           <input ngbButton type="radio" (click)="onRepute(content, 'liked')" value="liked">
           <i class="far fa-thumbs-up"></i>{{content.reputation.liked}}
         </label>
-        <label ngbButtonLabel class="btn-outline-dark">
+        <label ngbButtonLabel class="btn-outline-secondary">
           <input ngbButton type="radio" (click)="onRepute(content, 'disliked')" value="disliked">
           <i class="far fa-thumbs-down"></i>{{content.reputation.disliked}}
         </label>
-        <label ngbButtonLabel class="btn-outline-dark">
+        <label ngbButtonLabel class="btn-outline-secondary">
           <input ngbButton type="radio" (click)="onRepute(content, 'reported')" value="reported">
           <i class="fas fa-biohazard"></i>{{content.reputation.reported}}
         </label>

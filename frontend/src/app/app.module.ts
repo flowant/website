@@ -13,6 +13,8 @@ import { SearchContentComponent } from './search-content/search-content.componen
 import { MessagesComponent } from './messages/messages.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ReviewComponent } from './review/review.component';
+import { TopbarComponent } from './topbar/topbar.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { ReviewComponent } from './review/review.component';
     SearchContentComponent,
     MessagesComponent,
     PageNotFoundComponent,
-    ReviewComponent
+    ReviewComponent,
+    TopbarComponent,
+    SidebarComponent
   ],
   imports: [
     NgbModule,

@@ -11,7 +11,7 @@
         </ngb-rating>
       </div>
       <div class="col-7">
-        <button type="button" (click)="onSave()" class="btn btn-outline-dark btn-sm">
+        <button type="button" (click)="onSave()" class="btn btn-outline-secondary btn-sm">
           <i class="far fa-save"></i>Save
         </button>
       </div>
@@ -30,15 +30,15 @@
       <p>{{review.reviewerName}}<small><i>{{review.cruTime.created}}</i></small></p>
       <p>{{review.comment}}</p>
       <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
-        <label ngbButtonLabel class="btn-outline-dark">
+        <label ngbButtonLabel class="btn-outline-secondary">
           <input ngbButton type="radio" (click)="onRepute(review, 'liked')" value="liked">
           <i class="far fa-thumbs-up"></i>{{review.reputation.liked}}
         </label>
-        <label ngbButtonLabel class="btn-outline-dark">
+        <label ngbButtonLabel class="btn-outline-secondary">
           <input ngbButton type="radio" (click)="onRepute(review, 'disliked')" value="disliked">
           <i class="far fa-thumbs-down"></i>{{review.reputation.disliked}}
         </label>
-        <label ngbButtonLabel class="btn-outline-dark">
+        <label ngbButtonLabel class="btn-outline-secondary">
           <input ngbButton type="radio" (click)="onRepute(review, 'reported')" value="reported">
           <i class="fas fa-biohazard"></i>{{review.reputation.reported}}
         </label>
