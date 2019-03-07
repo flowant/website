@@ -28,6 +28,7 @@
             ],
             "styles": [
               "node_modules/bootstrap/scss/bootstrap.scss",
+              "node_modules/summernote/dist/summernote-bs4.css",
               "src/styles.scss"
             ],
             "scripts": [
@@ -35,8 +36,8 @@
               "node_modules/jquery.easing/jquery.easing.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js",
-              "src/assets/js/website.js",
-              "src/assets/js/summernote-bs4.min.js"
+              "node_modules/summernote/dist/summernote-bs4.min.js",
+              "src/assets/js/website.js"
             ]
           },
           "configurations": {

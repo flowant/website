@@ -20,6 +20,7 @@
     "@angular/platform-browser-dynamic": "^7.2.8",
     "@angular/router": "^7.2.8",
     "@ng-bootstrap/ng-bootstrap": "^4.1.0",
+    "ajv": "^6.10.0",
     "bootstrap": "^4.3.1",
     "core-js": "^2.6.5",
     "i": "^0.3.6",
@@ -33,13 +34,14 @@
     "parse-link-header": "^1.0.1",
     "popper.js": "^1.14.7",
     "rxjs": "~6.3.3",
+    "summernote": "^0.8.11",
     "tslib": "^1.9.0",
     "uuid": "^3.3.2",
     "zone.js": "^0.8.29"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.12.4",
-    "@angular/cli": "^7.2.4",
+    "@angular/cli": "^7.3.5",
     "@angular/compiler-cli": "^7.2.8",
     "@angular/language-service": "^7.2.8",
     "@types/jasmine": "^2.8.16",
