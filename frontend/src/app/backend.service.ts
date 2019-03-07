@@ -127,13 +127,9 @@ export class BackendService {
         catchError(this.handleError<FileRefs[]>('deleteFiles')));
   }
 
-  onRepute(model: Model, idCid: IdCid, selected?: string, reputation?: Reputation): Observable<Reputation> {
-    // TODO check User Id and already clicked by user
-    this.logger.trace("onRepute:", model, selected, idCid);
-    let rpt = reputation ? reputation : new Reputation();
-    if (selected) {
-      rpt.select(selected);
-    }
+  acculateRepute(model: Model, idCid: IdCid, reputation: Reputation): Observable<Reputation> {
+    this.logger.trace("acculateRepute:", model, idCid, reputation);
+    let rpt = Object.assign({}, reputation);
     rpt.idCid = idCid;
     return this.postModel<Reputation>(Config.toRptModel(model), rpt);
   }

@@ -29,20 +29,7 @@
       </ngb-rating>
       <p>{{review.reviewerName}}<small><i>{{review.cruTime.created}}</i></small></p>
       <p>{{review.comment}}</p>
-      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
-        <label ngbButtonLabel class="btn-rating-number">
-          <input ngbButton type="radio" (click)="onRepute(review, 'liked')" value="liked">
-          <i class="far fa-thumbs-up"></i><span>{{review.reputation.liked}}</span>
-        </label>
-        <label ngbButtonLabel class="btn-rating-number">
-          <input ngbButton type="radio" (click)="onRepute(review, 'disliked')" value="disliked">
-          <i class="far fa-thumbs-down"></i>{{review.reputation.disliked}}
-        </label>
-        <label ngbButtonLabel class="btn-rating-number">
-          <input ngbButton type="radio" (click)="onRepute(review, 'reported')" value="reported">
-          <i class="fas fa-biohazard"></i>{{review.reputation.reported}}
-        </label>
-      </div>
+      <app-reputation [model]="model" [idCid]="review.idCid" [reputation]="review.reputation"></app-reputation>
     </div>
   </li>
 </ul>

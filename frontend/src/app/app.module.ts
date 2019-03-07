@@ -15,6 +15,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { ReviewComponent } from './review/review.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { ReputationComponent } from './reputation/reputation.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     PageNotFoundComponent,
     ReviewComponent,
     TopbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    ReputationComponent
   ],
   imports: [
     NgbModule,

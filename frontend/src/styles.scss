@@ -1,5 +1,6 @@
 @import "node_modules/bootstrap/scss/bootstrap.scss";
 
+// used by review, reputation
 .rating-star {
   position: relative;
   display: inline-block;
@@ -7,19 +8,7 @@
   color: #b0c4de;
 }
 
+// used by review, reputation
 .rating-star-full {
   color: gold;
-}
-
-.rating-star-half {
-  position: absolute;
-  display: inline-block;
-  overflow: hidden;
-  color: gold;
-}
-
-.btn-rating-number {
-  @extend .btn;
-  @extend .btn-light;
-  @extend .py-0;
 }

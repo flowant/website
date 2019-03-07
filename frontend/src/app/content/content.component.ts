@@ -17,10 +17,14 @@ declare var $: any;
 })
 export class ContentComponent implements OnInit {
 
+  model: Model = Model.Content;
+
   imgServerUrl: string = Config.gatewayUrl;
+
   content: Content;
 
   isReadonly: boolean;
+
   idCid: IdCid;
 
   flatIngredients: string = "";
@@ -151,16 +155,6 @@ export class ContentComponent implements OnInit {
 
   goBack(): void {
     this.location.back();
-  }
-
-  getRated(): string {
-    let avr = this.content.reputation.rated / this.content.reputation.reputed;
-    return avr.toFixed(1);
-  }
-
-  onRepute(content: Content, selected: string) {
-    this.backendService.onRepute(Model.Content, content.idCid, selected)
-        .subscribe((rpt) => {content.reputation = rpt});
   }
 
 }

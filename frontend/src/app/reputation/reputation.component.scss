@@ -1,0 +1,15 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+@import "src/styles.scss";
+
+.rating-star-half {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  color: gold;
+}
+
+.btn-rating-number {
+  @extend .btn;
+  @extend .btn-light;
+  @extend .py-0;
+}

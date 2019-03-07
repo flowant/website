@@ -13,9 +13,12 @@ export class ReviewComponent implements OnInit {
 
   @Input() content: Content;
 
+  model: Model = Model.Review;
+
   review: Review;
 
   reviews: Review[] = new Array<Review>();
+
   nextInfo: string;
 
   postedRpt: Reputation;
@@ -51,25 +54,19 @@ export class ReviewComponent implements OnInit {
 
     this.logger.trace('onSave:', this.review);
     this.backendService.postModel<Review>(Model.Review, this.review)
-      .subscribe(() => {});
+        .subscribe(() => {});
 
-    //TODO min value of rated is 0 or 1?
     this.review.reputing.reputed = 1;
 
     let contentRpt = this.postedRpt ?
         this.review.reputing.subtract(this.postedRpt) : this.review.reputing;
 
     this.logger.trace("onSave, ContentRpt:", contentRpt);
-    this.backendService.onRepute(Model.Content, this.content.idCid, undefined, contentRpt)
+    this.backendService.acculateRepute(Model.Content, this.content.idCid, contentRpt)
         .subscribe((rpt) => {
           this.content.reputation = rpt;
           this.postedRpt = Object.assign({}, this.review.reputing);
         });
-  }
-
-  onRepute(review: Review, selected: string) {
-    this.backendService.onRepute(Model.Review, review.idCid, selected)
-        .subscribe((rpt) => {review.reputation = rpt});
   }
 
 }

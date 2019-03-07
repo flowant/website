@@ -1,0 +1,33 @@
+
+<div class="container-fluid p-1">
+
+  <div *ngIf="isRated()" class="align-middle">
+    <span>Average</span>
+    <ngb-rating [rate]="getRated()" [readonly]="true">
+      <ng-template let-fill="fill">
+        <span class="rating-star" [class.rating-star-full]="fill === 100">
+          <span class="rating-star-half" [style.width.%]="fill">&#9733;</span>&#9733;
+        </span>
+      </ng-template>
+    </ngb-rating>
+    <span>{{getRated()}}</span>
+    <span>voted: {{reputation.reputed}}</span>
+  </div>
+
+  <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">
+    <label ngbButtonLabel class="btn-rating-number">
+      <input ngbButton type="radio" (click)="onRepute(idCid, 'liked')" value="liked">
+      <i class="far fa-thumbs-up"></i><span>{{reputation.liked}}</span>
+    </label>
+    <label ngbButtonLabel class="btn-rating-number">
+      <input ngbButton type="radio" (click)="onRepute(idCid, 'disliked')" value="disliked">
+      <i class="far fa-thumbs-down"></i>{{reputation.disliked}}
+    </label>
+    <label ngbButtonLabel class="btn-rating-number">
+      <input ngbButton type="radio" (click)="onRepute(idCid, 'reported')" value="reported">
+      <i class="fas fa-biohazard"></i>{{reputation.reported}}
+    </label>
+  </div>
+
+</div>
+
