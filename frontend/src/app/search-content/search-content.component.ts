@@ -12,9 +12,8 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SearchContentComponent implements OnInit {
 
-  contents : Content[] = new Array<Content>();
+  contents : Content[];
   nextInfo: string;
-  tag: string;
   getNext: () => void;
 
   constructor(
@@ -22,28 +21,33 @@ export class SearchContentComponent implements OnInit {
       private route: ActivatedRoute,
       private logger: NGXLogger) {
 
-    this.tag = this.route.snapshot.paramMap.get('tag');
-    this.getNext = this.tag ? this.getNextSearch : this.getNextContent;
+    route.params.subscribe(param => {
+      this.logger.trace('ActivatedRoute params subscrive:', param);
+      let tag: string = param['tag'];
+      this.contents = new Array<Content>();
+      if (tag) {
+        this.search(tag);
+      } else {
+        this.getPopularContents();
+      }
+    });
   }
 
   ngOnInit() {
-    if (this.tag) {
-      this.search(this.tag);
-    } else {
-      this.getPopularContents();
-    }
   }
 
+  //TODO get container id from the backend
   getPopularContents(): void {
+    this.getNext = this.getNextLatest;
     this.backendService.getPopularItems<Content>(Model.Content, "56a1cd50-3c77-11e9-bf26-d571c84212ed")
         .subscribe(contents => {
           this.contents = this.contents.concat(contents);
         });
 
-    this.getNextContent();
+    this.getNextLatest();
   }
 
-  getNextContent() {
+  getNextLatest() {
     this.backendService.getModels<Content>(Model.Content, this.nextInfo, "56a1cd50-3c77-11e9-bf26-d571c84212ed")
         .subscribe(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);
@@ -53,13 +57,12 @@ export class SearchContentComponent implements OnInit {
   }
 
   search(tag?: string) {
-    this.tag = tag ? tag : this.tag;
     this.getNext = this.getNextSearch;
-    this.getNextSearch();
+    this.getNextSearch(tag);
   }
 
-  getNextSearch() {
-    this.backendService.getSearch(this.nextInfo, this.tag)
+  getNextSearch(tag?: string) {
+    this.backendService.getSearch(this.nextInfo, tag)
         .subscribe(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
