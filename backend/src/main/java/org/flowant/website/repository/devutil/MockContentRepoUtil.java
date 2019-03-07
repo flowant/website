@@ -1,5 +1,7 @@
 package org.flowant.website.repository.devutil;
 
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.PreDestroy;
@@ -7,6 +9,7 @@ import javax.annotation.PreDestroy;
 import org.flowant.website.event.MockDataGenerateEvent;
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
+import org.flowant.website.model.FileRef;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;
@@ -22,14 +25,25 @@ import org.flowant.website.repository.ReviewReputationRepository;
 import org.flowant.website.repository.SubItemRepository;
 import org.flowant.website.repository.UserRepository;
 import org.flowant.website.repository.WebSiteRepository;
+import org.flowant.website.rest.FileRest;
+import org.flowant.website.storage.FileStorage;
 import org.flowant.website.util.test.ContentMaker;
 import org.flowant.website.util.test.ReplyMaker;
 import org.flowant.website.util.test.ReputationMaker;
 import org.flowant.website.util.test.ReviewMaker;
 import org.flowant.website.util.test.UserMaker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
@@ -38,6 +52,12 @@ import reactor.core.publisher.Mono;
 @Component
 @Log4j2
 public class MockContentRepoUtil {
+
+    @Value("${server.port}")
+    int port;
+
+    @Value("${server.address}")
+    String address;
 
     @Autowired
     WebSiteRepository repoWebSite;
@@ -75,7 +95,31 @@ public class MockContentRepoUtil {
 
     int cntRepliesPerReview = 3;
 
+    public FileRef postRandomFile() {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+
+        Random random = new Random();
+        int pictureIndex = random.nextInt(3) + 1;
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<ClassPathResource> entity =
+                new HttpEntity<>(new ClassPathResource("sea" + pictureIndex + ".jpg"), headers);
+        parts.add(FileRest.ATTACHMENT, entity);
+
+        return WebClient
+                .create("http://" + address + ":" + port + FileRest.FILES)
+                .post()
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(parts))
+                .exchange()
+                .block()
+                .bodyToFlux(FileRef.class)
+                .blockLast();
+    }
+
     public Content saveContent(Content content) {
+
+        content.setFileRefs(List.of(postRandomFile()));
 
         Mono<Content> con = Mono.just(content).cache();
         con.flatMap(repoContent::save).block();
@@ -131,9 +175,10 @@ public class MockContentRepoUtil {
     @PreDestroy
     public void onPreDestroy() throws Exception {
 
-        contents.flatMap(c -> repoContent.deleteByIdWithRelationship(c.getIdCid())
-                    .then(RelationshipService.deleteSubItemById(c.getContainerId())))
-                    .blockLast();
+        contents.flatMap(c -> FileStorage.deleteAll(c.getFileRefs())
+                .then(repoContent.deleteByIdWithRelationship(c.getIdCid()))
+                .then(RelationshipService.deleteSubItemById(c.getContainerId())))
+                .blockLast();
 
         repoUser.deleteAll(users).block();
 

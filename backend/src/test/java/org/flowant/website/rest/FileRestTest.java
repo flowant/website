@@ -49,8 +49,8 @@ public class FileRestTest extends RestTest {
 
         for (int i = 1; i <= count; i++) {
             HttpHeaders headers = new HttpHeaders();
-            HttpEntity<ClassPathResource> entity = new HttpEntity<>(
-                    new ClassPathResource("sea" + i + ".jpg"), headers);
+            HttpEntity<ClassPathResource> entity =
+                    new HttpEntity<>(new ClassPathResource("sea" + i + ".jpg"), headers);
             parts.add(FileRest.ATTACHMENT, entity);
         }
 

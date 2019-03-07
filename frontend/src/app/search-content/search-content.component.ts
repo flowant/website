@@ -16,6 +16,8 @@ export class SearchContentComponent implements OnInit {
   nextInfo: string;
   getNext: () => void;
 
+  imgServerUrl: string = Config.gatewayUrl;
+
   constructor(
       private backendService: BackendService,
       private route: ActivatedRoute,
