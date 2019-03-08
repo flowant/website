@@ -1,18 +1,26 @@
 package org.flowant.website.integration;
 
 import java.util.Comparator;
+import java.util.Set;
 import java.util.UUID;
 
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
 import org.flowant.website.model.IdCid;
+import org.flowant.website.model.Message;
+import org.flowant.website.model.Notification;
+import org.flowant.website.model.Relation;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
+import org.flowant.website.model.User;
 import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.repository.ContentReputationRepository;
 import org.flowant.website.repository.IdCidRepository;
+import org.flowant.website.repository.MessageRepository;
+import org.flowant.website.repository.NotificationRepository;
+import org.flowant.website.repository.RelationRepository;
 import org.flowant.website.repository.ReplyRepository;
 import org.flowant.website.repository.ReplyReputationRepository;
 import org.flowant.website.repository.ReviewRepository;
@@ -22,9 +30,12 @@ import org.flowant.website.repository.UserRepository;
 import org.flowant.website.repository.WebSiteRepository;
 import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.ContentMaker;
+import org.flowant.website.util.test.MessageMaker;
+import org.flowant.website.util.test.NotificationMaker;
 import org.flowant.website.util.test.ReplyMaker;
 import org.flowant.website.util.test.ReputationMaker;
 import org.flowant.website.util.test.ReviewMaker;
+import org.flowant.website.util.test.UserMaker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -78,6 +89,15 @@ public class IntegrationTest {
 
     @Autowired
     UserRepository repoUser;
+
+    @Autowired
+    MessageRepository repoMessage;
+
+    @Autowired
+    NotificationRepository repoNotification;
+
+    @Autowired
+    RelationRepository repoRelation;
 
     Flux<IdCidRepository<?>> repos;
 
@@ -195,6 +215,34 @@ public class IntegrationTest {
         StepVerifier.create(repoSubItem.findById(reply.getContainerId())).expectNextCount(0).verifyComplete();
 
         toBeDeletedPopularSubItems = Flux.just(content.getContainerId());
+    }
+
+    @Test
+    public void userDeleteByIdWithRelationship() {
+        UUID identity = IdMaker.randomUUID();
+
+        User user = UserMaker.large(identity);
+        Message message = MessageMaker.random(identity);
+        Notification notification = NotificationMaker.largeRandom(identity);
+        Relation relation = Relation.of(identity, Set.of(), Set.of());
+
+        repoUser.save(user).block();
+        repoMessage.save(message).block();
+        repoNotification.save(notification).block();
+        repoRelation.save(relation).block();
+
+        StepVerifier.create(repoUser.findById(user.getIdentity())).expectNextCount(1).verifyComplete();
+        StepVerifier.create(repoMessage.findById(message.getIdCid())).expectNextCount(1).verifyComplete();
+        StepVerifier.create(repoNotification.findById(notification.getIdCid())).expectNextCount(1).verifyComplete();
+        StepVerifier.create(repoRelation.findById(relation.getIdentity())).expectNextCount(1).verifyComplete();
+
+        repoUser.deleteByIdWithRelationship(identity).block();
+
+        StepVerifier.create(repoUser.findById(user.getIdentity())).expectNextCount(0).verifyComplete();
+        StepVerifier.create(repoMessage.findById(message.getIdCid())).expectNextCount(0).verifyComplete();
+        StepVerifier.create(repoNotification.findById(notification.getIdCid())).expectNextCount(0).verifyComplete();
+        StepVerifier.create(repoRelation.findById(relation.getIdentity())).expectNextCount(0).verifyComplete();
+
     }
 
     @Test

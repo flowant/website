@@ -54,7 +54,7 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
 
     @Builder.Default
     @Column("g")
-    Gender gender = Gender.UNDEFINED;
+    Gender gender = Gender.U;
 
     @Column("bd")
     ZonedDate birthdate;
@@ -67,12 +67,6 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
 
     @Column("at")
     List<Authority> authorities;
-
-    @Column("fe")
-    Set<UUID> followers;
-
-    @Column("fw")
-    Set<UUID> followings;
 
     // TODO likes and dislikes: contents, Reviews, Replys
     @Column("it")
@@ -88,7 +82,7 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
 
     @Builder.Default
     @Column("anl")
-    boolean accountNonLocked = true;;
+    boolean accountNonLocked = true;
 
     @Builder.Default
     @Column("cne")

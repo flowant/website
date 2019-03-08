@@ -18,6 +18,11 @@ public interface UserRepository extends ReactiveCassandraRepository<User, UUID> 
 
     Flux<User> findByUsername(String username, QueryOptions opts);
 
+    default Mono<Void> deleteByIdWithRelationship(UUID identity) {
+        return deleteById(identity)
+                .then(RelationshipService.deleteUserRelationship(identity));
+    }
+
     // for test
     @AllowFiltering
     Mono<Slice<User>> findByLastname(String lastname, Pageable pageRequest);

@@ -40,12 +40,12 @@ public class SubItemRepositoryTest extends RepositoryTest<SubItem, UUID, SubItem
 
         IdScore idScore = IdScore.random();
 
-        repo.addSubItem(subItem.getIdentity(), idScore, SubItem.class).block();
+        repo.addSubItem(subItem.getIdentity(), idScore).block();
 
         SubItem found = repo.findById(subItem.getIdentity()).block();
         assertTrue(found.getSubItems().contains(idScore));
 
-        repo.removeSubItem(subItem.getIdentity(), idScore, SubItem.class).block();
+        repo.removeSubItem(subItem.getIdentity(), idScore).block();
         found = repo.findById(subItem.getIdentity()).block();
         assertFalse(found.getSubItems().contains(idScore));
     }

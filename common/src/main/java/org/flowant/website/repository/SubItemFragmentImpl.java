@@ -13,13 +13,13 @@ import org.springframework.data.cassandra.core.query.Update;
 
 import reactor.core.publisher.Mono;
 
-public class SubItemFragmentImpl<T> implements SubItemFragment<T> {
+public class SubItemFragmentImpl implements SubItemFragment {
 
     @Autowired
     private ReactiveCassandraOperations operations;
 
     @Override
-    public Mono <IdScore> addSubItem(UUID identity, IdScore idScore, Class<T> entityClass) {
+    public Mono <IdScore> addSubItem(UUID identity, IdScore idScore) {
 
         return operations.update(
                 Query.query(where("identity").is(identity)),
@@ -29,7 +29,7 @@ public class SubItemFragmentImpl<T> implements SubItemFragment<T> {
     }
 
     @Override
-    public Mono<IdScore> removeSubItem(UUID identity, IdScore idScore, Class<T> entityClass) {
+    public Mono<IdScore> removeSubItem(UUID identity, IdScore idScore) {
 
         return operations.update(
                 Query.query(where("identity").is(identity)),

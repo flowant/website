@@ -20,7 +20,7 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ContentRepositoryTest extends HasReputationRepositoryTest<Content, ContentRepository> {
+public class ContentRepositoryTest extends IdCidRepositoryTest<Content, ContentRepository> {
 
     @Test
     public void crud() {

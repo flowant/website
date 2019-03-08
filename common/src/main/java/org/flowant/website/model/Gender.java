@@ -2,6 +2,10 @@ package org.flowant.website.model;
 
 public enum Gender {
 
-    MAIL, FEMAIL, UNDEFINED;
+    M, // Male
+
+    F, // Female
+
+    U; // undefined
 
 }

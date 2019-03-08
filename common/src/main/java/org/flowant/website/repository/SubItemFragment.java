@@ -6,10 +6,10 @@ import org.flowant.website.model.IdScore;
 
 import reactor.core.publisher.Mono;
 
-public interface SubItemFragment<T> {
+public interface SubItemFragment {
 
-    Mono<IdScore> addSubItem(UUID identity, IdScore idScore, Class<T> entityClass);
+    Mono<IdScore> addSubItem(UUID identity, IdScore idScore);
 
-    Mono<IdScore> removeSubItem(UUID identity, IdScore idScore, Class<T> entityClass);
+    Mono<IdScore> removeSubItem(UUID identity, IdScore idScore);
 
 }

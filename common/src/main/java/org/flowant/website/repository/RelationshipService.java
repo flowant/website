@@ -40,6 +40,9 @@ public class RelationshipService {
     static ReviewReputationRepository repoReviewRpt;
     static ReplyReputationRepository repoReplyRpt;
     static SubItemRepository repoSubItem;
+    static MessageRepository repoMessage;
+    static NotificationRepository repoNotification;
+    static RelationRepository repoRelation;
 
     static HashMap<Class<?>, ReputationRepository<? extends HasReputation>> repoReputation = new HashMap<>();
 
@@ -52,7 +55,10 @@ public class RelationshipService {
                         ContentReputationRepository repoContentRpt,
                         ReviewReputationRepository repoReviewRpt,
                         ReplyReputationRepository repoReplyRpt,
-                        SubItemRepository repoSubItem) {
+                        SubItemRepository repoSubItem,
+                        MessageRepository repoMessage,
+                        NotificationRepository repoNotification,
+                        RelationRepository repoRelation) {
 
         RelationshipService.repoContent = repoContent;
         RelationshipService.repoReview = repoReview;
@@ -61,6 +67,9 @@ public class RelationshipService {
         RelationshipService.repoReviewRpt = repoReviewRpt;
         RelationshipService.repoReplyRpt = repoReplyRpt;
         RelationshipService.repoSubItem = repoSubItem;
+        RelationshipService.repoMessage = repoMessage;
+        RelationshipService.repoNotification = repoNotification;
+        RelationshipService.repoRelation = repoRelation;
 
         repoReputation.put(ContentReputation.class, repoContent);
         repoReputation.put(ReviewReputation.class, repoReview);
@@ -70,6 +79,12 @@ public class RelationshipService {
         repoCounter.put(Review.class, repoReviewRpt);
         repoCounter.put(Reply.class, repoReplyRpt);
 
+    }
+
+    public static Mono<Void> deleteUserRelationship(UUID identity) {
+        return repoMessage.deleteAllByIdCidContainerId(identity)
+                .then(repoNotification.deleteAllByIdCidContainerId(identity))
+                .then(repoRelation.deleteById(identity));
     }
 
     public static <T extends HasIdCid> Mono<Void> deleteReviewsByContainerId(UUID containerId) {
@@ -151,7 +166,7 @@ public class RelationshipService {
 
         if (idScores.size() < maxSize) {
             log.trace("updatePopularSubItems, addAndReturn");
-            return repoSubItem.addSubItem(subItem.getIdentity(), candidate, SubItem.class)
+            return repoSubItem.addSubItem(subItem.getIdentity(), candidate)
                     .thenReturn(subItem);
         }
 
@@ -165,12 +180,12 @@ public class RelationshipService {
             log.trace("updatePopularSubItems, candidate is dropped");
         } else {
             log.trace("updatePopularSubItems, candidate is added");
-            addCandidate = repoSubItem.addSubItem(subItem.getIdentity(), candidate, SubItem.class);
+            addCandidate = repoSubItem.addSubItem(subItem.getIdentity(), candidate);
         }
         log.trace("updatePopularSubItems, removeSubItems:{}", toBeDeleted);
 
         Flux<IdScore> removeAll = Flux.fromIterable(toBeDeleted)
-                .flatMap(idScore -> repoSubItem.removeSubItem(subItem.getIdentity(), idScore, SubItem.class));
+                .flatMap(idScore -> repoSubItem.removeSubItem(subItem.getIdentity(), idScore));
 
         return addCandidate.thenMany(removeAll).then(Mono.just(subItem));
     }

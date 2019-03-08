@@ -3,8 +3,8 @@ package org.flowant.website.repository;
 import java.util.Comparator;
 import java.util.UUID;
 
-import org.flowant.website.model.Reply;
-import org.flowant.website.util.test.ReplyMaker;
+import org.flowant.website.model.Message;
+import org.flowant.website.util.test.MessageMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,29 +16,29 @@ import reactor.core.publisher.Flux;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
-public class ReplyRepositoryTest extends IdCidRepositoryTest<Reply, ReplyRepository> {
+public class MessageRepositoryTest extends IdCidRepositoryTest<Message, MessageRepository> {
 
     @Test
     public void crud() {
-        testCrud(Reply::getIdCid, ReplyMaker::smallRandom, ReplyMaker::largeRandom);
+        testCrud(Message::getIdCid, MessageMaker::random, MessageMaker::random);
     }
 
     @Test
     public void pageable() {
         UUID containerId = UUIDs.timeBased();
-        Flux<Reply> entities = Flux.range(1, 10).map(i -> ReplyMaker.smallRandom(containerId));
+        Flux<Message> entities = Flux.range(1, 10).map(i -> MessageMaker.random(containerId));
         findAllByContainerIdPageable(containerId, entities);
     }
 
     @Test
     public void ordered() {
-        testOrdered(Reply::getIdCid, Comparator.comparing(Reply::getIdentity).reversed(),
-                ReplyMaker::smallRandom);
+        testOrdered(Message::getIdCid, Comparator.comparing(Message::getIdentity).reversed(),
+                MessageMaker::random);
     }
 
     @Test
     public void testDeleteAllByContainerId() {
-        super.testDeleteAllByContainerId(ReplyMaker.largeRandom(), Reply::getContainerId);
+        super.testDeleteAllByContainerId(MessageMaker.random(), Message::getContainerId);
     }
 
 }

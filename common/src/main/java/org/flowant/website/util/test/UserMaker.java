@@ -10,8 +10,7 @@ import org.flowant.website.model.Phone;
 import org.flowant.website.model.PostalAddress;
 import org.flowant.website.model.User;
 import org.flowant.website.model.ZonedDate;
-
-import com.datastax.driver.core.utils.UUIDs;
+import org.flowant.website.util.IdMaker;
 
 public class UserMaker {
 
@@ -42,7 +41,7 @@ public class UserMaker {
     }
 
     public static User smallRandom() {
-        return small(UUIDs.timeBased());
+        return small(IdMaker.randomUUID());
     }
 
     public static User large(UUID id) {
@@ -57,15 +56,13 @@ public class UserMaker {
                 .lastname(lastname + id)
                 .phone(Phone.of(82, id.hashCode()))
                 .authorities(List.of(Authority.of("ROLE_USER"), Authority.of("MEMBER")))
-                .followers(Set.of(UUIDs.timeBased()))
-                .followings(Set.of(UUIDs.timeBased()))
                 .interests(Set.of(tag + id))
                 .cruTime(CRUZonedTime.now())
                 .build();
     }
 
     public static User largeRandom() {
-        return large(UUIDs.timeBased());
+        return large(IdMaker.randomUUID());
     }
 
 }
