@@ -18,26 +18,26 @@ public class RelationFragmentImpl implements RelationFragment {
     private ReactiveCassandraOperations operations;
 
     @Override
-    public Mono<UUID> follow(UUID identity, UUID following) {
-        return addFollowing(identity, following)
-                .then(addFollower(following, identity))
-                .thenReturn(following);
+    public Mono<UUID> follow(UUID identity, UUID followee) {
+        return addFollowing(identity, followee)
+                .then(addFollower(followee, identity))
+                .thenReturn(followee);
     }
 
     @Override
-    public Mono<UUID> unfollow(UUID identity, UUID following) {
-        return removeFollowing(identity, following)
-                .then(removeFollower(following, identity))
-                .thenReturn(following);
+    public Mono<UUID> unfollow(UUID identity, UUID followee) {
+        return removeFollowing(identity, followee)
+                .then(removeFollower(followee, identity))
+                .thenReturn(followee);
     }
 
-    public Mono<UUID> addFollowing(UUID identity, UUID following) {
+    public Mono<UUID> addFollowing(UUID identity, UUID followee) {
 
         return operations.update(
                 Query.query(where("identity").is(identity)),
-                Update.empty().addTo("followings").append(following),
+                Update.empty().addTo("followings").append(followee),
                 Relation.class)
-                .thenReturn(following);
+                .thenReturn(followee);
     }
 
     public Mono<UUID> addFollower(UUID identity, UUID follower) {
@@ -49,13 +49,13 @@ public class RelationFragmentImpl implements RelationFragment {
                 .thenReturn(follower);
     }
 
-    public Mono<UUID> removeFollowing(UUID identity, UUID following) {
+    public Mono<UUID> removeFollowing(UUID identity, UUID followee) {
 
         return operations.update(
                 Query.query(where("identity").is(identity)),
-                Update.empty().remove("followings", following),
+                Update.empty().remove("followings", followee),
                 Relation.class)
-                .thenReturn(following);
+                .thenReturn(followee);
     }
 
     public Mono<UUID> removeFollower(UUID identity, UUID follower) {

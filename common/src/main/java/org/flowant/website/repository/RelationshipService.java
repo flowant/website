@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.UUID;
 
 import org.flowant.website.model.Content;
@@ -15,6 +16,7 @@ import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.HasReputation;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.IdScore;
+import org.flowant.website.model.Relation;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.ReputationCounter;
@@ -79,6 +81,11 @@ public class RelationshipService {
         repoCounter.put(Review.class, repoReviewRpt);
         repoCounter.put(Reply.class, repoReplyRpt);
 
+    }
+
+    public static Mono<Void> createUserRelationship(UUID identity) {
+        Relation relation = Relation.of(identity, Set.of(), Set.of());
+        return repoRelation.save(relation).then();
     }
 
     public static Mono<Void> deleteUserRelationship(UUID identity) {

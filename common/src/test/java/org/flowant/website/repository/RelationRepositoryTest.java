@@ -30,30 +30,30 @@ public class RelationRepositoryTest extends RepositoryTest<Relation, UUID, Relat
 
     @Test
     public void followAndUnfollow() {
-        UUID man = IdMaker.randomUUID();
-        UUID woman = IdMaker.randomUUID();
+        UUID follower = IdMaker.randomUUID();
+        UUID followee = IdMaker.randomUUID();
 
-        Relation manRelation = Relation.of(man, Set.of(), Set.of());
-        Relation womanRelation = Relation.of(woman, Set.of(), Set.of());
+        Relation followerRelation = Relation.of(follower, Set.of(), Set.of());
+        Relation followeeRelation = Relation.of(followee, Set.of(), Set.of());
 
-        repo.save(manRelation).block();
-        repo.save(womanRelation).block();
-        cleaner.registerToBeDeleted(manRelation);
-        cleaner.registerToBeDeleted(womanRelation);
+        repo.save(followerRelation).block();
+        repo.save(followeeRelation).block();
+        cleaner.registerToBeDeleted(followerRelation);
+        cleaner.registerToBeDeleted(followeeRelation);
 
-        repo.follow(man, woman).block();
-        Relation found = repo.findById(man).block();
-        assertTrue(found.getFollowings().contains(woman));
+        repo.follow(follower, followee).block();
+        Relation found = repo.findById(follower).block();
+        assertTrue(found.getFollowings().contains(followee));
 
-        found = repo.findById(woman).block();
-        assertTrue(found.getFollowers().contains(man));
+        found = repo.findById(followee).block();
+        assertTrue(found.getFollowers().contains(follower));
 
-        repo.unfollow(man, woman).block();
-        found = repo.findById(man).block();
-        assertFalse(found.getFollowings().contains(woman));
+        repo.unfollow(follower, followee).block();
+        found = repo.findById(follower).block();
+        assertFalse(found.getFollowings().contains(followee));
 
-        found = repo.findById(woman).block();
-        assertFalse(found.getFollowers().contains(man));
+        found = repo.findById(followee).block();
+        assertFalse(found.getFollowers().contains(follower));
     }
 
 }

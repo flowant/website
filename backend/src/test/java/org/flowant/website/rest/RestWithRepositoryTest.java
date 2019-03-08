@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.ReputationCounter;
-import org.flowant.website.repository.ReputationRepository;
+import org.flowant.website.repository.IdCidRepository;
 import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.AssertUtil;
 import org.flowant.website.util.test.DeleteAfterTest;
@@ -237,7 +237,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
     public void pagination(int cntEntities, int pageSize, Function<UUID, Entity> supplier) {
         UUID containerId = UUIDs.timeBased();
 
-        Assert.assertTrue(repo instanceof ReputationRepository);
+        Assert.assertTrue(repo instanceof IdCidRepository);
 
         Flux<Entity> contents = Flux.range(1, cntEntities).map(i -> supplier.apply(containerId)).cache();
         repo.saveAll(contents).blockLast();

@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import org.flowant.website.model.User;
+import org.flowant.website.repository.RelationshipService;
 import org.flowant.website.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +31,8 @@ public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
 
     @PostMapping(value = USER)
     public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
-        return super.post(user);
+        return RelationshipService.createUserRelationship(user.getIdentity())
+                .then(super.post(user));
     }
 
     @PutMapping(value = USER)
@@ -45,6 +47,7 @@ public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
 
     @DeleteMapping(value = USER + PATH_SEG_ID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
-        return super.deleteById(UUID.fromString(id));
+        return repo.deleteByIdWithRelationship(UUID.fromString(id))
+                .map(ResponseEntity::ok);
     }
 }

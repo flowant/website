@@ -73,7 +73,6 @@ public class ContentRest extends PopularRepositoryRest<Content, ContentRepositor
         IdCid idCid = IdCid.of(id, cid);
         return repo.findById(idCid)
                 .doOnNext(content-> FileStorage.deleteAll(content.getFileRefs()))
-                .then(repo.deleteByIdWithRelationship(idCid)
-                .map(ResponseEntity::ok));
+                .then(super.deleteById(idCid));
     }
 }

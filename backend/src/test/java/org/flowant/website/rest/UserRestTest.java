@@ -24,6 +24,8 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserReposit
         setTestParams(UserRest.USER, User.class, User::getIdentity,
                 UserMaker::smallRandom, UserMaker::largeRandom,
                 user -> user.setFirstname("newFirstname"));
+
+        setDeleter(user -> repo.deleteByIdWithRelationship(user.getIdentity()).subscribe());
     }
 
     @Test
