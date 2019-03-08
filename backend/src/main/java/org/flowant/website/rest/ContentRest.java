@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ContentRest extends PageableRepositoryRest<Content, ContentRepository> {
+public class ContentRest extends PopularRepositoryRest<Content, ContentRepository> {
 
     public final static String CONTENT = "/content";
 

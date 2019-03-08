@@ -17,7 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class SearchRest extends PageableRepositoryRest<Content, ContentRepository> {
+public class SearchRest extends PopularRepositoryRest<Content, ContentRepository> {
 
     public final static String SEARCH = "/search";
     public final static String TAG = "tag";

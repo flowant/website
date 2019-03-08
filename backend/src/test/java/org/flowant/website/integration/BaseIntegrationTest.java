@@ -1,9 +1,9 @@
 package org.flowant.website.integration;
 
-import static org.flowant.website.rest.PageableRepositoryRest.CID;
-import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
-import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
-import static org.flowant.website.rest.PageableRepositoryRest.POPULAR;
+import static org.flowant.website.rest.IdCidRepositoryRest.CID;
+import static org.flowant.website.rest.IdCidRepositoryRest.PAGE;
+import static org.flowant.website.rest.IdCidRepositoryRest.SIZE;
+import static org.flowant.website.rest.PopularRepositoryRest.POPULAR;
 import static org.flowant.website.rest.UriUtil.getUri;
 
 import java.net.URI;

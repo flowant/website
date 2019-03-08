@@ -21,7 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ReplyRest extends PageableRepositoryRest<Reply, ReplyRepository> {
+public class ReplyRest extends PopularRepositoryRest<Reply, ReplyRepository> {
 
     public final static String REPLY = "/reply";
 

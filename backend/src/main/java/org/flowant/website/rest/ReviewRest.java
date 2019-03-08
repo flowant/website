@@ -21,7 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class ReviewRest extends PageableRepositoryRest<Review, ReviewRepository> {
+public class ReviewRest extends PopularRepositoryRest<Review, ReviewRepository> {
 
     public final static String REVIEW = "/review";
 

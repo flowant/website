@@ -1,8 +1,8 @@
 package org.flowant.website.rest;
 
-import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
-import static org.flowant.website.rest.PageableRepositoryRest.PS;
-import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
+import static org.flowant.website.rest.IdCidRepositoryRest.PAGE;
+import static org.flowant.website.rest.IdCidRepositoryRest.PS;
+import static org.flowant.website.rest.IdCidRepositoryRest.SIZE;
 
 import java.net.URI;
 import java.util.List;

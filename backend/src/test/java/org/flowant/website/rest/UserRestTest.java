@@ -1,6 +1,5 @@
 package org.flowant.website.rest;
 
-import java.util.Set;
 import java.util.UUID;
 
 import org.flowant.website.BackendApplication;
@@ -11,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import com.datastax.driver.core.utils.UUIDs;
 
 import junitparams.JUnitParamsRunner;
 
@@ -26,7 +23,7 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserReposit
 
         setTestParams(UserRest.USER, User.class, User::getIdentity,
                 UserMaker::smallRandom, UserMaker::largeRandom,
-                user -> user.setFirstname("newFirstname").setFollowers(Set.of(UUIDs.timeBased(), UUIDs.timeBased())));
+                user -> user.setFirstname("newFirstname"));
     }
 
     @Test

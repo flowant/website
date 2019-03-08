@@ -1,7 +1,7 @@
 package org.flowant.website.rest;
 
-import static org.flowant.website.rest.PageableRepositoryRest.PAGE;
-import static org.flowant.website.rest.PageableRepositoryRest.SIZE;
+import static org.flowant.website.rest.IdCidRepositoryRest.PAGE;
+import static org.flowant.website.rest.IdCidRepositoryRest.SIZE;
 import static org.flowant.website.rest.SearchRest.SEARCH;
 import static org.flowant.website.rest.SearchRest.TAG;
 
