@@ -68,7 +68,9 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     @Column("at")
     List<Authority> authorities;
 
-    // TODO likes and dislikes: contents, Reviews, Replys
+    @Column("l")
+    Set<UUID> likes; //TODO to be updated by user activities;
+
     @Column("it")
     Set<String> interests; //TODO to be updated by user activities;
 
