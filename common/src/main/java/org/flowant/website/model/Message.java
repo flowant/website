@@ -21,18 +21,20 @@ import lombok.experimental.Accessors;
 @Table
 public class Message implements HasIdCid {
 
+    // container means receiver
     @NonNull
     @PrimaryKey
     @Column("ic")
     IdCid idCid;
 
+    // author means sender
     @NonNull
-    @Column("si")
-    UUID senderId;
+    @Column("ai")
+    UUID authorId;
 
     @NonNull
-    @Column("sn")
-    String senderName;
+    @Column("an")
+    String authorName;
 
     @NonNull
     @Column("s")

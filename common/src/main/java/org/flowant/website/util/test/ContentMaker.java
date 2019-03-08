@@ -12,6 +12,9 @@ import org.flowant.website.util.IdMaker;
 
 public class ContentMaker {
 
+    static UUID authorId = IdMaker.randomUUID();
+    static String authorName = "authorName" + authorId;
+
     static String title = "title";
 
     static String ingredients = "ingredients";
@@ -37,7 +40,7 @@ public class ContentMaker {
 
     public static Content small(IdCid idCid) {
         UUID id = idCid.getIdentity();
-        return Content.of(idCid, title + id, ReputationMaker.emptyReputation(), CRUZonedTime.now());
+        return Content.of(idCid, authorId, authorName, title + id, ReputationMaker.emptyReputation(), CRUZonedTime.now());
     }
 
     public static Content smallRandom(UUID containerId) {
@@ -53,6 +56,8 @@ public class ContentMaker {
         int cs = id.hashCode() / 1000000;
         return Content.builder()
                 .idCid(idCid)
+                .authorId(authorId)
+                .authorName(authorName)
                 .title(title + id)
                 .extend(new Recipe(List.of(ingredients + id, ingredients + id, ingredients + id),
                         prepareTime, cookTime, servings + cs, calory + cs, nutritionFacts + id))

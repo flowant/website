@@ -131,7 +131,7 @@ public class MockContentRepoUtil {
         // make one review per user at a content
         Flux<Review> reviews = users
                 .map(user -> ReviewMaker.largeRandom(con.block().getIdentity())
-                .setReviewerId(user.getIdentity()))
+                .setAuthorId(user.getIdentity()))
                 .cache();
         reviews.flatMap(repoReview::save).blockLast();
 

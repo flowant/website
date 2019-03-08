@@ -29,12 +29,12 @@ public class Reply implements HasIdCid, HasReputation, HasCruTime {
     IdCid idCid;
 
     @NonNull
-    @Column("ri")
-    UUID replierId;
+    @Column("ai")
+    UUID authorId;
 
     @NonNull
-    @Column("rn")
-    String replierName;
+    @Column("an")
+    String authorName;
 
     @Column("c")
     String comment;

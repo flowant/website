@@ -2,6 +2,7 @@ package org.flowant.website.model;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.Indexed;
@@ -29,6 +30,14 @@ public class Content implements HasIdCid, HasReputation, HasCruTime, Comparable<
     @PrimaryKey
     @Column("ic")
     IdCid idCid;
+
+    @NonNull
+    @Column("ai")
+    UUID authorId;
+
+    @NonNull
+    @Column("an")
+    String authorName;
 
     @NonNull
     @Column("t")

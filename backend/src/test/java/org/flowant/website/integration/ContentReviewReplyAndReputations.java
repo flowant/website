@@ -80,7 +80,7 @@ public class ContentReviewReplyAndReputations extends BaseIntegrationTest {
         // make one review per user at a content
         Flux<Review> reviews = users
                 .map(user -> ReviewMaker.largeRandom(content.block().getIdentity())
-                .setReviewerId(user.getIdentity()))
+                .setAuthorId(user.getIdentity()))
                 .cache();
 
         Flux<ReviewReputation> reviewReputations = reviews

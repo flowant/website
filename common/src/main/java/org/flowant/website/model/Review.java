@@ -29,12 +29,12 @@ public class Review implements HasIdCid, HasReputation, HasCruTime {
     IdCid idCid;
 
     @NonNull
-    @Column("ri")
-    UUID reviewerId;
+    @Column("ai")
+    UUID authorId;
 
     @NonNull
-    @Column("rn")
-    String reviewerName;
+    @Column("an")
+    String authorName;
 
     @NonNull
     @Column("r")

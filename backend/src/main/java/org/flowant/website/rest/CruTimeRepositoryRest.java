@@ -15,22 +15,18 @@ public abstract class CruTimeRepositoryRest <T extends HasIdCid & HasCruTime, R 
         extends IdCidRepositoryRest<T, R> {
 
     public Flux<T> getAll() {
-        return repo.findAll()
+        return super.getAll()
                 .doOnNext(entity -> entity.getCruTime().readNow());
     }
 
     public Mono<ResponseEntity<T>> post(T entity) {
         entity.setCruTime(CRUZonedTime.now());
-        return repo.save(entity)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return super.post(entity);
     }
 
     public Mono<ResponseEntity<T>> put(T entity) {
         entity.getCruTime().updatedNow();
-        return repo.save(entity)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return super.put(entity);
     }
 
     public Mono<ResponseEntity<T>> getById(IdCid idCid) {
