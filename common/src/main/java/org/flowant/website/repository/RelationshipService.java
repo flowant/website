@@ -94,7 +94,7 @@ public class RelationshipService {
                 .then(repoRelation.deleteById(identity));
     }
 
-    public static <T extends HasIdCid> Mono<Void> deleteReviewsByContainerId(UUID containerId) {
+    public static Mono<Void> deleteReviewsByContainerId(UUID containerId) {
         return repoReview.findAllByIdCidContainerId(containerId)
                 .flatMap(review -> repoReview.deleteByIdWithRelationship(review.getIdCid()))
                 .then();
