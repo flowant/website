@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.UUID;
 
 import org.flowant.website.model.Review;
+import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.ReviewMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,15 @@ public class ReviewRepositoryTest extends IdCidRepositoryTest<Review, ReviewRepo
         UUID containerId = UUIDs.timeBased();
         Flux<Review> entities = Flux.range(1, 10).map(i -> ReviewMaker.smallRandom(containerId));
         findAllByContainerIdPageable(containerId, entities);
+    }
+
+    @Test
+    public void findAllByAuthorIdPageable() {
+        UUID authorId = IdMaker.randomUUID();
+        Flux<Review> entities = Flux.range(1, 10)
+                .map(i -> ReviewMaker.largeRandom().setAuthorId(authorId)).cache();
+        cleaner.registerToBeDeleted(entities);
+        saveAndGetPaging(entities, pageable -> repo.findAllByAuthorId(authorId, pageable));
     }
 
     @Test

@@ -3,6 +3,7 @@ package org.flowant.website.model;
 import java.util.UUID;
 
 import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.Indexed;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
@@ -29,6 +30,7 @@ public class Reply implements HasIdCid, HasReputation, HasCruTime {
     IdCid idCid;
 
     @NonNull
+    @Indexed
     @Column("ai")
     UUID authorId;
 

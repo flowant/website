@@ -35,6 +35,15 @@ public class ContentRepositoryTest extends IdCidRepositoryTest<Content, ContentR
     }
 
     @Test
+    public void findAllByAuthorIdPageable() {
+        UUID authorId = IdMaker.randomUUID();
+        Flux<Content> entities = Flux.range(1, 10)
+                .map(i -> ContentMaker.largeRandom().setAuthorId(authorId)).cache();
+        cleaner.registerToBeDeleted(entities);
+        saveAndGetPaging(entities, pageable -> repo.findAllByAuthorId(authorId, pageable));
+    }
+
+    @Test
     public void ordered() {
         testOrdered(Content::getIdCid, Comparator.comparing(Content::getIdentity).reversed(),
                 ContentMaker::smallRandom);

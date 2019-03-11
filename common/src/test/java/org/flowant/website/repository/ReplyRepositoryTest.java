@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.UUID;
 
 import org.flowant.website.model.Reply;
+import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.ReplyMaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,15 @@ public class ReplyRepositoryTest extends IdCidRepositoryTest<Reply, ReplyReposit
         UUID containerId = UUIDs.timeBased();
         Flux<Reply> entities = Flux.range(1, 10).map(i -> ReplyMaker.smallRandom(containerId));
         findAllByContainerIdPageable(containerId, entities);
+    }
+
+    @Test
+    public void findAllByAuthorIdPageable() {
+        UUID authorId = IdMaker.randomUUID();
+        Flux<Reply> entities = Flux.range(1, 10)
+                .map(i -> ReplyMaker.largeRandom().setAuthorId(authorId)).cache();
+        cleaner.registerToBeDeleted(entities);
+        saveAndGetPaging(entities, pageable -> repo.findAllByAuthorId(authorId, pageable));
     }
 
     @Test

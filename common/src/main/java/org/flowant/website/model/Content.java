@@ -32,6 +32,7 @@ public class Content implements HasIdCid, HasReputation, HasCruTime, Comparable<
     IdCid idCid;
 
     @NonNull
+    @Indexed
     @Column("ai")
     UUID authorId;
 
