@@ -1,5 +1,6 @@
 package org.flowant.website.rest;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -82,6 +83,26 @@ public class NotificationRestTest extends RestWithRepositoryTest<Notification, I
                     log.trace(r);
                     Notification n = repo.findById(noti.getIdCid()).block();
                     assertTrue(n.getSubscribers().contains(follower));
+                });
+    }
+
+    @Test
+    public void testRemoveSubscriber() {
+        Notification noti = NotificationMaker.largeRandom();
+        UUID subscriber = IdMaker.randomUUID();
+        noti.setSubscribers(Set.of(subscriber));
+        repo.save(noti).block();
+        cleaner.registerToBeDeleted(noti);
+
+        assertTrue(repo.findById(noti.getIdCid()).block().getSubscribers().contains(subscriber));
+
+        webTestClient.delete()
+                .uri(baseUrl + "/" + noti.getIdentity() + "/" + noti.getContainerId() + "/" + subscriber)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().consumeWith(r -> {
+                    log.trace(r::toString);
+                    assertFalse(repo.findById(noti.getIdCid()).block().getSubscribers().contains(subscriber));
                 });
     }
 

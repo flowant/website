@@ -1,6 +1,7 @@
 package org.flowant.website.rest;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -26,6 +27,8 @@ import reactor.core.publisher.Mono;
 public class NotificationRest extends IdCidRepositoryRest<Notification, NotificationRepository> {
 
     public final static String NOTIFICATION = "/notification";
+    public final static String SUBSCRIBER = "subscriber";
+    public final static String PATH_SEG_SUBSCRIBER = "/{subscriber}";
 
     @Autowired
     RelationRepository repoRelation;
@@ -77,6 +80,16 @@ public class NotificationRest extends IdCidRepositoryRest<Notification, Notifica
             @PathVariable(value = CID) String cid) {
 
         return super.deleteById(IdCid.of(id, cid));
+    }
+
+    @DeleteMapping(value = NOTIFICATION + PATH_SEG_ID_CID + PATH_SEG_SUBSCRIBER)
+    public Mono<ResponseEntity<UUID>> deleteById(
+            @PathVariable(value = ID) String id,
+            @PathVariable(value = CID) String cid,
+            @PathVariable(value = SUBSCRIBER) String subscriber) {
+
+        return repo.removeSubscriber(IdCid.of(id, cid), UUID.fromString(subscriber))
+                .map(ResponseEntity::ok);
     }
 
 }
