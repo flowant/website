@@ -24,7 +24,7 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Content implements HasIdCid, HasReputation, HasCruTime, Comparable<Content> {
+public class Content implements HasIdCid, HasAuthor<Content>, HasReputation, HasCruTime, Comparable<Content> {
 
     @NonNull
     @PrimaryKey

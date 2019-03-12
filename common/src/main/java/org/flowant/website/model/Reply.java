@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Reply implements HasIdCid, HasReputation, HasCruTime {
+public class Reply implements HasIdCid, HasAuthor<Reply>, HasReputation, HasCruTime {
 
     @NonNull
     @PrimaryKey

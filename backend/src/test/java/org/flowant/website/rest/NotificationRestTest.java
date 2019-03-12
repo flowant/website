@@ -67,7 +67,7 @@ public class NotificationRestTest extends RestWithRepositoryTest<Notification, I
         Relation relation = Relation.of(userId, Set.of(), Set.of(follower));
         repoRelation.save(relation).block();
 
-        Notification noti = Notification.of(IdCid.random(userId), "authorName", Set.of(IdMaker.randomUUID()), Category.NC);
+        Notification noti = Notification.of(IdCid.random(userId), "authorName", Category.NC, Set.of(IdMaker.randomUUID()));
         cleaner.registerToBeDeleted(noti);
 
         setDeleter(n -> repo.deleteById(n.getIdCid()).then(repoRelation.deleteById(n.getContainerId())).subscribe());

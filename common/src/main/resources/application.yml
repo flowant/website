@@ -7,6 +7,7 @@ spring:
       port: 9042
 
 website:
+  identity: f1b8dba2-44a4-11e9-944f-99e89c6a8c79
   maxSubContentItems: 5
   maxSubReviewItems: 5
   maxSubReplyItems: 5

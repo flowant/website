@@ -1,11 +1,13 @@
 package org.flowant.website.repository.devutil;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.PreDestroy;
 
+import org.flowant.website.WebSiteConfig;
 import org.flowant.website.event.MockDataGenerateEvent;
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
@@ -15,6 +17,7 @@ import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;
 import org.flowant.website.model.ReviewReputation;
 import org.flowant.website.model.User;
+import org.flowant.website.model.WebSite;
 import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.repository.ContentReputationRepository;
 import org.flowant.website.repository.RelationshipService;
@@ -60,6 +63,9 @@ public class MockContentRepoUtil {
     String address;
 
     @Autowired
+    WebSiteConfig config;
+
+    @Autowired
     WebSiteRepository repoWebSite;
 
     @Autowired
@@ -86,12 +92,11 @@ public class MockContentRepoUtil {
     @Autowired
     UserRepository repoUser;
 
+    WebSite webSite;
     Flux<Content> contents = Flux.empty();
     Flux<User> users = Flux.empty();
 
-    int cntContents = 20;
-
-    int cntUsers = 20;
+    int cntUsersContents = 20;
 
     int cntRepliesPerReview = 3;
 
@@ -121,17 +126,17 @@ public class MockContentRepoUtil {
 
         content.setFileRefs(List.of(postRandomFile()));
 
-        Mono<Content> con = Mono.just(content).cache();
-        con.flatMap(repoContent::save).block();
+        Mono<Content> contentM = Mono.just(content).cache();
+        contentM.flatMap(repoContent::save).block();
 
         Mono<ContentReputation> contentReputation =
-                con.map(c -> ReputationMaker.randomContentReputation(c.getIdCid())).cache();
+                contentM.map(c -> ReputationMaker.randomContentReputation(c.getIdCid()))
+                        .cache();
         contentReputation.flatMap(repoContentRpt::save).block();
 
         // make one review per user at a content
         Flux<Review> reviews = users
-                .map(user -> ReviewMaker.largeRandom(con.block().getIdentity())
-                .setAuthorId(user.getIdentity()))
+                .map(user -> ReviewMaker.largeRandom(contentM.block().getIdentity()).setAuthor(user))
                 .cache();
         reviews.flatMap(repoReview::save).blockLast();
 
@@ -143,8 +148,8 @@ public class MockContentRepoUtil {
         // make cntRepliesPerReview replies per review.
         Flux<Reply> replies = reviews
                 .flatMap(review -> Flux.range(1, cntRepliesPerReview)
-                .map(i -> ReplyMaker.largeRandom(review.getIdentity()))
-                .cast(Reply.class))
+                        .map(i -> ReplyMaker.largeRandom(review.getIdentity()).setAuthor(review))
+                        .cast(Reply.class))
                 .cache();
         replies.flatMap(repoReply::save).blockLast();
 
@@ -152,15 +157,21 @@ public class MockContentRepoUtil {
                 .map(r -> ReputationMaker.randomReplyReputation(r.getIdCid())).cache();
         replyReputations.flatMap(repoReplyRpt::save).blockLast();
 
-        return con.block();
+        return contentM.block();
     }
 
     public void saveMockData() {
 
-        UUID containerId = UUID.fromString("56a1cd50-3c77-11e9-bf26-d571c84212ed");
+        UUID recipeCid = UUID.fromString(config.getContentContainerIds().get(WebSiteConfig.RECIPE));
 
-        users = Flux.range(1, cntUsers).map(i -> UserMaker.largeRandom()).cache();
-        contents = Flux.range(1, cntContents).map(i -> ContentMaker.largeRandom(containerId)).cache();
+        webSite = WebSite.builder()
+                .identity(UUID.fromString(config.getIdentity()))
+                .contentContainerIds(Map.of(WebSiteConfig.RECIPE, recipeCid))
+                .build();
+        repoWebSite.save(webSite).block();
+
+        users = Flux.range(1, cntUsersContents).map(i -> UserMaker.largeRandom()).cache();
+        contents = users.map(user -> ContentMaker.largeRandom(recipeCid).setAuthor(user)).cache();
 
         repoUser.saveAll(users).blockLast();
         contents.map(c -> saveContent(c)).blockLast();
@@ -181,6 +192,8 @@ public class MockContentRepoUtil {
                 .blockLast();
 
         repoUser.deleteAll(users).block();
+
+        repoWebSite.delete(webSite).block();
 
         log.debug("Mock data are deleted before shutting down.");
     }

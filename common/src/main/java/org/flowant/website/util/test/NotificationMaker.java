@@ -18,7 +18,7 @@ public class NotificationMaker {
     static String appendix = "appendix";
 
     public static Notification small(IdCid idCid) {
-        return Notification.of(idCid, authorName, subscribers, category);
+        return Notification.of(idCid, authorName, category, subscribers);
     }
 
     public static Notification smallRandom(UUID containerId) {

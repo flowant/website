@@ -1,6 +1,7 @@
 package org.flowant.website;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -24,10 +25,14 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class WebSiteConfig {
 
+    public static final String RECIPE = "recipe";
+
+    String identity;
     int maxSubContentItems;
     int maxSubReviewItems;
     int maxSubReplyItems;
     long ttlNotifications;
+    Map<String, String> contentContainerIds;
 
     static HashMap<Class<?>, Integer> mapMaxSubItems = new HashMap<>();
 

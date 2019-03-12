@@ -34,14 +34,14 @@ public class Notification implements HasIdCid {
     @Column("an")
     String authorName;
 
+    @NonNull
+    @Column("c")
+    Category category;
+
     @Indexed
     @NonNull
     @Column("s")
     Set<UUID> subscribers;
-
-    @NonNull
-    @Column("c")
-    Category category;
 
     @Column("ri")
     UUID referenceId;
@@ -57,6 +57,10 @@ public class Notification implements HasIdCid {
             subscribers = new HashSet<>();
         }
         return subscribers;
+    }
+
+    public Notification fromUser(User user, Category category, Set<UUID> subscribers) {
+        return of(IdCid.random(user.getIdentity()), user.getDisplayName(), category, subscribers);
     }
 
 }

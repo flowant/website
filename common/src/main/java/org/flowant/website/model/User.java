@@ -52,6 +52,9 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     @Column("ln")
     String lastname;
 
+    @Column("dn")
+    String displayName;
+
     @Builder.Default
     @Column("g")
     Gender gender = Gender.U;
@@ -94,4 +97,10 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     @Column("en")
     boolean enabled = true;
 
+    public String getDisplayName() {
+        if(displayName == null) {
+            displayName = username;
+        }
+        return displayName;
+    }
 }
