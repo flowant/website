@@ -26,6 +26,7 @@ import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.repository.ContentReputationRepository;
 import org.flowant.website.repository.MessageRepository;
 import org.flowant.website.repository.NotificationRepository;
+import org.flowant.website.repository.RelationRepository;
 import org.flowant.website.repository.RelationshipService;
 import org.flowant.website.repository.ReplyRepository;
 import org.flowant.website.repository.ReplyReputationRepository;
@@ -60,7 +61,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Log4j2
-public class MockContentRepoUtil {
+public class MockDataUtil {
 
     @Value("${server.port}")
     int port;
@@ -102,11 +103,17 @@ public class MockContentRepoUtil {
     MessageRepository repoMessage;
 
     @Autowired
+    RelationRepository repoRelation;
+
+    @Autowired
     UserRepository repoUser;
 
     WebSite webSite;
+
     Flux<Content> contents = Flux.empty();
+
     Flux<User> users = Flux.empty();
+
     Set<UUID> userSet = Set.of();
 
     int cntUsersContents = 20;
@@ -114,6 +121,7 @@ public class MockContentRepoUtil {
     int cntRepliesPerReview = 3;
 
     public FileRef postRandomFile() {
+
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
 
         Random random = new Random();
@@ -188,6 +196,10 @@ public class MockContentRepoUtil {
                 .blockLast();
     }
 
+    public void follow(User follower) {
+        users.flatMap(followee -> repoRelation.follow(follower.getIdentity(), followee.getIdentity())).blockLast();
+    }
+
     public void saveMockData() {
 
         UUID recipeCid = UUID.fromString(config.getContentContainerIds().get(WebSiteConfig.RECIPE));
@@ -206,12 +218,8 @@ public class MockContentRepoUtil {
         contents.map(c -> saveContent(c)).blockLast();
 
         users.subscribe(this::sendMessage);
-    }
 
-    @EventListener
-    public void onApplicationEvent(MockDataGenerateEvent event) {
-        log.debug(event::toString);
-        saveMockData();
+        users.subscribe(this::follow);
     }
 
     @PreDestroy
@@ -230,7 +238,15 @@ public class MockContentRepoUtil {
 
         users.flatMap(user -> repoMessage.deleteAllByIdCidContainerId(user.getIdentity())).blockLast();
 
+        users.flatMap(user -> repoRelation.deleteById(user.getIdentity())).blockLast();
+
         log.debug("Mock data are deleted before shutting down.");
+    }
+
+    @EventListener
+    public void onApplicationEvent(MockDataGenerateEvent event) {
+        log.debug(event::toString);
+        saveMockData();
     }
 
 }
