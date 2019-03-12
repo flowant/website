@@ -36,14 +36,14 @@ public class Relation {
 
     public Set<UUID> getFollowings() {
         if (followings == null) {
-            followings =new HashSet<>();
+            followings = new HashSet<>();
         }
         return followings;
     }
 
     public Set<UUID> getFollowers() {
         if (followers == null) {
-            followers =new HashSet<>();
+            followers = new HashSet<>();
         }
         return followers;
     }
