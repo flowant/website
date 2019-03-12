@@ -7,6 +7,6 @@ import reactor.core.publisher.Mono;
 
 public interface ReputationCounterFragment<T extends ReputationCounter> {
 
-    Mono<Boolean> accumulate(T entity, Class<T> entityClass);
+    Mono<Boolean> accumulate(T entity);
 
 }

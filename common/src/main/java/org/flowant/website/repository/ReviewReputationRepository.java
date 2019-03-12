@@ -12,7 +12,7 @@ public interface ReviewReputationRepository extends ReputationCounterRepository<
 
     @Override
     default Mono<ReviewReputation> save(ReviewReputation rr) {
-        return accumulate(rr, ReviewReputation.class)
+        return accumulate(rr)
                 .then(findById(rr.getIdCid())
                         .flatMap(RelationshipService::updateReputation)
                         .flatMap(RelationshipService::updatePopularSubItems));

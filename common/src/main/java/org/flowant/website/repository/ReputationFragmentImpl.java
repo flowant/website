@@ -1,11 +1,13 @@
 package org.flowant.website.repository;
 
-import static org.flowant.website.repository.CassandraTemplateUtil.getTableName;
+import static org.springframework.data.cassandra.core.query.Criteria.where;
 
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reputation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.ReactiveCassandraOperations;
+import org.springframework.data.cassandra.core.query.Query;
+import org.springframework.data.cassandra.core.query.Update;
 
 import reactor.core.publisher.Mono;
 
@@ -17,21 +19,11 @@ public class ReputationFragmentImpl<T> implements ReputationFragment<T> {
     @Override
     public Mono<Reputation> updateReputationById(IdCid idCid, Reputation reputation, Class<T> entityClass) {
 
-        // TODO Consider preparing the statement only once.
-
-        final String cqlUpdateReputation = "UPDATE " + getTableName(operations, entityClass) +
-                " SET rp = {viewed: ?, rated: ?, liked: ?, disliked: ?, reported: ?, reputed: ?} " +
-                " WHERE id = ? and cid = ?";
-
-        return operations.getReactiveCqlOperations().execute(cqlUpdateReputation,
-                reputation.getViewed(),
-                reputation.getRated(),
-                reputation.getLiked(),
-                reputation.getDisliked(),
-                reputation.getReported(),
-                reputation.getReputed(),
-                idCid.getIdentity(),
-                idCid.getContainerId())
+        return operations.update(
+                Query.query(where("idCidIdentity").is(idCid.getIdentity()))
+                        .and(where("idCidContainerId").is(idCid.getContainerId())),
+                Update.empty().set("reputation", reputation),
+                entityClass)
                 .thenReturn(reputation);
     }
 
