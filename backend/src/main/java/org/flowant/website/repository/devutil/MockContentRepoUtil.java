@@ -14,6 +14,7 @@ import org.flowant.website.model.Category;
 import org.flowant.website.model.Content;
 import org.flowant.website.model.ContentReputation;
 import org.flowant.website.model.FileRef;
+import org.flowant.website.model.Message;
 import org.flowant.website.model.Notification;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
@@ -181,6 +182,12 @@ public class MockContentRepoUtil {
         return contentM.block();
     }
 
+    public void sendMessage(User sender) {
+        users.map(user -> Message.fromUser(user.getIdentity(), sender, sender.toString()))
+                .flatMap(repoMessage::save)
+                .blockLast();
+    }
+
     public void saveMockData() {
 
         UUID recipeCid = UUID.fromString(config.getContentContainerIds().get(WebSiteConfig.RECIPE));
@@ -197,6 +204,8 @@ public class MockContentRepoUtil {
 
         repoUser.saveAll(users).blockLast();
         contents.map(c -> saveContent(c)).blockLast();
+
+        users.subscribe(this::sendMessage);
     }
 
     @EventListener
@@ -218,6 +227,8 @@ public class MockContentRepoUtil {
         repoWebSite.delete(webSite).block();
 
         users.flatMap(user -> repoNotification.deleteAllByIdCidContainerId(user.getIdentity())).blockLast();
+
+        users.flatMap(user -> repoMessage.deleteAllByIdCidContainerId(user.getIdentity())).blockLast();
 
         log.debug("Mock data are deleted before shutting down.");
     }

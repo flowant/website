@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @RequiredArgsConstructor(staticName="of")
 @NoArgsConstructor
 @Table
-public class Message implements HasIdCid {
+public class Message implements HasIdCid, HasAuthor<Message> {
 
     // container means receiver
     @NonNull
@@ -42,5 +42,9 @@ public class Message implements HasIdCid {
 
     @Column("ir")
     boolean isRead = false;
+
+    public static Message fromUser(UUID receiver, User sender, String msg) {
+        return of(IdCid.random(receiver), sender.getIdentity(), sender.getDisplayName(), msg);
+    }
 
 }
