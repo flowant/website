@@ -59,8 +59,12 @@ public class Notification implements HasIdCid {
         return subscribers;
     }
 
-    public Notification fromUser(User user, Category category, Set<UUID> subscribers) {
+    public static Notification fromUser(User user, Category category, Set<UUID> subscribers) {
         return of(IdCid.random(user.getIdentity()), user.getDisplayName(), category, subscribers);
+    }
+
+    public static Notification fromAuthor(HasAuthor<?> author, Category category, Set<UUID> subscribers) {
+        return of(IdCid.random(author.getAuthorId()), author.getAuthorName(), category, subscribers);
     }
 
 }
