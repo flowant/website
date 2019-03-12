@@ -7,6 +7,8 @@ import javax.validation.Valid;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Notification;
 import org.flowant.website.repository.NotificationRepository;
+import org.flowant.website.repository.RelationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,9 @@ import reactor.core.publisher.Mono;
 public class NotificationRest extends IdCidRepositoryRest<Notification, NotificationRepository> {
 
     public final static String NOTIFICATION = "/notification";
+
+    @Autowired
+    RelationRepository repoRelation;
 
     @GetMapping(value = NOTIFICATION)
     public Mono<ResponseEntity<List<Notification>>> getAllByContainerId(
@@ -47,13 +52,23 @@ public class NotificationRest extends IdCidRepositoryRest<Notification, Notifica
     @PostMapping(value = NOTIFICATION)
     public Mono<ResponseEntity<Notification>> post(@Valid @RequestBody Notification notification) {
 
-        return super.post(notification);
+        switch(notification.getCategory()) {
+        case NC:
+            return repoRelation.findById(notification.getContainerId())
+                    .map(relation -> {
+                        notification.getSubscribers().addAll(relation.getFollowers());
+                        return notification;
+                    }).flatMap(super::post);
+        default:
+            return super.post(notification);
+        }
+
     }
 
     @PutMapping(value = NOTIFICATION)
     public Mono<ResponseEntity<Notification>> put(@Valid @RequestBody Notification notification) {
 
-        return super.put(notification);
+        return post(notification);
     }
 
     @DeleteMapping(value = NOTIFICATION + PATH_SEG_ID_CID)

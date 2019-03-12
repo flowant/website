@@ -26,7 +26,12 @@ public class Notification implements HasIdCid {
     @NonNull
     @PrimaryKey
     @Column("ic")
+    // containerId means authorId; source of notification
     IdCid idCid;
+
+    @NonNull
+    @Column("an")
+    String authorName;
 
     @Indexed
     @NonNull
@@ -39,6 +44,9 @@ public class Notification implements HasIdCid {
 
     @Column("ri")
     UUID referenceId;
+
+    @Column("rc")
+    UUID referenceCid;
 
     @Column("a")
     String appendix;

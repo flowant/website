@@ -11,12 +11,14 @@ import org.flowant.website.util.IdMaker;
 public class NotificationMaker {
 
     static Set<UUID> subscribers = Set.of(IdMaker.randomUUID());
-    static Category category = Category.NC;
+    static String authorName = "authorName";
+    static Category category = Category.L;
     static UUID referenceId = IdMaker.randomUUID();
+    static UUID referenceCid = IdMaker.randomUUID();
     static String appendix = "appendix";
 
     public static Notification small(IdCid idCid) {
-        return Notification.of(idCid, subscribers, category);
+        return Notification.of(idCid, authorName, subscribers, category);
     }
 
     public static Notification smallRandom(UUID containerId) {
@@ -31,6 +33,7 @@ public class NotificationMaker {
         UUID id = idCid.getIdentity();
         Notification notification = small(idCid);
         notification.setReferenceId(referenceId);
+        notification.setReferenceCid(referenceCid);
         notification.setAppendix(appendix + id);
         return notification;
     }
