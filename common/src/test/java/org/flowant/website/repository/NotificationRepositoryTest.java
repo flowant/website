@@ -1,5 +1,8 @@
 package org.flowant.website.repository;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Comparator;
 import java.util.Set;
 import java.util.UUID;
@@ -50,6 +53,19 @@ public class NotificationRepositoryTest extends IdCidRepositoryTest<Notification
                 .map(i -> NotificationMaker.largeRandom().setSubscribers(Set.of(subscriber))).cache();
         cleaner.registerToBeDeleted(notifications);
         saveAndGetPaging(notifications, pageable -> repo.findAllBySubscriberId(subscriber, pageable));
+    }
+
+    @Test
+    public void removeSubscriber() {
+        Notification noti = NotificationMaker.largeRandom();
+        UUID subscriber = IdMaker.randomUUID();
+        noti.setSubscribers(Set.of(subscriber));
+        repo.save(noti).block();
+        cleaner.registerToBeDeleted(noti);
+
+        assertTrue(repo.findById(noti.getIdCid()).block().getSubscribers().contains(subscriber));
+        repo.removeSubscriber(noti.getIdCid(), subscriber).block();
+        assertFalse(repo.findById(noti.getIdCid()).block().getSubscribers().contains(subscriber));
     }
 
 }

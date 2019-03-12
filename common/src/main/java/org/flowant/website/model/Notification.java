@@ -1,5 +1,6 @@
 package org.flowant.website.model;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,5 +51,12 @@ public class Notification implements HasIdCid {
 
     @Column("a")
     String appendix;
+
+    public Set<UUID> getSubscribers() {
+        if (subscribers == null) {
+            subscribers = new HashSet<>();
+        }
+        return subscribers;
+    }
 
 }

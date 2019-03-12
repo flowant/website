@@ -9,7 +9,7 @@ import org.springframework.data.domain.Slice;
 
 import reactor.core.publisher.Mono;
 
-public interface NotificationRepository extends IdCidRepository<Notification> {
+public interface NotificationRepository extends NotificationFragment, IdCidRepository<Notification> {
 
     public static final String FIND_BY_SUBSCRIBER = "select * from notification where s contains ?0";
 
