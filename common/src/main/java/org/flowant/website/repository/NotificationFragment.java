@@ -9,6 +9,6 @@ import reactor.core.publisher.Mono;
 
 public interface NotificationFragment {
 
-    Mono<Boolean> removeSubscriber(IdCid idCid, UUID subscriber);
+    Mono<UUID> removeSubscriber(IdCid idCid, UUID subscriber);
 
 }

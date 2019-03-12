@@ -19,13 +19,13 @@ public class NotificationFragmentImpl implements NotificationFragment {
     private ReactiveCassandraOperations operations;
 
     @Override
-    public Mono<Boolean> removeSubscriber(IdCid idCid, UUID subscriber) {
+    public Mono<UUID> removeSubscriber(IdCid idCid, UUID subscriber) {
         return operations.update(
                 Query.query(where("idCidIdentity").is(idCid.getIdentity()))
                         .and(where("idCidContainerId").is(idCid.getContainerId())),
                 Update.empty().remove("subscribers", subscriber),
                 Notification.class)
-                .thenReturn(true);
+                .thenReturn(subscriber);
     }
 
 }
