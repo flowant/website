@@ -18,6 +18,8 @@ import com.datastax.driver.core.utils.UUIDs;
 
 import junitparams.JUnitParamsRunner;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest
@@ -66,6 +68,17 @@ public class NotificationRepositoryTest extends IdCidRepositoryTest<Notification
         assertTrue(repo.findById(noti.getIdCid()).block().getSubscribers().contains(subscriber));
         repo.removeSubscriber(noti.getIdCid(), subscriber).block();
         assertFalse(repo.findById(noti.getIdCid()).block().getSubscribers().contains(subscriber));
+    }
+
+    @Test
+    public void saveWithTtl() throws InterruptedException {
+        long ttl = 1000;
+        Notification noti = NotificationMaker.largeRandom();
+        repo.saveWithTtl(noti, ttl).block();
+        Mono<Notification> find = repo.findById(noti.getIdCid());
+        StepVerifier.create(find).expectNext(noti).verifyComplete();
+        Thread.sleep(ttl + 100);
+        StepVerifier.create(find).expectNextCount(0).verifyComplete();
     }
 
 }

@@ -27,6 +27,7 @@ public class WebSiteConfig {
     int maxSubContentItems;
     int maxSubReviewItems;
     int maxSubReplyItems;
+    long ttlNotifications;
 
     static HashMap<Class<?>, Integer> mapMaxSubItems = new HashMap<>();
 

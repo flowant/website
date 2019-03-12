@@ -2,11 +2,13 @@ package org.flowant.website.repository;
 
 import static org.springframework.data.cassandra.core.query.Criteria.where;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.data.cassandra.core.ReactiveCassandraOperations;
 import org.springframework.data.cassandra.core.query.Query;
 import org.springframework.data.cassandra.core.query.Update;
@@ -26,6 +28,13 @@ public class NotificationFragmentImpl implements NotificationFragment {
                 Update.empty().remove("subscribers", subscriber),
                 Notification.class)
                 .thenReturn(subscriber);
+    }
+
+    @Override
+    public Mono<Notification> saveWithTtl(Notification notification, long ttlMillis) {
+        InsertOptions options = InsertOptions.builder().ttl(Duration.ofMillis(ttlMillis)).build();
+        return operations.insert(notification, options)
+                .thenReturn(notification);
     }
 
 }

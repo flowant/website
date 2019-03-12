@@ -5,11 +5,13 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.flowant.website.WebSiteConfig;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Notification;
 import org.flowant.website.repository.NotificationRepository;
 import org.flowant.website.repository.RelationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,9 @@ public class NotificationRest extends IdCidRepositoryRest<Notification, Notifica
 
     @Autowired
     RelationRepository repoRelation;
+
+    @Autowired
+    WebSiteConfig config;
 
     @GetMapping(value = NOTIFICATION)
     public Mono<ResponseEntity<List<Notification>>> getAllByContainerId(
@@ -61,11 +66,17 @@ public class NotificationRest extends IdCidRepositoryRest<Notification, Notifica
                     .map(relation -> {
                         notification.getSubscribers().addAll(relation.getFollowers());
                         return notification;
-                    }).flatMap(super::post);
+                    }).flatMap(this::saveWithTtl);
         default:
-            return super.post(notification);
+            return saveWithTtl(notification);
         }
+    }
 
+    public Mono<ResponseEntity<Notification>> saveWithTtl(Notification notification) {
+
+        return repo.saveWithTtl(notification, config.getTtlNotifications())
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(value = NOTIFICATION)

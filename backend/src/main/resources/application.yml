@@ -19,6 +19,7 @@ website:
   maxSubContentItems: 12
   maxSubReviewItems: 5
   maxSubReplyItems: 5
+  ttlNotifications: 2592000000 # 86400 * 30 * 1000, 30 days in milliseconds
   cassandra:
     cqlCreateKeySpace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
   storage:

@@ -20,6 +20,4 @@ public interface NotificationRepository extends NotificationFragment, IdCidRepos
     @Query("delete from notification where cid = ?0")
     Mono<Object> deleteAllByIdCidContainerId(UUID containerId);
 
-    // TODO delete old notifications
-
 }
