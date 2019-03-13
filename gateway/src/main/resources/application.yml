@@ -77,6 +77,34 @@ spring:
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
+      - id: message
+        uri: http://127.0.0.1:9092/message
+        predicates:
+        - Path=/api/message/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: notification
+        uri: http://127.0.0.1:9092/notification
+        predicates:
+        - Path=/api/notification/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: relation
+        uri: http://127.0.0.1:9092/relation
+        predicates:
+        - Path=/api/relation/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+      - id: user
+        uri: http://127.0.0.1:9092/user
+        predicates:
+        - Path=/api/user/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /$\{segment}
+
 website:
   cors:
     allowedOrigins: "http://localhost:9090"
