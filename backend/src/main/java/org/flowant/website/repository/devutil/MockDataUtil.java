@@ -203,6 +203,7 @@ public class MockDataUtil {
     public void saveMockData() {
 
         UUID recipeCid = UUID.fromString(config.getContentContainerIds().get(WebSiteConfig.RECIPE));
+        UUID userId = UUID.fromString("b901f010-4546-11e9-97e9-594de5a6cf90");
 
         webSite = WebSite.builder()
                 .identity(UUID.fromString(config.getIdentity()))
@@ -210,7 +211,11 @@ public class MockDataUtil {
                 .build();
         repoWebSite.save(webSite).block();
 
-        users = Flux.range(1, cntUsersContents).map(i -> UserMaker.largeRandom()).cache();
+        users = Flux.range(1, cntUsersContents - 1)
+                .map(i -> UserMaker.largeRandom())
+                .concatWith(Flux.just(UserMaker.large(userId)))
+                .cache();
+
         users.doOnNext(user -> user.setFileRefs(List.of(postRandomFile()))).blockLast();
 
         userSet = Set.copyOf(users.map(User::getIdentity).collectList().block());
