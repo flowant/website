@@ -211,6 +211,8 @@ public class MockDataUtil {
         repoWebSite.save(webSite).block();
 
         users = Flux.range(1, cntUsersContents).map(i -> UserMaker.largeRandom()).cache();
+        users.doOnNext(user -> user.setFileRefs(List.of(postRandomFile()))).blockLast();
+
         userSet = Set.copyOf(users.map(User::getIdentity).collectList().block());
         contents = users.map(user -> ContentMaker.largeRandom(recipeCid).setAuthor(user)).cache();
 
@@ -230,9 +232,10 @@ public class MockDataUtil {
                 .then(RelationshipService.deleteSubItemById(c.getContainerId())))
                 .blockLast();
 
-        repoUser.deleteAll(users).block();
-
         repoWebSite.delete(webSite).block();
+
+        users.flatMap(u -> FileStorage.deleteAll(u.getFileRefs())
+                .then(repoUser.delete(u))).blockLast();
 
         users.flatMap(user -> repoNotification.deleteAllByIdCidContainerId(user.getIdentity())).blockLast();
 

@@ -77,6 +77,9 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     @Column("it")
     Set<String> interests; //TODO to be updated by user activities;
 
+    @Column("fr")
+    List<FileRef> fileRefs;
+
     @NonNull
     @Column("ct")
     CRUZonedTime cruTime;//TODO updated time

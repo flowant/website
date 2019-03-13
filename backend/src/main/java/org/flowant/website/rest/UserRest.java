@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.RelationshipService;
 import org.flowant.website.repository.UserRepository;
+import org.flowant.website.storage.FileStorage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +48,10 @@ public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
 
     @DeleteMapping(value = USER + PATH_SEG_ID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
-        return repo.deleteByIdWithRelationship(UUID.fromString(id))
-                .map(ResponseEntity::ok);
+        UUID userId = UUID.fromString(id);
+        return repo.findById(userId)
+                .doOnNext(u-> FileStorage.deleteAll(u.getFileRefs()))
+                .then(repo.deleteByIdWithRelationship(userId)
+                        .map(ResponseEntity::ok));
     }
 }
