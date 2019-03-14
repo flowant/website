@@ -3,6 +3,7 @@ package org.flowant.website.rest;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.flowant.website.model.FileRef;
 import org.flowant.website.storage.FileStorage;
@@ -33,8 +34,17 @@ public class FileRest {
 
     @PostMapping(value = FILES)
     public Mono<ResponseEntity<List<FileRef>>> postAll(@RequestPart(ATTACHMENT) Flux<FilePart> files) {
+
         return FileStorage.saveAll(files)
                 .collectList()
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping(value = FILES__ID__)
+    public Mono<ResponseEntity<FileRef>> post(@PathVariable(value = ID) String id, @RequestPart(ATTACHMENT) FilePart file) {
+
+        return FileStorage.save(UUID.fromString(id), file)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -42,6 +52,7 @@ public class FileRest {
     //TODO CACHE
     @GetMapping(value = FILES__ID__)
     public Mono<ResponseEntity<Resource>> getById(@PathVariable(value = ID) String id) {
+
         return FileStorage.findById(id)
                 .map(res -> ResponseEntity.ok()
                         .header(CONTENT_DISPOSITION, "attachment; filename=\"" + res.getFilename() + "\"")
@@ -51,6 +62,7 @@ public class FileRest {
 
     @DeleteMapping(value = FILES__ID__)
     public Mono<ResponseEntity<Boolean>> deleteById(@PathVariable(value = ID) String id) {
+
         return FileStorage.deleteById(id)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -58,6 +70,7 @@ public class FileRest {
 
     @PostMapping(value = FILES_DELETES)
     public Mono<ResponseEntity<Boolean>> deleteAll(@RequestBody Flux<FileRef> files) {
+
         return FileStorage.deleteAll(files)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));

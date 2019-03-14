@@ -50,34 +50,34 @@ public class FileStorage {
         log.debug("Storage's root path is created:{}", root);
     }
 
-    public static Flux<FileRef> saveAll(Flux<FilePart> files) {
-        return files.flatMap(partFile -> {
-            UUID identity = UUIDs.timeBased();
-            FileRef fileRef = FileRef.builder()
-                    .identity(identity)
-                    .cruTime(CRUZonedTime.now())
-                    .contentType(partFile.headers().getContentType().toString())
-                    .length(partFile.headers().getContentLength())
-                    .filename(partFile.filename())
-                    .uri(FileRest.FILES + SEP_URL + identity)
-                    .build();
+    public static Mono<FileRef> save(UUID identity, FilePart filePart) {
+        FileRef fileRef = FileRef.builder()
+                .identity(identity)
+                .cruTime(CRUZonedTime.now())
+                .contentType(filePart.headers().getContentType().toString())
+                .length(filePart.headers().getContentLength())
+                .filename(filePart.filename())
+                .uri(FileRest.FILES + SEP_URL + identity)
+                .build();
 
-            File file = getPath(identity).toFile();
-            return partFile.transferTo(file)
-                    .cast(FileRef.class)
-                    .concatWith(Mono.just(fileRef.setLength(file.length())));
-        });
+        File file = getPath(identity).toFile();
+        return filePart.transferTo(file)
+                .thenReturn(fileRef.setLength(file.length()));
     }
 
-    public static Flux<Resource> findAll () throws IOException {
+    public static Flux<FileRef> saveAll(Flux<FilePart> files) {
+        return files.flatMap(partFile -> save(UUIDs.timeBased(), partFile));
+    }
+
+    public static Flux<Resource> findAll() throws IOException {
         return Flux.fromStream(listFiles(root)).map(path -> new FileSystemResource(path));
     }
 
-    public static Mono<Resource> findById (String id) {
+    public static Mono<Resource> findById(String id) {
         return exist(id) ? Mono.just(new FileSystemResource(getPath(id))) : Mono.empty();
     }
 
-    public static Mono<Resource> findById (UUID id) {
+    public static Mono<Resource> findById(UUID id) {
         return findById(id.toString());
     }
 

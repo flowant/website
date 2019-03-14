@@ -1,10 +1,15 @@
 package org.flowant.website.rest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
+import java.util.UUID;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.FileRef;
 import org.flowant.website.storage.FileStorage;
+import org.flowant.website.util.IdMaker;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,7 +73,9 @@ public class FileRestTest extends RestTest {
     public void testPosts(int count) {
         postFiles(count, webTestClient).consumeWith(body -> {
             // log.trace(body); // use if Http requests need to be debugged.
-            body.getResponseBody().forEach(fileRef -> {
+            List<FileRef> refs = body.getResponseBody();
+            assertEquals(count, refs.size());
+            refs.forEach(fileRef -> {
                 log.trace("post files response:{}", fileRef);
                 StepVerifier.create(FileStorage.findById(fileRef.getIdentity())).expectNextCount(1).verifyComplete();
                 FileStorage.deleteById(fileRef.getIdentity()).subscribe();
@@ -111,6 +118,36 @@ public class FileRestTest extends RestTest {
                                 });
                 });
         });
+    }
+
+    @Test
+    public void testPostOneAndGetId() {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        ClassPathResource img = new ClassPathResource("sea1.jpg");
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<ClassPathResource> entity = new HttpEntity<>(img, headers);
+        parts.add(FileRest.ATTACHMENT, entity);
+
+        UUID identity = IdMaker.randomUUID();
+
+        webTestClient.post()
+                .uri(FileRest.FILES + "/" + identity)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(parts))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(FileRef.class).consumeWith(body -> {
+                    FileRef fileRef = body.getResponseBody();
+                    assertEquals(identity, fileRef.getIdentity());
+                    webTestClient.get()
+                            .uri(FileRest.FILES__ID__, fileRef.getIdentity())
+                            .exchange()
+                            .expectStatus().isOk()
+                            .expectBody().consumeWith( s -> {
+                                assertTrue(0 < s.getResponseBodyContent().length);
+                                FileStorage.deleteById(fileRef.getIdentity()).subscribe();
+                            });
+                });
     }
 
     @Test
