@@ -6,7 +6,11 @@ export enum Model {
   Reply = "Reply",
   ContentRpt = "ContentRpt",
   ReviewRpt = "ReviewRpt",
-  ReplyRpt = "ReplyRpt"
+  ReplyRpt = "ReplyRpt",
+  User = "User",
+  Message = "Message",
+  Notification = "Notification",
+  Relation = "Relation"
 }
 
 export class Config {
@@ -21,6 +25,12 @@ export class Config {
   static replyRptUrl = env.url.gateway + env.path.replyRpt;
   static fileUrl = env.url.gateway + env.path.files;
   static fileDeletesUrl = Config.fileUrl + env.path.deletes;
+  static messageUrl = env.url.gateway + env.path.message;
+  static notificationUrl = env.url.gateway + env.path.notification;
+  static relationUrl = env.url.gateway + env.path.relation;
+  static userUrl = env.url.gateway + env.path.user;
+  static imgServerUrl = Config.fileUrl;
+
   static popularPath = env.path.popular;
 
   static defaultPage = "0";
@@ -32,7 +42,11 @@ export class Config {
     [Model.Reply, Config.replyUrl],
     [Model.ContentRpt, Config.contentRptUrl],
     [Model.ReviewRpt, Config.reviewRptUrl],
-    [Model.ReplyRpt, Config.replyRptUrl]
+    [Model.ReplyRpt, Config.replyRptUrl],
+    [Model.User, Config.userUrl],
+    [Model.Message, Config.messageUrl],
+    [Model.Notification, Config.notificationUrl],
+    [Model.Relation, Config.relationUrl],
   ]);
 
   static getUrl(model: Model): string {

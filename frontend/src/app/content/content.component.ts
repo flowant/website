@@ -19,7 +19,7 @@ export class ContentComponent implements OnInit {
 
   model: Model = Model.Content;
 
-  imgServerUrl: string = Config.gatewayUrl;
+  imgServerUrl: string = Config.imgServerUrl;
 
   content: Content;
 

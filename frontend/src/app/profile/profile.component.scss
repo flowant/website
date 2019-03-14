@@ -1,0 +1,36 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+@import "src/styles.scss";
+
+.inputGroup {
+    @extend .input-group;
+    @extend .m-1;
+}
+
+.inputPrepend {
+    @extend .input-group-prepend;
+    width: 33%;
+}
+
+.inputPrependLabel {
+    @extend .input-group-text;
+    @extend .pl-2;
+    width: 100%;
+}
+
+.inputBox {
+    @extend .form-control;
+}
+
+.inputBoxReadonly {
+    @extend .inputBox;
+    pointer-events: none;
+}
+
+.select {
+    @extend .custom-select;
+}
+
+.selectReadonly {
+    @extend .select;
+    pointer-events: none;
+}

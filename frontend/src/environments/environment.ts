@@ -19,6 +19,9 @@ export const environment = {
     deletes: '/deletes',
     popular: '/popular',
     website: '/website',
+    message: '/message',
+    notification: '/notification',
+    relation: '/relation',
     user: '/user'
   }
 };

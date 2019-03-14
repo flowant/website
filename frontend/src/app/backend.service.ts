@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { NGXLogger } from 'ngx-logger';
+import { NGXLogger, LoggerConfig } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { IdCid, HasIdCid, Content, Reputation, reviver, FileRefs, RespWithLink } from './protocols/model';
+import { IdCid, HasIdCid, IdToPath, Content, Reputation, reviver, FileRefs, RespWithLink, User } from './protocols/model';
 import { MessageService } from './message.service';
 import { Config, Model } from './config';
 
@@ -81,12 +81,12 @@ export class BackendService {
         catchError(this.handleError<RespWithLink<T>>(`getModels query:${queryParams}`)));
   }
 
-  getModel<T>(model: Model, idCid: IdCid): Observable<T> {
-    const url = Config.getUrl(model) + idCid.toPath();
+  getModel<T>(model: Model, idToPath: IdToPath): Observable<T> {
+    const url = Config.getUrl(model) + '/' + idToPath.toString();
     return this.http.get(url, baseOptions).pipe(
         map(r => JSON.parse(r.body, reviver)),
         tap(m => this.logger.trace('got model:', m)),
-        catchError(this.handleError<T>(`getModel model=${model} idCid=${idCid}`)));
+        catchError(this.handleError<T>(`getModel model=${model} idToPath=${idToPath}`)));
   }
 
   postModel<T>(model: Model, entity: T): Observable<T> {
@@ -98,14 +98,25 @@ export class BackendService {
   }
 
   /** DELETE: delete the t from the server */
-  deleteModel<T extends HasIdCid>(model: Model, entity: T | IdCid): Observable<any> {
-    const idCid = entity instanceof IdCid ? entity : entity.idCid;
-    const url = Config.getUrl(model) + idCid.toPath();
-
+  deleteModel<T extends HasIdCid>(model: Model, idToPath: IdToPath): Observable<any> {
+    const url = Config.getUrl(model) + '/' + idToPath.toString();
     return this.http.delete(url, writeOptions).pipe(
-        tap(r => this.logger.trace(`deleted model idCid:${idCid}, resp:`, r)),
+        tap(r => this.logger.trace(`deleted model idToPath:${idToPath}, resp:`, r)),
         catchError(this.handleError<string>('deleteModel'))
     );
+  }
+
+  // FileList contains only one element when identity is used.
+  // identity is the same as user identity, it enable to find the user picture by user id.
+  addFile(identity: string, file: FileList): Observable<FileRefs> {
+    let uploadData = new FormData();
+
+    uploadData.append('attachment', file[0], file[0].name);
+
+    return this.http.post(Config.fileUrl + '/' + identity, uploadData, baseOptions).pipe(
+        map(r => JSON.parse(r.body, reviver)),
+        tap(r => this.logger.trace('added files:', r)),
+        catchError(this.handleError<FileRefs>('addFile')));
   }
 
   addFiles(files: FileList): Observable<FileRefs[]> {

@@ -6,7 +6,7 @@
         theme: "minimal"
     });
 
-    $('#dismiss, .overlay').on('click', function () {
+    $('#dismiss, .overlay, .sidebar-link').on('click', function () {
         $('#sidebar').removeClass('active');
         $('.overlay').removeClass('active');
     });
@@ -34,7 +34,7 @@
     var $anchor = $(this);
     $('html, body').stop().animate({
       scrollTop: ($($anchor.attr('href')).offset().top)
-    }, 1000, 'easeInOutExpo');
+    }, 500, 'easeInOutExpo');
     e.preventDefault();
   });
 

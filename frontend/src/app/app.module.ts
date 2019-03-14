@@ -16,6 +16,9 @@ import { ReviewComponent } from './review/review.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ReputationComponent } from './reputation/reputation.component';
+import { MessageComponent } from './message/message.component';
+import { NotificationComponent } from './notification/notification.component';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +31,10 @@ import { ReputationComponent } from './reputation/reputation.component';
     ReviewComponent,
     TopbarComponent,
     SidebarComponent,
-    ReputationComponent
+    ReputationComponent,
+    MessageComponent,
+    NotificationComponent,
+    UserComponent
   ],
   imports: [
     NgbModule,

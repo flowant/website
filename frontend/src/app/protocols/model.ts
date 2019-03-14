@@ -23,6 +23,10 @@ export interface HasIdCid {
   idCid: IdCid;
 }
 
+export interface IdToPath {
+  toString(): string;
+}
+
 export class IdCid {
   identity: string;
   containerId: string;
@@ -32,8 +36,8 @@ export class IdCid {
     this.containerId = containerId;
   }
 
-  toPath(): string {
-    return `/${this.identity}/${this.containerId}`;
+  toString(): string {
+    return `${this.identity}/${this.containerId}`;
   }
 
   static random(containerId?: string): IdCid {
@@ -44,6 +48,8 @@ export class IdCid {
 
 export class Content {
   idCid: IdCid = IdCid.random();
+  authorId: string;
+  authorName: string;
   title: string = "Please type a title here.";
   extend: Extend = new Extend();
   fileRefs?: (FileRefs)[] = [];
@@ -121,6 +127,37 @@ export class Reputation {
 
 }
 
+export class Message {
+  idCid: IdCid;
+  authorId: string;
+  authorName: string;
+  sentences: string;
+  read: boolean;
+}
+
+export class Notification {
+  idCid: IdCid;
+  authorName: string;
+  category: Category;
+  subscribers?: (string)[] | null;
+  referenceId: string;
+  referenceCid: string;
+  appendix: string;
+}
+
+export enum Category {
+  NewContent = "NC",  // new Content, notify to followers
+  NewReview = "NRV", // new Review
+  NewReply = "NRP", // new Reply
+  Like = "L"   // like
+}
+
+export class WebSite {
+  identity: string;
+  contentContainerIds: Map<string, string>;
+  popularTagCounts?: null;
+}
+
 export class User {
   identity: string;
   username: string;
@@ -128,19 +165,26 @@ export class User {
   email: string;
   firstname: string;
   lastname: string;
-  gender: string;
+  displayName: string;
+  gender: Gender;
   birthdate: Birthdate;
-  phone: Phone;
+  phone: Phone = new Phone();
   address: Address;
   authorities?: (Authority)[] | null;
-  followers?: (string)[] | null; //TODO Set type
-  followings?: (string)[] | null; //TODO Set type
-  interests?: (string)[] | null; //TODO Set type
+  likes?: (string)[] | null;
+  interests?: (string)[] | null;
+  fileRefs?: (FileRefs)[] = [];
   cruTime: CruTime;
   accountNonExpired: boolean;
   accountNonLocked: boolean;
   credentialsNonExpired: boolean;
   enabled: boolean;
+}
+
+export enum Gender {
+  Male = "M", // Male
+  Female = "F", // Female
+  Undefined = "U" // undefined
 }
 
 export class Birthdate {
@@ -172,7 +216,6 @@ export class CruTime {
   read: LocalDateTime = this.created;
   updated: LocalDateTime = this.created;
 }
-
 
 export class RespWithLink<T> {
   response: T[];
