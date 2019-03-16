@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.ReputationCounter;
@@ -235,17 +236,21 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
     }
 
     public void pagination(int cntEntities, int pageSize, Function<UUID, Entity> supplier) {
-        UUID containerId = UUIDs.timeBased();
+        pagination(cntEntities, pageSize, CID, supplier);
+    }
+
+    public void pagination(int cntEntities, int pageSize, String queryParam, Function<UUID, Entity> supplier) {
+        UUID queryId = UUIDs.timeBased();
 
         Assert.assertTrue(repo instanceof IdCidRepository);
 
-        Flux<Entity> contents = Flux.range(1, cntEntities).map(i -> supplier.apply(containerId)).cache();
-        repo.saveAll(contents).blockLast();
-        cleaner.registerToBeDeleted(contents);
+        Flux<Entity> entities = Flux.range(1, cntEntities).map(i -> supplier.apply(queryId)).cache();
+        repo.saveAll(entities).blockLast();
+        cleaner.registerToBeDeleted(entities);
 
         ClientResponse resp = WebClient.create().get()
                 .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl)
-                        .queryParam(CID, containerId.toString())
+                        .queryParam(queryParam, queryId.toString())
                         .queryParam(PAGE, "0")
                         .queryParam(SIZE, String.valueOf(pageSize)).build())
                 .exchange().block();
@@ -262,7 +267,13 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
             log.trace("nextUrl:{}", nextUrl);
             resp = WebClient.create().get().uri(nextUrl.get()).exchange().block();
         }
-        Assert.assertTrue(contents.all(c -> list.contains(c)).block());
+
+        if (queryParam.equalsIgnoreCase(CID)) {
+            Assert.assertTrue(entities.all(c -> list.contains(c)).block());
+        } else { // SID
+            List<ID> actualIdCids = list.stream().map(getEntityId).collect(Collectors.toList());
+            Assert.assertTrue(entities.map(getEntityId).all(actualIdCids::contains).block());
+        }
     }
 
     public void popularSubItem(int maxSubItems, Function<UUID, Entity> supplier,
