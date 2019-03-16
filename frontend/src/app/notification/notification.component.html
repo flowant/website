@@ -1,14 +1,10 @@
-<div class="row">
-  <a *ngFor="let content of contents" class="col-sm-3"
-      routerLink="/content/{{content.idCid.identity}}/{{content.idCid.containerId}}">
-    <div>
-      <div class="card">
-        <img class="card-img-top" [src]="imgServerUrl + content.fileRefs[0].uri" alt="Card image cap">
-        <div class="card-body">
-          <span class="card-text">{{content.title}}</span>
-        </div>
-      </div>
-    </div>
-  </a>
+
+<div *ngFor="let noti of notifications; index as i" class="noti">
+  <ngb-alert type="info" (close)="onDelete(i)">
+      {{noti.authorName}}
+      {{noti.category}}
+      {{noti.time.created}}
+  </ngb-alert>
 </div>
-<button type="button" (click)="getNext()" class="btn btn-primary btn-lg btn-block" [disabled]="!nextInfo">More</button>
+
+<button *ngIf="!isPreview" type="button" (click)="getNext()" class="btn-next-page" [disabled]="!nextInfo">More</button>

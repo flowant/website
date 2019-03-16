@@ -65,13 +65,14 @@ export class BackendService {
         catchError(this.handleError<RespWithLink<Content>>(`getSearch query:${queryParams}`)));
   }
 
-  getModels<T>(model: Model, nextInfo: string, containerId?: string, page?: string, size?: string)
+  getModels<T>(model: Model, nextInfo: string, queryValue?: string, queryName?: string, page?: string, size?: string)
       : Observable<RespWithLink<T>> {
 
+    queryName = queryName ? queryName : 'cid';
     page = page ? page : Config.defaultPage;
     size = size ? size: Config.defaultSize;
 
-    let queryParams: string = nextInfo ? nextInfo : `?cid=${containerId}&page=${page}&size=${size}`;
+    let queryParams: string = nextInfo ? nextInfo : `?${queryName}=${queryValue}&page=${page}&size=${size}`;
 
     return this.http.get(Config.getUrl(model) + queryParams, baseOptions).pipe(
         map(r => RespWithLink.of<T>(JSON.parse(r.body, reviver), r.headers.get("link"))),
@@ -95,8 +96,10 @@ export class BackendService {
     );
   }
 
-  deleteModel<T extends HasIdCid>(model: Model, idToPath: IdToPath): Observable<any> {
-    const url = Config.getUrl(model) + '/' + idToPath.toString();
+  deleteModel<T extends HasIdCid>(model: Model, idToPath: IdToPath, urlSuffix?: string): Observable<any> {
+    let url = Config.getUrl(model) + '/' + idToPath.toString();
+    url = urlSuffix ? url + '/' + urlSuffix : url;
+
     this.logger.trace("deleteModel url:", url);
     return this.http.delete(url, writeOptions).pipe(
         tap(r => this.logger.trace(`deleted model idToPath:${idToPath}, resp:`, r)),

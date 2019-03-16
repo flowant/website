@@ -1,4 +1,3 @@
-
 <div *ngFor="let message of messages; index as i" class="msg">
   <div class="row">
     <div class="align-self-center col-3">
@@ -19,4 +18,4 @@
   <span class="msg-text">{{message.sentences}}</span>
 </div>
 
-<button *ngIf="!isPreview" type="button" (click)="getNextMessages()" class="btn-next-page" [disabled]="!nextInfo">More</button>
+<button *ngIf="!isPreview" type="button" (click)="getNext()" class="btn-next-page" [disabled]="!nextInfo">More</button>

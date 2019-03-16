@@ -35,6 +35,7 @@ export class Config {
 
   static defaultPage = "0";
   static defaultSize = "12";
+  static previewSize = "5";
 
   static urlMap: Map<Model, string> = new Map([
     [Model.Content, Config.contentUrl],

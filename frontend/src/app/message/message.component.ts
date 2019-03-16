@@ -35,19 +35,20 @@ export class MessageComponent implements OnInit {
     this.backendService.getUser("b901f010-4546-11e9-97e9-594de5a6cf90")
         .subscribe(user => {
           this.user = user;
-          this.isPreview ? this.getPreviewMessage() : this.getNextMessages();
+          this.isPreview ? this.getPreview() : this.getNext();
         });
   }
 
-  getPreviewMessage() {
-    this.backendService.getModels<Message>(Model.Message, this.nextInfo, this.user.identity, "0", "5")
+  getPreview() {
+    this.backendService.getModels<Message>(Model.Message, this.nextInfo,
+        this.user.identity, 'cid', Config.defaultPage, Config.previewSize)
         .subscribe(respWithLink => {
           this.messages = this.messages.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
         });
   }
 
-  getNextMessages() {
+  getNext() {
     this.backendService.getModels<Message>(Model.Message, this.nextInfo, this.user.identity)
         .subscribe(respWithLink => {
           this.messages = this.messages.concat(respWithLink.response);

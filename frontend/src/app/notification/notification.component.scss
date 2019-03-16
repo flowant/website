@@ -1,0 +1,6 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+@import "src/styles.scss";
+
+.noti {
+    @extend .my-1;
+}
