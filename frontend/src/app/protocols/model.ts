@@ -5,6 +5,9 @@ import { v1 } from 'uuid';
 // deserialize class instances from json string.
 export function reviver(key, value): any {
   switch (key) {
+    case 'idCid': {
+      return new IdCid(value['identity'], value['containerId']);
+    }
     case 'zoneId': {
       return ZoneId.of(value);
     }
@@ -132,7 +135,8 @@ export class Message {
   authorId: string;
   authorName: string;
   sentences: string;
-  read: boolean;
+  markedAsRead: boolean;
+  time: ZonedTime;
 }
 
 export class Notification {
@@ -143,6 +147,7 @@ export class Notification {
   referenceId: string;
   referenceCid: string;
   appendix: string;
+  time: ZonedTime;
 }
 
 export enum Category {
@@ -215,6 +220,11 @@ export class CruTime {
   created: LocalDateTime = LocalDateTime.now();
   read: LocalDateTime = this.created;
   updated: LocalDateTime = this.created;
+}
+
+export class ZonedTime {
+  zoneId: ZoneId = ZoneId.systemDefault();
+  created: LocalDateTime = LocalDateTime.now();
 }
 
 export class RespWithLink<T> {

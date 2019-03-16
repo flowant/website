@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.flowant.website.model.Category;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Notification;
+import org.flowant.website.model.ZonedTime;
 import org.flowant.website.util.IdMaker;
 
 public class NotificationMaker {
@@ -18,7 +19,7 @@ public class NotificationMaker {
     static String appendix = "appendix";
 
     public static Notification small(IdCid idCid) {
-        return Notification.of(idCid, authorName, category, subscribers);
+        return Notification.of(idCid, authorName, category, ZonedTime.now());
     }
 
     public static Notification smallRandom(UUID containerId) {
@@ -35,6 +36,7 @@ public class NotificationMaker {
         notification.setReferenceId(referenceId);
         notification.setReferenceCid(referenceCid);
         notification.setAppendix(appendix + id);
+        notification.setSubscribers(subscribers);
         return notification;
     }
 

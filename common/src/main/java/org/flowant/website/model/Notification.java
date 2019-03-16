@@ -39,7 +39,6 @@ public class Notification implements HasIdCid {
     Category category;
 
     @Indexed
-    @NonNull
     @Column("s")
     Set<UUID> subscribers;
 
@@ -52,6 +51,10 @@ public class Notification implements HasIdCid {
     @Column("a")
     String appendix;
 
+    @NonNull
+    @Column("t")
+    ZonedTime time;
+
     public Set<UUID> getSubscribers() {
         if (subscribers == null) {
             subscribers = new HashSet<>();
@@ -60,11 +63,13 @@ public class Notification implements HasIdCid {
     }
 
     public static Notification fromUser(User user, Category category, Set<UUID> subscribers) {
-        return of(IdCid.random(user.getIdentity()), user.getDisplayName(), category, subscribers);
+        return of(IdCid.random(user.getIdentity()), user.getDisplayName(), category, ZonedTime.now())
+                .setSubscribers(subscribers);
     }
 
     public static Notification fromAuthor(HasAuthor<?> author, Category category, Set<UUID> subscribers) {
-        return of(IdCid.random(author.getAuthorId()), author.getAuthorName(), category, subscribers);
+        return of(IdCid.random(author.getAuthorId()), author.getAuthorName(), category, ZonedTime.now())
+                .setSubscribers(subscribers);
     }
 
 }

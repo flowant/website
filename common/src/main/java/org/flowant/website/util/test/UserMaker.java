@@ -33,7 +33,7 @@ public class UserMaker {
     public static User small(UUID id) {
         return User.builder()
                 .identity(id)
-                .username(username + id)
+                .username(username + id.toString().substring(0, 8))
                 .password(password + id)
                 .email(email + id)
                 .cruTime(CRUZonedTime.now())
@@ -47,7 +47,7 @@ public class UserMaker {
     public static User large(UUID id) {
         return User.builder()
                 .identity(id)
-                .username(username + id)
+                .username(username + id.toString().substring(0, 8))
                 .password(password + id)
                 .email(email + id)
                 .address(PostalAddress.of(address + id, city + id, state + id, country + id, zipCode + id))

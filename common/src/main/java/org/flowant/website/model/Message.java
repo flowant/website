@@ -40,11 +40,15 @@ public class Message implements HasIdCid, HasAuthor<Message> {
     @Column("s")
     String sentences;
 
-    @Column("ir")
-    boolean isRead = false;
+    @Column("mr")
+    boolean markedAsRead = false;
+
+    @NonNull
+    @Column("t")
+    ZonedTime time;
 
     public static Message fromUser(UUID receiver, User sender, String msg) {
-        return of(IdCid.random(receiver), sender.getIdentity(), sender.getDisplayName(), msg);
+        return of(IdCid.random(receiver), sender.getIdentity(), sender.getDisplayName(), msg, ZonedTime.now());
     }
 
 }

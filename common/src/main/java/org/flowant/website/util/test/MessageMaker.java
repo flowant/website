@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Message;
+import org.flowant.website.model.ZonedTime;
 import org.flowant.website.util.IdMaker;
 
 public class MessageMaker {
@@ -14,7 +15,7 @@ public class MessageMaker {
 
     public static Message random(IdCid idCid) {
         UUID id = idCid.getIdentity();
-        return Message.of(idCid, senderId, senderName + id, sentences);
+        return Message.of(idCid, senderId, senderName + id, sentences, ZonedTime.now());
     }
 
     public static Message random(UUID containerId) {

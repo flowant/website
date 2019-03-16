@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.flowant.website.model.HasIdCid;
 import org.flowant.website.model.IdCid;
@@ -64,7 +65,9 @@ public abstract class IdCidRepositoryTest <T extends HasIdCid, R extends IdCidRe
             }
             slice = getPaging(slice.nextPageable()).block();
         }
-        Assert.assertTrue(entities.all(actual::contains).block());
+
+        List<IdCid> actualIdCids = actual.stream().map(HasIdCid::getIdCid).collect(Collectors.toList());
+        Assert.assertTrue(entities.map(HasIdCid::getIdCid).all(actualIdCids::contains).block());
     }
 
     public void findAllByContainerIdPageable(UUID containerId, Flux<T> entities) {

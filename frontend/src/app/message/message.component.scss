@@ -1,0 +1,25 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+@import "src/styles.scss";
+
+.msg {
+    @extend .card;
+    @extend .my-1;
+}
+
+.msg-img {
+    @extend .align-self-center;
+    @extend .mx-1;
+    @extend .card-img;
+    width: 5rem;
+    height: auto;
+}
+
+.msg-body {
+    @extend .card-body;
+    @extend .p-0;
+}
+
+.msg-text {
+    @extend .card-text;
+    @extend .ml-1;
+}

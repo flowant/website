@@ -12,3 +12,9 @@
 .rating-star-full {
   color: gold;
 }
+
+.btn-next-page {
+  @extend .btn;
+  @extend .btn-outline-secondary;
+  @extend .btn-block;
+}

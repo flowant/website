@@ -12,6 +12,7 @@ import org.flowant.website.model.Category;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Notification;
 import org.flowant.website.model.Relation;
+import org.flowant.website.model.ZonedTime;
 import org.flowant.website.repository.NotificationRepository;
 import org.flowant.website.repository.RelationRepository;
 import org.flowant.website.util.IdMaker;
@@ -67,7 +68,7 @@ public class NotificationRestTest extends RestWithRepositoryTest<Notification, I
         Relation relation = Relation.of(userId, Set.of(), Set.of(follower));
         repoRelation.save(relation).block();
 
-        Notification noti = Notification.of(IdCid.random(userId), "authorName", Category.NC, Set.of(IdMaker.randomUUID()));
+        Notification noti = Notification.of(IdCid.random(userId), "authorName", Category.NC, ZonedTime.now()).setSubscribers(Set.of(IdMaker.randomUUID()));
         cleaner.registerToBeDeleted(noti);
 
         setDeleter(n -> repo.deleteById(n.getIdCid()).then(repoRelation.deleteById(n.getContainerId())).subscribe());

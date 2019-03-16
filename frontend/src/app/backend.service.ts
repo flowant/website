@@ -97,6 +97,7 @@ export class BackendService {
 
   deleteModel<T extends HasIdCid>(model: Model, idToPath: IdToPath): Observable<any> {
     const url = Config.getUrl(model) + '/' + idToPath.toString();
+    this.logger.trace("deleteModel url:", url);
     return this.http.delete(url, writeOptions).pipe(
         tap(r => this.logger.trace(`deleted model idToPath:${idToPath}, resp:`, r)),
         catchError(this.handleError<string>('deleteModel'))

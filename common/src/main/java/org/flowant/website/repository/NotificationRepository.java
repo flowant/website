@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 
 public interface NotificationRepository extends NotificationFragment, IdCidRepository<Notification> {
 
-    public static final String FIND_BY_SUBSCRIBER = "select * from notification where s contains ?0";
+    public static final String FIND_BY_SUBSCRIBER = "select id, cid, a, an, c, rc, ri, t from notification where s contains ?0";
 
     @Query(FIND_BY_SUBSCRIBER)
     Mono<Slice<Notification>> findAllBySubscriberId(UUID identity, Pageable pageable);

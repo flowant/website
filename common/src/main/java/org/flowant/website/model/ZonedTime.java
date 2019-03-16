@@ -23,7 +23,7 @@ public class ZonedTime {
     ZoneId zoneId;
 
     @NonNull
-    LocalDateTime time;
+    LocalDateTime created;
 
     public static ZonedTime now() {
         return ZonedTime.of(ZoneId.systemDefault(), TimeUtil.nowMillisecond());

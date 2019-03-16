@@ -1,10 +1,22 @@
-<a *ngFor="let content of contents" class="dropdown-item d-flex align-items-center" href="#">
-  <div class="dropdown-list-image mr-3">
-    <img class="rounded-circle" src="/assets/img/img60x60.jpg" alt="">
-    <div class="status-indicator bg-success"></div>
+
+<div *ngFor="let message of messages; index as i" class="msg">
+  <div class="row">
+    <div class="align-self-center col-3">
+        <img src="{{imgServerUrl + message.authorId}}" class="msg-img" onError="this.src='/assets/img/img60x60.jpg';">
+    </div>
+    <div class="align-self-center col-7">
+      <div class="msg-body">
+        <span class="msgText">{{message.authorName}}</span>
+        <p class="msg-text"><small class="text-muted">{{message.time.created}}</small></p>
+      </div>
+    </div>
+    <div class="align-self-center col-2">
+      <button type="button" (click)="onDelete(i)" class="btn btn-outline-secondary btn-sm">
+        <i class="far fa-trash-alt"></i>
+      </button>
+    </div>
   </div>
-  <div class="font-weight-bold">
-    <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.</div>
-    <div class="small text-gray-500">Emily Fowler · 58m</div>
-  </div>
-</a>
+  <span class="msg-text">{{message.sentences}}</span>
+</div>
+
+<button *ngIf="!isPreview" type="button" (click)="getNextMessages()" class="btn-next-page" [disabled]="!nextInfo">More</button>

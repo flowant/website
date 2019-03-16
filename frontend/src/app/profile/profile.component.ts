@@ -7,7 +7,6 @@ import { User, Gender } from '../protocols/model';
 import { BackendService } from '../backend.service';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
-import { getRenderedText } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-profile',

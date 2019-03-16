@@ -192,7 +192,7 @@ public class MockDataUtil {
     }
 
     public void sendMessage(User sender) {
-        users.map(user -> Message.fromUser(user.getIdentity(), sender, sender.toString()))
+        users.map(user -> Message.fromUser(user.getIdentity(), sender, "message contents" + sender.getIdentity()))
                 .flatMap(repoMessage::save)
                 .blockLast();
     }
