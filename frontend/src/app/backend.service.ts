@@ -4,7 +4,6 @@ import { NGXLogger, LoggerConfig } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { IdCid, HasIdCid, IdToPath, Content, Reputation, reviver, FileRefs, RespWithLink, User } from './protocols/model';
-import { MessageService } from './message.service';
 import { Config, Model } from './config';
 
 interface TextResponseOption {
@@ -38,7 +37,6 @@ export class BackendService {
 
   constructor(
     private http: HttpClient,
-    private messageService: MessageService,
     private logger: NGXLogger) { }
 
   getPopularItems<T>(model: Model, containerId: string): Observable<T[]> {
@@ -97,13 +95,16 @@ export class BackendService {
     );
   }
 
-  /** DELETE: delete the t from the server */
   deleteModel<T extends HasIdCid>(model: Model, idToPath: IdToPath): Observable<any> {
     const url = Config.getUrl(model) + '/' + idToPath.toString();
     return this.http.delete(url, writeOptions).pipe(
         tap(r => this.logger.trace(`deleted model idToPath:${idToPath}, resp:`, r)),
         catchError(this.handleError<string>('deleteModel'))
     );
+  }
+
+  getUser(id: string): Observable<User> {
+    return this.getModel<User>(Model.User, id);
   }
 
   // FileList contains only one element when identity is used.
@@ -156,9 +157,6 @@ export class BackendService {
 
       // send the error to remote logging infrastructure
       this.logger.error(error);
-
-      // TODO: better job of transforming error for user consumption
-      this.messageService.add(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

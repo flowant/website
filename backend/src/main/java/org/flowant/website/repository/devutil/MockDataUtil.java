@@ -2,6 +2,7 @@ package org.flowant.website.repository.devutil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -120,7 +121,7 @@ public class MockDataUtil {
 
     int cntRepliesPerReview = 3;
 
-    public FileRef postRandomFile() {
+    public FileRef postRandomFile(Optional<String> pathSegId) {
 
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
 
@@ -133,7 +134,7 @@ public class MockDataUtil {
         parts.add(FileRest.ATTACHMENT, entity);
 
         return WebClient
-                .create("http://" + address + ":" + port + FileRest.FILES)
+                .create("http://" + address + ":" + port + FileRest.FILES + pathSegId.orElse(""))
                 .post()
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(parts))
@@ -145,7 +146,7 @@ public class MockDataUtil {
 
     public Content saveContent(Content content) {
 
-        content.setFileRefs(List.of(postRandomFile()));
+        content.setFileRefs(List.of(postRandomFile(Optional.empty())));
 
         Mono<Content> contentM = Mono.just(content).cache();
         contentM.flatMap(repoContent::save).block();
@@ -216,7 +217,7 @@ public class MockDataUtil {
                 .concatWith(Flux.just(UserMaker.large(userId)))
                 .cache();
 
-        users.doOnNext(user -> user.setFileRefs(List.of(postRandomFile()))).blockLast();
+        users.doOnNext(user -> user.setFileRefs(List.of(postRandomFile(Optional.of("/" + user.getIdentity()))))).blockLast();
 
         userSet = Set.copyOf(users.map(User::getIdentity).collectList().block());
         contents = users.map(user -> ContentMaker.largeRandom(recipeCid).setAuthor(user)).cache();

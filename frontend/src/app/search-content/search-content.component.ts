@@ -21,9 +21,10 @@ export class SearchContentComponent implements OnInit {
   constructor(
       private backendService: BackendService,
       private route: ActivatedRoute,
-      private logger: NGXLogger) {
+      private logger: NGXLogger) { }
 
-    route.params.subscribe(param => {
+  ngOnInit() {
+    this.route.params.subscribe(param => {
       this.logger.trace('ActivatedRoute params subscrive:', param);
       let tag: string = param['tag'];
       this.contents = new Array<Content>();
@@ -33,9 +34,6 @@ export class SearchContentComponent implements OnInit {
         this.getPopularContents();
       }
     });
-  }
-
-  ngOnInit() {
   }
 
   //TODO get container id from the backend

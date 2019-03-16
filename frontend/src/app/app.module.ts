@@ -10,7 +10,6 @@ import { AppComponent } from './app.component';
 import { ContentComponent } from './content/content.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SearchContentComponent } from './search-content/search-content.component';
-import { MessagesComponent } from './messages/messages.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ReviewComponent } from './review/review.component';
 import { TopbarComponent } from './topbar/topbar.component';
@@ -26,7 +25,6 @@ import { UserComponent } from './user/user.component';
     ContentComponent,
     ProfileComponent,
     SearchContentComponent,
-    MessagesComponent,
     PageNotFoundComponent,
     ReviewComponent,
     TopbarComponent,

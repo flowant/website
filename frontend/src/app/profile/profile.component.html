@@ -4,7 +4,7 @@
     <ngb-tab title="Basic">
       <ng-template ngbTabContent>
         <div class="text-center m-1">
-          <img src="{{userImage}}" class="img-thumbnail" onError="this.src='/assets/img/emptyAvatar.png';">
+          <img src="{{userImageUri}}" class="img-thumbnail" onError="this.src='/assets/img/emptyAvatar.png';">
         </div>
 
         <div *ngIf="isReadonly==false" class="row">
@@ -61,10 +61,7 @@
             <label class="inputPrependLabel" for="genderSelector">Gender</label>
           </div>
           <select [ngClass]="'select'+ suffixReadonly()" id="genderSelector" [(ngModel)]="user.gender">
-            <option selected>{{getGender()}}</option>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-            <option value="U">Undefined</option>
+            <option *ngFor="let key of genderKeys" [value]="genders[key]">{{key}}</option>
           </select>
         </div>
         <!-- TODO change password-->

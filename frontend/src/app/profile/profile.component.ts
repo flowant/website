@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { Observable, empty, of } from 'rxjs';
-import { User } from '../protocols/model';
+import { Observable, of } from 'rxjs';
+import { filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
+import { User, Gender } from '../protocols/model';
 import { BackendService } from '../backend.service';
 import { Config, Model } from '../config';
-import { NGXLogger, LoggerConfig } from 'ngx-logger';
-import { userInfo } from 'os';
+import { NGXLogger } from 'ngx-logger';
+import { getRenderedText } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-profile',
@@ -21,9 +22,17 @@ export class ProfileComponent implements OnInit {
 
   user: User;
 
-  userImage: string;
+  userImageUri: string;
 
   isReadonly: boolean;
+
+  genderKeys = Object.keys(Gender);
+
+  genders = Gender;
+
+  suffixReadonly(): string {
+    return this.isReadonly ? "Readonly": "";
+  }
 
   constructor(
     private backendService: BackendService,
@@ -37,34 +46,29 @@ export class ProfileComponent implements OnInit {
 
     if (this.identity) {
       this.isReadonly = true;
-      this.getUser(this.identity).subscribe(u => this.updateUser(u));
+      this.backendService.getUser(this.identity).subscribe(u => this.updateUser(u));
     } else {
       this.isReadonly = false;
-      this.getUser("b901f010-4546-11e9-97e9-594de5a6cf90").subscribe(u => this.updateUser(u));
+      //TODO login user based
+      this.backendService.getUser("b901f010-4546-11e9-97e9-594de5a6cf90").subscribe(u => this.updateUser(u));
     }
   }
 
-  getUser(id: string): Observable<User> {
-    return this.backendService.getModel<User>(Model.User, id);
-  }
+  updateUser(user?: User): User {
 
-  updateUser(user: User) {
-    this.user = user;
-    this.logger.trace("user is updated:", this.user);
+    if (user) {
+      this.user = user;
+    }
+
     if(this.user.fileRefs) {
-      this.userImage = Config.imgServerUrl + '/' + this.user.identity;
+      this.userImageUri = Config.imgServerUrl + '/' + this.user.identity;
+    } else {
+      this.userImageUri = "/assets/img/emptyAvatar.png";
     }
-  }
 
-  getGender(): string {
-    switch (this.user.gender) {
-      case "M":
-      return "Male";
-      case "F":
-      return "Female";
-      default:
-      return "Undefined";
-    }
+    this.logger.trace("userImageUri and user are updated:", this.userImageUri, this.user);
+
+    return this.user;
   }
 
   onSave() {
@@ -73,25 +77,26 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteIfExistPhoto(): Observable<any> {
-    this.userImage = "/assets/img/emptyAvatar.png";
-    let deleteIfExist: Observable<any> = this.user.fileRefs ?
-        this.backendService.deleteFiles(this.user.fileRefs) : of(0);
-    return deleteIfExist;
+    return of(this.user.fileRefs).pipe(
+        filter(refs => Boolean(refs)),
+        concatMap(refs => this.backendService.deleteFiles(refs)),
+        tap(_ => this.user.fileRefs = undefined),
+        tap(_ => this.updateUser()),
+        defaultIfEmpty(undefined)
+    );
   }
 
   onDeletePhoto() {
-    this.deleteIfExistPhoto().subscribe(r => this.user.fileRefs = undefined);
+    this.deleteIfExistPhoto().subscribe();
   }
 
   onUploadPhoto(files: FileList) {
-    this.deleteIfExistPhoto().subscribe(r => this.backendService.addFile(this.user.identity, files).subscribe(fileRef => {
-      this.user.fileRefs = [fileRef];
-      this.userImage = Config.imgServerUrl + '/' + this.user.identity;
-    }));
-  }
-
-  suffixReadonly(): string {
-    return this.isReadonly ? "Readonly": "";
+    this.deleteIfExistPhoto()
+        .pipe(concatMap(_ => this.backendService.addFile(this.user.identity, files)))
+        .subscribe(fileRef => {
+          this.user.fileRefs = [fileRef];
+          this.updateUser();
+        });
   }
 
 }
