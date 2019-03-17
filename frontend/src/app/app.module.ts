@@ -8,7 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { ContentComponent } from './content/content.component';
-import { ProfileComponent } from './profile/profile.component';
 import { SearchContentComponent } from './search-content/search-content.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ReviewComponent } from './review/review.component';
@@ -17,13 +16,13 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { ReputationComponent } from './reputation/reputation.component';
 import { MessageComponent } from './message/message.component';
 import { NotificationComponent } from './notification/notification.component';
-import { UserComponent } from './user/user.component';
+import { UserRefComponent } from './user-ref/user-ref.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ContentComponent,
-    ProfileComponent,
     SearchContentComponent,
     PageNotFoundComponent,
     ReviewComponent,
@@ -32,7 +31,8 @@ import { UserComponent } from './user/user.component';
     ReputationComponent,
     MessageComponent,
     NotificationComponent,
-    UserComponent
+    UserRefComponent,
+    UserProfileComponent
   ],
   imports: [
     NgbModule,

@@ -9,11 +9,11 @@ import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  selector: 'app-user-profile',
+  templateUrl: './user-profile.component.html',
+  styleUrls: ['./user-profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit {
 
   model: Model = Model.User;
 

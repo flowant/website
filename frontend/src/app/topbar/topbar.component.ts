@@ -14,9 +14,8 @@ import { userInfo } from 'os';
 export class TopbarComponent implements OnInit {
 
   searchTag: string;
-  user: User;
 
-  userImage: string;
+  user: User;
 
   imgServerUrl: string = Config.imgServerUrl + '/';
 
@@ -29,7 +28,6 @@ export class TopbarComponent implements OnInit {
     this.backendService.getModel<User>(Model.User, "b901f010-4546-11e9-97e9-594de5a6cf90")
           .subscribe(u => {
             this.user = u;
-            this.userImage = Config.imgServerUrl + '/' + this.user.identity;
           });
   }
 
