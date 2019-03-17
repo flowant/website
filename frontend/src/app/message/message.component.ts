@@ -57,6 +57,11 @@ export class MessageComponent implements OnInit {
         });
   }
 
+  onClick(index: number) {
+    let message = this.messages[index];
+    this.logger.trace('onClick:', message);
+  }
+
   onDelete(index: number) {
     let message = this.messages[index];
     this.logger.trace('onDelete:', message);

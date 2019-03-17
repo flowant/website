@@ -1,9 +1,9 @@
 
 <div *ngFor="let noti of notifications; index as i" class="noti">
-  <ngb-alert type="info" (close)="onDelete(i)">
-      {{noti.authorName}}
-      {{noti.category}}
-      {{noti.time.created}}
+  <ngb-alert type="primary" (click)="onClick(i)" (close)="onDelete(i)">
+    <strong>{{noti.authorName}} </strong>
+    {{toString(noti)}}
+    <small class="text-muted">{{noti.time.created}}</small>
   </ngb-alert>
 </div>
 

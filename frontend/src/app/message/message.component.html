@@ -1,5 +1,5 @@
 <div *ngFor="let message of messages; index as i" class="msg">
-  <div class="row">
+  <div class="row" (click)="onClick(i)">
     <div class="align-self-center col-3">
         <img src="{{imgServerUrl + message.authorId}}" class="msg-img" onError="this.src='/assets/img/img60x60.jpg';">
     </div>

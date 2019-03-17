@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
-import { User, Notification } from '../protocols/model';
+import { User, Notification, Category } from '../protocols/model';
 import { BackendService } from '../backend.service';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
@@ -65,5 +65,13 @@ export class NotificationComponent implements OnInit {
       .subscribe(_ => this.notifications.splice(index, 1));
   }
 
+  onClick(index: number) {
+    let noti = this.notifications[index];
+    this.logger.trace('onClick:', noti);
+  }
+
+  toString(noti: Notification): string {
+    return Category.toString(noti.category);
+  }
 
 }

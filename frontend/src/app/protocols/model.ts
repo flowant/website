@@ -150,6 +150,23 @@ export class Notification {
   time: ZonedTime;
 }
 
+export namespace Category {
+  export function toString(category: Category): string {
+    switch(category) {
+      case Category.NewContent:
+        return "created a new content";
+      case Category.NewReview:
+        return "created a new review";
+      case Category.NewReply:
+        return "created a new reply";
+      case Category.Like:
+        return "likes";
+      default:
+        return "";
+    }
+  }
+}
+
 export enum Category {
   NewContent = "NC",  // new Content, notify to followers
   NewReview = "NRV", // new Review
