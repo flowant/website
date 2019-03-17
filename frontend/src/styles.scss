@@ -18,3 +18,9 @@
   @extend .btn-outline-secondary;
   @extend .btn-block;
 }
+
+.btn-basic {
+  @extend .btn;
+  @extend .btn-outline-secondary;
+  @extend .float-right;
+}

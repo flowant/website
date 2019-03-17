@@ -1,1 +1,47 @@
 @import "src/styles.scss";
+
+.review {
+  @extend .border;
+  @extend .rounded;
+  @extend .container-fluid;
+  @extend .p-1;
+}
+
+.review-btns {
+  @extend .row;
+  @extend .no-gutters;
+  @extend .mt-1;
+}
+
+.media {
+  @extend .row;
+  @extend .no-gutters;
+  @extend .border;
+  @extend .rounded;
+  @extend .mt-1;
+  @extend .p-1;
+}
+
+.date {
+  @extend .text-center;
+  @extend .text-muted;
+  @extend .small;
+  @extend .mt-1;
+}
+
+.user-ref {
+  @extend .p-0;
+  @extend .m-1;
+  @extend .col-3;
+  @extend .h-100;
+}
+
+.media-body {
+  @extend .col-9;
+  @extend .container;
+}
+
+p, span {
+  @extend .p-0;
+  @extend .m-0;
+}

@@ -1,35 +1,36 @@
-<div class="container-fluid p-1">
-    <div class="row mt-1 ">
-      <textarea class="form-control" [(ngModel)]="review.comment" placeholder="Please type a title here."></textarea>
+<div class="review">
+  <textarea class="form-control" [(ngModel)]="review.comment" placeholder="Please type a title here."></textarea>
+  <div class="review-btns">
+    <div class="col-5">
+      <ngb-rating [(rate)]="review.reputing.rated">
+        <ng-template let-fill="fill">
+          <span class="rating-star" [class.rating-star-full]="fill === 100">&#9733;</span>
+        </ng-template>
+      </ngb-rating>
     </div>
-    <div class="row mt-1">
-      <div class="col-5">
-        <ngb-rating [(rate)]="review.reputing.rated">
-          <ng-template let-fill="fill">
-            <span class="rating-star" [class.rating-star-full]="fill === 100">&#9733;</span>
-          </ng-template>
-        </ngb-rating>
-      </div>
-      <div class="col-7">
-        <button type="button" (click)="onSave()" class="btn btn-outline-secondary btn-sm">
-          <i class="far fa-save"></i>Save
-        </button>
-      </div>
+    <div class="col-7">
+      <button type="button" (click)="onSave()" class="btn-basic">
+        <i class="far fa-save"></i><span> Save</span>
+      </button>
     </div>
+  </div>
 </div>
 
-<ul class="list-unstyled p-1">
+<ul class="list-unstyled">
   <li class="media" *ngFor="let review of reviews" >
-    <img src="assets/img/img60x60.jpg" alt="John Doe" class="mr-1 mt-1 rounded-circle" style="width:60px;">
+    <div class="user-ref">
+      <app-user-ref [userRefId]="review.authorId"></app-user-ref>
+      <p class="date">{{review.cruTime.created.toLocalDate()}}</p>
+      <app-reputation [model]="model" [idCid]="review.idCid" [reputation]="review.reputation"></app-reputation>
+    </div>
     <div class="media-body">
+      <p>{{review.authorName}}</p>
       <ngb-rating [(rate)]="review.reputing.rated" readonly=true>
         <ng-template let-fill="fill">
           <span class="rating-star" [class.rating-star-full]="fill === 100">&#9733;</span>
         </ng-template>
       </ngb-rating>
-      <p>{{review.reviewerName}}<small><i>{{review.cruTime.created}}</i></small></p>
       <p>{{review.comment}}</p>
-      <app-reputation [model]="model" [idCid]="review.idCid" [reputation]="review.reputation"></app-reputation>
     </div>
   </li>
 </ul>

@@ -4,6 +4,7 @@ import { Config, Model } from '../config';
 import { IdCid, Reputation } from '../protocols/model';
 import { NGXLogger } from 'ngx-logger';
 import { modelGroupProvider } from '@angular/forms/src/directives/ng_model_group';
+const numeral = require('numeral');
 
 @Component({
   selector: 'app-reputation',
@@ -44,4 +45,7 @@ export class ReputationComponent implements OnInit {
         .subscribe((rpt) => {this.reputation = rpt});
   }
 
+  toNumberal(num: number): string {
+    return numeral(num).format('0a').toUpperCase();
+  }
 }

@@ -1,21 +1,34 @@
-@import "node_modules/bootstrap/scss/bootstrap.scss";
 @import "src/styles.scss";
 
 .msg {
+    @extend .container;
     @extend .card;
-    @extend .my-1;
+    @extend .m-1;
+    @extend .p-1;
 }
 
-.msg-img {
+.user-ref {
+    @extend .col-3;
     @extend .align-self-center;
-    @extend .mx-1;
+    @extend .m-1;
+    @extend .p-0;
     @extend .card-img;
-    width: 5rem;
-    height: auto;
 }
 
 .msg-body {
+    @extend .col-7;
+    @extend .align-self-center;
     @extend .card-body;
+    @extend .p-0;
+}
+
+.btn-delete {
+    @extend .col-1;
+    @extend .align-self-center;
+    @extend .btn;
+    @extend .btn-outline-secondary;
+    @extend .btn-sm;
+    @extend .m-0;
     @extend .p-0;
 }
 

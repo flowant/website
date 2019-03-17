@@ -1,0 +1,9 @@
+@import "src/styles.scss";
+
+.icon {
+  @extend .rounded;
+  @extend .m-0;
+  @extend .p-0;
+  width: 100%;
+  height: 100%;
+}

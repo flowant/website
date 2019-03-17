@@ -82,18 +82,18 @@ export class FileRefs {
 
 export class Review {
   idCid: IdCid;
-  reviewerId: string;
-  reviewerName: string;
+  authorId: string;
+  authorName: string;
   reputing: Reputation = new Reputation();
-  comment: string = "Please type comments here.";
+  comment: string;
   reputation: Reputation = new Reputation();
   cruTime: CruTime = new CruTime();
 }
 
 export class Reply {
   idCid: IdCid;
-  replierId: string;
-  replierName: string;
+  authorId: string;
+  authorName: string;
   comment: string = "Please type comments here.";
   reputation: Reputation = new Reputation();
   cruTime: CruTime = new CruTime();

@@ -1,19 +1,15 @@
 <div *ngFor="let message of messages; index as i" class="msg">
-  <div class="row" (click)="onClick(i)">
-    <div class="align-self-center col-3">
-        <img src="{{imgServerUrl + message.authorId}}" class="msg-img" onError="this.src='/assets/img/img60x60.jpg';">
+  <div class="row no-gutters" (click)="onClick(i)">
+    <div class="user-ref">
+      <app-user-ref [userRefId]="message.authorId"></app-user-ref>
     </div>
-    <div class="align-self-center col-7">
-      <div class="msg-body">
-        <span class="msgText">{{message.authorName}}</span>
-        <p class="msg-text"><small class="text-muted">{{message.time.created}}</small></p>
-      </div>
+    <div class="msg-body">
+      <span class="msgText">{{message.authorName}}</span>
+      <p class="msg-text"><small class="text-muted">{{message.time.created.toLocalDate()}}</small></p>
     </div>
-    <div class="align-self-center col-2">
-      <button type="button" (click)="onDelete(i)" class="btn btn-outline-secondary btn-sm">
-        <i class="far fa-trash-alt"></i>
-      </button>
-    </div>
+    <button class="btn-delete" type="button" (click)="onDelete(i)" >
+      <i class="far fa-trash-alt"></i>
+    </button>
   </div>
   <span class="msg-text">{{message.sentences}}</span>
 </div>

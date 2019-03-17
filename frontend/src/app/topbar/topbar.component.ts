@@ -17,7 +17,7 @@ export class TopbarComponent implements OnInit {
 
   user: User;
 
-  imgServerUrl: string = Config.imgServerUrl + '/';
+  userImgUrl: string;
 
   constructor(
     private backendService: BackendService,
@@ -28,6 +28,7 @@ export class TopbarComponent implements OnInit {
     this.backendService.getModel<User>(Model.User, "b901f010-4546-11e9-97e9-594de5a6cf90")
           .subscribe(u => {
             this.user = u;
+            this.userImgUrl = Config.imgServerUrl + '/' + this.user.identity;
           });
   }
 
