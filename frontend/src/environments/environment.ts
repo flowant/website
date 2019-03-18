@@ -22,6 +22,8 @@ export const environment = {
     message: '/message',
     notification: '/notification',
     relation: '/relation',
+    follow: '/follow',
+    unfollow: '/unfollow',
     user: '/user'
   }
 };

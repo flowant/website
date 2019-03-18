@@ -4,7 +4,8 @@
   <div class="dropdown-menu">
     <a class="dropdown-item" routerLink="/user/profile/{{userRefId}}">Show Profile</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="#">Follow</a>
+    <a class="dropdown-item" (click)="follow(true)">Follow</a>
+    <a class="dropdown-item" (click)="follow(false)">Unfollow</a>
     <a class="dropdown-item" (click)="sendMessage()">Send Message</a>
     <a class="dropdown-item">Report</a>
   </div><!-- class="btn-group dropright"> -->

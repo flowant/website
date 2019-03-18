@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IdCid, Content, Review, Reputation } from '../protocols/model';
+import { IdCid, Content, Review, Reputation, User } from '../protocols/model';
 import { BackendService } from '../backend.service'
 import { Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
@@ -12,6 +12,8 @@ import { NGXLogger } from 'ngx-logger';
 export class ReviewComponent implements OnInit {
 
   @Input() content: Content;
+
+  user: User;
 
   model: Model = Model.Review;
 
@@ -30,6 +32,8 @@ export class ReviewComponent implements OnInit {
     this.getPopularReviews();
     this.review = new Review();
     this.review.idCid = IdCid.random(this.content.idCid.identity);
+
+    this.backendService.getUser().subscribe(u => this.user = u);
   }
 
   getPopularReviews(): void {

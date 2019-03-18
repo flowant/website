@@ -32,6 +32,7 @@ export class Config {
   static imgServerUrl = Config.fileUrl;
 
   static popularPath = env.path.popular;
+  static path = env.path;
 
   static defaultPage = "0";
   static defaultSize = "12";

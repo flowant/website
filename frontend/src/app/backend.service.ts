@@ -151,6 +151,18 @@ export class BackendService {
     return this.postModel<Reputation>(Config.toRptModel(model), rpt);
   }
 
+  follow(follow:boolean, followerId: string, followeeId: string) {
+
+    let url = Config.relationUrl + (follow ? Config.path.follow : Config.path.unfollow)
+        + "/" + followerId + "/" + followeeId;
+
+    return this.http.post(url, null, writeOptions).pipe(
+        map(r => JSON.parse(r.body, reviver)),
+        tap(f => this.logger.trace('posted follow:', f)),
+        catchError(this.handleError<any>('follow'))
+    );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.

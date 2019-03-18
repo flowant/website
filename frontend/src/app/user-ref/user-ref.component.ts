@@ -19,6 +19,7 @@ import { NgbModalSendMessageComponent } from '../ngb-modal-send-message/ngb-moda
 })
 export class UserRefComponent implements OnInit {
 
+  @Input() user: User;
   @Input() userRefId: string;
   @Input() userRefName: string;
 
@@ -38,6 +39,11 @@ export class UserRefComponent implements OnInit {
     const modalRef = this.modalService.open(NgbModalSendMessageComponent);
     modalRef.componentInstance.receiverId = this.userRefId;
     modalRef.componentInstance.receiverName = this.userRefName;
+  }
+
+  follow(isFollowing: boolean) {
+    this.backendService.follow(isFollowing, this.user.identity, this.userRefId)
+        .subscribe();
   }
 
 }
