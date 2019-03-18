@@ -30,7 +30,7 @@ export class NgbModalSendMessageComponent implements OnInit {
 
   send() {
     this.backendService.getUser().pipe(
-        map(user => Message.of(this.receiverId, user.identity, user.displayName, this.sentences)),
+        map(user => Message.of(this.receiverId, this.receiverName, user.identity, user.displayName, this.sentences)),
         concatMap(msg => this.backendService.postModel<Message>(Model.Message, msg))
     ).subscribe(m => {
       this.logger.trace("The message has been sent:", m);

@@ -22,11 +22,15 @@ import lombok.experimental.Accessors;
 @Table
 public class Message implements HasIdCid, HasAuthor<Message> {
 
-    // container means receiver
+    // containerId means receiverId
     @NonNull
     @PrimaryKey
     @Column("ic")
     IdCid idCid;
+
+    @NonNull
+    @Column("rn")
+    String receiverName;
 
     // author means sender
     @NonNull
@@ -49,8 +53,9 @@ public class Message implements HasIdCid, HasAuthor<Message> {
     @Column("t")
     ZonedTime time;
 
-    public static Message fromUser(UUID receiver, User sender, String msg) {
-        return of(IdCid.random(receiver), sender.getIdentity(), sender.getDisplayName(), msg, ZonedTime.now());
+    public static Message fromUser(User receiver, User sender, String msg) {
+        return of(IdCid.random(receiver.getIdentity()), receiver.getDisplayName(),
+                sender.getIdentity(), sender.getDisplayName(), msg, ZonedTime.now());
     }
 
 }

@@ -1,44 +1,62 @@
-<ngb-tabset justify="justified">
-  <ngb-tab title="Received">
-    <ng-template ngbTabContent>
-      <div *ngFor="let message of messages; index as i" class="msg">
-        <div class="row no-gutters" (click)="onClick(i)">
-          <div class="user-ref">
-            <app-user-ref [userRefId]="message.authorId" [userRefName]="message.authorName"></app-user-ref>
-          </div>
-          <div class="msg-body">
-            <span class="msg-text">{{message.authorName}}</span>
-            <p class="msg-text"><small class="text-muted">{{message.time.created.toLocalDate()}}</small></p>
-          </div>
-          <button class="btn-delete" type="button" (click)="onDelete(i)" >
-            <i class="far fa-trash-alt"></i>
-          </button>
-        </div>
-        <span class="msg-text">{{message.sentences}}</span>
+<div *ngIf="isPreview; else elseBlock">
+  <div *ngFor="let message of msgMap.get(received); index as i" class="msg">
+    <div class="row no-gutters" (click)="onClick(received, i)">
+      <div class="user-ref">
+        <app-user-ref [userRefId]="message.authorId" [userRefName]="message.authorName"></app-user-ref>
       </div>
-      <button *ngIf="!isPreview" type="button" (click)="getNext()" class="btn-next-page" [disabled]="!nextInfo">More</button>
-    </ng-template>
-  </ngb-tab> <!-- title="Received" -->
+      <div class="msg-body">
+        <span class="msg-text">{{message.authorName}}</span>
+        <p class="msg-text"><small class="text-muted">{{message.time.created.toLocalDate()}}</small></p>
+      </div>
+      <button class="btn-delete" type="button" (click)="onDelete(received, i)" >
+        <i class="far fa-trash-alt"></i>
+      </button>
+    </div>
+    <span class="msg-text">{{message.sentences}}</span>
+  </div>
+</div> <!-- *ngIf="isPreview; else elseBlock" -->
 
-  <ngb-tab title="Sent">
-    <ng-template ngbTabContent>
-        <div *ngFor="let message of messages; index as i" class="msg">
-            <div class="row no-gutters" (click)="onClick(i)">
-              <div class="user-ref">
-                <app-user-ref [userRefId]="message.authorId" [userRefName]="message.authorName"></app-user-ref>
-              </div>
-              <div class="msg-body">
-                <span class="msg-text">{{message.authorName}}</span>
-                <p class="msg-text"><small class="text-muted">{{message.time.created.toLocalDate()}}</small></p>
-              </div>
-              <button class="btn-delete" type="button" (click)="onDelete(i)" >
-                <i class="far fa-trash-alt"></i>
-              </button>
+<ng-template #elseBlock>
+  <ngb-tabset justify="justified">
+    <ngb-tab title="Received">
+      <ng-template ngbTabContent>
+        <div *ngFor="let message of msgMap.get(received); index as i" class="msg">
+          <div class="row no-gutters" (click)="onClick(received, i)">
+            <div class="user-ref">
+              <app-user-ref [userRefId]="message.authorId" [userRefName]="message.authorName"></app-user-ref>
             </div>
-            <span class="msg-text">{{message.sentences}}</span>
+            <div class="msg-body">
+              <span class="msg-text">{{message.authorName}}</span>
+              <p class="msg-text"><small class="text-muted">{{message.time.created.toLocalDate()}}</small></p>
+            </div>
+            <button class="btn-delete" type="button" (click)="onDelete(received, i)" >
+              <i class="far fa-trash-alt"></i>
+            </button>
           </div>
-          <button type="button" (click)="getNext()" class="btn-next-page" [disabled]="!nextInfo">More</button>
-    </ng-template>
-  </ngb-tab>
-
-</ngb-tabset>
+          <span class="msg-text">{{message.sentences}}</span>
+        </div>
+        <button type="button" (click)="getNext(received)" class="btn-next-page" [disabled]="!nextInfoMap.get(received)">More</button>
+      </ng-template>
+    </ngb-tab> <!-- title="Received" -->
+    <ngb-tab title="Sent">
+      <ng-template ngbTabContent>
+          <div *ngFor="let message of msgMap.get(sent); index as i" class="msg">
+              <div class="row no-gutters" (click)="onClick(sent, i)">
+                <div class="user-ref">
+                  <app-user-ref [userRefId]="message.idCid.containerId" [userRefName]="message.receiverName"></app-user-ref>
+                </div>
+                <div class="msg-body">
+                  <span class="msg-text">{{message.receiverName}}</span>
+                  <p class="msg-text"><small class="text-muted">{{message.time.created.toLocalDate()}}</small></p>
+                </div>
+                <button class="btn-delete" type="button" (click)="onDelete(sent, i)" >
+                  <i class="far fa-trash-alt"></i>
+                </button>
+              </div>
+              <span class="msg-text">{{message.sentences}}</span>
+            </div>
+            <button type="button" (click)="getNext(sent)" class="btn-next-page" [disabled]="!nextInfoMap.get(sent)">More</button>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+</ng-template> <!-- #elseBlock -->

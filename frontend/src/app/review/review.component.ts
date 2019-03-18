@@ -41,7 +41,7 @@ export class ReviewComponent implements OnInit {
   }
 
   getNextReview() {
-    this.backendService.getModels<Review>(Model.Review, this.nextInfo, this.content.idCid.identity)
+    this.backendService.getModels<Review>(Model.Review, this.nextInfo, 'cid', this.content.idCid.identity)
         .subscribe(respWithLink => {
           this.reviews = this.reviews.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();

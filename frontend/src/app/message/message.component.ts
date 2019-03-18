@@ -1,12 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { Observable, of } from 'rxjs';
-import { filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
 import { User, Message } from '../protocols/model';
 import { BackendService } from '../backend.service';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
+
+export enum Option {
+  Sent,
+  Received
+}
 
 @Component({
   selector: 'app-message',
@@ -19,54 +20,67 @@ export class MessageComponent implements OnInit {
 
   user: User;
 
-  messages : Message[] = new Array<Message>();
+  sent = Option.Sent;
+  received = Option.Received;
 
-  nextInfo: string;
+  msgMap: Map<Option, Message[]> = new Map();
+  paramNameMap: Map<Option, string> = new Map();
+  nextInfoMap: Map<Option, string> = new Map();
 
   imgServerUrl: string = Config.fileUrl + "/";
 
   constructor(
     private backendService: BackendService,
-    private location: Location,
-    private route: ActivatedRoute,
     private logger: NGXLogger) { }
 
   ngOnInit() {
-    this.backendService.getUser("b901f010-4546-11e9-97e9-594de5a6cf90")
+    this.msgMap.set(Option.Received, new Array<Message>())
+    this.msgMap.set(Option.Sent, new Array<Message>())
+    this.paramNameMap.set(Option.Received, 'cid');
+    this.paramNameMap.set(Option.Sent, 'aid');
+
+    this.backendService.getUser()
         .subscribe(user => {
           this.user = user;
-          this.isPreview ? this.getPreview() : this.getNext();
+          if (this.isPreview) {
+            this.getPreview();
+          } else {
+            this.getNext(Option.Received);
+            this.getNext(Option.Sent);
+          }
         });
   }
 
   getPreview() {
-    this.backendService.getModels<Message>(Model.Message, this.nextInfo,
-        this.user.identity, 'cid', Config.defaultPage, Config.previewSize)
+    this.backendService.getModels<Message>(Model.Message, this.nextInfoMap.get(Option.Received),
+        this.paramNameMap.get(Option.Received), this.user.identity, Config.defaultPage, Config.previewSize)
         .subscribe(respWithLink => {
-          this.messages = this.messages.concat(respWithLink.response);
-          this.nextInfo = respWithLink.getNextQueryParams();
+          this.msgMap.set(Option.Received, this.msgMap.get(Option.Received).concat(respWithLink.response));
+          this.nextInfoMap.set(Option.Received, respWithLink.getNextQueryParams());
         });
   }
 
-  getNext() {
-    this.backendService.getModels<Message>(Model.Message, this.nextInfo, this.user.identity)
+  getNext(option: Option) {
+    this.backendService.getModels<Message>(Model.Message, this.nextInfoMap.get(option),
+        this.paramNameMap.get(option), this.user.identity)
         .subscribe(respWithLink => {
-          this.messages = this.messages.concat(respWithLink.response);
-          this.nextInfo = respWithLink.getNextQueryParams();
-          this.logger.trace("nextInfo:", this.nextInfo);
+          this.msgMap.set(option, this.msgMap.get(option).concat(respWithLink.response));
+          this.nextInfoMap.set(option, respWithLink.getNextQueryParams());
+          this.logger.trace("nextInfo:", this.nextInfoMap.get(option));
         });
   }
 
-  onClick(index: number) {
-    let message = this.messages[index];
+  onClick(option: Option, index: number) {
+    this.logger.trace('onClick, option:', option);
+    let message = this.msgMap.get(option)[index];
     this.logger.trace('onClick:', message);
   }
 
-  onDelete(index: number) {
-    let message = this.messages[index];
+  onDelete(option: Option, index: number) {
+    let message = this.msgMap.get(option)[index];
     this.logger.trace('onDelete:', message);
     this.backendService.deleteModel<Message>(Model.Message, message.idCid)
-      .subscribe(_ => this.messages.splice(index, 1));
+        .subscribe(_ => this.msgMap.get(option).splice(index, 1));
   }
 
 }

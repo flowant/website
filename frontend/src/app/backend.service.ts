@@ -65,10 +65,9 @@ export class BackendService {
         catchError(this.handleError<RespWithLink<Content>>(`getSearch query:${queryParams}`)));
   }
 
-  getModels<T>(model: Model, nextInfo: string, queryValue?: string, queryName?: string, page?: string, size?: string)
+  getModels<T>(model: Model, nextInfo: string, queryName: string, queryValue: string, page?: string, size?: string)
       : Observable<RespWithLink<T>> {
 
-    queryName = queryName ? queryName : 'cid';
     page = page ? page : Config.defaultPage;
     size = size ? size: Config.defaultSize;
 

@@ -42,7 +42,7 @@ export class NotificationComponent implements OnInit {
 
   getPreview() {
     this.backendService.getModels<Notification>(Model.Notification, this.nextInfo,
-        this.user.identity, 'sid', Config.defaultPage, Config.previewSize)
+        'sid', this.user.identity, Config.defaultPage, Config.previewSize)
         .subscribe(respWithLink => {
           this.notifications = this.notifications.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
@@ -50,7 +50,7 @@ export class NotificationComponent implements OnInit {
   }
 
   getNext() {
-    this.backendService.getModels<Notification>(Model.Notification, this.nextInfo, this.user.identity, 'sid')
+    this.backendService.getModels<Notification>(Model.Notification, this.nextInfo, 'sid', this.user.identity)
         .subscribe(respWithLink => {
           this.notifications = this.notifications.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();

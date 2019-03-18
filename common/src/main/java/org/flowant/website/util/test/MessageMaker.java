@@ -9,13 +9,14 @@ import org.flowant.website.util.IdMaker;
 
 public class MessageMaker {
 
+    static String receiverName = "receiverName";
     static UUID senderId = IdMaker.randomUUID();
     static String senderName = "senderName";
     static String sentences = "sentences";
 
     public static Message random(IdCid idCid) {
         UUID id = idCid.getIdentity();
-        return Message.of(idCid, senderId, senderName + id, sentences, ZonedTime.now());
+        return Message.of(idCid, receiverName + id, senderId, senderName + id, sentences, ZonedTime.now());
     }
 
     public static Message random(UUID containerId) {

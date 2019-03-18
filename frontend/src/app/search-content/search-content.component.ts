@@ -48,7 +48,7 @@ export class SearchContentComponent implements OnInit {
   }
 
   getNextLatest() {
-    this.backendService.getModels<Content>(Model.Content, this.nextInfo, "56a1cd50-3c77-11e9-bf26-d571c84212ed")
+    this.backendService.getModels<Content>(Model.Content, this.nextInfo, 'cid', "56a1cd50-3c77-11e9-bf26-d571c84212ed")
         .subscribe(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();

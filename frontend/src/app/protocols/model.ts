@@ -132,15 +132,17 @@ export class Reputation {
 
 export class Message {
   idCid: IdCid;
+  receiverName: string;
   authorId: string;
   authorName: string;
   sentences: string;
   markedAsRead: boolean = false;
   time: ZonedTime = new ZonedTime();
 
-  static of(receiverId: string, senderId: string, senderName: string, sentences: string): Message {
+  static of(receiverId: string, receiverName: string, senderId: string, senderName: string, sentences: string): Message {
     let msg: Message = new Message();
     msg.idCid = IdCid.random(receiverId);
+    msg.receiverName = receiverName;
     msg.authorId = senderId;
     msg.authorName = senderName;
     msg.sentences = sentences;
