@@ -49,7 +49,7 @@ export class UserProfileComponent implements OnInit {
     } else {
       this.isReadonly = false;
       //TODO login user based
-      this.backendService.getUser("b901f010-4546-11e9-97e9-594de5a6cf90").subscribe(u => this.updateUser(u));
+      this.backendService.getUser().subscribe(u => this.updateUser(u));
     }
   }
 

@@ -33,7 +33,7 @@ export class NotificationComponent implements OnInit {
     private logger: NGXLogger) { }
 
   ngOnInit() {
-    this.backendService.getUser("b901f010-4546-11e9-97e9-594de5a6cf90")
+    this.backendService.getUser()
         .subscribe(user => {
           this.user = user;
           this.isPreview ? this.getPreview() : this.getNext();
