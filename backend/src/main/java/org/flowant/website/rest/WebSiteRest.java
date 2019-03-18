@@ -21,29 +21,29 @@ import reactor.core.publisher.Mono;
 @RestController
 public class WebSiteRest extends RepositoryRest<WebSite, UUID, WebSiteRepository> {
 
-    public final static String WEBSITE = "/website";
+    public final static String PATH_WEBSITE = "/website";
 
-    @GetMapping(value = WEBSITE)
+    @GetMapping(value = PATH_WEBSITE)
     public Flux<WebSite> getAll() {
         return super.getAll();
     }
 
-    @PostMapping(value = WEBSITE)
+    @PostMapping(value = PATH_WEBSITE)
     public Mono<ResponseEntity<WebSite>> post(@Valid @RequestBody WebSite webSite) {
         return super.post(webSite);
     }
 
-    @PutMapping(value = WEBSITE)
+    @PutMapping(value = PATH_WEBSITE)
     public Mono<ResponseEntity<WebSite>> put(@Valid @RequestBody WebSite webSite) {
         return super.put(webSite);
     }
 
-    @GetMapping(value = WEBSITE + PATH_SEG_ID)
+    @GetMapping(value = PATH_WEBSITE + PATH_SEG_ID)
     public Mono<ResponseEntity<WebSite>> getById(@PathVariable(value = ID) String id) {
         return super.getById(UUID.fromString(id));
     }
 
-    @DeleteMapping(value = WEBSITE + PATH_SEG_ID)
+    @DeleteMapping(value = PATH_WEBSITE + PATH_SEG_ID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         return super.deleteById(UUID.fromString(id));
     }

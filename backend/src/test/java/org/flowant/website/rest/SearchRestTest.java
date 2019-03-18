@@ -2,7 +2,7 @@ package org.flowant.website.rest;
 
 import static org.flowant.website.rest.IdCidRepositoryRest.PAGE;
 import static org.flowant.website.rest.IdCidRepositoryRest.SIZE;
-import static org.flowant.website.rest.SearchRest.SEARCH;
+import static org.flowant.website.rest.SearchRest.PATH_SEARCH;
 import static org.flowant.website.rest.SearchRest.TAG;
 
 import java.net.URI;
@@ -46,7 +46,7 @@ public class SearchRestTest extends RestWithRepositoryTest<Content, IdCid, Conte
         cleaner.registerToBeDeleted(contents);
 
         ClientResponse resp = WebClient.create().get()
-                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(SEARCH)
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(PATH_SEARCH)
                         .queryParam(TAG, tag)
                         .queryParam(PAGE, "0")
                         .queryParam(SIZE, String.valueOf(pageSize)).build())

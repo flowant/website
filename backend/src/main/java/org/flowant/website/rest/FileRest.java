@@ -27,12 +27,11 @@ public class FileRest {
     public static final String ID = "id";
     public static final String CONTENTID = "contentId";
     public static final String ATTACHMENT = "attachment";
-    public static final String FILES = "/files";
-    public static final String FILES_STREAM = "/files/stream";
-    public static final String FILES__ID__ = "/files/{id}";
-    public static final String FILES_DELETES = "/files/deletes";
+    public static final String PATH_FILES = "/files";
+    public static final String PATH_FILES_SEG_ID = "/files/{id}";
+    public static final String PATH_FILES_DELETES = "/files/deletes";
 
-    @PostMapping(value = FILES)
+    @PostMapping(value = PATH_FILES)
     public Mono<ResponseEntity<List<FileRef>>> postAll(@RequestPart(ATTACHMENT) Flux<FilePart> files) {
 
         return FileStorage.saveAll(files)
@@ -41,7 +40,7 @@ public class FileRest {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping(value = FILES__ID__)
+    @PostMapping(value = PATH_FILES_SEG_ID)
     public Mono<ResponseEntity<FileRef>> post(@PathVariable(value = ID) String id, @RequestPart(ATTACHMENT) FilePart file) {
 
         return FileStorage.save(UUID.fromString(id), file)
@@ -50,7 +49,7 @@ public class FileRest {
     }
 
     //TODO CACHE
-    @GetMapping(value = FILES__ID__)
+    @GetMapping(value = PATH_FILES_SEG_ID)
     public Mono<ResponseEntity<Resource>> getById(@PathVariable(value = ID) String id) {
 
         return FileStorage.findById(id)
@@ -60,7 +59,7 @@ public class FileRest {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping(value = FILES__ID__)
+    @DeleteMapping(value = PATH_FILES_SEG_ID)
     public Mono<ResponseEntity<Boolean>> deleteById(@PathVariable(value = ID) String id) {
 
         return FileStorage.deleteById(id)
@@ -68,7 +67,7 @@ public class FileRest {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping(value = FILES_DELETES)
+    @PostMapping(value = PATH_FILES_DELETES)
     public Mono<ResponseEntity<Boolean>> deleteAll(@RequestBody Flux<FileRef> files) {
 
         return FileStorage.deleteAll(files)

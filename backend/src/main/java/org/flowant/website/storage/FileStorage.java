@@ -57,7 +57,7 @@ public class FileStorage {
                 .contentType(filePart.headers().getContentType().toString())
                 .length(filePart.headers().getContentLength())
                 .filename(filePart.filename())
-                .uri(FileRest.FILES + SEP_URL + identity)
+                .uri(FileRest.PATH_FILES + SEP_URL + identity)
                 .build();
 
         File file = getPath(identity).toFile();

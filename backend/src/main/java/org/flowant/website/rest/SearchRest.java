@@ -19,10 +19,10 @@ import reactor.core.publisher.Mono;
 @RestController
 public class SearchRest extends PopularRepositoryRest<Content, ContentRepository> {
 
-    public final static String SEARCH = "/search";
+    public final static String PATH_SEARCH = "/search";
     public final static String TAG = "tag";
 
-    @GetMapping(value = SEARCH)
+    @GetMapping(value = PATH_SEARCH)
     public Mono<ResponseEntity<List<Content>>> findAllByTag(
             @RequestParam(TAG)String tag,
             @RequestParam(PAGE) int page,
@@ -32,7 +32,7 @@ public class SearchRest extends PopularRepositoryRest<Content, ContentRepository
 
         return repo.findAllByTag(tag, pageable(page, size, pagingState))
               .map(slice -> ResponseEntity.ok()
-                      .headers(nextLinkHeader(TAG, tag, uriBuilder.path(SEARCH), slice))
+                      .headers(nextLinkHeader(TAG, tag, uriBuilder.path(PATH_SEARCH), slice))
                       .body(slice.getContent()))
               .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

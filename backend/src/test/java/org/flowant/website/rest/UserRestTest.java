@@ -24,7 +24,7 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserReposit
     public void before() {
         super.before();
 
-        setTestParams(UserRest.USER, User.class, User::getIdentity,
+        setTestParams(UserRest.PATH_USER, User.class, User::getIdentity,
                 UserMaker::smallRandom, UserMaker::largeRandom,
                 user -> user.setFirstname("newFirstname"));
 
@@ -45,7 +45,7 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserReposit
         cleaner.registerToBeDeleted(user); // in case of fails
 
         webTestClient.delete()
-                .uri(UserRest.USER + UserRest.PATH_SEG_ID, user.getIdentity())
+                .uri(UserRest.PATH_USER + UserRest.PATH_SEG_ID, user.getIdentity())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().consumeWith(r -> {

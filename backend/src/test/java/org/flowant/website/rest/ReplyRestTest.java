@@ -34,7 +34,7 @@ public class ReplyRestTest extends RestWithRepositoryTest<Reply, IdCid, ReplyRep
     public void before() {
         super.before();
 
-        setTestParams(ReplyRest.REPLY, Reply.class, Reply::getIdCid,
+        setTestParams(ReplyRest.PATH_REPLY, Reply.class, Reply::getIdCid,
                 ReplyMaker::smallRandom, ReplyMaker::largeRandom,
                 r -> r.setComment("newComment"));
     }

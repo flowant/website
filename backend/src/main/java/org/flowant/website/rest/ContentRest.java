@@ -25,9 +25,9 @@ import reactor.core.publisher.Mono;
 @RestController
 public class ContentRest extends PopularRepositoryRest<Content, ContentRepository> {
 
-    public final static String CONTENT = "/content";
+    public final static String PATH_CONTENT = "/content";
 
-    @GetMapping(value = CONTENT)
+    @GetMapping(value = PATH_CONTENT)
     public Mono<ResponseEntity<List<Content>>> getAllByParam(
             @RequestParam(value = CID, required = false) String containerId,
             @RequestParam(value = AID, required = false) String authorId,
@@ -36,7 +36,7 @@ public class ContentRest extends PopularRepositoryRest<Content, ContentRepositor
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
-        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(CONTENT);
+        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(PATH_CONTENT);
 
         if (containerId != null) {
             return super.getAllByParam(repo::findAllByIdCidContainerId, CID, containerId,
@@ -49,14 +49,14 @@ public class ContentRest extends PopularRepositoryRest<Content, ContentRepositor
         }
     }
 
-    @GetMapping(value = CONTENT + POPULAR)
+    @GetMapping(value = PATH_CONTENT + PATH_POPULAR)
     public Mono<ResponseEntity<List<Content>>> getPopularSubItemByContainerId(
             @RequestParam(value = CID) String containerId) {
 
         return super.getPopularSubItemByContainerId(containerId);
     }
 
-    @GetMapping(value = CONTENT + PATH_SEG_ID_CID)
+    @GetMapping(value = PATH_CONTENT + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Content>> getById(
             @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
@@ -64,20 +64,20 @@ public class ContentRest extends PopularRepositoryRest<Content, ContentRepositor
         return super.getById(IdCid.of(id, cid));
     }
 
-    @PostMapping(value = CONTENT)
+    @PostMapping(value = PATH_CONTENT)
     public Mono<ResponseEntity<Content>> post(@Valid @RequestBody Content content) {
 
         return super.post(content);
     }
 
-    @PutMapping(value = CONTENT)
+    @PutMapping(value = PATH_CONTENT)
     public Mono<ResponseEntity<Content>> put(@Valid @RequestBody Content content) {
 
         return super.put(content);
     }
 
     // If File Server is separated, we can use FILES_DELETES end point instead of FileStorage.deleteAll
-    @DeleteMapping(value = CONTENT + PATH_SEG_ID_CID)
+    @DeleteMapping(value = PATH_CONTENT + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Void>> deleteById(
             @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {

@@ -24,9 +24,9 @@ import reactor.core.publisher.Mono;
 @RestController
 public class MessageRest extends IdCidRepositoryRest<Message, MessageRepository> {
 
-    public final static String MESSAGE = "/message";
+    public final static String PATH_MESSAGE = "/message";
 
-    @GetMapping(value = MESSAGE)
+    @GetMapping(value = PATH_MESSAGE)
     public Mono<ResponseEntity<List<Message>>> getAllByParam(
             @RequestParam(value = CID, required = false) String containerId,
             @RequestParam(value = AID, required = false) String authorId,
@@ -35,7 +35,7 @@ public class MessageRest extends IdCidRepositoryRest<Message, MessageRepository>
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
-        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(MESSAGE);
+        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(PATH_MESSAGE);
 
         if (containerId != null) {
             return super.getAllByParam(repo::findAllByIdCidContainerId, CID, containerId,
@@ -48,7 +48,7 @@ public class MessageRest extends IdCidRepositoryRest<Message, MessageRepository>
         }
     }
 
-    @GetMapping(value = MESSAGE + PATH_SEG_ID_CID)
+    @GetMapping(value = PATH_MESSAGE + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Message>> getById(
             @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
@@ -56,19 +56,19 @@ public class MessageRest extends IdCidRepositoryRest<Message, MessageRepository>
         return super.getById(IdCid.of(id, cid));
     }
 
-    @PostMapping(value = MESSAGE)
+    @PostMapping(value = PATH_MESSAGE)
     public Mono<ResponseEntity<Message>> post(@Valid @RequestBody Message message) {
 
         return super.post(message);
     }
 
-    @PutMapping(value = MESSAGE)
+    @PutMapping(value = PATH_MESSAGE)
     public Mono<ResponseEntity<Message>> put(@Valid @RequestBody Message message) {
 
         return super.put(message);
     }
 
-    @DeleteMapping(value = MESSAGE + PATH_SEG_ID_CID)
+    @DeleteMapping(value = PATH_MESSAGE + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Void>> deleteById(
             @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {

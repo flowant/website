@@ -24,9 +24,9 @@ import reactor.core.publisher.Mono;
 @RestController
 public class ReviewRest extends PopularRepositoryRest<Review, ReviewRepository> {
 
-    public final static String REVIEW = "/review";
+    public final static String PATH_REVIEW = "/review";
 
-    @GetMapping(value = REVIEW)
+    @GetMapping(value = PATH_REVIEW)
     public Mono<ResponseEntity<List<Review>>> getAllByParam(
             @RequestParam(value = CID, required = false) String containerId,
             @RequestParam(value = AID, required = false) String authorId,
@@ -35,7 +35,7 @@ public class ReviewRest extends PopularRepositoryRest<Review, ReviewRepository> 
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
-        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(REVIEW);
+        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(PATH_REVIEW);
 
         if (containerId != null) {
             return super.getAllByParam(repo::findAllByIdCidContainerId, CID, containerId,
@@ -48,14 +48,14 @@ public class ReviewRest extends PopularRepositoryRest<Review, ReviewRepository> 
         }
     }
 
-    @GetMapping(value = REVIEW + POPULAR)
+    @GetMapping(value = PATH_REVIEW + PATH_POPULAR)
     public Mono<ResponseEntity<List<Review>>> getPopularSubItemByContainerId(
             @RequestParam(value = CID) String containerId) {
 
         return super.getPopularSubItemByContainerId(containerId);
     }
 
-    @GetMapping(value = REVIEW + PATH_SEG_ID_CID)
+    @GetMapping(value = PATH_REVIEW + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Review>> getById(
             @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
@@ -63,17 +63,17 @@ public class ReviewRest extends PopularRepositoryRest<Review, ReviewRepository> 
         return super.getById(IdCid.of(id, cid));
     }
 
-    @PostMapping(value = REVIEW)
+    @PostMapping(value = PATH_REVIEW)
     public Mono<ResponseEntity<Review>> post(@Valid @RequestBody Review review) {
         return super.post(review);
     }
 
-    @PutMapping(value = REVIEW)
+    @PutMapping(value = PATH_REVIEW)
     public Mono<ResponseEntity<Review>> put(@Valid @RequestBody Review review) {
         return super.put(review);
     }
 
-    @DeleteMapping(value = REVIEW + PATH_SEG_ID_CID)
+    @DeleteMapping(value = PATH_REVIEW + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Void>> deleteById(
             @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {

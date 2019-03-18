@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
 @RestController
 public class RelationRest extends RepositoryRest<Relation, UUID, RelationRepository> {
 
-    public final static String RELATION = "/relation";
+    public final static String PATH_RELATION = "/relation";
     public final static String PATH_SEG_METHOD = "/{method}";
     public final static String PATH_SEG_FOLLOWEE = "/{followee}";
     public final static String METHOD = "method";
@@ -30,12 +30,12 @@ public class RelationRest extends RepositoryRest<Relation, UUID, RelationReposit
     public final static String UNFOLLOW = "unfollow";
     public final static String FOLLOWEE = "followee";
 
-    @PostMapping(value = RELATION)
+    @PostMapping(value = PATH_RELATION)
     public Mono<ResponseEntity<Relation>> post(@Valid @RequestBody Relation relation) {
         return super.post(relation);
     }
 
-    @PostMapping(value = RELATION + PATH_SEG_METHOD + PATH_SEG_ID + PATH_SEG_FOLLOWEE)
+    @PostMapping(value = PATH_RELATION + PATH_SEG_METHOD + PATH_SEG_ID + PATH_SEG_FOLLOWEE)
     public Mono<ResponseEntity<Relation>> put(
             @PathVariable(value = METHOD) String method,
             @PathVariable(value = ID) String id,
@@ -60,17 +60,17 @@ public class RelationRest extends RepositoryRest<Relation, UUID, RelationReposit
                 .then(super.getById(follower));
     }
 
-    @PutMapping(value = RELATION)
+    @PutMapping(value = PATH_RELATION)
     public Mono<ResponseEntity<Relation>> put(@Valid @RequestBody Relation relation) {
         return super.put(relation);
     }
 
-    @GetMapping(value = RELATION + PATH_SEG_ID)
+    @GetMapping(value = PATH_RELATION + PATH_SEG_ID)
     public Mono<ResponseEntity<Relation>> getById(@PathVariable(value = ID) String id) {
         return super.getById(UUID.fromString(id));
     }
 
-    @DeleteMapping(value = RELATION + PATH_SEG_ID)
+    @DeleteMapping(value = PATH_RELATION + PATH_SEG_ID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         return super.deleteById(UUID.fromString(id));
     }

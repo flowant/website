@@ -20,7 +20,7 @@ public class ReviewReputationRestTest extends RestWithRepositoryTest<ReviewReput
     public void before() {
         super.before();
 
-        setTestParams(ReviewReputationRest.REVIEW_REPUTATION,
+        setTestParams(ReviewReputationRest.PATH_REVIEW_REPUTATION,
                 ReviewReputation.class,
                 ReviewReputation::getIdCid,
                 ReputationMaker::emptyReviewReputation,

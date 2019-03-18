@@ -40,7 +40,7 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, IdCid, Cont
     public void before() {
         super.before();
 
-        setTestParams(ContentRest.CONTENT, Content.class, Content::getIdCid,
+        setTestParams(ContentRest.PATH_CONTENT, Content.class, Content::getIdCid,
                 ContentMaker::smallRandom, ContentMaker::largeRandom,
                 c -> c.setTitle("newTitle"));
     }
@@ -59,7 +59,7 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, IdCid, Cont
         cleaner.registerToBeDeleted(content); // in case of fails
 
         webTestClient.delete()
-                .uri(ContentRest.CONTENT + ContentRest.PATH_SEG_ID_CID, content.getIdentity(), content.getContainerId())
+                .uri(ContentRest.PATH_CONTENT + ContentRest.PATH_SEG_ID_CID, content.getIdentity(), content.getContainerId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().consumeWith(r -> {

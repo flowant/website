@@ -23,30 +23,30 @@ import reactor.core.publisher.Mono;
 @RestController
 public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
 
-    public final static String USER = "/user";
+    public final static String PATH_USER = "/user";
 
-    @GetMapping(value = USER)
+    @GetMapping(value = PATH_USER)
     public Flux<User> getAll() {
         return super.getAll();
     }
 
-    @PostMapping(value = USER)
+    @PostMapping(value = PATH_USER)
     public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
         return RelationshipService.createUserRelationship(user.getIdentity())
                 .then(super.post(user));
     }
 
-    @PutMapping(value = USER)
+    @PutMapping(value = PATH_USER)
     public Mono<ResponseEntity<User>> put(@Valid @RequestBody User user) {
         return super.put(user);
     }
 
-    @GetMapping(value = USER + PATH_SEG_ID)
+    @GetMapping(value = PATH_USER + PATH_SEG_ID)
     public Mono<ResponseEntity<User>> getById(@PathVariable(value = ID) String id) {
         return super.getById(UUID.fromString(id));
     }
 
-    @DeleteMapping(value = USER + PATH_SEG_ID)
+    @DeleteMapping(value = PATH_USER + PATH_SEG_ID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         UUID userId = UUID.fromString(id);
         return repo.findById(userId)

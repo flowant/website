@@ -134,7 +134,7 @@ public class MockDataUtil {
         parts.add(FileRest.ATTACHMENT, entity);
 
         return WebClient
-                .create("http://" + address + ":" + port + FileRest.FILES + pathSegId.orElse(""))
+                .create("http://" + address + ":" + port + FileRest.PATH_FILES + pathSegId.orElse(""))
                 .post()
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(parts))

@@ -8,14 +8,14 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class RootRest {
-    final static String ROOT = "/";
+    final static String PATH_ROOT = "/";
 
     @Value("${server.address}")
     String serverAddress;
     @Value("${server.port}")
     int serverPort;
 
-    @RequestMapping(ROOT)
+    @RequestMapping(PATH_ROOT)
     public Mono<String> welcome() {
         return Mono.just("backend:" + serverAddress + ":" + serverPort);
     }

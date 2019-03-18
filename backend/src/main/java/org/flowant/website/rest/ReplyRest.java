@@ -24,9 +24,9 @@ import reactor.core.publisher.Mono;
 @RestController
 public class ReplyRest extends PopularRepositoryRest<Reply, ReplyRepository> {
 
-    public final static String REPLY = "/reply";
+    public final static String PATH_REPLY = "/reply";
 
-    @GetMapping(value = REPLY)
+    @GetMapping(value = PATH_REPLY)
     public Mono<ResponseEntity<List<Reply>>> getAllByParam(
             @RequestParam(value = CID, required = false) String containerId,
             @RequestParam(value = AID, required = false) String authorId,
@@ -35,7 +35,7 @@ public class ReplyRest extends PopularRepositoryRest<Reply, ReplyRepository> {
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
-        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(REPLY);
+        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(PATH_REPLY);
 
         if (containerId != null) {
             return super.getAllByParam(repo::findAllByIdCidContainerId, CID, containerId,
@@ -48,14 +48,14 @@ public class ReplyRest extends PopularRepositoryRest<Reply, ReplyRepository> {
         }
     }
 
-    @GetMapping(value = REPLY + POPULAR)
+    @GetMapping(value = PATH_REPLY + PATH_POPULAR)
     public Mono<ResponseEntity<List<Reply>>> getPopularSubItemByContainerId(
             @RequestParam(value = CID) String containerId) {
 
         return super.getPopularSubItemByContainerId(containerId);
     }
 
-    @GetMapping(value = REPLY + PATH_SEG_ID_CID)
+    @GetMapping(value = PATH_REPLY + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Reply>> getById(
             @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {
@@ -63,19 +63,19 @@ public class ReplyRest extends PopularRepositoryRest<Reply, ReplyRepository> {
         return super.getById(IdCid.of(id, cid));
     }
 
-    @PostMapping(value = REPLY)
+    @PostMapping(value = PATH_REPLY)
     public Mono<ResponseEntity<Reply>> post(@Valid @RequestBody Reply reply) {
 
         return super.post(reply);
     }
 
-    @PutMapping(value = REPLY)
+    @PutMapping(value = PATH_REPLY)
     public Mono<ResponseEntity<Reply>> put(@Valid @RequestBody Reply reply) {
 
         return super.put(reply);
     }
 
-    @DeleteMapping(value = REPLY + PATH_SEG_ID_CID)
+    @DeleteMapping(value = PATH_REPLY + PATH_SEG_ID_CID)
     public Mono<ResponseEntity<Void>> deleteById(
             @PathVariable(value = ID) String id,
             @PathVariable(value = CID) String cid) {

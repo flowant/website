@@ -25,7 +25,7 @@ public class SubItemRestTest extends RestWithRepositoryTest<SubItem, UUID, SubIt
 
         SubItem subItem = SubItem.of(IdMaker.randomUUID(), List.of(IdScore.random()));
 
-        setTestParams(SubItemRest.SUBITEM, SubItem.class, SubItem::getIdentity,
+        setTestParams(SubItemRest.PATH_SUBITEM, SubItem.class, SubItem::getIdentity,
                 () -> subItem, () -> subItem, s -> s);
     }
 

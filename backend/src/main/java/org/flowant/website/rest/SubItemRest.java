@@ -20,24 +20,24 @@ import reactor.core.publisher.Mono;
 @RestController
 public class SubItemRest extends RepositoryRest<SubItem, UUID, SubItemRepository> {
 
-    public final static String SUBITEM = "/subitem";
+    public final static String PATH_SUBITEM = "/subitem";
 
-    @PostMapping(value = SUBITEM)
+    @PostMapping(value = PATH_SUBITEM)
     public Mono<ResponseEntity<SubItem>> post(@Valid @RequestBody SubItem subItem) {
         return super.post(subItem);
     }
 
-    @PutMapping(value = SUBITEM)
+    @PutMapping(value = PATH_SUBITEM)
     public Mono<ResponseEntity<SubItem>> put(@Valid @RequestBody SubItem subItem) {
         return super.put(subItem);
     }
 
-    @GetMapping(value = SUBITEM + PATH_SEG_ID)
+    @GetMapping(value = PATH_SUBITEM + PATH_SEG_ID)
     public Mono<ResponseEntity<SubItem>> getById(@PathVariable(value = ID) String id) {
         return super.getById(UUID.fromString(id));
     }
 
-    @DeleteMapping(value = SUBITEM + PATH_SEG_ID)
+    @DeleteMapping(value = PATH_SUBITEM + PATH_SEG_ID)
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable(value = ID) String id) {
         return super.deleteById(UUID.fromString(id));
     }

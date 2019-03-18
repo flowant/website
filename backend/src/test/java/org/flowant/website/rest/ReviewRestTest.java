@@ -34,7 +34,7 @@ public class ReviewRestTest extends RestWithRepositoryTest<Review, IdCid, Review
     public void before() {
         super.before();
 
-        setTestParams(ReviewRest.REVIEW, Review.class, Review::getIdCid,
+        setTestParams(ReviewRest.PATH_REVIEW, Review.class, Review::getIdCid,
                 ReviewMaker::smallRandom, ReviewMaker::largeRandom,
                 r -> r.setComment("newComment"));
     }

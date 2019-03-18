@@ -23,7 +23,7 @@ public class WebSiteRestTest extends RestWithRepositoryTest<WebSite, UUID, WebSi
 
         WebSite webSite = WebSite.of(IdMaker.randomUUID());
 
-        setTestParams(WebSiteRest.WEBSITE, WebSite.class, WebSite::getIdentity,
+        setTestParams(WebSiteRest.PATH_WEBSITE, WebSite.class, WebSite::getIdentity,
                 () -> webSite, () -> webSite, w -> w);
     }
 

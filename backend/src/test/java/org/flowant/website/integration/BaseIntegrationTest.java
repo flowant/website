@@ -3,7 +3,7 @@ package org.flowant.website.integration;
 import static org.flowant.website.rest.IdCidRepositoryRest.CID;
 import static org.flowant.website.rest.IdCidRepositoryRest.PAGE;
 import static org.flowant.website.rest.IdCidRepositoryRest.SIZE;
-import static org.flowant.website.rest.PopularRepositoryRest.POPULAR;
+import static org.flowant.website.rest.PopularRepositoryRest.PATH_POPULAR;
 import static org.flowant.website.rest.UriUtil.getUri;
 
 import java.net.URI;
@@ -72,18 +72,18 @@ public abstract class BaseIntegrationTest extends RestTest {
     public void before() {
         super.before();
 
-        apiInfo.put(WebSite.class.getSimpleName(), ApiInfo.of(WebSiteRest.WEBSITE, WebSite.class));
-        apiInfo.put(SubItem.class.getSimpleName(), ApiInfo.of(SubItemRest.SUBITEM, SubItem.class));
-        apiInfo.put(User.class.getSimpleName(), ApiInfo.of(UserRest.USER, User.class));
-        apiInfo.put(Content.class.getSimpleName(), ApiInfo.of(ContentRest.CONTENT, Content.class));
-        apiInfo.put(Review.class.getSimpleName(), ApiInfo.of(ReviewRest.REVIEW, Review.class));
-        apiInfo.put(Reply.class.getSimpleName(), ApiInfo.of(ReplyRest.REPLY, Reply.class));
+        apiInfo.put(WebSite.class.getSimpleName(), ApiInfo.of(WebSiteRest.PATH_WEBSITE, WebSite.class));
+        apiInfo.put(SubItem.class.getSimpleName(), ApiInfo.of(SubItemRest.PATH_SUBITEM, SubItem.class));
+        apiInfo.put(User.class.getSimpleName(), ApiInfo.of(UserRest.PATH_USER, User.class));
+        apiInfo.put(Content.class.getSimpleName(), ApiInfo.of(ContentRest.PATH_CONTENT, Content.class));
+        apiInfo.put(Review.class.getSimpleName(), ApiInfo.of(ReviewRest.PATH_REVIEW, Review.class));
+        apiInfo.put(Reply.class.getSimpleName(), ApiInfo.of(ReplyRest.PATH_REPLY, Reply.class));
         apiInfo.put(ContentReputation.class.getSimpleName(),
-                ApiInfo.of(ContentReputationRest.CONTENT_REPUTATION, ContentReputation.class));
+                ApiInfo.of(ContentReputationRest.PATH_CONTENT_REPUTATION, ContentReputation.class));
         apiInfo.put(ReviewReputation.class.getSimpleName(),
-                ApiInfo.of(ReviewReputationRest.REVIEW_REPUTATION, ReviewReputation.class));
+                ApiInfo.of(ReviewReputationRest.PATH_REVIEW_REPUTATION, ReviewReputation.class));
         apiInfo.put(ReplyReputation.class.getSimpleName(),
-                ApiInfo.of(ReplyReputationRest.REPLY_REPUTATION, ReplyReputation.class));
+                ApiInfo.of(ReplyReputationRest.PATH_REPLY_REPUTATION, ReplyReputation.class));
     }
 
     @After
@@ -152,7 +152,7 @@ public abstract class BaseIntegrationTest extends RestTest {
         ApiInfo<? extends HasIdentity> info = apiInfo.get(classSimpleName);
 
         List<T> resp = WebClient.create().get()
-                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl() + POPULAR)
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(info.getUrl() + PATH_POPULAR)
                         .queryParam(CID, id.toString()).build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .exchange().block()

@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 public abstract class PopularRepositoryRest <T extends HasIdCid & HasReputation & HasCruTime, R extends ReputationRepository<T>>
         extends CruTimeRepositoryRest <T, R> {
 
-    public final static String POPULAR = "/popular";
+    public final static String PATH_POPULAR = "/popular";
 
     @Autowired
     SubItemRepository repoSubItem;

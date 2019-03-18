@@ -25,7 +25,7 @@ public class MessageRestTest extends RestWithRepositoryTest<Message, IdCid, Mess
     public void before() {
         super.before();
 
-        setTestParams(MessageRest.MESSAGE, Message.class, Message::getIdCid,
+        setTestParams(MessageRest.PATH_MESSAGE, Message.class, Message::getIdCid,
                 MessageMaker::random, MessageMaker::random,
                 r -> r.setSentences("new sentences"));
     }

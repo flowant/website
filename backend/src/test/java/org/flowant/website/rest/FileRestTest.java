@@ -39,7 +39,7 @@ public class FileRestTest extends RestTest {
     @Test
     public void testPostMalformed() {
         ResponseSpec respSpec = webTestClient.post()
-                .uri(FileRest.FILES)
+                .uri(FileRest.PATH_FILES)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .body(Mono.just("notFile"), String.class)
@@ -60,7 +60,7 @@ public class FileRestTest extends RestTest {
         }
 
         return webTestClient.post()
-                .uri(FileRest.FILES)
+                .uri(FileRest.PATH_FILES)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(parts))
                 .exchange()
@@ -86,7 +86,7 @@ public class FileRestTest extends RestTest {
     @Test
     public void testGetNotExistId() {
         webTestClient.get()
-                .uri(FileRest.FILES__ID__, "NotExist")
+                .uri(FileRest.PATH_FILES_SEG_ID, "NotExist")
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody().consumeWith(log::trace);
@@ -101,7 +101,7 @@ public class FileRestTest extends RestTest {
         parts.add(FileRest.ATTACHMENT, entity);
 
         webTestClient.post()
-                .uri(FileRest.FILES)
+                .uri(FileRest.PATH_FILES)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(parts))
                 .exchange()
@@ -109,7 +109,7 @@ public class FileRestTest extends RestTest {
                 .expectBodyList(FileRef.class).hasSize(1).consumeWith(body -> {
                     body.getResponseBody().forEach(fileRef -> {
                         webTestClient.get()
-                                .uri(FileRest.FILES__ID__, fileRef.getIdentity())
+                                .uri(FileRest.PATH_FILES_SEG_ID, fileRef.getIdentity())
                                 .exchange()
                                 .expectStatus().isOk()
                                 .expectBody().consumeWith( s -> {
@@ -131,7 +131,7 @@ public class FileRestTest extends RestTest {
         UUID identity = IdMaker.randomUUID();
 
         webTestClient.post()
-                .uri(FileRest.FILES + "/" + identity)
+                .uri(FileRest.PATH_FILES + "/" + identity)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(parts))
                 .exchange()
@@ -140,7 +140,7 @@ public class FileRestTest extends RestTest {
                     FileRef fileRef = body.getResponseBody();
                     assertEquals(identity, fileRef.getIdentity());
                     webTestClient.get()
-                            .uri(FileRest.FILES__ID__, fileRef.getIdentity())
+                            .uri(FileRest.PATH_FILES_SEG_ID, fileRef.getIdentity())
                             .exchange()
                             .expectStatus().isOk()
                             .expectBody().consumeWith( s -> {
@@ -153,7 +153,7 @@ public class FileRestTest extends RestTest {
     @Test
     public void testDeleteNotExistId() {
         webTestClient.delete()
-                .uri(FileRest.FILES__ID__, "NotExist")
+                .uri(FileRest.PATH_FILES_SEG_ID, "NotExist")
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody().consumeWith(log::trace);
@@ -168,7 +168,7 @@ public class FileRestTest extends RestTest {
         parts.add(FileRest.ATTACHMENT, entity);
 
         webTestClient.post()
-                .uri(FileRest.FILES)
+                .uri(FileRest.PATH_FILES)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(parts))
                 .exchange()
@@ -176,7 +176,7 @@ public class FileRestTest extends RestTest {
                 .expectBodyList(FileRef.class).hasSize(1).consumeWith(body -> {
                     body.getResponseBody().forEach(fileRef -> {
                         webTestClient.delete()
-                                .uri(FileRest.FILES__ID__, fileRef.getIdentity())
+                                .uri(FileRest.PATH_FILES_SEG_ID, fileRef.getIdentity())
                                 .exchange()
                                 .expectStatus().isOk()
                                 .expectBody().consumeWith(s -> {
@@ -194,7 +194,7 @@ public class FileRestTest extends RestTest {
             List<FileRef> refs = body.getResponseBody();
 
             webTestClient.post()
-                    .uri(FileRest.FILES_DELETES)
+                    .uri(FileRest.PATH_FILES_DELETES)
                     .contentType(MediaType.APPLICATION_JSON_UTF8)
                     .body(Flux.fromIterable(refs), FileRef.class)
                     .exchange()

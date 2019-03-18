@@ -30,7 +30,7 @@ public class RelationRestTest extends RestWithRepositoryTest<Relation, UUID, Rel
 
         Relation relation = Relation.of(IdMaker.randomUUID(), Set.of(), Set.of());
 
-        setTestParams(RelationRest.RELATION, Relation.class, Relation::getIdentity,
+        setTestParams(RelationRest.PATH_RELATION, Relation.class, Relation::getIdentity,
                 () -> relation, () -> relation, s -> s);
     }
 

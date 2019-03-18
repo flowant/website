@@ -20,7 +20,7 @@ public class ContentReputationRestTest extends RestWithRepositoryTest<ContentRep
     public void before() {
         super.before();
 
-        setTestParams(ContentReputationRest.CONTENT_REPUTATION,
+        setTestParams(ContentReputationRest.PATH_CONTENT_REPUTATION,
                 ContentReputation.class,
                 ContentReputation::getIdCid,
                 ReputationMaker::emptyContentReputation,

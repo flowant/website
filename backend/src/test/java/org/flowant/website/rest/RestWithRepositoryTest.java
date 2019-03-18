@@ -5,7 +5,7 @@ import static org.flowant.website.rest.IdCidRepositoryRest.CID;
 import static org.flowant.website.rest.IdCidRepositoryRest.PAGE;
 import static org.flowant.website.rest.IdCidRepositoryRest.SID;
 import static org.flowant.website.rest.IdCidRepositoryRest.SIZE;
-import static org.flowant.website.rest.PopularRepositoryRest.POPULAR;
+import static org.flowant.website.rest.PopularRepositoryRest.PATH_POPULAR;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
@@ -300,7 +300,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
         log.trace("expected:{}", expected);
 
         webTestClient.get()
-                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl + POPULAR)
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl + PATH_POPULAR)
                         .queryParam(CID, containerId.toString()).build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .exchange()
