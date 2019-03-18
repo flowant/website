@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
@@ -23,8 +23,7 @@ import reactor.core.publisher.Flux;
 public class SubItem implements HasIdentity {
 
     @NonNull
-    @Id
-    @Column("id")
+    @PrimaryKey("id")
     UUID identity;
 
     @NonNull

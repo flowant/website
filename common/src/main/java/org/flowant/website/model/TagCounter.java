@@ -1,8 +1,8 @@
 package org.flowant.website.model;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import com.datastax.driver.core.DataType.Name;
@@ -19,8 +19,7 @@ import lombok.experimental.Accessors;
 @Table
 public class TagCounter {
 
-    @Id
-    @Column("t")
+    @PrimaryKey("t")
     String tag;
 
     @CassandraType(type=Name.COUNTER)

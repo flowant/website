@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.Indexed;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -29,8 +29,7 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     private static final long serialVersionUID = 3027599136204429983L;
 
     @NonNull
-    @Id
-    @Column("id")
+    @PrimaryKey("id")
     UUID identity;
 
     @NonNull
