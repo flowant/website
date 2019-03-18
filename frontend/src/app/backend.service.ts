@@ -107,7 +107,9 @@ export class BackendService {
     );
   }
 
-  getUser(id: string): Observable<User> {
+  getUser(id?: string): Observable<User> {
+    // TODO get current user
+    id = id ? id : "b901f010-4546-11e9-97e9-594de5a6cf90" as string;
     return this.getModel<User>(Model.User, id);
   }
 

@@ -18,6 +18,8 @@ import { MessageComponent } from './message/message.component';
 import { NotificationComponent } from './notification/notification.component';
 import { UserRefComponent } from './user-ref/user-ref.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { ModalsComponent } from './modals/modals.component';
+import { NgbModalSendMessageComponent } from './ngb-modal-send-message/ngb-modal-send-message.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     MessageComponent,
     NotificationComponent,
     UserRefComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    ModalsComponent,
+    NgbModalSendMessageComponent
   ],
   imports: [
     NgbModule,
@@ -41,6 +45,9 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     HttpClientModule,
     AppRoutingModule,
     LoggerModule.forRoot({serverLoggingUrl: 'http://localhost:8888/debug.test', level: NgxLoggerLevel.TRACE, serverLogLevel: NgxLoggerLevel.TRACE})
+  ],
+  entryComponents: [
+    NgbModalSendMessageComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,6 @@
 @import "src/styles.scss";
 
 .msg {
-    @extend .container;
     @extend .card;
     @extend .m-1;
     @extend .p-1;

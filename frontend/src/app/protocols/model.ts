@@ -135,8 +135,18 @@ export class Message {
   authorId: string;
   authorName: string;
   sentences: string;
-  markedAsRead: boolean;
-  time: ZonedTime;
+  markedAsRead: boolean = false;
+  time: ZonedTime = new ZonedTime();
+
+  static of(receiverId: string, senderId: string, senderName: string, sentences: string): Message {
+    let msg: Message = new Message();
+    msg.idCid = IdCid.random(receiverId);
+    msg.authorId = senderId;
+    msg.authorName = senderName;
+    msg.sentences = sentences;
+    return msg;
+  }
+
 }
 
 export class Notification {

@@ -7,7 +7,10 @@ import { User, Notification, Category } from '../protocols/model';
 import { BackendService } from '../backend.service';
 import { Config, Model } from '../config';
 import { NGXLogger, LoggerConfig } from 'ngx-logger';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalSendMessageComponent } from '../ngb-modal-send-message/ngb-modal-send-message.component';
+
+
 
 @Component({
   selector: 'app-user-ref',
@@ -17,6 +20,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 export class UserRefComponent implements OnInit {
 
   @Input() userRefId: string;
+  @Input() userRefName: string;
 
   imgServerUrl: string = Config.fileUrl + "/";
 
@@ -30,8 +34,10 @@ export class UserRefComponent implements OnInit {
   ngOnInit() {
   }
 
-  sendMessage(content) {
-  // TODO
+  sendMessage() {
+    const modalRef = this.modalService.open(NgbModalSendMessageComponent);
+    modalRef.componentInstance.receiverId = this.userRefId;
+    modalRef.componentInstance.receiverName = this.userRefName;
   }
 
 }

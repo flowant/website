@@ -1,13 +1,11 @@
-<div>
-  <div class="btn-group dropright">
-    <img class="icon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-      src="{{imgServerUrl + userRefId}}" onError="this.src='/assets/img/img60x60.jpg';">
-    <div class="dropdown-menu">
-      <a class="dropdown-item" routerLink="/user/profile/{{userRefId}}">Show Profile</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Follow</a>
-      <a class="dropdown-item" (click)="sendMessage(content)">Send Message</a>
-      <a class="dropdown-item">Report</a>
-    </div><!-- class="btn-group dropright"> -->
-  </div>
+<div class="btn-group dropright">
+  <img class="icon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+    src="{{imgServerUrl + userRefId}}" onError="this.src='/assets/img/img60x60.jpg';">
+  <div class="dropdown-menu">
+    <a class="dropdown-item" routerLink="/user/profile/{{userRefId}}">Show Profile</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="#">Follow</a>
+    <a class="dropdown-item" (click)="sendMessage()">Send Message</a>
+    <a class="dropdown-item">Report</a>
+  </div><!-- class="btn-group dropright"> -->
 </div>
