@@ -1,5 +1,7 @@
 package org.flowant.website.rest;
 
+import static org.flowant.website.rest.IdCidRepositoryRest.AID;
+
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -74,6 +76,16 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, IdCid, Cont
         pagination(10, 3, supplier);
         pagination(10, 5, supplier);
         pagination(10, 11, supplier);
+    }
+
+    @Test
+    public void testPaginationByAuthorId() {
+        Function<UUID, Content> supplier = (authorId) -> ContentMaker.largeRandom().setAuthorId(authorId);
+
+        pagination(10, 1, AID, supplier);
+        pagination(10, 3, AID, supplier);
+        pagination(10, 5, AID, supplier);
+        pagination(10, 11, AID, supplier);
     }
 
     @Autowired

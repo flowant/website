@@ -1,8 +1,5 @@
 package org.flowant.website.rest;
 
-import static org.flowant.website.repository.PageableUtil.pageable;
-import static org.flowant.website.rest.LinkUtil.nextLinkHeader;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +29,6 @@ import reactor.core.publisher.Mono;
 public class NotificationRest extends IdCidRepositoryRest<Notification, NotificationRepository> {
 
     public final static String PATH_NOTIFICATION = "/notification";
-    public final static String SID = "sid";
     public final static String SUBSCRIBER = "subscriber";
     public final static String PATH_SEG_SUBSCRIBER = "/{subscriber}";
 
@@ -43,7 +39,7 @@ public class NotificationRest extends IdCidRepositoryRest<Notification, Notifica
     WebSiteConfig config;
 
     @GetMapping(value = PATH_NOTIFICATION)
-    public Mono<ResponseEntity<List<Notification>>> getAllByContainerId(
+    public Mono<ResponseEntity<List<Notification>>> getAllByParam(
             @RequestParam(value = CID, required = false) String containerId,
             @RequestParam(value = SID, required = false) String subscriberId,
             @RequestParam(PAGE) int page,
@@ -54,15 +50,11 @@ public class NotificationRest extends IdCidRepositoryRest<Notification, Notifica
         UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(PATH_NOTIFICATION);
 
         if (containerId != null) {
-            return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilderWithPath);
-
+            return super.getAllByParam(repo::findAllByIdCidContainerId, CID, containerId,
+                    page, size, pagingState, uriBuilderWithPath);
         } else if (subscriberId != null) {
-            return repo.findAllBySubscriberId(UUID.fromString(subscriberId), pageable(page, size, pagingState))
-                    .map(slice -> ResponseEntity.ok()
-                            .headers(nextLinkHeader(SID, subscriberId, uriBuilderWithPath, slice))
-                            .body(slice.getContent()))
-                    .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
+            return super.getAllByParam(repo::findAllBySubscriberId, SID, subscriberId,
+                    page, size, pagingState, uriBuilderWithPath);
         } else {
             return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }

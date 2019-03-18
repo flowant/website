@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.model.Reply;
 import org.flowant.website.repository.ReplyRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +27,25 @@ public class ReplyRest extends PopularRepositoryRest<Reply, ReplyRepository> {
     public final static String REPLY = "/reply";
 
     @GetMapping(value = REPLY)
-    public Mono<ResponseEntity<List<Reply>>> getAllByContainerId(
-            @RequestParam(CID) String containerId,
+    public Mono<ResponseEntity<List<Reply>>> getAllByParam(
+            @RequestParam(value = CID, required = false) String containerId,
+            @RequestParam(value = AID, required = false) String authorId,
             @RequestParam(PAGE) int page,
             @RequestParam(SIZE) int size,
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
-        return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilder.path(REPLY));
+        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(REPLY);
+
+        if (containerId != null) {
+            return super.getAllByParam(repo::findAllByIdCidContainerId, CID, containerId,
+                    page, size, pagingState, uriBuilderWithPath);
+        } else if (authorId != null) {
+            return super.getAllByParam(repo::findAllByAuthorId, AID, authorId,
+                    page, size, pagingState, uriBuilderWithPath);
+        } else {
+            return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
     }
 
     @GetMapping(value = REPLY + POPULAR)

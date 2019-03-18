@@ -8,6 +8,7 @@ import org.flowant.website.model.Content;
 import org.flowant.website.model.IdCid;
 import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.storage.FileStorage;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,14 +28,25 @@ public class ContentRest extends PopularRepositoryRest<Content, ContentRepositor
     public final static String CONTENT = "/content";
 
     @GetMapping(value = CONTENT)
-    public Mono<ResponseEntity<List<Content>>> getAllByContainerId(
-            @RequestParam(CID) String containerId,
+    public Mono<ResponseEntity<List<Content>>> getAllByParam(
+            @RequestParam(value = CID, required = false) String containerId,
+            @RequestParam(value = AID, required = false) String authorId,
             @RequestParam(PAGE) int page,
             @RequestParam(SIZE) int size,
             @RequestParam(value = PS, required = false) String pagingState,
             UriComponentsBuilder uriBuilder) {
 
-        return super.getAllByContainerId(containerId, page, size, pagingState, uriBuilder.path(CONTENT));
+        UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(CONTENT);
+
+        if (containerId != null) {
+            return super.getAllByParam(repo::findAllByIdCidContainerId, CID, containerId,
+                    page, size, pagingState, uriBuilderWithPath);
+        } else if (authorId != null) {
+            return super.getAllByParam(repo::findAllByAuthorId, AID, authorId,
+                    page, size, pagingState, uriBuilderWithPath);
+        } else {
+            return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
     }
 
     @GetMapping(value = CONTENT + POPULAR)

@@ -3,6 +3,7 @@ package org.flowant.website.rest;
 import static org.flowant.website.BackendSecurityConfiguration.ROLE_WRITER;
 import static org.flowant.website.rest.IdCidRepositoryRest.CID;
 import static org.flowant.website.rest.IdCidRepositoryRest.PAGE;
+import static org.flowant.website.rest.IdCidRepositoryRest.SID;
 import static org.flowant.website.rest.IdCidRepositoryRest.SIZE;
 import static org.flowant.website.rest.PopularRepositoryRest.POPULAR;
 import static org.junit.Assert.assertTrue;
@@ -239,18 +240,18 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
         pagination(cntEntities, pageSize, CID, supplier);
     }
 
-    public void pagination(int cntEntities, int pageSize, String queryParam, Function<UUID, Entity> supplier) {
-        UUID queryId = UUIDs.timeBased();
+    public void pagination(int cntEntities, int pageSize, String paramName, Function<UUID, Entity> supplier) {
+        UUID paramValue = UUIDs.timeBased();
 
         Assert.assertTrue(repo instanceof IdCidRepository);
 
-        Flux<Entity> entities = Flux.range(1, cntEntities).map(i -> supplier.apply(queryId)).cache();
+        Flux<Entity> entities = Flux.range(1, cntEntities).map(i -> supplier.apply(paramValue)).cache();
         repo.saveAll(entities).blockLast();
         cleaner.registerToBeDeleted(entities);
 
         ClientResponse resp = WebClient.create().get()
                 .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(baseUrl)
-                        .queryParam(queryParam, queryId.toString())
+                        .queryParam(paramName, paramValue.toString())
                         .queryParam(PAGE, "0")
                         .queryParam(SIZE, String.valueOf(pageSize)).build())
                 .exchange().block();
@@ -268,11 +269,11 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
             resp = WebClient.create().get().uri(nextUrl.get()).exchange().block();
         }
 
-        if (queryParam.equalsIgnoreCase(CID)) {
-            Assert.assertTrue(entities.all(c -> list.contains(c)).block());
-        } else { // SID
+        if (paramName.equalsIgnoreCase(SID)) {
             List<ID> actualIdCids = list.stream().map(getEntityId).collect(Collectors.toList());
             Assert.assertTrue(entities.map(getEntityId).all(actualIdCids::contains).block());
+        } else {
+            Assert.assertTrue(entities.all(c -> list.contains(c)).block());
         }
     }
 

@@ -61,6 +61,17 @@ public class NotificationRestTest extends RestWithRepositoryTest<Notification, I
     }
 
     @Test
+    public void testPaginationBySubscriberId() {
+        Function<UUID, Notification> supplier = (subscriberId) -> NotificationMaker.largeRandom()
+                .setSubscribers(Set.of(subscriberId));
+
+        pagination(10, 1, SID, supplier);
+        pagination(10, 3, SID, supplier);
+        pagination(10, 5, SID, supplier);
+        pagination(10, 11, SID, supplier);
+    }
+
+    @Test
     public void testNewContentNotification() {
 
         UUID userId = IdMaker.randomUUID();
@@ -86,17 +97,6 @@ public class NotificationRestTest extends RestWithRepositoryTest<Notification, I
                     Notification n = repo.findById(noti.getIdCid()).block();
                     assertTrue(n.getSubscribers().contains(follower));
                 });
-    }
-
-    @Test
-    public void testPaginationBySubscriberId() {
-        Function<UUID, Notification> supplier = (subscriberId) -> NotificationMaker.largeRandom()
-                .setSubscribers(Set.of(subscriberId));
-
-        pagination(10, 1, SID, supplier);
-        pagination(10, 3, SID, supplier);
-        pagination(10, 5, SID, supplier);
-        pagination(10, 11, SID, supplier);
     }
 
     @Test
