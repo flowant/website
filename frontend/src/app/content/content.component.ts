@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
+import { filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
 import * as $ from 'jquery';
-import { Content, IdCid } from '../protocols/model';
+import { Content, IdCid, User } from '../protocols/model';
 import { BackendService } from '../backend.service';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
+import { userInfo } from 'os';
 
 declare var $: any;
 
@@ -21,6 +23,8 @@ export class ContentComponent implements OnInit {
 
   imgServerUrl: string = Config.imgServerUrl;
 
+  user: User;
+
   content: Content;
 
   isReadonly: boolean;
@@ -33,8 +37,9 @@ export class ContentComponent implements OnInit {
     private backendService: BackendService,
     private location: Location,
     private route: ActivatedRoute,
-    private logger: NGXLogger) {
+    private logger: NGXLogger) { }
 
+  ngOnInit() {
     let identity = this.route.snapshot.paramMap.get('id');
     let containerId = this.route.snapshot.paramMap.get('cid');
 
@@ -43,12 +48,10 @@ export class ContentComponent implements OnInit {
           this.route.snapshot.paramMap.get('cid'));
     }
 
-    // TODO should depend on permission
-    this.isReadonly = this.idCid != null;
-  }
-
-  ngOnInit() {
-    this.prepareContent();
+    this.backendService.getUser().pipe(
+      tap(user => this.user = user),
+      tap(_ => this.prepareContent())
+    ).subscribe();
   }
 
   prepareContent(): void {
@@ -56,12 +59,15 @@ export class ContentComponent implements OnInit {
     observable.subscribe(c => {
       this.content = c;
       this.convertFromContent();
+      this.isReadonly = this.user.identity !== c.authorId;
       this.logger.trace('getContent:', c);
     });
   }
 
   newContent(): Observable<Content> {
     this.content = new Content();
+    this.content.authorId = this.user.identity;
+    this.content.authorName = this.user.displayName;
     return of(this.content);
   }
 
@@ -118,7 +124,7 @@ export class ContentComponent implements OnInit {
 
   // see summernote's onMediaDelete event handler
   deleteUnusedFile() {
-    if (this.content.fileRefs.length == 0) {
+    if (!this.content.fileRefs || this.content.fileRefs.length == 0) {
       return;
     }
 
@@ -149,8 +155,8 @@ export class ContentComponent implements OnInit {
       .subscribe(() => {});
   }
 
-  styleSuffix(): string {
-    return this.isReadonly ? "Readonly": "";
+  suffixReadonly(): string {
+    return this.isReadonly ? "-readonly": "";
   }
 
   goBack(): void {
