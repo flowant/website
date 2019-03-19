@@ -7,58 +7,54 @@
           <img src="{{userImageUri}}" class="img-thumbnail" onError="this.src='/assets/img/emptyAvatar.png';">
         </div>
 
-        <div *ngIf="isReadonly==false" class="row">
-          <div class="inputGroup col-8">
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" (change)="onUploadPhoto($event.target.files)">
-              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-            </div>
+        <div *ngIf="isReadonly==false" class="input-group">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" (change)="onUploadPhoto($event.target.files)">
+            <label class="custom-file-label">Choose file</label>
           </div>
-          <div class="float-right">
-            <button type="button" (click)="onDeletePhoto()" class="inputGroup btn btn-outline-secondary">
-              Delete
-            </button>
+          <div class="input-group-append">
+            <button class="btn-basic" type="button" (click)="onDeletePhoto()">Delete</button>
           </div>
         </div>
 
-        <div class="inputGroup">
-          <div class="inputPrepend">
-            <span class="inputPrependLabel">Username</span>
+        <div class="input-group">
+          <div class="input-prepend">
+            <span class="input-prepend-label">Username</span>
           </div>
-          <input class="inputBoxReadonly" type="text" [(ngModel)]="user.username">
+          <input class="input-box-readonly" type="text" [(ngModel)]="user.username">
         </div>
 
-        <div class="inputGroup">
-          <div class="inputPrepend">
-            <span class="inputPrependLabel">Display Name</span>
+        <div class="input-group">
+          <div class="input-prepend">
+            <span class="input-prepend-label">Display Name</span>
           </div>
-          <input [ngClass]="'inputBox'+ suffixReadonly()" type="text" [(ngModel)]="user.displayName">
+          <input [ngClass]="'input-box'+ suffixReadonly()" type="text" [(ngModel)]="user.displayName">
         </div>
 
-        <div class="inputGroup">
-          <div class="inputPrepend">
-            <span class="inputPrependLabel">Firstname</span>
+        <div class="input-group">
+          <div class="input-prepend">
+            <span class="input-prepend-label">Firstname</span>
           </div>
-          <input [ngClass]="'inputBox'+ suffixReadonly()" type="text" [(ngModel)]="user.firstname">
+          <input [ngClass]="'input-box'+ suffixReadonly()" type="text" [(ngModel)]="user.firstname">
         </div>
 
-        <div class="inputGroup">
-          <div class="inputPrepend">
-            <span class="inputPrependLabel">Lastname</span>
+        <div class="input-group">
+          <div class="input-prepend">
+            <span class="input-prepend-label">Lastname</span>
           </div>
-          <input [ngClass]="'inputBox'+ suffixReadonly()" type="text" [(ngModel)]="user.lastname">
+          <input [ngClass]="'input-box'+ suffixReadonly()" type="text" [(ngModel)]="user.lastname">
         </div>
 
-        <div class="inputGroup">
-          <div class="inputPrepend">
-            <span class="inputPrependLabel">Email</span>
+        <div class="input-group">
+          <div class="input-prepend">
+            <span class="input-prepend-label">Email</span>
           </div>
-          <input [ngClass]="'inputBox'+ suffixReadonly()" type="text" [(ngModel)]="user.email">
+          <input [ngClass]="'input-box'+ suffixReadonly()" type="text" [(ngModel)]="user.email">
         </div>
 
-        <div class="inputGroup">
-          <div class="inputPrepend">
-            <label class="inputPrependLabel" for="genderSelector">Gender</label>
+        <div class="input-group">
+          <div class="input-prepend">
+            <label class="input-prepend-label" for="genderSelector">Gender</label>
           </div>
           <select [ngClass]="'select'+ suffixReadonly()" id="genderSelector" [(ngModel)]="user.gender">
             <option *ngFor="let key of genderKeys" [value]="genders[key]">{{key}}</option>
@@ -67,7 +63,7 @@
         <!-- TODO change password-->
 
         <div *ngIf="isReadonly==false" class="float-right">
-          <button type="button" (click)="onSave()" class="btn btn-outline-secondary">
+          <button type="button" (click)="onSave()" class="btn-basic">
             Save
           </button>
         </div>

@@ -28,7 +28,7 @@ export class UserProfileComponent implements OnInit {
   genders = Gender;
 
   suffixReadonly(): string {
-    return this.isReadonly ? "Readonly": "";
+    return this.isReadonly ? "-readonly": "";
   }
 
   constructor(

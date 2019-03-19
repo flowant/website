@@ -1,27 +1,27 @@
 @import "src/styles.scss";
 
-.inputGroup {
+.input-group {
     @extend .input-group;
     @extend .m-1;
 }
 
-.inputPrepend {
+.input-prepend {
     @extend .input-group-prepend;
     width: 33%;
 }
 
-.inputPrependLabel {
+.input-prepend-label {
     @extend .input-group-text;
     @extend .pl-2;
     width: 100%;
 }
 
-.inputBox {
+.input-box {
     @extend .form-control;
 }
 
-.inputBoxReadonly {
-    @extend .inputBox;
+.input-box-readonly {
+    @extend .input-box;
     pointer-events: none;
 }
 
@@ -29,7 +29,7 @@
     @extend .custom-select;
 }
 
-.selectReadonly {
+.select-readonly {
     @extend .select;
     pointer-events: none;
 }
