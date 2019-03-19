@@ -26,7 +26,6 @@ public class Notification implements HasIdCid {
 
     @NonNull
     @PrimaryKey
-    @Column("ic")
     // containerId means authorId; source of notification
     IdCid idCid;
 

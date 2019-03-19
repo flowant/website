@@ -25,7 +25,6 @@ public class Message implements HasIdCid, HasAuthor<Message> {
     // containerId means receiverId
     @NonNull
     @PrimaryKey
-    @Column("ic")
     IdCid idCid;
 
     @NonNull

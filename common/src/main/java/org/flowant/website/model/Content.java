@@ -28,7 +28,6 @@ public class Content implements HasIdCid, HasAuthor<Content>, HasReputation, Has
 
     @NonNull
     @PrimaryKey
-    @Column("ic")
     IdCid idCid;
 
     @NonNull

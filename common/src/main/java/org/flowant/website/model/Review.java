@@ -26,7 +26,6 @@ public class Review implements HasIdCid, HasAuthor<Review>, HasReputation, HasCr
 
     @NonNull
     @PrimaryKey
-    @Column("ic")
     IdCid idCid;
 
     @NonNull

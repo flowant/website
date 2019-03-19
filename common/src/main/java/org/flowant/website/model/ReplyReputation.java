@@ -26,7 +26,6 @@ public class ReplyReputation implements HasIdCid, ReputationCounter {
 
     @NonNull
     @PrimaryKey
-    @Column("ic")
     IdCid idCid;
 
     @CassandraType(type=Name.COUNTER)

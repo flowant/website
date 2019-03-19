@@ -26,7 +26,6 @@ public class Reply implements HasIdCid, HasAuthor<Reply>, HasReputation, HasCruT
 
     @NonNull
     @PrimaryKey
-    @Column("ic")
     IdCid idCid;
 
     @NonNull
