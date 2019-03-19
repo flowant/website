@@ -16,6 +16,9 @@ export function reviver(key, value): any {
     case 'read': {
       return LocalDateTime.parse(value);
     }
+    case 'followings':
+    case 'followers':
+      return new Set(value);
     default: {
       return value;
     }
@@ -149,6 +152,12 @@ export class Message {
     return msg;
   }
 
+}
+
+export class Relation {
+  identity: string;
+  followings: Set<string>;
+  followers: Set<string>;
 }
 
 export class Notification {

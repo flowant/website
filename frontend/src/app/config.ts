@@ -31,7 +31,6 @@ export class Config {
   static userUrl = env.url.gateway + env.path.user;
   static imgServerUrl = Config.fileUrl;
 
-  static popularPath = env.path.popular;
   static path = env.path;
 
   static defaultPage = "0";

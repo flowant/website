@@ -19,11 +19,12 @@ import { NgbModalSendMessageComponent } from '../ngb-modal-send-message/ngb-moda
 })
 export class UserRefComponent implements OnInit {
 
-  @Input() user: User;
   @Input() userRefId: string;
   @Input() userRefName: string;
 
   imgServerUrl: string = Config.fileUrl + "/";
+
+  isFollowee: boolean;
 
   constructor(
     private backendService: BackendService,
@@ -33,17 +34,25 @@ export class UserRefComponent implements OnInit {
     private logger: NGXLogger) { }
 
   ngOnInit() {
+    this.updateRelation();
+  }
+
+  updateRelation() {
+    this.backendService.getRelation().subscribe(relation => {
+      this.isFollowee = relation.followings.has(this.userRefId);
+    });
+  }
+
+  postRelation(follow: boolean) {
+    this.backendService.getUser()
+        .pipe(concatMap(user => this.backendService.postRelation(follow, user.identity, this.userRefId)))
+        .subscribe(_ => this.updateRelation());
   }
 
   sendMessage() {
     const modalRef = this.modalService.open(NgbModalSendMessageComponent);
     modalRef.componentInstance.receiverId = this.userRefId;
     modalRef.componentInstance.receiverName = this.userRefName;
-  }
-
-  follow(isFollowing: boolean) {
-    this.backendService.follow(isFollowing, this.user.identity, this.userRefId)
-        .subscribe();
   }
 
 }

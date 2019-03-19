@@ -19,7 +19,7 @@
 <ul class="list-unstyled">
   <li class="media" *ngFor="let review of reviews" >
     <div class="user-ref">
-      <app-user-ref [user]="user" [userRefId]="review.authorId" [userRefName]="review.authorName"></app-user-ref>
+      <app-user-ref [userRefId]="review.authorId" [userRefName]="review.authorName"></app-user-ref>
       <p class="date">{{review.cruTime.created.toLocalDate()}}</p>
       <app-reputation [model]="model" [idCid]="review.idCid" [reputation]="review.reputation"></app-reputation>
     </div>

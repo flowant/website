@@ -15,8 +15,6 @@ import { NGXLogger } from 'ngx-logger';
 })
 export class UserProfileComponent implements OnInit {
 
-  model: Model = Model.User;
-
   identity: string;
 
   user: User;
@@ -71,8 +69,8 @@ export class UserProfileComponent implements OnInit {
   }
 
   onSave() {
-    this.backendService.postModel<User>(Model.User, this.user)
-      .subscribe(u => this.updateUser(u));
+    this.backendService.postUser(this.user)
+        .subscribe(u => this.updateUser(u));
   }
 
   deleteIfExistPhoto(): Observable<any> {

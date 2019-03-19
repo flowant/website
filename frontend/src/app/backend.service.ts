@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NGXLogger, LoggerConfig } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
-import { IdCid, HasIdCid, IdToPath, Content, Reputation, reviver, FileRefs, RespWithLink, User } from './protocols/model';
+import { catchError, map, tap, concatMap } from 'rxjs/operators';
+import { IdCid, HasIdCid, IdToPath, Content, Reputation, reviver, FileRefs, RespWithLink, User, Relation } from './protocols/model';
 import { Config, Model } from './config';
 
 interface TextResponseOption {
@@ -35,16 +35,62 @@ const baseOptions: TextResponseOption = {
 })
 export class BackendService {
 
+  user: User;
+
+  relation: Relation;
+
   constructor(
     private http: HttpClient,
     private logger: NGXLogger) { }
+
+  getUser(id?: string): Observable<User> {
+    if (id) {
+      return this.getModel<User>(Model.User, id);
+    } else {
+      if (this.user) {
+        return of(this.user);
+      } else {
+        return this.getModel<User>(Model.User, "b901f010-4546-11e9-97e9-594de5a6cf90" as string)
+            .pipe(tap(u => this.user = u));
+      }
+    }
+  }
+
+  postUser(user: User): Observable<User> {
+    return this.postModel<User>(Model.User, this.user)
+        .pipe(tap(u => this.user = u));
+  }
+
+  getRelation(): Observable<Relation> {
+    if (this.relation) {
+      return of(this.relation)
+    } else {
+      return this.getUser().pipe(
+          concatMap(user => this.getModel<Relation>(Model.Relation, user.identity)),
+          tap(relation => this.relation = relation)
+      );
+    }
+  }
+
+  postRelation(follow:boolean, followerId: string, followeeId: string) {
+
+    let url = Config.relationUrl + (follow ? Config.path.follow : Config.path.unfollow)
+        + "/" + followerId + "/" + followeeId;
+
+    return this.http.post(url, null, writeOptions).pipe(
+        map(r => JSON.parse(r.body, reviver)),
+        tap(relation => this.relation = relation),
+        tap(relation => this.logger.trace('posted Relation:', relation)),
+        catchError(this.handleError<any>('postRelation'))
+    );
+  }
 
   getPopularItems<T>(model: Model, containerId: string): Observable<T[]> {
 
     let option = Object.assign({}, baseOptions);
     option.params = new HttpParams().set('cid', containerId);
 
-    return this.http.get(Config.getUrl(model) + Config.popularPath, option).pipe(
+    return this.http.get(Config.getUrl(model) + Config.path.popular, option).pipe(
       map(r => JSON.parse(r.body, reviver)),
       tap(r => this.logger.trace('fetched popular items:', r)),
       catchError(this.handleError('getPopulars', []))
@@ -106,12 +152,6 @@ export class BackendService {
     );
   }
 
-  getUser(id?: string): Observable<User> {
-    // TODO get current user
-    id = id ? id : "b901f010-4546-11e9-97e9-594de5a6cf90" as string;
-    return this.getModel<User>(Model.User, id);
-  }
-
   // FileList contains only one element when identity is used.
   // identity is the same as user identity, it enable to find the user picture by user id.
   addFile(identity: string, file: FileList): Observable<FileRefs> {
@@ -149,18 +189,6 @@ export class BackendService {
     let rpt = Object.assign({}, reputation);
     rpt.idCid = idCid;
     return this.postModel<Reputation>(Config.toRptModel(model), rpt);
-  }
-
-  follow(follow:boolean, followerId: string, followeeId: string) {
-
-    let url = Config.relationUrl + (follow ? Config.path.follow : Config.path.unfollow)
-        + "/" + followerId + "/" + followeeId;
-
-    return this.http.post(url, null, writeOptions).pipe(
-        map(r => JSON.parse(r.body, reviver)),
-        tap(f => this.logger.trace('posted follow:', f)),
-        catchError(this.handleError<any>('follow'))
-    );
   }
 
   /**
