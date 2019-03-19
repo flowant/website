@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { LoginComponent } from './login/login.component';
 import { SearchContentComponent } from './search-content/search-content.component';
 import { ContentComponent } from './content/content.component'
 import { NotificationComponent } from './notification/notification.component'
@@ -10,6 +11,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 
 const routes: Routes = [
   { path: '', redirectTo: '/search', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
   { path: 'search', component: SearchContentComponent },
   { path: 'search/:tag', component: SearchContentComponent },
   { path: 'content', component: ContentComponent },

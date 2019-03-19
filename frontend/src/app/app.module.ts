@@ -20,6 +20,7 @@ import { UserRefComponent } from './user-ref/user-ref.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ModalsComponent } from './modals/modals.component';
 import { NgbModalSendMessageComponent } from './ngb-modal-send-message/ngb-modal-send-message.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { NgbModalSendMessageComponent } from './ngb-modal-send-message/ngb-modal
     UserRefComponent,
     UserProfileComponent,
     ModalsComponent,
-    NgbModalSendMessageComponent
+    NgbModalSendMessageComponent,
+    LoginComponent
   ],
   imports: [
     NgbModule,
