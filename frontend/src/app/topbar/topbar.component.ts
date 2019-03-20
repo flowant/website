@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
-import { User } from '../protocols/model';
-import { BackendService } from '../backend.service';
+import { User } from '../_models';
+import { BackendService } from '../_services';
 import { Config, Model } from '../config';
 import { userInfo } from 'os';
 

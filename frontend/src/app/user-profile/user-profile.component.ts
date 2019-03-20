@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
-import { User, Gender } from '../protocols/model';
-import { BackendService } from '../backend.service';
+import { User, Gender } from '../_models';
+import { BackendService } from '../_services';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 

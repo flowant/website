@@ -24,7 +24,8 @@ export const environment = {
     relation: '/relation',
     follow: '/follow',
     unfollow: '/unfollow',
-    user: '/user'
+    user: '/user',
+    auth: '/oauth/token'
   }
 };
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Content, Extend } from '../protocols/model';
-import { BackendService } from '../backend.service'
+import { Content, Extend } from '../_models';
+import { BackendService } from '../_services'
 import { Config, Model } from '../config';
 import { NGXLogger, LoggerConfig } from 'ngx-logger';
 import { ActivatedRoute } from '@angular/router';

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User, Message } from '../protocols/model';
-import { BackendService } from '../backend.service';
+import { User, Message } from '../_models';
+import { BackendService } from '../_services';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 

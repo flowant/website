@@ -29,6 +29,7 @@ export class Config {
   static notificationUrl = env.url.gateway + env.path.notification;
   static relationUrl = env.url.gateway + env.path.relation;
   static userUrl = env.url.gateway + env.path.user;
+  static authUrl = env.url.gateway + env.path.auth;
   static imgServerUrl = Config.fileUrl;
 
   static path = env.path;

@@ -105,6 +105,13 @@ spring:
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
+      - id: oauth
+        uri: http://127.0.0.1:9093/uaa/oauth/token
+        predicates:
+        - Path=/api/oauth/token/**
+        filters:
+        - RewritePath=/api/(?<segment>.*), /uaa/$\{segment}
+
 website:
   cors:
     allowedOrigins: "http://localhost:9090"

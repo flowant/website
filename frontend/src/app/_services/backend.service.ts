@@ -3,8 +3,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NGXLogger, LoggerConfig } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap, concatMap } from 'rxjs/operators';
-import { IdCid, HasIdCid, IdToPath, Content, Reputation, reviver, FileRefs, RespWithLink, User, Relation } from './protocols/model';
-import { Config, Model } from './config';
+import { IdCid, HasIdCid, IdToPath, Content, Reputation, reviver, FileRefs } from '../_models';
+import { RespWithLink, User, Relation } from '../_models';
+import { Config, Model } from '../config';
 
 interface TextResponseOption {
   headers?: HttpHeaders | {

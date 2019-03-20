@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { BackendService } from '../backend.service';
+import { BackendService } from '../_services';
 import { Config, Model } from '../config';
-import { IdCid, Reputation } from '../protocols/model';
+import { IdCid, Reputation } from '../_models';
 import { NGXLogger } from 'ngx-logger';
 import { modelGroupProvider } from '@angular/forms/src/directives/ng_model_group';
 const numeral = require('numeral');

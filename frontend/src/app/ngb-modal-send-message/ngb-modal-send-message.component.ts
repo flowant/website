@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { map, filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
-import { User, Message } from '../protocols/model';
-import { BackendService } from '../backend.service';
+import { User, Message } from '../_models';
+import { BackendService } from '../_services';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
