@@ -1,6 +1,5 @@
 package org.flowant.website.util.test;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -55,7 +54,7 @@ public class UserMaker {
                 .firstname(firstname + id)
                 .lastname(lastname + id)
                 .phone(Phone.of(82, id.hashCode()))
-                .authorities(List.of(Authority.of("ROLE_USER"), Authority.of("MEMBER")))
+                .authorities(Set.of(Authority.of("ROLE_USER"), Authority.of(Authority.MEMBER)))
                 .interests(Set.of(tag + id))
                 .cruTime(CRUZonedTime.now())
                 .build();

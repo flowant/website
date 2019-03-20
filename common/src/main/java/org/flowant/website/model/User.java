@@ -68,7 +68,7 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     PostalAddress address;
 
     @Column("at")
-    List<Authority> authorities;
+    Set<Authority> authorities;
 
     @Column("l")
     Set<UUID> likes; //TODO to be updated by user activities;
