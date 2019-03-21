@@ -8,7 +8,7 @@ import { Content, IdCid, User } from '../_models';
 import { BackendService } from '../_services';
 import { Config, Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
-import { userInfo } from 'os';
+
 
 declare var $: any;
 

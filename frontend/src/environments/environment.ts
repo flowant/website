@@ -26,6 +26,10 @@ export const environment = {
     unfollow: '/unfollow',
     user: '/user',
     auth: '/oauth/token'
+  },
+  auth: {
+    clientId: 'client',
+    clientPass: 'client'
   }
 };
 

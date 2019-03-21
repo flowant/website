@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { User, Message } from '../_models';
 import { BackendService } from '../_services';
 import { Config, Model } from '../config';
-import { NGXLogger } from 'ngx-logger';
+import { NGXLogger, LoggerConfig } from 'ngx-logger';
 
 export enum Option {
   Sent,
@@ -41,6 +41,7 @@ export class MessageComponent implements OnInit {
 
     this.backendService.getUser()
         .subscribe(user => {
+          this.logger.trace("getUser Subscription:", user);
           this.user = user;
           if (this.isPreview) {
             this.getPreview();

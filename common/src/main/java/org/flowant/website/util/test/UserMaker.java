@@ -35,6 +35,7 @@ public class UserMaker {
                 .username(username + id.toString().substring(0, 8))
                 .password(password + id)
                 .email(email + id)
+                .authorities(Set.of(Authority.of("ROLE_USER"), Authority.of(Authority.USER)))
                 .cruTime(CRUZonedTime.now())
                 .build();
     }
@@ -54,7 +55,7 @@ public class UserMaker {
                 .firstname(firstname + id)
                 .lastname(lastname + id)
                 .phone(Phone.of(82, id.hashCode()))
-                .authorities(Set.of(Authority.of("ROLE_USER"), Authority.of(Authority.MEMBER)))
+                .authorities(Set.of(Authority.of("ROLE_USER"), Authority.of(Authority.USER)))
                 .interests(Set.of(tag + id))
                 .cruTime(CRUZonedTime.now())
                 .build();

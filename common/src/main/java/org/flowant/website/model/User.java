@@ -67,6 +67,7 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     @Column("ad")
     PostalAddress address;
 
+    @NonNull
     @Column("at")
     Set<Authority> authorities;
 

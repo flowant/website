@@ -1,12 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { Observable, of } from 'rxjs';
-import { map, filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
-import { User, Message } from '../_models';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { map, concatMap } from 'rxjs/operators';
+import { Message } from '../_models';
 import { BackendService } from '../_services';
-import { Config, Model } from '../config';
+import { Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 @Component({

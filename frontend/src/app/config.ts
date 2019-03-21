@@ -15,6 +15,8 @@ export enum Model {
 
 export class Config {
 
+  static AUTHENTICATION: string = 'authentication';
+
   static gatewayUrl = env.url.gateway;
   static searchUrl = env.url.gateway + env.path.search;
   static contentUrl = env.url.gateway + env.path.content;
@@ -33,6 +35,7 @@ export class Config {
   static imgServerUrl = Config.fileUrl;
 
   static path = env.path;
+  static auth = env.auth;
 
   static defaultPage = "0";
   static defaultSize = "12";

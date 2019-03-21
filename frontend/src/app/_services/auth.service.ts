@@ -1,55 +1,67 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { User } from '../_models';
+import { Observable } from 'rxjs';
+import { tap, concatMap } from 'rxjs/operators';
+import { User, Auth } from '../_models';
+import { BackendService } from './backend.service';
 import { Config } from '../config';
-import { NGXLogger, LoggerConfig } from 'ngx-logger';
+import { NGXLogger } from 'ngx-logger';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private currentUserSubject: BehaviorSubject<User>;
-  public currentUser: Observable<User>;
+  auth: Auth;
 
   constructor(
-    private http: HttpClient,
+    private backendService: BackendService,
     private logger: NGXLogger) {
-      this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
-      this.currentUser = this.currentUserSubject.asObservable();
+
+    this.loadAuth();
   }
 
-  public get currentUserValue(): User {
-      return this.currentUserSubject.value;
+  loadAuth(): Auth {
+    let strAuth = localStorage.getItem(Config.AUTHENTICATION);
+    this.logger.trace("load authentication from localStorage:", strAuth);
+
+    if (strAuth) {
+      this.auth = JSON.parse(strAuth);
+      this.backendService.changeUser(this.auth.username).subscribe();
+    } else {
+      this.auth = undefined;
+    }
+
+    return this.auth;
+  }
+
+  saveAuth(auth: Auth): Auth {
+    this.logger.trace("save authentication to localStorage:", auth);
+    if (auth) {
+      let strAuth = JSON.stringify(auth);
+      localStorage.setItem(Config.AUTHENTICATION, strAuth);
+    }
+    this.auth = auth;
+    return auth;
+  }
+
+  removeAuth(): void {
+    this.logger.trace("remove authentication from localStorage");
+    localStorage.removeItem(Config.AUTHENTICATION);
+    this.auth = undefined;
   }
 
   login(username: string, password: string) {
-    let httpHeaders = new HttpHeaders()
-     .set('Authorization', 'Basic ' + window.btoa('client:client'));
-     let options = {
-      headers: httpHeaders
-      }; 
-
-      return this.http.post<any>(Config.authUrl + '?grant_type=password&username=user0&password=pass0', null, options).pipe(
-        tap(r => this.logger.trace(r)),
-        map(user => {
-              // login successful if there's a jwt token in the response
-              if (user && user.token) {
-                  // store user details and jwt token in local storage to keep user logged in between page refreshes
-                  localStorage.setItem('currentUser', JSON.stringify(user));
-                  this.currentUserSubject.next(user);
-              }
-
-              return user;
-          }));
+    return this.backendService.authorize(username, password).pipe(
+      tap(auth => auth.username = username),
+      tap(auth => this.saveAuth(auth)),
+      concatMap(_ => this.backendService.changeUser(username))
+    );
   }
 
-  logout() {
-      // remove user from local storage to log user out
-      localStorage.removeItem('currentUser');
-      this.currentUserSubject.next(null);
+  logout(): Observable<User> {
+    this.removeAuth();
+    return this.backendService.changeUser();
   }
 
 }
+

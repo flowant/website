@@ -33,7 +33,6 @@ export class UserProfileComponent implements OnInit {
 
   constructor(
     private backendService: BackendService,
-    private location: Location,
     private route: ActivatedRoute,
     private logger: NGXLogger) { }
 

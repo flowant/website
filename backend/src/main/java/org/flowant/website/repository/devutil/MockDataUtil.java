@@ -204,7 +204,10 @@ public class MockDataUtil {
     public void saveMockData() {
 
         UUID recipeCid = UUID.fromString(config.getContentContainerIds().get(WebSiteConfig.RECIPE));
-        UUID userId = UUID.fromString("b901f010-4546-11e9-97e9-594de5a6cf90");
+        User devUser = UserMaker.large(UUID.fromString("b901f010-4546-11e9-97e9-594de5a6cf90"))
+                .setUsername("user0")
+                // "pass0" hashed as below
+                .setPassword("{bcrypt}$2a$10$uJ05cBLB0xDA.5nMkum4LeOVVjalozK12R3xC3iIHlyZ8FZOe/pEG");
 
         webSite = WebSite.builder()
                 .identity(UUID.fromString(config.getIdentity()))
@@ -214,7 +217,7 @@ public class MockDataUtil {
 
         users = Flux.range(1, cntUsersContents - 1)
                 .map(i -> UserMaker.largeRandom())
-                .concatWith(Flux.just(UserMaker.large(userId)))
+                .concatWith(Flux.just(devUser))
                 .cache();
 
         users.doOnNext(user -> user.setFileRefs(List.of(postRandomFile(Optional.of("/" + user.getIdentity()))))).blockLast();

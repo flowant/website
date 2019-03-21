@@ -29,8 +29,6 @@ export class UserRefComponent implements OnInit {
   constructor(
     private backendService: BackendService,
     private modalService: NgbModal,
-    private location: Location,
-    private route: ActivatedRoute,
     private logger: NGXLogger) { }
 
   ngOnInit() {

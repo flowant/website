@@ -2,9 +2,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import  {NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule }    from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { ReactiveFormsModule } from '@angular/forms';
+
 import { AppRoutingModule } from './app-routing.module';
+import { JwtInterceptor, AuthErrorInterceptor } from './_interceptors';
 
 import { AppComponent } from './app.component';
 import { ContentComponent } from './content/content.component';
@@ -21,6 +24,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ModalsComponent } from './modals/modals.component';
 import { NgbModalSendMessageComponent } from './ngb-modal-send-message/ngb-modal-send-message.component';
 import { LoginComponent } from './login/login.component';
+import { HomeComponent } from './home/home.component';
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -38,11 +43,14 @@ import { LoginComponent } from './login/login.component';
     UserProfileComponent,
     ModalsComponent,
     NgbModalSendMessageComponent,
-    LoginComponent
+    LoginComponent,
+    HomeComponent,
+    AdminComponent
   ],
   imports: [
     NgbModule,
     BrowserModule,
+    ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
@@ -51,7 +59,10 @@ import { LoginComponent } from './login/login.component';
   entryComponents: [
     NgbModalSendMessageComponent
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthErrorInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

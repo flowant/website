@@ -16,11 +16,9 @@ import lombok.experimental.Accessors;
 @UserDefinedType
 public class Authority implements GrantedAuthority {
 
-    public static final String CEO = "CEO";
-    public static final String CTO = "CTO";
-    public static final String MANAGER = "MANAGER";
-    public static final String MEMBER = "MEMBER";
-    public static final String GUEST = "GUEST";
+    public static final String ADMIN = "A";
+    public static final String USER = "U";
+    public static final String GUEST = "G";
 
     private static final long serialVersionUID = -4710371112263760289L;
 

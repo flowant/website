@@ -18,7 +18,11 @@ export function reviver(key, value): any {
     }
     case 'followings':
     case 'followers':
+    case 'likes':
+    case 'interests':
       return new Set(value);
+    case 'authorities':
+      return new Set(value.map(e => Authority.of(e.authority)));
     default: {
       return value;
     }
@@ -155,9 +159,12 @@ export class Message {
 }
 
 export class Relation {
+
+  static empty: Relation = new Relation();
+
   identity: string;
-  followings: Set<string>;
-  followers: Set<string>;
+  followings: Set<string> = new Set();
+  followers: Set<string> = new Set();
 }
 
 export class Notification {
@@ -209,19 +216,41 @@ export class User {
   firstname: string;
   lastname: string;
   displayName: string;
-  gender: Gender;
+  gender: Gender = Gender.Undefined;
   birthdate: Birthdate;
   phone: Phone = new Phone();
   address: Address;
-  authorities?: (Authority)[] | null;
-  likes?: (string)[] | null;
-  interests?: (string)[] | null;
+  authorities: Set<Authority> = new Set();
+  likes?: Set<string> | null;
+  interests?: Set<string> | null;
   fileRefs?: (FileRefs)[] = [];
   cruTime: CruTime;
   accountNonExpired: boolean;
   accountNonLocked: boolean;
   credentialsNonExpired: boolean;
   enabled: boolean;
+
+  isGuest(): boolean {
+    return this.authorities.has(Authority.Guest) && this.authorities.size === 1;
+  }
+
+  isUser(): boolean {
+    return this.authorities.has(Authority.User);
+  }
+
+  isAdmin(): boolean {
+    return this.authorities.has(Authority.Admin);
+  }
+
+  public static guest(): User {
+    let user = new User();
+    user.identity = v1();
+    user.displayName = 'Guest';
+    user.authorities.add(Authority.of(Role.Guest));
+    user.cruTime = new CruTime();
+    return user;
+  }
+
 }
 
 export enum Gender {
@@ -249,8 +278,37 @@ export class Address {
   detailCode?: null;
 }
 
+export enum Role {
+  Admin = "A", // ADMIN
+  User = "U", // USER
+  Guest = "G" // GUEST
+}
+
 export class Authority {
-  authority: string;
+
+  static Admin = Authority.from(Role.Admin);
+  static User = Authority.from(Role.User);
+  static Guest = Authority.from(Role.Guest);
+
+  authority: Role;
+
+  private static from(role: Role): Authority {
+    let auth = new Authority();
+    auth.authority = role;
+    return auth;
+  }
+
+  static of(role: Role): Authority {
+    switch (role) {
+      case Role.Admin:
+        return Authority.Admin;
+      case Role.User:
+        return Authority.User;
+      default:
+        return Authority.Guest;
+    }
+  }
+
 }
 
 export class CruTime {
@@ -283,4 +341,14 @@ export class RespWithLink<T> {
     let index = parsed.next.url.indexOf("?");
     return parsed.next.url.substr(index);
   }
+}
+
+export interface Auth {
+  access_token: string;
+  token_type: string;
+  refresh_token?: string;
+  expires_in: number;
+  scope: string;
+  jti: string;
+  username?: string;
 }

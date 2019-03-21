@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { NGXLogger, LoggerConfig } from 'ngx-logger';
-import { Observable, of } from 'rxjs';
+import { NGXLogger } from 'ngx-logger';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { catchError, map, tap, concatMap } from 'rxjs/operators';
 import { IdCid, HasIdCid, IdToPath, Content, Reputation, reviver, FileRefs } from '../_models';
-import { RespWithLink, User, Relation } from '../_models';
+import { RespWithLink, User, Relation, Auth } from '../_models';
 import { Config, Model } from '../config';
 
 interface TextResponseOption {
@@ -36,51 +36,74 @@ const baseOptions: TextResponseOption = {
 })
 export class BackendService {
 
-  user: User;
+  private userSubject: BehaviorSubject<User>;
 
-  relation: Relation;
+  private relationSubject: BehaviorSubject<Relation>;
 
   constructor(
     private http: HttpClient,
-    private logger: NGXLogger) { }
+    private logger: NGXLogger) {
 
-  getUser(id?: string): Observable<User> {
-    if (id) {
-      return this.getModel<User>(Model.User, id);
+      this.userSubject = new BehaviorSubject<User>(User.guest());
+      this.relationSubject = new BehaviorSubject<Relation>(Relation.empty);
+    }
+
+  getUser(identity?: string): Observable<User> {
+    if (identity) { // request other user for inquery
+      return this.getModel<User>(Model.User, identity);
     } else {
-      if (this.user) {
-        return of(this.user);
-      } else {
-        return this.getModel<User>(Model.User, "b901f010-4546-11e9-97e9-594de5a6cf90" as string)
-            .pipe(tap(u => this.user = u));
-      }
+      return this.userSubject;
+    }
+  }
+
+  getUserValue(): User {
+    return this.userSubject.getValue();
+  }
+
+  changeUser(username?: string): Observable<User> {
+    this.logger.trace("changeUser, username:", username);
+    if (username) {
+      return this.getModel<User>(Model.User, null, 'un', username).pipe(
+        tap(user => this.userSubject.next(user)),
+        concatMap(user => this.getModel<Relation>(Model.Relation, user.identity)),
+        tap(relation => this.relationSubject.next(relation)),
+        map(_ => this.userSubject.value)
+      );
+    } else {
+      this.userSubject.next(User.guest());
+      this.relationSubject.next(Relation.empty);
+      return this.userSubject;
     }
   }
 
   postUser(user: User): Observable<User> {
-    return this.postModel<User>(Model.User, this.user)
-        .pipe(tap(u => this.user = u));
+    if (user.isGuest() || user.identity !== this.userSubject.value.identity) {
+      this.logger.warn("Invalid user's postUser request is ignored:", user);
+      return of(user);
+    }
+
+    return this.postModel<User>(Model.User, user).pipe(
+      tap(user => this.userSubject.next(user))
+    );
   }
 
   getRelation(): Observable<Relation> {
-    if (this.relation) {
-      return of(this.relation)
-    } else {
-      return this.getUser().pipe(
-        concatMap(user => this.getModel<Relation>(Model.Relation, user.identity)),
-        tap(relation => this.relation = relation)
-      );
-    }
+    return this.relationSubject;
   }
 
   postRelation(follow:boolean, followerId: string, followeeId: string) {
+
+    if (this.userSubject.value.isGuest()) {
+      this.logger.warn("Guest user's postRelation request is ignored");
+      return;
+    }
 
     let url = Config.relationUrl + (follow ? Config.path.follow : Config.path.unfollow)
         + "/" + followerId + "/" + followeeId;
 
     return this.http.post(url, null, writeOptions).pipe(
       map(r => JSON.parse(r.body, reviver)),
-      tap(relation => this.relation = relation),
+      tap(relation => this.relationSubject.next(relation)),
       tap(relation => this.logger.trace('posted Relation:', relation)),
       catchError(this.handleError<any>('postRelation'))
     );
@@ -126,8 +149,18 @@ export class BackendService {
       catchError(this.handleError<RespWithLink<T>>(`getModels query:${queryParams}`)));
   }
 
-  getModel<T>(model: Model, idToPath: IdToPath): Observable<T> {
-    const url = Config.getUrl(model) + '/' + idToPath.toString();
+  getModel<T>(model: Model, idToPath?: IdToPath, queryName?: string, queryValue?: string): Observable<T> {
+
+    let url = Config.getUrl(model);
+
+    if (idToPath) {
+      url += '/' + idToPath.toString();
+    }
+
+    if (queryName && queryValue) {
+      url += '?' + queryName + '=' + queryValue;
+    }
+
     return this.http.get(url, baseOptions).pipe(
       map(r => JSON.parse(r.body, reviver)),
       tap(m => this.logger.trace('got model:', m)),
@@ -190,6 +223,15 @@ export class BackendService {
     let rpt = Object.assign({}, reputation);
     rpt.idCid = idCid;
     return this.postModel<Reputation>(Config.toRptModel(model), rpt);
+  }
+
+  authorize(username: string, password: string): Observable<Auth> {
+    let httpHeaders = new HttpHeaders()
+      .set('Authorization', 'Basic ' + window.btoa(Config.auth.clientId + ':' + Config.auth.clientPass));
+
+    let qeury = `?grant_type=password&username=${username}&password=${password}`;
+
+    return this.http.post<Auth>(Config.authUrl + qeury, null, {headers: httpHeaders});
   }
 
   /**

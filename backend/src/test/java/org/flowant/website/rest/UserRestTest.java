@@ -1,11 +1,14 @@
 package org.flowant.website.rest;
 
+import static org.flowant.website.rest.UserRest.UN;
+
 import java.util.UUID;
 
 import org.flowant.website.BackendApplication;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.UserRepository;
 import org.flowant.website.storage.FileStorage;
+import org.flowant.website.util.test.AssertUtil;
 import org.flowant.website.util.test.UserMaker;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,6 +54,22 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserReposit
                 .expectBody().consumeWith(r -> {
                     user.getFileRefs().forEach(fileRef -> Assert.assertFalse(FileStorage.exist(fileRef.getIdentity())));
                     StepVerifier.create(repo.findById(user.getIdentity())).expectNextCount(0).verifyComplete();
+                });
+    }
+
+    @Test
+    public void testGetByUsername() {
+        User user = UserMaker.largeRandom();
+        repo.save(user).block();
+        cleaner.registerToBeDeleted(user);
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(UserRest.PATH_USER)
+                        .queryParam(UN, user.getUsername()).build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(User.class).consumeWith(r -> {
+                    AssertUtil.assertEquals(user, r.getResponseBody());
                 });
     }
 
