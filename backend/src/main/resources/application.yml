@@ -13,7 +13,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:9093/.well-known/jwks.json
+          jwk-set-uri: http://localhost:9093/uaa/.well-known/jwks.json
 
 website:
   identity: f1b8dba2-44a4-11e9-944f-99e89c6a8c79
@@ -23,6 +23,11 @@ website:
   ttlNotifications: 2592000000 # 86400 * 30 * 1000, 30 days in milliseconds
   contentContainerIds:
     recipe: "56a1cd50-3c77-11e9-bf26-d571c84212ed"
+  oauth2Server:
+    address: 127.0.0.1
+    port: 9093
+    clientId: ${OAUTH2_CLIENT_ID}
+    clientSecret: ${OAUTH2_CLIENT_PASSWORD}
   cassandra:
     cqlCreateKeySpace: "CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
   storage:

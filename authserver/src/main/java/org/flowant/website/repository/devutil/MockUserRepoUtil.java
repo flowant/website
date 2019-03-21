@@ -43,8 +43,8 @@ public class MockUserRepoUtil {
     protected void saveMockUsers(int cntUser) {
         for (int i = 0; i < cntUser; i++) {
             User user = UserMaker.largeRandom();
-            user.setUsername("user" + i);
-            user.setPassword("pass" + i);
+            user.setUsername("authuser" + i);
+            user.setPassword("authpass" + i);
             if (0 == userRepository.findByUsername(user.getUsername()).count().block()) {
                 user = saveUserWithEncodedPassword(user);
                 mocks.add(user);
@@ -56,7 +56,7 @@ public class MockUserRepoUtil {
     @EventListener
     public void onApplicationEvent(MockDataGenerateEvent event) {
         log.debug(event::toString);
-        saveMockUsers(5);
+        saveMockUsers(3);
     }
 
     @PreDestroy

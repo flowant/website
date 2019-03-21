@@ -33,7 +33,7 @@ public class WebSiteConfig {
     int maxSubReplyItems;
     long ttlNotifications;
     Map<String, String> contentContainerIds;
-
+    Map<String, String> oauth2Server;
     static HashMap<Class<?>, Integer> mapMaxSubItems = new HashMap<>();
 
     @PostConstruct

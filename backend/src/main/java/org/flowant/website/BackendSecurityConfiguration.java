@@ -1,6 +1,13 @@
 package org.flowant.website;
 
-import org.flowant.website.rest.ContentRest;
+import static org.flowant.website.rest.ContentRest.PATH_CONTENT;
+import static org.flowant.website.rest.ReplyRest.PATH_REPLY;
+import static org.flowant.website.rest.ReviewRest.PATH_REVIEW;
+import static org.flowant.website.rest.FileRest.PATH_FILES;
+import static org.flowant.website.rest.SearchRest.PATH_SEARCH;
+import static org.flowant.website.rest.WebSiteRest.PATH_WEBSITE;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -9,14 +16,20 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class BackendSecurityConfiguration {
 
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        return http.authorizeExchange()
-                .pathMatchers(HttpMethod.GET, ContentRest.PATH_CONTENT + "/**").permitAll()
+    @Bean
+    public SecurityWebFilterChain backendSecurityFilterChain(ServerHttpSecurity http) {
+        http.authorizeExchange()
+                .pathMatchers(HttpMethod.GET, PATH_CONTENT + "/**").permitAll()
+                .pathMatchers(HttpMethod.GET, PATH_REVIEW + "/**").permitAll()
+                .pathMatchers(HttpMethod.GET, PATH_REPLY + "/**").permitAll()
+                .pathMatchers(HttpMethod.GET, PATH_FILES + "/**").permitAll()
+                .pathMatchers(HttpMethod.GET, PATH_SEARCH + "/**").permitAll()
+                .pathMatchers(HttpMethod.GET, PATH_WEBSITE + "/**").permitAll()
                 .anyExchange().authenticated().and()
-                .csrf().disable()
-                .httpBasic()
-                    .disable()
-                .build();
+            .oauth2ResourceServer()
+                .jwt();
+
+        return http.build();
     }
 }
 

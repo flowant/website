@@ -45,12 +45,14 @@ import org.flowant.website.util.test.ReviewMaker;
 import org.flowant.website.util.test.UserMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -121,6 +123,44 @@ public class MockDataUtil {
 
     int cntRepliesPerReview = 3;
 
+    User devUser = UserMaker.large(UUID.fromString("b901f010-4546-11e9-97e9-594de5a6cf90"))
+            .setUsername("user0")
+            .setPassword("{bcrypt}$2a$10$uJ05cBLB0xDA.5nMkum4LeOVVjalozK12R3xC3iIHlyZ8FZOe/pEG");
+
+    String devUserPasswordBeforeHashed = "pass0";
+
+    String accessToken;
+
+    public String getAccessToken() {
+
+        if (accessToken != null) {
+            return accessToken;
+        }
+
+        String credential = config.getOauth2Server().get("clientId")
+                + ":" + config.getOauth2Server().get("clientSecret");
+        String basicCredential = "Basic " + Base64Utils.encodeToString(credential.getBytes());
+
+        String resp = WebClient.create().post()
+                .uri(uriBuilder -> uriBuilder.scheme("http")
+                        .host(config.getOauth2Server().get("address"))
+                        .port(config.getOauth2Server().get("port"))
+                        .path("/uaa/oauth/token")
+                        .queryParam("grant_type", "password")
+                        .queryParam("username", devUser.getUsername())
+                        .queryParam("password", devUserPasswordBeforeHashed)
+                        .build())
+                .header("Authorization", basicCredential)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange().block()
+                .bodyToMono(String.class).block();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        accessToken = jsonParser.parseMap(resp).get("access_token").toString();
+        log.trace("accessToken:{}", accessToken);
+        return accessToken;
+    }
+
     public FileRef postRandomFile(Optional<String> pathSegId) {
 
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
@@ -137,6 +177,7 @@ public class MockDataUtil {
                 .create("http://" + address + ":" + port + FileRest.PATH_FILES + pathSegId.orElse(""))
                 .post()
                 .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header("Authorization", "Bearer " + getAccessToken())
                 .body(BodyInserters.fromMultipartData(parts))
                 .exchange()
                 .block()
@@ -220,12 +261,13 @@ public class MockDataUtil {
                 .concatWith(Flux.just(devUser))
                 .cache();
 
+        repoUser.saveAll(users).blockLast();
+
         users.doOnNext(user -> user.setFileRefs(List.of(postRandomFile(Optional.of("/" + user.getIdentity()))))).blockLast();
 
         userSet = Set.copyOf(users.map(User::getIdentity).collectList().block());
         contents = users.map(user -> ContentMaker.largeRandom(recipeCid).setAuthor(user)).cache();
 
-        repoUser.saveAll(users).blockLast();
         contents.map(c -> saveContent(c)).blockLast();
 
         users.subscribe(this::sendMessage);
