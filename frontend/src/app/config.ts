@@ -17,23 +17,24 @@ export class Config {
 
   static AUTHENTICATION: string = 'authentication';
 
-  static gatewayUrl = env.url.gateway;
-  static searchUrl = env.url.gateway + env.path.search;
-  static contentUrl = env.url.gateway + env.path.content;
-  static reviewUrl = env.url.gateway + env.path.review;
-  static replyUrl = env.url.gateway + env.path.reply;
-  static contentRptUrl = env.url.gateway + env.path.contentRpt;
-  static reviewRptUrl = env.url.gateway + env.path.reviewRpt;
-  static replyRptUrl = env.url.gateway + env.path.replyRpt;
-  static fileUrl = env.url.gateway + env.path.files;
+  static gatewayUrl = env.gateway.scheme + '://' + env.gateway.domain + ':' + env.gateway.port + env.path.gateway;
+  static searchUrl = Config.gatewayUrl + env.path.search;
+  static contentUrl = Config.gatewayUrl + env.path.content;
+  static reviewUrl = Config.gatewayUrl + env.path.review;
+  static replyUrl = Config.gatewayUrl + env.path.reply;
+  static contentRptUrl = Config.gatewayUrl + env.path.contentRpt;
+  static reviewRptUrl = Config.gatewayUrl + env.path.reviewRpt;
+  static replyRptUrl = Config.gatewayUrl + env.path.replyRpt;
+  static fileUrl = Config.gatewayUrl + env.path.files;
   static fileDeletesUrl = Config.fileUrl + env.path.deletes;
-  static messageUrl = env.url.gateway + env.path.message;
-  static notificationUrl = env.url.gateway + env.path.notification;
-  static relationUrl = env.url.gateway + env.path.relation;
-  static userUrl = env.url.gateway + env.path.user;
-  static authUrl = env.url.gateway + env.path.auth;
+  static messageUrl = Config.gatewayUrl + env.path.message;
+  static notificationUrl = Config.gatewayUrl + env.path.notification;
+  static relationUrl = Config.gatewayUrl + env.path.relation;
+  static userUrl = Config.gatewayUrl + env.path.user;
+  static authUrl = Config.gatewayUrl + env.path.auth;
   static imgServerUrl = Config.fileUrl;
 
+  static gateway = env.gateway;
   static path = env.path;
   static auth = env.auth;
 

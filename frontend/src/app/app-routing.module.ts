@@ -14,8 +14,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { Authority } from './_models';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/search', pathMatch: 'full' },
-  // { path: '', component: HomeComponent, pathMatch: 'full' },
+  // { path: '', redirectTo: '/search', pathMatch: 'full' },
+  { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: AdminComponent, canActivate: [AuthGuard], data: { a: Authority.Admin } },
   { path: 'search', component: SearchContentComponent },

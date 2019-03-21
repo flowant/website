@@ -4,10 +4,14 @@
 
 export const environment = {
   production: false,
-  url: {
-    gateway: 'http://localhost:9091/api'
+
+  gateway: {
+    scheme: 'http',
+    domain: 'localhost',
+    port: 9091,
   },
   path: {
+    gateway: '/api',
     search: '/search',
     content: '/content',
     review: '/review',
@@ -30,7 +34,7 @@ export const environment = {
   auth: {
     clientId: 'client',
     clientPass: 'client'
-  }
+  },
 };
 
 /*

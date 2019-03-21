@@ -1,13 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import  {NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule }    from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 import { ReactiveFormsModule } from '@angular/forms';
+import { JwtModule } from '@auth0/angular-jwt';
 
 import { AppRoutingModule } from './app-routing.module';
-import { JwtInterceptor, AuthErrorInterceptor } from './_interceptors';
 
 import { AppComponent } from './app.component';
 import { ContentComponent } from './content/content.component';
@@ -26,6 +26,9 @@ import { NgbModalSendMessageComponent } from './ngb-modal-send-message/ngb-modal
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { AdminComponent } from './admin/admin.component';
+import { AuthErrorInterceptor } from './_interceptors';
+import { getAccessToken } from './_services';
+import { Config } from './config';
 
 @NgModule({
   declarations: [
@@ -54,13 +57,23 @@ import { AdminComponent } from './admin/admin.component';
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
-    LoggerModule.forRoot({serverLoggingUrl: 'http://localhost:8888/debug.test', level: NgxLoggerLevel.TRACE, serverLogLevel: NgxLoggerLevel.TRACE})
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: getAccessToken,
+        whitelistedDomains: [Config.gateway.domain + ':' + Config.gateway.port],
+        blacklistedRoutes: [Config.gateway.domain + ':' + Config.gateway.port + Config.path.gateway + Config.path.auth]
+      }
+    }),
+    LoggerModule.forRoot({
+      // serverLoggingUrl: 'http://localhost:8888/debug.test',
+      level: NgxLoggerLevel.TRACE,
+      serverLogLevel: NgxLoggerLevel.TRACE
+    })
   ],
   entryComponents: [
     NgbModalSendMessageComponent
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

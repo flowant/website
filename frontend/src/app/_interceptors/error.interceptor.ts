@@ -12,8 +12,8 @@ export class AuthErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
       if (err.status === 401 || err.status === 403) {
-        this.authService.logout();
-        location.reload(true);
+        //this.authService.logout();
+        //location.reload(true);
       }
 
       //TODO handle error, e,g,. refresh token if token is expired
