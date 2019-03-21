@@ -1,10 +1,10 @@
 package org.flowant.website.rest;
 
-import static org.flowant.website.BackendSecurityConfiguration.ROLE_WRITER;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
+import org.flowant.website.model.Authority;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -44,7 +44,7 @@ public abstract class RestTest {
             .apply(springSecurity())
             .configureClient()
             .build().mutateWith(csrf())
-            .mutateWith(mockUser().roles(ROLE_WRITER));
+            .mutateWith(mockUser().authorities(Authority.of(Authority.USER)));
     }
 
 }
