@@ -1,6 +1,7 @@
 package org.flowant.website.rest;
 
 import static org.flowant.website.rest.UserRest.UN;
+import static org.junit.Assert.assertEquals;
 
 import java.util.UUID;
 
@@ -8,7 +9,7 @@ import org.flowant.website.BackendApplication;
 import org.flowant.website.model.User;
 import org.flowant.website.repository.UserRepository;
 import org.flowant.website.storage.FileStorage;
-import org.flowant.website.util.test.AssertUtil;
+import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.UserMaker;
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,13 +65,36 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserReposit
         cleaner.registerToBeDeleted(user);
 
         webTestClient.get()
-                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port).path(UserRest.PATH_USER)
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port)
+                        .path(UserRest.PATH_USER)
                         .queryParam(UN, user.getUsername()).build())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(User.class).consumeWith(r -> {
-                    AssertUtil.assertEquals(user, r.getResponseBody());
+                    assertEquals(user, r.getResponseBody());
                 });
+    }
+
+    public void existUsername(String username, boolean expected) {
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port)
+                        .path(UserRest.PATH_USER + UserRest.PATH_EXIST)
+                        .queryParam(UN, username).build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Boolean.class).consumeWith(r -> {
+                    assertEquals(expected, r.getResponseBody());
+                });
+    }
+
+    @Test
+    public void testExistByUsername() {
+        existUsername(IdMaker.randomUUID().toString(), false);
+
+        User user = UserMaker.largeRandom();
+        repo.save(user).block();
+        cleaner.registerToBeDeleted(user);
+        existUsername(user.getUsername(), true);
     }
 
 }

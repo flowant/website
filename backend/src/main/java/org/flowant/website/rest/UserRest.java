@@ -25,6 +25,7 @@ import reactor.core.publisher.Mono;
 public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
 
     public final static String PATH_USER = "/user";
+    public final static String PATH_EXIST = "/exist";
     public final static String UN = "un";
 
     @GetMapping(value = PATH_USER)
@@ -33,6 +34,15 @@ public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
                 .next()
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(value = PATH_USER + PATH_EXIST)
+    public Mono<ResponseEntity<Boolean>> existByUsername(@RequestParam(UN) String username) {
+        return repo.findByUsername(username)
+                .next()
+                .map(user -> true)
+                .defaultIfEmpty(false)
+                .map(ResponseEntity::ok);
     }
 
     @PostMapping(value = PATH_USER)
