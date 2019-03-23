@@ -64,6 +64,7 @@ export class BackendService {
     this.logger.trace("changeUser, username:", username);
     if (username) {
       return this.getModel<User>(Model.User, null, 'un', username).pipe(
+        map(user => user as User),
         tap(user => this.userSubject.next(user)),
         concatMap(user => this.getModel<Relation>(Model.Relation, user.identity)),
         tap(relation => this.relationSubject.next(relation)),
@@ -77,7 +78,10 @@ export class BackendService {
   }
 
   signUpUser(user: User) {
-    return this.postModel<User>(Model.User, user, Config.path.signup);
+    return this.http.post(Config.signupUrl, user, writeOptions).pipe(
+      map(r => JSON.parse(r.body, reviver)),
+      tap(m => this.logger.trace('signUp User:', user, m)),
+    );
   }
 
   postUser(user: User): Observable<User> {
@@ -92,7 +96,7 @@ export class BackendService {
 
   postRelation(follow:boolean, followerId: string, followeeId: string) {
 
-    if (this.userSubject.value.isGuest()) {
+    if (User.isGuest(this.userSubject.value)) {
       this.logger.warn("Guest user's postRelation request is ignored");
       return;
     }

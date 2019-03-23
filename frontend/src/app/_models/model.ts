@@ -22,7 +22,7 @@ export function reviver(key, value): any {
     case 'interests':
       return new Set(value);
     case 'authorities':
-      return new Set(value.map(e => Authority.of(e.authority)));
+      return value.map(e => Authority.of(e.authority));
     default: {
       return value;
     }
@@ -64,7 +64,7 @@ export class Content {
   extend: Extend = new Extend();
   fileRefs?: (FileRefs)[] = [];
   sentences: string = "Please type directions here.";;
-  tags?: (string)[] | null; // Set type
+  tags?: (string)[] | null;
   reputation: Reputation = new Reputation();
   cruTime: CruTime = new CruTime();
 }
@@ -220,7 +220,7 @@ export class User {
   birthdate: Birthdate;
   phone: Phone = new Phone();
   address: Address;
-  authorities: Set<Authority> = new Set();
+  authorities: (Authority)[] = new Array();
   likes?: Set<string> | null;
   interests?: Set<string> | null;
   fileRefs?: (FileRefs)[] = [];
@@ -230,16 +230,16 @@ export class User {
   credentialsNonExpired: boolean;
   enabled: boolean;
 
-  isGuest(): boolean {
-    return this.authorities.has(Authority.Guest) && this.authorities.size === 1;
+  static isGuest(user: User): boolean {
+    return user.authorities.includes(Authority.Guest) && user.authorities.length === 1;
   }
 
-  isUser(): boolean {
-    return this.authorities.has(Authority.User);
+  static isUser(user: User): boolean {
+    return user.authorities.includes(Authority.User);
   }
 
-  isAdmin(): boolean {
-    return this.authorities.has(Authority.Admin);
+  static isAdmin(user: User): boolean {
+    return user.authorities.includes(Authority.Admin);
   }
 
   public static of(username: string, email: string, password: string): User {
@@ -251,7 +251,7 @@ export class User {
 
     user.identity = v1();
     user.displayName = user.username;
-    user.authorities.add(Authority.User);
+    user.authorities.push(Authority.User);
     user.cruTime = new CruTime();
     return user;
   }
@@ -260,7 +260,7 @@ export class User {
     let user = new User();
     user.identity = v1();
     user.displayName = 'Guest';
-    user.authorities.add(Authority.Guest);
+    user.authorities.push(Authority.Guest);
     user.cruTime = new CruTime();
     return user;
   }

@@ -41,7 +41,7 @@ export class MessageComponent implements OnInit {
     this.paramNameMap.set(Option.Sent, 'aid');
 
     this.backendService.getUser()
-        .pipe(filter(user => !user.isGuest()))
+        .pipe(filter(user => !User.isGuest(user)))
         .subscribe(user => {
           this.logger.trace("getUser Subscription:", user);
           this.user = user;

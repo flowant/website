@@ -19,6 +19,8 @@ export class TopbarComponent implements OnInit {
 
   userImgUrl: string;
 
+  isGuest = User.isGuest;
+
   constructor(
     private backendService: BackendService,
     private router: Router,

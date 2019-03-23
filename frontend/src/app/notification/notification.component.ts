@@ -31,7 +31,7 @@ export class NotificationComponent implements OnInit {
 
   ngOnInit() {
     this.backendService.getUser()
-        .pipe(filter(user => !user.isGuest()))
+        .pipe(filter(user => !User.isGuest(user)))
         .subscribe(user => {
           this.user = user;
           this.isPreview ? this.getPreview() : this.getNext();

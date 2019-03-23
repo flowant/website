@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-import { first } from 'rxjs/operators';
+import { concatMap } from 'rxjs/operators';
 
 import { AuthService, BackendService } from '../_services';
 import { NGXLogger } from 'ngx-logger';
@@ -40,14 +39,14 @@ export class SignUpComponent implements OnInit {
       username: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', Validators.required],
-      confirm: ['', Validators.required]
+      confirm: ['', Validators.required],
+      accept: [false, Validators.required]
     }, { validator: this.validate });
 
     this.returnUrl = '/';
   }
 
   validate(group: FormGroup) {
-    return;//TODO remove
     // TODO make a policy and refine
 
     // validate username
@@ -93,17 +92,18 @@ export class SignUpComponent implements OnInit {
 
     this.logger.trace("signUpUser:", newUser);
 
-    this.backendService.signUpUser(newUser)
-        .subscribe(
-          _ => {
-            // this.router.navigate(['/']);
-          },
-          error => {
-            this.error = error;
-            this.loading = false;
-            this.logger.trace('signup error:', error);
-          }
-        );
+    this.backendService.signUpUser(newUser).pipe(
+      concatMap(u =>  this.authService.login(this.f.username.value, this.f.password.value))
+    ).subscribe(
+      _ => {
+        this.loading = false;
+        this.router.navigate(['/user/profile']);
+      },
+      error => {
+        this.loading = false;
+        this.error = error;
+      }
+    );
   }
 
 }
