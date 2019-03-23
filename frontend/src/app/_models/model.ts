@@ -242,11 +242,25 @@ export class User {
     return this.authorities.has(Authority.Admin);
   }
 
+  public static of(username: string, email: string, password: string): User {
+    let user = new User();
+
+    user.username = username;
+    user.email = email;
+    user.password = password;
+
+    user.identity = v1();
+    user.displayName = user.username;
+    user.authorities.add(Authority.User);
+    user.cruTime = new CruTime();
+    return user;
+  }
+
   public static guest(): User {
     let user = new User();
     user.identity = v1();
     user.displayName = 'Guest';
-    user.authorities.add(Authority.of(Role.Guest));
+    user.authorities.add(Authority.Guest);
     user.cruTime = new CruTime();
     return user;
   }

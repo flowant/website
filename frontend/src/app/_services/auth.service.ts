@@ -4,10 +4,9 @@ import { tap, concatMap } from 'rxjs/operators';
 import { User, Auth } from '../_models';
 import { BackendService } from './backend.service';
 import { Config } from '../config';
-import { NGXLogger } from 'ngx-logger';
+import { NGXLogger, LoggerConfig } from 'ngx-logger';
 
 export function getAccessToken(): string {
-  console.log('getAccessToken called');
   return localStorage.getItem('access_token');
 }
 
@@ -32,7 +31,7 @@ export class AuthService {
   initAuth() {
     let strAuth = localStorage.getItem(Config.AUTHENTICATION);
     this.auth = strAuth ? JSON.parse(strAuth) : undefined;
-    this.setAuthChangeUser(this.auth).subscribe();
+    this.setAuthChangeUser(this.auth).subscribe(user => this.logger.trace("initAuth", user));
   }
 
   setAuthChangeUser(auth?: Auth): Observable<User> {

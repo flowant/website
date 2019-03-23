@@ -1,5 +1,8 @@
 <div class="shadow p-4">
-  <h2 class="text-center mb-3">Sign in</h2>
+  <h2 class="text-center mb-3"><b>Sign In</b></h2>
+
+  <hr class="my-4"/>
+
   <div class="text-center">
       <a href="http://localhost:9093/uaa/login/facebook" class="btn btn-primary btn-block"><i class="fab fa-facebook"></i> Sign in with <b>Facebook</b></a>
       <a href="./login/google" class="btn btn-danger btn-block"><i class="fab fa-google"></i> Sign in with <b>Google</b></a>
@@ -7,7 +10,7 @@
 
   <hr class="my-4"/>
 
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <div class="input-group">
         <div class="input-group-prepend">
@@ -47,10 +50,10 @@
 
   <div class="d-flex justify-content-around">
     <label><input type="checkbox"> Remember me</label>
-    <a href="#" class="text-success">Forgot Password?</a>
+    <a routerLink="/" class="text-success">Forgot Password?</a>
   </div>
-</div> 
+</div>
 
 <div class="d-flex justify-content-center mt-2">
-  <div class="hint-text small">Don't have an account? <a href="#" class="text-success">Register Now!</a></div>
+  <div class="hint-text">Don't have an account? <a routerLink="/signup" class="text-success">Register Now!</a></div>
 </div>

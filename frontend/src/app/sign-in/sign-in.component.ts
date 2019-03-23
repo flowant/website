@@ -8,12 +8,13 @@ import { AuthService } from '../_services';
 import { NGXLogger } from 'ngx-logger';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  selector: 'app-sign-in',
+  templateUrl: './sign-in.component.html',
+  styleUrls: ['./sign-in.component.scss']
 })
-export class LoginComponent implements OnInit {
-  loginForm: FormGroup;
+export class SignInComponent implements OnInit {
+
+  signInForm: FormGroup;
   loading = false;
   submitted = false;
   returnUrl: string;
@@ -33,7 +34,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loginForm = this.formBuilder.group({
+    this.signInForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
@@ -42,13 +43,13 @@ export class LoginComponent implements OnInit {
   }
 
   get f() { 
-    return this.loginForm.controls;
+    return this.signInForm.controls;
   }
 
   onSubmit() {
     this.submitted = true;
 
-    if (this.loginForm.invalid) {
+    if (this.signInForm.invalid) {
       return;
     }
 

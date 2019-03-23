@@ -51,6 +51,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -111,6 +112,9 @@ public class MockDataUtil {
     @Autowired
     UserRepository repoUser;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     WebSite webSite;
 
     Flux<Content> contents = Flux.empty();
@@ -125,11 +129,17 @@ public class MockDataUtil {
 
     User devUser = UserMaker.large(UUID.fromString("b901f010-4546-11e9-97e9-594de5a6cf90"))
             .setUsername("user0")
-            .setPassword("{bcrypt}$2a$10$uJ05cBLB0xDA.5nMkum4LeOVVjalozK12R3xC3iIHlyZ8FZOe/pEG");
-
-    String devUserPasswordBeforeHashed = "pass0";
+            .setPassword("pass0");
 
     String accessToken;
+
+    public User saveUserWithEncodedPassword(User user) {
+        String orgPassword = user.getPassword();
+        user.setPassword(passwordEncoder.encode(orgPassword));
+        repoUser.save(user).block();
+        user.setPassword(orgPassword);
+        return user;
+    }
 
     public String getAccessToken() {
 
@@ -141,6 +151,8 @@ public class MockDataUtil {
                 + ":" + config.getOauth2Server().get("clientSecret");
         String basicCredential = "Basic " + Base64Utils.encodeToString(credential.getBytes());
 
+        log.trace("in getAccessToken: {}", devUser.getPassword());
+
         String resp = WebClient.create().post()
                 .uri(uriBuilder -> uriBuilder.scheme("http")
                         .host(config.getOauth2Server().get("address"))
@@ -148,7 +160,7 @@ public class MockDataUtil {
                         .path("/uaa/oauth/token")
                         .queryParam("grant_type", "password")
                         .queryParam("username", devUser.getUsername())
-                        .queryParam("password", devUserPasswordBeforeHashed)
+                        .queryParam("password", devUser.getPassword())
                         .build())
                 .header("Authorization", basicCredential)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -245,10 +257,6 @@ public class MockDataUtil {
     public void saveMockData() {
 
         UUID recipeCid = UUID.fromString(config.getContentContainerIds().get(WebSiteConfig.RECIPE));
-        User devUser = UserMaker.large(UUID.fromString("b901f010-4546-11e9-97e9-594de5a6cf90"))
-                .setUsername("user0")
-                // "pass0" hashed as below
-                .setPassword("{bcrypt}$2a$10$uJ05cBLB0xDA.5nMkum4LeOVVjalozK12R3xC3iIHlyZ8FZOe/pEG");
 
         webSite = WebSite.builder()
                 .identity(UUID.fromString(config.getIdentity()))
@@ -261,7 +269,7 @@ public class MockDataUtil {
                 .concatWith(Flux.just(devUser))
                 .cache();
 
-        repoUser.saveAll(users).blockLast();
+        users.doOnNext(this::saveUserWithEncodedPassword).blockLast();
 
         users.doOnNext(user -> user.setFileRefs(List.of(postRandomFile(Optional.of("/" + user.getIdentity()))))).blockLast();
 

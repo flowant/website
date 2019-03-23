@@ -23,12 +23,13 @@ import { UserRefComponent } from './user-ref/user-ref.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ModalsComponent } from './modals/modals.component';
 import { NgbModalSendMessageComponent } from './ngb-modal-send-message/ngb-modal-send-message.component';
-import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { AdminComponent } from './admin/admin.component';
 import { AuthErrorInterceptor } from './_interceptors';
 import { getAccessToken } from './_services';
 import { Config } from './config';
+import { SignInComponent } from './sign-in/sign-in.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
 
 @NgModule({
   declarations: [
@@ -46,9 +47,10 @@ import { Config } from './config';
     UserProfileComponent,
     ModalsComponent,
     NgbModalSendMessageComponent,
-    LoginComponent,
     HomeComponent,
-    AdminComponent
+    AdminComponent,
+    SignInComponent,
+    SignUpComponent
   ],
   imports: [
     NgbModule,

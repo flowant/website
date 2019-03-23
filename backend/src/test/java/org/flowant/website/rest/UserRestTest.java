@@ -15,14 +15,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import junitparams.JUnitParamsRunner;
+import lombok.extern.log4j.Log4j2;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+@Log4j2
 @RunWith(JUnitParamsRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes=BackendApplication.class)
 public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserRepository> {
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Before
     public void before() {
@@ -75,26 +84,30 @@ public class UserRestTest extends RestWithRepositoryTest<User, UUID, UserReposit
                 });
     }
 
-    public void existUsername(String username, boolean expected) {
-        webTestClient.get()
+    public void signup(User user, boolean expected) {
+        webTestClient.post()
                 .uri(uriBuilder -> uriBuilder.scheme(SCHEME).host(host).port(port)
-                        .path(UserRest.PATH_USER + UserRest.PATH_EXIST)
-                        .queryParam(UN, username).build())
+                        .path(UserRest.PATH_USER + UserRest.PATH_SIGNUP)
+                        .build())
+                .body(Mono.just(user), User.class)
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody(Boolean.class).consumeWith(r -> {
-                    assertEquals(expected, r.getResponseBody());
+                .expectStatus().value(r -> {
+                    assertEquals(expected, r.intValue() == HttpStatus.OK.value());
                 });
     }
 
     @Test
-    public void testExistByUsername() {
-        existUsername(IdMaker.randomUUID().toString(), false);
-
-        User user = UserMaker.largeRandom();
-        repo.save(user).block();
+    public void testSignup() {
+        User user = UserMaker.smallRandom();
         cleaner.registerToBeDeleted(user);
-        existUsername(user.getUsername(), true);
+        signup(user, true);
+        signup(user, false);
+    }
+
+    @Test
+    public void testUserPasswordEncoding() {
+        String encoded = passwordEncoder.encode(IdMaker.randomUUID().toString());
+        log.trace("encoded:{}", encoded);
     }
 
 }

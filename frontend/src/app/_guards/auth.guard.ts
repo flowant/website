@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
         return true;
       } else {
         this.logger.trace("canActivate: false ", user, route);
-        this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+        this.router.navigate(['/signin'], { queryParams: { returnUrl: state.url } });
         return false;
       }
     }

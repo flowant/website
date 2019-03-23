@@ -44,9 +44,13 @@ export class BackendService {
     private http: HttpClient,
     private logger: NGXLogger) {
 
-      this.userSubject = new BehaviorSubject<User>(User.guest());
-      this.relationSubject = new BehaviorSubject<Relation>(Relation.empty);
-    }
+    this.userSubject = new BehaviorSubject<User>(User.guest());
+    this.relationSubject = new BehaviorSubject<Relation>(Relation.empty);
+  }
+
+  getUserValue(): User {
+    return this.userSubject.getValue();
+  }
 
   getUser(identity?: string): Observable<User> {
     if (identity) { // request other user for inquery
@@ -54,10 +58,6 @@ export class BackendService {
     } else {
       return this.userSubject;
     }
-  }
-
-  getUserValue(): User {
-    return this.userSubject.getValue();
   }
 
   changeUser(username?: string): Observable<User> {
@@ -76,12 +76,11 @@ export class BackendService {
     }
   }
 
-  postUser(user: User): Observable<User> {
-    if (user.isGuest() || user.identity !== this.userSubject.value.identity) {
-      this.logger.warn("Invalid user's postUser request is ignored:", user);
-      return of(user);
-    }
+  signUpUser(user: User) {
+    return this.postModel<User>(Model.User, user, Config.path.signup);
+  }
 
+  postUser(user: User): Observable<User> {
     return this.postModel<User>(Model.User, user).pipe(
       tap(user => this.userSubject.next(user))
     );
@@ -167,8 +166,11 @@ export class BackendService {
       catchError(this.handleError<T>(`getModel model=${model} idToPath=${idToPath}`)));
   }
 
-  postModel<T>(model: Model, entity: T): Observable<T> {
-    return this.http.post(Config.getUrl(model), entity, writeOptions).pipe(
+  postModel<T>(model: Model, entity: T, urlSuffix?: string): Observable<T> {
+    let url = Config.getUrl(model);
+    url = urlSuffix ? url + urlSuffix : url;
+
+    return this.http.post(url, entity, writeOptions).pipe(
       map(r => JSON.parse(r.body, reviver)),
       tap(m => this.logger.trace('posted model:', model, m)),
       catchError(this.handleError<T>('postModel'))

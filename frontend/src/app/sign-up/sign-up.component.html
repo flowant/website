@@ -1,0 +1,134 @@
+<div class="shadow p-4">
+  <h2 class="text-center mb-3"><b>Sign Up</b></h2>
+
+  <hr class="my-4"/>
+
+  <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fas fa-user"></i>
+          </span>
+        </div>
+        <input type="text" class="form-control" placeholder="Username" formControlName="username"
+            [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
+        <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+          <div *ngIf="f.username.errors.required">Username is required</div>
+          <div *ngIf="f.username.errors.tooShort">Username is at least 8 character</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fas fa-envelope"></i>
+          </span>
+        </div>
+        <input type="text" class="form-control" placeholder="Email@email.net" formControlName="email"
+            [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+        <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+          <div *ngIf="f.email.errors.required">Email is required</div>
+          <div *ngIf="f.email.errors.mustContain">Email must have @ character</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fas fa-key"></i>
+          </span>
+        </div>
+        <input type="password" class="form-control" placeholder="Password" formControlName="password"
+            [ngClass]="{ 'is-invalid': submitted && f.password.errors }">
+        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+          <div *ngIf="f.username.errors.tooShort">Password is at least 8 character</div>
+          <div *ngIf="f.password.errors.invalidCharacter">Password contains invalid characters</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fas fa-key"></i>
+          </span>
+        </div>
+        <input type="password" class="form-control" placeholder="Confirm Password" formControlName="confirm"
+            [ngClass]="{ 'is-invalid': submitted && f.confirm.errors }">
+        <div *ngIf="submitted && f.confirm.errors" class="invalid-feedback">
+          <div *ngIf="f.confirm.errors.required">Confirm is required</div>
+          <div *ngIf="f.confirm.errors.notSame">Password confirmation fails</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="checkbox-inline">
+        <input type="checkbox" required="required">
+        I accept the <a routerLink="#" class="text-primary">Terms of Use</a>
+        &amp; <a routerLink="#" class="text-primary">Privacy Policy</a>
+      </label>
+    </div>
+
+    <div class="form-group">
+      <button type="submit" [disabled]="loading" class="btn btn-success btn-block">Sign Up</button>
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger">Incorrect username or password</div>
+  </form>
+</div>
+
+<div class="d-flex justify-content-center mt-2">
+  <div class="hint-text">Already have an account? <a routerLink="/signin" class="text-success">Sign in here</a></div>
+</div>
+
+
+<!--
+<div class="signup-form">
+  <form action="/examples/actions/confirmation.php" method="post">
+  <h2>Sign Up</h2>
+  <p>Please fill in this form to create an account!</p>
+  <hr>
+      <div class="form-group">
+    <div class="input-group">
+      <span class="input-group-addon"><i class="fa fa-user"></i></span>
+      <input type="text" class="form-control" name="username" placeholder="Username" required="required">
+    </div>
+      </div>
+      <div class="form-group">
+    <div class="input-group">
+      <span class="input-group-addon"><i class="fa fa-paper-plane"></i></span>
+      <input type="email" class="form-control" name="email" placeholder="Email Address" required="required">
+    </div>
+      </div>
+  <div class="form-group">
+    <div class="input-group">
+      <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+      <input type="text" class="form-control" name="password" placeholder="Password" required="required">
+    </div>
+      </div>
+  <div class="form-group">
+    <div class="input-group">
+      <span class="input-group-addon">
+        <i class="fa fa-lock"></i>
+        <i class="fa fa-check"></i>
+      </span>
+      <input type="text" class="form-control" name="confirm_password" placeholder="Confirm Password" required="required">
+    </div>
+      </div>
+      <div class="form-group">
+    <label class="checkbox-inline"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a></label>
+  </div>
+  <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+      </div>
+  </form>
+<div class="text-center">Already have an account? <a href="#">Login here</a></div>
+</div>
+-->

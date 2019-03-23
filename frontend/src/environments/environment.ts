@@ -29,6 +29,7 @@ export const environment = {
     follow: '/follow',
     unfollow: '/unfollow',
     user: '/user',
+    signup: '/signup',
     auth: '/oauth/token'
   },
   auth: {

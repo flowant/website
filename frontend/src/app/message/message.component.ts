@@ -1,8 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { filter } from 'rxjs/operators';
 import { User, Message } from '../_models';
 import { BackendService } from '../_services';
 import { Config, Model } from '../config';
-import { NGXLogger, LoggerConfig } from 'ngx-logger';
+import { NGXLogger } from 'ngx-logger';
 
 export enum Option {
   Sent,
@@ -40,6 +41,7 @@ export class MessageComponent implements OnInit {
     this.paramNameMap.set(Option.Sent, 'aid');
 
     this.backendService.getUser()
+        .pipe(filter(user => !user.isGuest()))
         .subscribe(user => {
           this.logger.trace("getUser Subscription:", user);
           this.user = user;

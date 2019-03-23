@@ -8,8 +8,10 @@ import org.flowant.website.model.User;
 import org.flowant.website.repository.RelationshipService;
 import org.flowant.website.repository.UserRepository;
 import org.flowant.website.storage.FileStorage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +27,12 @@ import reactor.core.publisher.Mono;
 public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
 
     public final static String PATH_USER = "/user";
-    public final static String PATH_EXIST = "/exist";
+    public final static String PATH_SIGNUP = "/signup";
     public final static String UN = "un";
+    public final static String ENCODER_ID = "{bcrypt}";
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @GetMapping(value = PATH_USER)
     public Mono<ResponseEntity<User>> getByUsername(@RequestParam(UN) String username) {
@@ -36,19 +42,21 @@ public class UserRest extends RepositoryRest<User, UUID, UserRepository> {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping(value = PATH_USER + PATH_EXIST)
-    public Mono<ResponseEntity<Boolean>> existByUsername(@RequestParam(UN) String username) {
-        return repo.findByUsername(username)
+    @PostMapping(value = PATH_USER + PATH_SIGNUP)
+    public Mono<ResponseEntity<User>> signup(@Valid @RequestBody User user) {
+        return repo.findByUsername(user.getUsername())
                 .next()
-                .map(user -> true)
-                .defaultIfEmpty(false)
-                .map(ResponseEntity::ok);
+                .map(existUser -> new ResponseEntity<User>(HttpStatus.CONFLICT))
+                .switchIfEmpty(RelationshipService.createUserRelationship(user.getIdentity()).then(post(user)));
     }
 
     @PostMapping(value = PATH_USER)
     public Mono<ResponseEntity<User>> post(@Valid @RequestBody User user) {
-        return RelationshipService.createUserRelationship(user.getIdentity())
-                .then(super.post(user));
+        String password = user.getPassword();
+        if (password.startsWith(ENCODER_ID) == false) {
+            user.setPassword(this.passwordEncoder.encode(password));
+        }
+        return super.post(user);
     }
 
     @PutMapping(value = PATH_USER)
