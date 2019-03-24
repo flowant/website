@@ -60,10 +60,10 @@ export class Content {
   idCid: IdCid = IdCid.random();
   authorId: string;
   authorName: string;
-  title: string = "Please type a title here.";
+  title: string;
   extend: Extend = new Extend();
   fileRefs?: (FileRefs)[] = [];
-  sentences: string = "Please type directions here.";;
+  sentences: string;
   tags?: (string)[] | null;
   reputation: Reputation = new Reputation();
   cruTime: CruTime = new CruTime();

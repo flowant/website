@@ -1,7 +1,6 @@
 <div *ngIf="content" class="content">
   <textarea [(ngModel)]="content.title" [ngClass]="'title'+ suffixReadonly()"
-      placeholder="Please type a title here."></textarea>
-
+      placeholder="Please type a title here." required></textarea>
 
   <div class="border rounded m-2 p-1 row no-gutters align-items-center" >
     <div class="col-2">

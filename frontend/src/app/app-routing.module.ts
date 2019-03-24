@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent, canActivate: [AuthGuard], data: { a: Authority.Admin } },
   { path: 'search', component: SearchContentComponent },
   { path: 'search/:tag', component: SearchContentComponent },
-  { path: 'content', component: ContentComponent },
+  { path: 'content', component: ContentComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'content/:id/:cid', component: ContentComponent },
   { path: 'notification', component: NotificationComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'message', component: MessageComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
