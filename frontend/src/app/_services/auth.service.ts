@@ -49,15 +49,19 @@ export class AuthService {
     }
   }
 
-  login(username: string, password: string) {
+  signIn(username: string, password: string) {
     return this.backendService.authorize(username, password).pipe(
       tap(auth => auth.username = username),
       concatMap(auth => this.setAuthChangeUser(auth))
     );
   }
 
-  logout(): Observable<User> {
+  signOut(): Observable<User> {
     return this.setAuthChangeUser();
+  }
+
+  isSignedIn(): boolean {
+    return Boolean(this.auth);
   }
 
 }

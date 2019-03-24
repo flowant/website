@@ -28,7 +28,7 @@ export class SignInComponent implements OnInit {
     private logger: NGXLogger) {
 
     // redirect to home if already logged in
-    if (this.authService.auth) {
+    if (this.authService.isSignedIn()) {
       this.router.navigate(['/']);
     }
   }
@@ -54,7 +54,7 @@ export class SignInComponent implements OnInit {
     }
 
     this.loading = true;
-    this.authService.login(this.f.username.value, this.f.password.value)
+    this.authService.signIn(this.f.username.value, this.f.password.value)
         .pipe(first())
         .subscribe(
           _ => {

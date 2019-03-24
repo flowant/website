@@ -18,8 +18,8 @@ export class ModalsComponent implements OnInit {
   ngOnInit() {
   }
 
-  logout() {
-    this.authService.logout()
+  signOut() {
+    this.authService.signOut()
         .subscribe(_ => this.router.navigate(['/']));
   }
 

@@ -29,7 +29,7 @@ export class SignUpComponent implements OnInit {
     private logger: NGXLogger) {
 
     // redirect to home if already logged in
-    if (this.authService.auth) {
+    if (this.authService.isSignedIn()) {
       this.router.navigate(['/']);
     }
   }
@@ -47,26 +47,35 @@ export class SignUpComponent implements OnInit {
   }
 
   validate(group: FormGroup) {
-    // TODO make a policy and refine
+
+    let mustNotContain = new RegExp("^(?=.*[{}])");
 
     // validate username
-    if (group.controls.username.value.length < 8) {
+    if (group.controls.username.value.length < 6) {
       group.controls.username.setErrors({ tooShort: true });
     }
 
+    if (mustNotContain.test(group.controls.username.value) === true) {
+      group.controls.username.setErrors({ mustNotContain: true });
+    }
+
     // validate email
+    if (group.controls.email.value.length < 5) {
+      group.controls.email.setErrors({ tooShort: true });
+    }
+
     if (group.controls.email.value.includes('@') === false) {
       group.controls.email.setErrors({ mustContain: true });
     }
 
     // validate password
-    if (group.controls.password.value.length < 8) {
-      group.controls.password.setErrors({ tooShort: true });
+    let passwordMustContain = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
+    if (passwordMustContain.test(group.controls.password.value) === false) {
+      group.controls.password.setErrors({ mustContain: true });
     }
 
-    // TODO refine
-    if (group.controls.password.value.includes('{')) {
-      group.controls.password.setErrors({ invalidCharacter: true });
+    if (mustNotContain.test(group.controls.password.value) === true) {
+      group.controls.password.setErrors({ mustNotContain: true });
     }
 
     // validate password and confirmation
@@ -93,7 +102,7 @@ export class SignUpComponent implements OnInit {
     this.logger.trace("signUpUser:", newUser);
 
     this.backendService.signUpUser(newUser).pipe(
-      concatMap(u =>  this.authService.login(this.f.username.value, this.f.password.value))
+      concatMap(u =>  this.authService.signIn(this.f.username.value, this.f.password.value))
     ).subscribe(
       _ => {
         this.loading = false;
