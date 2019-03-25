@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReviewComponent } from './review.component';
+import { AppModule } from '../app.module';
 
 describe('ReviewComponent', () => {
   let component: ReviewComponent;
@@ -8,9 +9,11 @@ describe('ReviewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ReviewComponent ]
+      declarations: [ ],
+      imports: [ AppModule ]
     })
-    .compileComponents();
+    TestBed.overrideModule(AppModule, {
+    }).compileComponents();
   }));
 
   beforeEach(() => {

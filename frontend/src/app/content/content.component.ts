@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
-import { filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import * as $ from 'jquery';
 import { Content, IdCid, User } from '../_models';
 import { BackendService } from '../_services';

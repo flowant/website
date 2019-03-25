@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SearchContentComponent } from './search-content.component';
+import { AppModule } from '../app.module';
 
 describe('SearchContentComponent', () => {
   let component: SearchContentComponent;
@@ -8,9 +9,11 @@ describe('SearchContentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SearchContentComponent ]
+      declarations: [ ],
+      imports: [ AppModule ]
     })
-    .compileComponents();
+    TestBed.overrideModule(AppModule, {
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -21,5 +24,8 @@ describe('SearchContentComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+
+    component.getPopularContents();
+
   });
 });

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NgbModalSendMessageComponent } from './ngb-modal-send-message.component';
+import { AppModule } from '../app.module';
 
 describe('NgbModalSendMessageComponent', () => {
   let component: NgbModalSendMessageComponent;
@@ -8,9 +9,11 @@ describe('NgbModalSendMessageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NgbModalSendMessageComponent ]
+      declarations: [ ],
+      imports: [ AppModule ]
     })
-    .compileComponents();
+    TestBed.overrideModule(AppModule, {
+    }).compileComponents();
   }));
 
   beforeEach(() => {

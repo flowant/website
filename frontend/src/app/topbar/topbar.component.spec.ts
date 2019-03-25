@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TopbarComponent } from './topbar.component';
+import { AppModule } from '../app.module';
 
 describe('TopbarComponent', () => {
   let component: TopbarComponent;
@@ -8,9 +9,11 @@ describe('TopbarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TopbarComponent ]
+      declarations: [ ],
+      imports: [ AppModule ]
     })
-    .compileComponents();
+    TestBed.overrideModule(AppModule, {
+    }).compileComponents();
   }));
 
   beforeEach(() => {

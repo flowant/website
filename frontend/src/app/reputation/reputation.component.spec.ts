@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReputationComponent } from './reputation.component';
+import { AppModule } from '../app.module';
 
 describe('ReputationComponent', () => {
   let component: ReputationComponent;
@@ -8,9 +9,11 @@ describe('ReputationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ReputationComponent ]
+      declarations: [ ],
+      imports: [ AppModule ]
     })
-    .compileComponents();
+    TestBed.overrideModule(AppModule, {
+    }).compileComponents();
   }));
 
   beforeEach(() => {

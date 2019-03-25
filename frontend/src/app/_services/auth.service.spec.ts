@@ -14,7 +14,7 @@ function setup() {
         serverLogLevel: NgxLoggerLevel.TRACE
       })
     ],
-    providers: [BackendService]
+    providers: [BackendService, AuthService]
   });
 }
 

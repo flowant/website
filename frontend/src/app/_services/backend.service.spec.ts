@@ -15,7 +15,7 @@ describe('BackendService', () => {
           serverLogLevel: NgxLoggerLevel.TRACE
         })
       ],
-      providers: []
+      providers: [BackendService]
     });
   });
 

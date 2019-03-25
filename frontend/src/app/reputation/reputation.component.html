@@ -1,5 +1,5 @@
 
-<div class="reputation">
+<div *ngIf="reputation" class="reputation">
 
   <ngb-rating *ngIf="isRated()" class="uniform" [rate]="getRated()" [readonly]="true">
     <ng-template let-fill="fill">

@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserRefComponent } from './user-ref.component';
+import { AppModule } from '../app.module';
 
 describe('UserRefComponent', () => {
   let component: UserRefComponent;
@@ -8,9 +9,11 @@ describe('UserRefComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserRefComponent ]
+      declarations: [ ],
+      imports: [ AppModule ]
     })
-    .compileComponents();
+    TestBed.overrideModule(AppModule, {
+    }).compileComponents();
   }));
 
   beforeEach(() => {
