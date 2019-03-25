@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap, concatMap } from 'rxjs/operators';
 import { User, Auth } from '../_models';
 import { BackendService } from './backend.service';
 import { Config } from '../config';
-import { NGXLogger, LoggerConfig } from 'ngx-logger';
+import { NGXLogger } from 'ngx-logger';
 
 export function getAccessToken(): string {
   return localStorage.getItem('access_token');
