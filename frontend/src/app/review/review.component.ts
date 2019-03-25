@@ -25,14 +25,16 @@ export class ReviewComponent implements OnInit {
 
   postedRpt: Reputation;
 
-  constructor(private backendService: BackendService, private logger: NGXLogger) {
-  }
+  constructor(
+    private backendService: BackendService,
+    private logger: NGXLogger) { }
 
   ngOnInit() {
-    this.getPopularReviews();
-    this.review = new Review();
-    this.review.idCid = IdCid.random(this.content.idCid.identity);
-
+    if (this.content) {
+      this.review = new Review();
+      this.review.idCid = IdCid.random(this.content.idCid.identity);
+      this.getPopularReviews();
+    }
     this.backendService.getUser().subscribe(u => this.user = u);
   }
 

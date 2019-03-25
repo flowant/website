@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { filter } from 'rxjs/operators';
+
 import { Content } from '../_models';
 import { BackendService } from '../_services'
 import { Config, Model } from '../config';
@@ -12,16 +14,17 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SearchContentComponent implements OnInit {
 
-  contents : Content[];
+  contents: Content[];
   nextInfo: string;
   getNext: () => void;
 
   imgServerUrl: string = Config.gatewayUrl;
 
   constructor(
-      private backendService: BackendService,
-      private route: ActivatedRoute,
-      private logger: NGXLogger) { }
+    private backendService: BackendService,
+    private route: ActivatedRoute,
+    private logger: NGXLogger
+  ) { }
 
   ngOnInit() {
     this.route.params.subscribe(param => {
@@ -49,6 +52,7 @@ export class SearchContentComponent implements OnInit {
 
   getNextLatest() {
     this.backendService.getModels<Content>(Model.Content, this.nextInfo, 'cid', "56a1cd50-3c77-11e9-bf26-d571c84212ed")
+        .pipe(filter(Boolean))
         .subscribe(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
@@ -63,6 +67,7 @@ export class SearchContentComponent implements OnInit {
 
   getNextSearch(tag?: string) {
     this.backendService.getSearch(this.nextInfo, tag)
+        .pipe(filter(Boolean))
         .subscribe(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
