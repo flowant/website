@@ -9,7 +9,6 @@ import { Config } from '../config';
 
 describe('BackendService', () => {
 
-  let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
   let service: BackendService;
   let logger: NGXLogger;
@@ -28,7 +27,6 @@ describe('BackendService', () => {
 
     // Inject the http, test controller, and service-under-test
     // as they will be referenced by each test.
-    httpClient = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     service = TestBed.get(BackendService);
     logger = TestBed.get(NGXLogger);

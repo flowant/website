@@ -64,7 +64,6 @@ export class BackendService {
     this.logger.trace("changeUser, username:", username);
     if (username) {
       return this.getModel<User>(User, null, 'un', username).pipe(
-        map(user => user as User),
         tap(user => this.userSubject.next(user)),
         concatMap(user => this.getModel<Relation>(Relation, user.identity)),
         tap(relation => this.relationSubject.next(relation)),
@@ -73,7 +72,7 @@ export class BackendService {
     } else {
       this.userSubject.next(User.guest());
       this.relationSubject.next(Relation.empty);
-      return this.userSubject;
+      return of(this.userSubject.value);
     }
   }
 

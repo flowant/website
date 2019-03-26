@@ -5,6 +5,7 @@ import { User, Auth } from '../_models';
 import { BackendService } from './backend.service';
 import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 export function getAccessToken(): string {
   return localStorage.getItem('access_token');
@@ -24,19 +25,30 @@ export class AuthService {
   auth: Auth;
 
   constructor(
+    private jwtHelper: JwtHelperService,
     private backendService: BackendService,
     private logger: NGXLogger) {
 
     this.initAuth();
   }
 
-  initAuth() {
-    let strAuth = localStorage.getItem(AuthService.AUTHENTICATION);
-    this.auth = strAuth ? JSON.parse(strAuth) : undefined;
-    this.setAuthChangeUser(this.auth).subscribe(user => this.logger.trace("initAuth", user));
+  private initAuth() {
+    if (this.isTokenExpired()) {
+      this.logger.trace("access_token is expired, remove storage");
+      this.setAuthChangeUser()
+          .toPromise()
+          .then(user => this.logger.trace("initAuth, user:", user));
+    } else {
+      this.logger.trace("access_token expiration date:", this.jwtHelper.getTokenExpirationDate());
+      this.logger.trace("access_token:", this.jwtHelper.decodeToken(getAccessToken()));
+      this.auth = Object.assign(new Auth(), JSON.parse(localStorage.getItem(AuthService.AUTHENTICATION)));
+      this.setAuthChangeUser(this.auth)
+          .toPromise()
+          .then(user => this.logger.trace("initAuth, user:", user));
+    }
   }
 
-  setAuthChangeUser(auth?: Auth): Observable<User> {
+  private setAuthChangeUser(auth?: Auth): Observable<User> {
     this.logger.trace("setAuthChangeUser:", auth);
     if (auth) {
       this.auth = auth;
@@ -64,6 +76,10 @@ export class AuthService {
 
   isSignedIn(): boolean {
     return Boolean(this.auth);
+  }
+
+  isTokenExpired(): boolean {
+    return this.jwtHelper.isTokenExpired();
   }
 
 }
