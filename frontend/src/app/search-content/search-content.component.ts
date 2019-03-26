@@ -3,7 +3,7 @@ import { filter } from 'rxjs/operators';
 
 import { Content } from '../_models';
 import { BackendService } from '../_services'
-import { Config, Model } from '../config';
+import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
 import { ActivatedRoute } from '@angular/router';
 
@@ -42,7 +42,7 @@ export class SearchContentComponent implements OnInit {
   //TODO get container id from the backend
   getPopularContents(): void {
     this.getNext = this.getNextLatest;
-    this.backendService.getPopularItems<Content>(Model.Content, "56a1cd50-3c77-11e9-bf26-d571c84212ed")
+    this.backendService.getPopularItems<Content>(Content, "56a1cd50-3c77-11e9-bf26-d571c84212ed")
         .subscribe(contents => {
           this.contents = this.contents.concat(contents);
         });
@@ -51,7 +51,7 @@ export class SearchContentComponent implements OnInit {
   }
 
   getNextLatest() {
-    this.backendService.getModels<Content>(Model.Content, this.nextInfo, 'cid', "56a1cd50-3c77-11e9-bf26-d571c84212ed")
+    this.backendService.getModels<Content>(Content, this.nextInfo, 'cid', "56a1cd50-3c77-11e9-bf26-d571c84212ed")
         .pipe(filter(Boolean))
         .subscribe(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);

@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { User, Notification, Category } from '../_models';
 import { BackendService } from '../_services';
-import { Config, Model } from '../config';
+import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
 import { userInfo } from 'os';
 
@@ -31,7 +31,7 @@ export class NotificationComponent implements OnInit {
 
   ngOnInit() {
     this.backendService.getUser()
-        .pipe(filter(user => !User.isGuest(user)))
+        .pipe(filter(user => !user.isGuest()))
         .subscribe(user => {
           this.user = user;
           this.isPreview ? this.getPreview() : this.getNext();
@@ -39,8 +39,8 @@ export class NotificationComponent implements OnInit {
   }
 
   getPreview() {
-    this.backendService.getModels<Notification>(Model.Notification, this.nextInfo,
-        'sid', this.user.identity, Config.defaultPage, Config.previewSize)
+    this.backendService.getModels<Notification>(Notification, this.nextInfo,
+        'sid', this.user.identity, Config.paging.defaultPage, Config.paging.previewSize)
         .subscribe(respWithLink => {
           this.notifications = this.notifications.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
@@ -48,7 +48,7 @@ export class NotificationComponent implements OnInit {
   }
 
   getNext() {
-    this.backendService.getModels<Notification>(Model.Notification, this.nextInfo, 'sid', this.user.identity)
+    this.backendService.getModels<Notification>(Notification, this.nextInfo, 'sid', this.user.identity)
         .subscribe(respWithLink => {
           this.notifications = this.notifications.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
@@ -59,7 +59,7 @@ export class NotificationComponent implements OnInit {
   onDelete(index: number) {
     let noti = this.notifications[index];
     this.logger.trace('onDelete:', noti);
-    this.backendService.deleteModel<Notification>(Model.Notification, noti.idCid, this.user.identity)
+    this.backendService.deleteModel(Notification, noti.idCid, this.user.identity)
       .subscribe(_ => this.notifications.splice(index, 1));
   }
 

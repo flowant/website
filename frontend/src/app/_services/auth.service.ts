@@ -19,6 +19,8 @@ export function setAccessToken(access_token?: string) {
 })
 export class AuthService {
 
+  static AUTHENTICATION: string = 'authentication';
+
   auth: Auth;
 
   constructor(
@@ -29,7 +31,7 @@ export class AuthService {
   }
 
   initAuth() {
-    let strAuth = localStorage.getItem(Config.AUTHENTICATION);
+    let strAuth = localStorage.getItem(AuthService.AUTHENTICATION);
     this.auth = strAuth ? JSON.parse(strAuth) : undefined;
     this.setAuthChangeUser(this.auth).subscribe(user => this.logger.trace("initAuth", user));
   }
@@ -39,12 +41,12 @@ export class AuthService {
     if (auth) {
       this.auth = auth;
       setAccessToken(auth.access_token);
-      localStorage.setItem(Config.AUTHENTICATION, JSON.stringify(auth));
+      localStorage.setItem(AuthService.AUTHENTICATION, JSON.stringify(auth));
       return this.backendService.changeUser(auth.username);
     } else {
       this.auth = undefined;
       setAccessToken();
-      localStorage.removeItem(Config.AUTHENTICATION);
+      localStorage.removeItem(AuthService.AUTHENTICATION);
       return this.backendService.changeUser();
     }
   }

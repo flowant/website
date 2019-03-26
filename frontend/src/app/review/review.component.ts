@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IdCid, Content, Review, Reputation, User } from '../_models';
 import { BackendService } from '../_services'
-import { Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 @Component({
@@ -14,8 +13,6 @@ export class ReviewComponent implements OnInit {
   @Input() content: Content;
 
   user: User;
-
-  model: Model = Model.Review;
 
   review: Review;
 
@@ -39,7 +36,7 @@ export class ReviewComponent implements OnInit {
   }
 
   getPopularReviews(): void {
-    this.backendService.getPopularItems<Review>(Model.Review, this.content.idCid.identity)
+    this.backendService.getPopularItems<Review>(Review, this.content.idCid.identity)
       .subscribe(pupolarReviews => {
         this.reviews = this.reviews.concat(pupolarReviews);
         this.getNextReview();
@@ -47,7 +44,7 @@ export class ReviewComponent implements OnInit {
   }
 
   getNextReview() {
-    this.backendService.getModels<Review>(Model.Review, this.nextInfo, 'cid', this.content.idCid.identity)
+    this.backendService.getModels<Review>(Review, this.nextInfo, 'cid', this.content.idCid.identity)
         .subscribe(respWithLink => {
           this.reviews = this.reviews.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
@@ -59,7 +56,7 @@ export class ReviewComponent implements OnInit {
     // check user id and already clicked by user
 
     this.logger.trace('onSave:', this.review);
-    this.backendService.postModel<Review>(Model.Review, this.review)
+    this.backendService.postModel<Review>(Review, this.review)
         .subscribe(() => {});
 
     this.review.reputing.reputed = 1;
@@ -68,7 +65,7 @@ export class ReviewComponent implements OnInit {
         this.review.reputing.subtract(this.postedRpt) : this.review.reputing;
 
     this.logger.trace("onSave, ContentRpt:", contentRpt);
-    this.backendService.acculateRepute(Model.Content, this.content.idCid, contentRpt)
+    this.backendService.acculateRepute(Content.name, this.content.idCid, contentRpt)
         .subscribe((rpt) => {
           this.content.reputation = rpt;
           this.postedRpt = Object.assign({}, this.review.reputing);

@@ -36,6 +36,11 @@ export const environment = {
     clientId: 'client',
     clientPass: 'client'
   },
+  paging: {
+    defaultPage: '0',
+    defaultSize: '12',
+    previewSize: '5'
+  }
 };
 
 /*

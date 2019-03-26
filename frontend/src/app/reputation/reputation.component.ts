@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { BackendService } from '../_services';
-import { Model } from '../config';
-import { IdCid, Reputation } from '../_models';
+import { IdCid, Reputation, Content } from '../_models';
 import { NGXLogger } from 'ngx-logger';
 
 const numeral = require('numeral');
@@ -13,7 +12,7 @@ const numeral = require('numeral');
 })
 export class ReputationComponent implements OnInit {
 
-  @Input() model: Model;
+  @Input() typeName: string;
   @Input() idCid: IdCid;
   @Input() reputation: Reputation;
 
@@ -27,7 +26,7 @@ export class ReputationComponent implements OnInit {
   }
 
   isRated(): boolean {
-    return Model.Content === this.model;
+    return Content.name === this.typeName;
   }
 
   getRated(): string {
@@ -41,7 +40,7 @@ export class ReputationComponent implements OnInit {
     reputation.select(selected);
     reputation.idCid = idCid;
 
-    this.backendService.acculateRepute(this.model, idCid, reputation)
+    this.backendService.acculateRepute(this.typeName, idCid, reputation)
         .subscribe((rpt) => {this.reputation = rpt});
   }
 

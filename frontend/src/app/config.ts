@@ -1,21 +1,6 @@
 import { environment as env } from '../environments/environment';
 
-export enum Model {
-  Content = "Content",
-  Review = "Review",
-  Reply = "Reply",
-  ContentRpt = "ContentRpt",
-  ReviewRpt = "ReviewRpt",
-  ReplyRpt = "ReplyRpt",
-  User = "User",
-  Message = "Message",
-  Notification = "Notification",
-  Relation = "Relation"
-}
-
 export class Config {
-
-  static AUTHENTICATION: string = 'authentication';
 
   static gatewayUrl = env.gateway.scheme + '://' + env.gateway.domain + ':' + env.gateway.port + env.path.gateway;
   static searchUrl = Config.gatewayUrl + env.path.search;
@@ -38,39 +23,28 @@ export class Config {
   static gateway = env.gateway;
   static path = env.path;
   static auth = env.auth;
+  static paging = env.paging;
 
-  static defaultPage = "0";
-  static defaultSize = "12";
-  static previewSize = "5";
-
-  static urlMap: Map<Model, string> = new Map([
-    [Model.Content, Config.contentUrl],
-    [Model.Review, Config.reviewUrl],
-    [Model.Reply, Config.replyUrl],
-    [Model.ContentRpt, Config.contentRptUrl],
-    [Model.ReviewRpt, Config.reviewRptUrl],
-    [Model.ReplyRpt, Config.replyRptUrl],
-    [Model.User, Config.userUrl],
-    [Model.Message, Config.messageUrl],
-    [Model.Notification, Config.notificationUrl],
-    [Model.Relation, Config.relationUrl],
+  // key: type name, value: url
+  static urlMap: Map<string, string> = new Map([
+    ['Content', Config.contentUrl],
+    ['Review', Config.reviewUrl],
+    ['Reply', Config.replyUrl],
+    ['ContentRpt', Config.contentRptUrl],
+    ['ReviewRpt', Config.reviewRptUrl],
+    ['ReplyRpt', Config.replyRptUrl],
+    ['User', Config.userUrl],
+    ['Message', Config.messageUrl],
+    ['Notification', Config.notificationUrl],
+    ['Relation', Config.relationUrl]
   ]);
 
-  static getUrl(model: Model): string {
-    return this.urlMap.get(model);
+  static getUrl(typeName: string): string {
+    return this.urlMap.get(typeName);
   }
 
-  static toRptModel(model: Model): Model {
-    switch (model) {
-      case Model.Content:
-        return Model.ContentRpt;
-      case Model.Reply:
-        return Model.ReplyRpt;
-      case Model.Review:
-        return Model.ReviewRpt;
-      default:
-      //TODO error handle
-    }
+  static toRptName(typeName: string): any {
+    return typeName + 'Rpt';
   }
 
 }

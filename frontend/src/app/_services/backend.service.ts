@@ -3,9 +3,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { catchError, map, tap, concatMap } from 'rxjs/operators';
-import { IdCid, HasIdCid, IdToPath, Content, Reputation, reviver, FileRefs } from '../_models';
+import { IdCid, IdToPath, Content, Reputation, reviver, FileRefs } from '../_models';
 import { RespWithLink, User, Relation, Auth } from '../_models';
-import { Config, Model } from '../config';
+import { Config } from '../config';
 
 interface TextResponseOption {
   headers?: HttpHeaders | {
@@ -54,7 +54,7 @@ export class BackendService {
 
   getUser(identity?: string): Observable<User> {
     if (identity) { // request other user for inquery
-      return this.getModel<User>(Model.User, identity);
+      return this.getModel<User>(User, identity);
     } else {
       return this.userSubject;
     }
@@ -63,10 +63,10 @@ export class BackendService {
   changeUser(username?: string): Observable<User> {
     this.logger.trace("changeUser, username:", username);
     if (username) {
-      return this.getModel<User>(Model.User, null, 'un', username).pipe(
+      return this.getModel<User>(User, null, 'un', username).pipe(
         map(user => user as User),
         tap(user => this.userSubject.next(user)),
-        concatMap(user => this.getModel<Relation>(Model.Relation, user.identity)),
+        concatMap(user => this.getModel<Relation>(Relation, user.identity)),
         tap(relation => this.relationSubject.next(relation)),
         map(_ => this.userSubject.value)
       );
@@ -77,15 +77,16 @@ export class BackendService {
     }
   }
 
-  signUpUser(user: User) {
-    return this.http.post(Config.signupUrl, user, writeOptions).pipe(
-      map(r => JSON.parse(r.body, reviver)),
-      tap(m => this.logger.trace('signUp User:', user, m)),
+  signUpUser(user: User): Observable<User> {
+    return this.http.post(encodeURI(Config.signupUrl), user, writeOptions).pipe(
+      map(resp => JSON.parse(resp.body, reviver)),
+      map(object => Object.assign(new User, object)),
+      tap(item => this.logger.trace('signUp User:', item)),
     );
   }
 
   postUser(user: User): Observable<User> {
-    return this.postModel<User>(Model.User, user).pipe(
+    return this.postModel<User>(User, user).pipe(
       tap(user => this.userSubject.next(user))
     );
   }
@@ -96,7 +97,7 @@ export class BackendService {
 
   postRelation(follow:boolean, followerId: string, followeeId: string) {
 
-    if (User.isGuest(this.userSubject.value)) {
+    if (this.userSubject.value.isGuest()) {
       this.logger.warn("Guest user's postRelation request is ignored");
       return;
     }
@@ -104,90 +105,92 @@ export class BackendService {
     let url = Config.relationUrl + (follow ? Config.path.follow : Config.path.unfollow)
         + "/" + followerId + "/" + followeeId;
 
-    return this.http.post(url, null, writeOptions).pipe(
-      map(r => JSON.parse(r.body, reviver)),
+    return this.http.post(encodeURI(url), null, writeOptions).pipe(
+      map(resp => JSON.parse(resp.body, reviver)),
+      map(object => Object.assign(new Relation(), object)),
       tap(relation => this.relationSubject.next(relation)),
-      tap(relation => this.logger.trace('posted Relation:', relation)),
+      tap(relation => this.logger.trace('postRelation resp:', relation)),
       catchError(this.handleError<any>('postRelation'))
     );
   }
 
-  getPopularItems<T>(model: Model, containerId: string): Observable<T[]> {
+  getPopularItems<T>(type, containerId: string): Observable<T[]> {
 
-    let option = Object.assign({}, baseOptions);
-    option.params = new HttpParams().set('cid', containerId);
+    let url = Config.getUrl(type.name) + Config.path.popular + '?cid=' + containerId;
 
-    return this.http.get(Config.getUrl(model) + Config.path.popular, option).pipe(
-      map(r => JSON.parse(r.body, reviver)),
-      tap(r => this.logger.trace('fetched popular items:', r)),
-      catchError(this.handleError('getPopulars', []))
+    return this.http.get(encodeURI(url), baseOptions).pipe(
+      map(resp => JSON.parse(resp.body, reviver)),
+      map(array => array.map(object => Object.assign(new type(), object))),
+      tap(items => this.logger.trace('getPopularItems resp:', items)),
+      catchError(this.handleError('getPopularItems', []))
     );
   }
 
   getSearch(nextInfo: string, tag?: string, page?: string, size?: string)
       : Observable<RespWithLink<Content>> {
 
-    page = page ? page : Config.defaultPage;
-    size = size ? size: Config.defaultSize;
+    page = page ? page : Config.paging.defaultPage;
+    size = size ? size: Config.paging.defaultSize;
 
     let queryParams: string = nextInfo ? nextInfo : `?tag=${tag}&page=${page}&size=${size}`;
 
-    return this.http.get(Config.searchUrl + queryParams, baseOptions).pipe(
-      map(r => RespWithLink.of<Content>(JSON.parse(r.body, reviver), r.headers.get("link"))),
-      tap(r => this.logger.trace('fetched mapped:', r)),
-      catchError(this.handleError<RespWithLink<Content>>(`getSearch query:${queryParams}`)));
+    return this.http.get(encodeURI(Config.searchUrl + queryParams), baseOptions).pipe(
+      map(resp => RespWithLink.of<Content>(
+        JSON.parse(resp.body, reviver).map(object => Object.assign(new Content(), object)),
+        resp.headers.get("link")
+      )),
+      tap(items => this.logger.trace('getSearch resp:', items)),
+      catchError(this.handleError<RespWithLink<Content>>(`getSearch query:${queryParams}`))
+    );
   }
 
-  getModels<T>(model: Model, nextInfo: string, queryName: string, queryValue: string, page?: string, size?: string)
+  getModels<T>(type, nextInfo: string, queryName: string, queryValue: string, page?: string, size?: string)
       : Observable<RespWithLink<T>> {
 
-    page = page ? page : Config.defaultPage;
-    size = size ? size: Config.defaultSize;
+    page = page ? page : Config.paging.defaultPage;
+    size = size ? size: Config.paging.defaultSize;
 
     let queryParams: string = nextInfo ? nextInfo : `?${queryName}=${queryValue}&page=${page}&size=${size}`;
 
-    return this.http.get(Config.getUrl(model) + queryParams, baseOptions).pipe(
-      map(r => RespWithLink.of<T>(JSON.parse(r.body, reviver), r.headers.get("link"))),
-      tap(r => this.logger.trace('fetched mapped:', r)),
-      catchError(this.handleError<RespWithLink<T>>(`getModels query:${queryParams}`)));
+    return this.http.get(encodeURI(Config.getUrl(type.name) + queryParams) , baseOptions).pipe(
+      map(resp => RespWithLink.of<T>(
+        JSON.parse(resp.body, reviver).map(object => Object.assign(new type(), object)),
+        resp.headers.get("link")
+      )),
+      tap(items => this.logger.trace('getModels resp:', items)),
+      catchError(this.handleError<RespWithLink<T>>(`getModels query:${queryParams}`))
+    );
   }
 
-  getModel<T>(model: Model, idToPath?: IdToPath, queryName?: string, queryValue?: string): Observable<T> {
+  getModel<T>(type, idToPath?: IdToPath, queryName?: string, queryValue?: string): Observable<T> {
+    let url = Config.getUrl(type.name)
+        + (idToPath ? '/' + idToPath.toString() : '')
+        + (queryName && queryValue ? '?' + queryName + '=' + queryValue : '');
 
-    let url = Config.getUrl(model);
-
-    if (idToPath) {
-      url += '/' + idToPath.toString();
-    }
-
-    if (queryName && queryValue) {
-      url += '?' + queryName + '=' + queryValue;
-    }
-
-    return this.http.get(url, baseOptions).pipe(
-      map(r => JSON.parse(r.body, reviver)),
-      tap(m => this.logger.trace('got model:', m)),
-      catchError(this.handleError<T>(`getModel model=${model} idToPath=${idToPath}`)));
+    return this.http.get(encodeURI(url), baseOptions).pipe(
+      map(resp => JSON.parse(resp.body, reviver)),
+      map(object => Object.assign(new type(), object)),
+      tap(item => this.logger.trace('getModel resp:', item)),
+      catchError(this.handleError<T>(`getModel model=${type.name} idToPath=${idToPath}`))
+    );
   }
 
-  postModel<T>(model: Model, entity: T, urlSuffix?: string): Observable<T> {
-    let url = Config.getUrl(model);
-    url = urlSuffix ? url + urlSuffix : url;
+  postModel<T>(type, entity: T, urlSuffix?: string): Observable<T> {
+    let url = Config.getUrl(type.name) + (urlSuffix ? '/' + urlSuffix : '');
 
-    return this.http.post(url, entity, writeOptions).pipe(
-      map(r => JSON.parse(r.body, reviver)),
-      tap(m => this.logger.trace('posted model:', model, m)),
+    return this.http.post(encodeURI(url), entity, writeOptions).pipe(
+      map(resp => JSON.parse(resp.body, reviver)),
+      map(object => Object.assign(new type(), object)),
+      tap(item => this.logger.trace('postModel resp:', item)),
       catchError(this.handleError<T>('postModel'))
     );
   }
 
-  deleteModel<T extends HasIdCid>(model: Model, idToPath: IdToPath, urlSuffix?: string): Observable<any> {
-    let url = Config.getUrl(model) + '/' + idToPath.toString();
-    url = urlSuffix ? url + '/' + urlSuffix : url;
+  deleteModel(type, idToPath: IdToPath, urlSuffix?: string): Observable<any> {
+    let url = Config.getUrl(type.name) + '/' + idToPath.toString() + (urlSuffix ? '/' + urlSuffix : '');
 
-    this.logger.trace("deleteModel url:", url);
-    return this.http.delete(url, writeOptions).pipe(
-      tap(r => this.logger.trace(`deleted model idToPath:${idToPath}, resp:`, r)),
+    return this.http.delete(encodeURI(url), writeOptions).pipe(
+      tap(resp => this.logger.trace(`deleteModel idToPath:${idToPath}, resp:`, resp)),
       catchError(this.handleError<string>('deleteModel'))
     );
   }
@@ -196,13 +199,16 @@ export class BackendService {
   // identity is the same as user identity, it enable to find the user picture by user id.
   addFile(identity: string, file: FileList): Observable<FileRefs> {
     let uploadData = new FormData();
-
     uploadData.append('attachment', file[0], file[0].name);
 
-    return this.http.post(Config.fileUrl + '/' + identity, uploadData, baseOptions).pipe(
-      map(r => JSON.parse(r.body, reviver)),
-      tap(r => this.logger.trace('added files:', r)),
-      catchError(this.handleError<FileRefs>('addFile')));
+    let url = Config.fileUrl + '/' + identity;
+
+    return this.http.post(encodeURI(url), uploadData, baseOptions).pipe(
+      map(resp => JSON.parse(resp.body, reviver)),
+      map(object => Object.assign(new FileRefs(), object)),
+      tap(item => this.logger.trace('addFile resp:', item)),
+      catchError(this.handleError<FileRefs>('addFile'))
+    );
   }
 
   addFiles(files: FileList): Observable<FileRefs[]> {
@@ -212,32 +218,42 @@ export class BackendService {
       uploadData.append('attachment', files[i], files[i].name);
     }
 
-    return this.http.post(Config.fileUrl, uploadData, baseOptions).pipe(
-      map(r => JSON.parse(r.body, reviver)),
-      tap(r => this.logger.trace('added files:', r)),
-      catchError(this.handleError<FileRefs[]>('addFiles', [])));
+    return this.http.post(encodeURI(Config.fileUrl), uploadData, baseOptions).pipe(
+      map(resp => JSON.parse(resp.body, reviver)),
+      map(array => array.map(object => Object.assign(new FileRefs(), object))),
+      tap(items => this.logger.trace('addFiles resp:', items)),
+      catchError(this.handleError<FileRefs[]>('addFiles', []))
+    );
   }
 
   deleteFiles(files: FileRefs[]): Observable<any> {
-    return this.http.post(Config.fileDeletesUrl, files, writeOptions).pipe(
-      tap(r => this.logger.trace('deleted files:', r)),
-      catchError(this.handleError<FileRefs[]>('deleteFiles')));
+    return this.http.post(encodeURI(Config.fileDeletesUrl), files, writeOptions).pipe(
+      tap(resp => this.logger.trace('deleteFiles resp:', resp)),
+      catchError(this.handleError<FileRefs[]>('deleteFiles'))
+    );
   }
 
-  acculateRepute(model: Model, idCid: IdCid, reputation: Reputation): Observable<Reputation> {
-    this.logger.trace("acculateRepute:", model, idCid, reputation);
-    let rpt = Object.assign({}, reputation);
+  acculateRepute(typeName: string, idCid: IdCid, reputation: Reputation): Observable<Reputation> {
+    let rpt = Object.assign(new Reputation(), reputation);
     rpt.idCid = idCid;
-    return this.postModel<Reputation>(Config.toRptModel(model), rpt);
+
+    let url = Config.getUrl(Config.toRptName(typeName));
+
+    return this.http.post(encodeURI(url), rpt, writeOptions).pipe(
+      map(resp => JSON.parse(resp.body, reviver)),
+      map(object => Object.assign(new Reputation(), object)),
+      tap(item => this.logger.trace('acculateRepute resp:', item)),
+      catchError(this.handleError<Reputation>('acculateRepute'))
+    );
   }
 
   authorize(username: string, password: string): Observable<Auth> {
     let httpHeaders = new HttpHeaders()
-      .set('Authorization', 'Basic ' + window.btoa(Config.auth.clientId + ':' + Config.auth.clientPass));
+        .set('Authorization', 'Basic ' + window.btoa(Config.auth.clientId + ':' + Config.auth.clientPass));
 
-    let qeury = `?grant_type=password&username=${username}&password=${password}`;
+    let url = `${Config.authUrl}?grant_type=password&username=${username}&password=${password}`;
 
-    return this.http.post<Auth>(Config.authUrl + qeury, null, {headers: httpHeaders});
+    return this.http.post<Auth>(encodeURI(url), null, {headers: httpHeaders});
   }
 
   /**
@@ -250,7 +266,7 @@ export class BackendService {
     return (error: any): Observable<T> => {
 
       // send the error to remote logging infrastructure
-      this.logger.error(error);
+      this.logger.error(operation, error);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

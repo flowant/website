@@ -1,12 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { Observable, of } from 'rxjs';
-import { filter, concatMap, tap, defaultIfEmpty } from 'rxjs/operators';
-import { User, Notification, Category } from '../_models';
+import { concatMap } from 'rxjs/operators';
 import { BackendService } from '../_services';
-import { Config, Model } from '../config';
-import { NGXLogger, LoggerConfig } from 'ngx-logger';
+import { Config } from '../config';
+import { NGXLogger } from 'ngx-logger';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbModalSendMessageComponent } from '../ngb-modal-send-message/ngb-modal-send-message.component';
 

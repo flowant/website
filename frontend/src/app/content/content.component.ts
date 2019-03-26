@@ -6,7 +6,7 @@ import { tap } from 'rxjs/operators';
 import * as $ from 'jquery';
 import { Content, IdCid, User } from '../_models';
 import { BackendService } from '../_services';
-import { Config, Model } from '../config';
+import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 
@@ -18,8 +18,6 @@ declare var $: any;
   styleUrls: ['./content.component.scss']
 })
 export class ContentComponent implements OnInit {
-
-  model: Model = Model.Content;
 
   imgServerUrl: string = Config.imgServerUrl;
 
@@ -44,7 +42,7 @@ export class ContentComponent implements OnInit {
     let containerId = this.route.snapshot.paramMap.get('cid');
 
     if (identity && containerId) {
-      this.idCid = new IdCid(this.route.snapshot.paramMap.get('id'),
+      this.idCid = IdCid.of(this.route.snapshot.paramMap.get('id'),
           this.route.snapshot.paramMap.get('cid'));
     }
 
@@ -55,7 +53,7 @@ export class ContentComponent implements OnInit {
   }
 
   prepareContent(): void {
-    let observable = this.idCid ? this.backendService.getModel<Content>(Model.Content, this.idCid) : this.newContent();
+    let observable = this.idCid ? this.backendService.getModel<Content>(Content, this.idCid) : this.newContent();
     observable.subscribe(c => {
       this.content = c;
       this.convertFromContent();
@@ -145,13 +143,13 @@ export class ContentComponent implements OnInit {
     this.convertToContent();
     this.deleteUnusedFile();
     this.logger.trace('onSave:', this.content);
-    this.backendService.postModel<Content>(Model.Content, this.content)
+    this.backendService.postModel<Content>(Content, this.content)
       .subscribe(() => {});
   }
 
   onDelete(): void {
     this.logger.trace('onDelete:', this.content);
-    this.backendService.deleteModel<Content>(Model.Content, this.content)
+    this.backendService.deleteModel(Content, this.content)
       .subscribe(() => {});
   }
 

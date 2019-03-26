@@ -6,15 +6,22 @@ import { v1 } from 'uuid';
 export function reviver(key, value): any {
   switch (key) {
     case 'idCid': {
-      return new IdCid(value['identity'], value['containerId']);
+      return IdCid.of(value['identity'], value['containerId']);
     }
-    case 'zoneId': {
-      return ZoneId.of(value);
+    case 'cruTime': {
+      return CruTime.assign(value);
     }
-    case 'created':
-    case 'updated':
-    case 'read': {
-      return LocalDateTime.parse(value);
+    case 'time': {
+      return ZonedTime.assign(value);
+    }
+    case 'birthdate': {
+      return Object.assign(new Birthdate(), value);
+    }
+    case 'phone': {
+      return Object.assign(new Phone(), value);
+    }
+    case 'address': {
+      return Object.assign(new Address(), value);
     }
     case 'followings':
     case 'followers':
@@ -41,17 +48,19 @@ export class IdCid {
   identity: string;
   containerId: string;
 
-  constructor(identity: string, containerId: string) {
-    this.identity = identity;
-    this.containerId = containerId;
-  }
-
   toString(): string {
     return `${this.identity}/${this.containerId}`;
   }
 
+  static of(identity: string, containerId: string): IdCid {
+    let idCid = new IdCid();
+    idCid.identity = identity;
+    idCid.containerId = containerId;
+    return idCid;
+  }
+
   static random(containerId?: string): IdCid {
-    return new IdCid(v1(), containerId ? containerId : v1());
+    return IdCid.of(v1(), containerId ? containerId : v1());
   }
 
 }
@@ -66,7 +75,7 @@ export class Content {
   sentences: string;
   tags?: (string)[] | null;
   reputation: Reputation = new Reputation();
-  cruTime: CruTime = new CruTime();
+  cruTime: CruTime = CruTime.now();
 }
 
 export class Extend {
@@ -94,7 +103,7 @@ export class Review {
   reputing: Reputation = new Reputation();
   comment: string;
   reputation: Reputation = new Reputation();
-  cruTime: CruTime = new CruTime();
+  cruTime: CruTime = CruTime.now();
 }
 
 export class Reply {
@@ -103,7 +112,7 @@ export class Reply {
   authorName: string;
   comment: string = "Please type comments here.";
   reputation: Reputation = new Reputation();
-  cruTime: CruTime = new CruTime();
+  cruTime: CruTime = CruTime.now();
 }
 
 export class Reputation {
@@ -230,16 +239,16 @@ export class User {
   credentialsNonExpired: boolean;
   enabled: boolean;
 
-  static isGuest(user: User): boolean {
-    return user.authorities.includes(Authority.Guest) && user.authorities.length === 1;
+  isGuest(): boolean {
+    return this.authorities.includes(Authority.Guest) && this.authorities.length === 1;
   }
 
-  static isUser(user: User): boolean {
-    return user.authorities.includes(Authority.User);
+  isUser(): boolean {
+    return this.authorities.includes(Authority.User);
   }
 
-  static isAdmin(user: User): boolean {
-    return user.authorities.includes(Authority.Admin);
+  isAdmin(): boolean {
+    return this.authorities.includes(Authority.Admin);
   }
 
   public static of(username: string, email: string, password: string): User {
@@ -252,8 +261,14 @@ export class User {
     user.identity = v1();
     user.displayName = user.username;
     user.authorities.push(Authority.User);
-    user.cruTime = new CruTime();
+    user.cruTime = CruTime.now();
     return user;
+  }
+
+  public static random(): User {
+    let randomStr: string = v1();
+    randomStr = randomStr.substring(0, 3);
+    return User.of("User" + randomStr, randomStr + "@domain.com", randomStr);
   }
 
   public static guest(): User {
@@ -261,7 +276,7 @@ export class User {
     user.identity = v1();
     user.displayName = 'Guest';
     user.authorities.push(Authority.Guest);
-    user.cruTime = new CruTime();
+    user.cruTime = CruTime.now();
     return user;
   }
 
@@ -326,21 +341,62 @@ export class Authority {
 }
 
 export class CruTime {
-  zoneId: ZoneId = ZoneId.systemDefault();
-  created: LocalDateTime = LocalDateTime.now();
-  read: LocalDateTime = this.created;
-  updated: LocalDateTime = this.created;
+  zoneId: ZoneId;
+  created: LocalDateTime;
+  read: LocalDateTime;
+  updated: LocalDateTime;
+
+  static now(): CruTime {
+    let t = new CruTime();
+    t.zoneId = ZoneId.systemDefault();
+    t.created = LocalDateTime.now();
+    t.read = LocalDateTime.now();
+    t.updated = LocalDateTime.now();
+    return t;
+  }
+
+  static assign(object: Object): CruTime {
+    let t = new CruTime();
+    t.zoneId = ZoneId.of(object['zoneId']);
+    t.created = LocalDateTime.parse(object['created']);
+    t.read = LocalDateTime.parse(object['read']);
+    t.updated = LocalDateTime.parse(object['updated']);
+    return t;
+  }
+
 }
 
 export class ZonedTime {
-  zoneId: ZoneId = ZoneId.systemDefault();
-  created: LocalDateTime = LocalDateTime.now();
+  zoneId: ZoneId;
+  created: LocalDateTime;
+
+  static now(): ZonedTime {
+    let t = new ZonedTime();
+    t.zoneId = ZoneId.systemDefault();
+    t.created = LocalDateTime.now();
+    return t;
+  }
+
+  static assign(object: Object): ZonedTime {
+    let t = new ZonedTime();
+    t.zoneId = ZoneId.of(object['zoneId']);
+    t.created = LocalDateTime.parse(object['created']);
+    return t;
+  }
+
 }
 
 export class RespWithLink<T> {
   response: T[];
   link: string;
   static parse = require('parse-link-header');
+
+  getNextQueryParams(): string {
+    if(!this.link) return null;
+    var parsed = RespWithLink.parse(this.link);
+    let index = parsed.next.url.indexOf("?");
+    return parsed.next.url.substr(index);
+  }
 
   static of<T>(response: T[], link: string): RespWithLink<T> {
     let respWithLink = new RespWithLink<T>();
@@ -349,15 +405,9 @@ export class RespWithLink<T> {
     return respWithLink;
   }
 
-  getNextQueryParams(): string {
-    if(!this.link) return null;
-    var parsed = RespWithLink.parse(this.link);
-    let index = parsed.next.url.indexOf("?");
-    return parsed.next.url.substr(index);
-  }
 }
 
-export interface Auth {
+export class Auth {
   access_token: string;
   token_type: string;
   refresh_token?: string;

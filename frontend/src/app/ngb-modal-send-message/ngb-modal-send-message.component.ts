@@ -3,7 +3,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { map, concatMap } from 'rxjs/operators';
 import { Message } from '../_models';
 import { BackendService } from '../_services';
-import { Model } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 @Component({
@@ -28,7 +27,7 @@ export class NgbModalSendMessageComponent implements OnInit {
   send() {
     this.backendService.getUser().pipe(
         map(user => Message.of(this.receiverId, this.receiverName, user.identity, user.displayName, this.sentences)),
-        concatMap(msg => this.backendService.postModel<Message>(Model.Message, msg))
+        concatMap(msg => this.backendService.postModel<Message>(Message, msg))
     ).subscribe(m => {
       this.logger.trace("The message has been sent:", m);
     });

@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { filter } from 'rxjs/operators';
 import { User, Message } from '../_models';
 import { BackendService } from '../_services';
-import { Config, Model } from '../config';
+import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 export enum Option {
@@ -41,7 +41,7 @@ export class MessageComponent implements OnInit {
     this.paramNameMap.set(Option.Sent, 'aid');
 
     this.backendService.getUser()
-        .pipe(filter(user => !User.isGuest(user)))
+        .pipe(filter(user => !user.isGuest()))
         .subscribe(user => {
           this.logger.trace("getUser Subscription:", user);
           this.user = user;
@@ -55,8 +55,8 @@ export class MessageComponent implements OnInit {
   }
 
   getPreview() {
-    this.backendService.getModels<Message>(Model.Message, this.nextInfoMap.get(Option.Received),
-        this.paramNameMap.get(Option.Received), this.user.identity, Config.defaultPage, Config.previewSize)
+    this.backendService.getModels<Message>(Message, this.nextInfoMap.get(Option.Received),
+        this.paramNameMap.get(Option.Received), this.user.identity, Config.paging.defaultPage, Config.paging.previewSize)
         .subscribe(respWithLink => {
           this.msgMap.set(Option.Received, this.msgMap.get(Option.Received).concat(respWithLink.response));
           this.nextInfoMap.set(Option.Received, respWithLink.getNextQueryParams());
@@ -64,7 +64,7 @@ export class MessageComponent implements OnInit {
   }
 
   getNext(option: Option) {
-    this.backendService.getModels<Message>(Model.Message, this.nextInfoMap.get(option),
+    this.backendService.getModels<Message>(Message, this.nextInfoMap.get(option),
         this.paramNameMap.get(option), this.user.identity)
         .subscribe(respWithLink => {
           this.msgMap.set(option, this.msgMap.get(option).concat(respWithLink.response));
@@ -82,7 +82,7 @@ export class MessageComponent implements OnInit {
   onDelete(option: Option, index: number) {
     let message = this.msgMap.get(option)[index];
     this.logger.trace('onDelete:', message);
-    this.backendService.deleteModel<Message>(Model.Message, message.idCid)
+    this.backendService.deleteModel(Message, message.idCid)
         .subscribe(_ => this.msgMap.get(option).splice(index, 1));
   }
 

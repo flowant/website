@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
 import { User } from '../_models';
 import { BackendService } from '../_services';
-import { Config, Model } from '../config';
-import { userInfo } from 'os';
+import { Config } from '../config';
 
 @Component({
   selector: 'app-topbar',
@@ -18,8 +17,6 @@ export class TopbarComponent implements OnInit {
   user: User;
 
   userImgUrl: string;
-
-  isGuest = User.isGuest;
 
   constructor(
     private backendService: BackendService,
