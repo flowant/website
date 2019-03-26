@@ -4,9 +4,9 @@ import { TestBed } from '@angular/core/testing';
 import { LoggerModule, NgxLoggerLevel, NGXLogger } from 'ngx-logger';
 
 import { BackendService } from './backend.service';
-import { User, Phone, CruTime } from '../_models';
+import { User, Phone, CruTime, Reply } from '../_models';
 import { Config } from '../config';
-import { Type } from '@angular/core';
+
 
 describe('BackendService', () => {
 
@@ -40,12 +40,10 @@ describe('BackendService', () => {
     httpTestingController.verify();
   });
 
-  describe('#signUpUser', () => {
-    let expectedUser: User;
+  fdescribe('#User', () => {
 
     beforeEach(() => {
       service = TestBed.get(BackendService);
-      expectedUser = User.random();
     });
 
     it('should be created', () => {
@@ -53,7 +51,9 @@ describe('BackendService', () => {
       expect(TestBed.get(NGXLogger)).toBeTruthy();
     });
 
-    it('should return expected user', () => {
+    it('signUpUser should return expected user', () => {
+      let expectedUser: User = User.random();
+
       service.signUpUser(expectedUser).toPromise().then(
         (user: User) => {
           expect(user).toEqual(expectedUser, 'should return expected user');
@@ -67,62 +67,25 @@ describe('BackendService', () => {
       req.flush(expectedUser);
     });
 
+    it('getModel<User> should return expected user', () => {
+      let expectedUser: User = User.guest();
+
+      service.getModel<User>(User, expectedUser.identity).toPromise().then(
+        (user: User) => {
+          expect(user).toEqual(expectedUser, 'should return expected user');
+          expect(user.isGuest()).toBe(true);
+          expect(user.isAdmin()).toBe(false);
+          expect(user.isUser()).toBe(false);
+        },
+        fail
+      );
+
+      const req = httpTestingController.expectOne(Config.userUrl + '/' + expectedUser.identity);
+      expect(req.request.method).toEqual('GET');
+
+      req.flush(expectedUser);
+    });
+
   });
-  //   it('should be OK returning no heroes', () => {
-  //     heroService.getHeroes().subscribe(
-  //       heroes => expect(heroes.length).toEqual(0, 'should have empty heroes array'),
-  //       fail
-  //     );
-
-  //     const req = httpTestingController.expectOne(heroService.heroesUrl);
-  //     req.flush([]); // Respond with no heroes
-  //   });
-
-  //   it('should turn 404 into a user-friendly error', () => {
-  //     const msg = 'Deliberate 404';
-  //     heroService.getHeroes().subscribe(
-  //       heroes => fail('expected to fail'),
-  //       error => expect(error.message).toContain(msg)
-  //     );
-
-  //     const req = httpTestingController.expectOne(heroService.heroesUrl);
-
-  //     // respond with a 404 and the error message in the body
-  //     req.flush(msg, {status: 404, statusText: 'Not Found'});
-  //   });
-
-  //   it('should return expected heroes (called multiple times)', () => {
-  //     heroService.getHeroes().subscribe();
-  //     heroService.getHeroes().subscribe();
-  //     heroService.getHeroes().subscribe(
-  //       heroes => expect(heroes).toEqual(expectedHeroes, 'should return expected heroes'),
-  //       fail
-  //     );
-
-  //     const requests = httpTestingController.match(heroService.heroesUrl);
-  //     expect(requests.length).toEqual(3, 'calls to getHeroes()');
-
-  //     // Respond to each request with different mock hero results
-  //     requests[0].flush([]);
-  //     requests[1].flush([{id: 1, name: 'bob'}]);
-  //     requests[2].flush(expectedHeroes);
-  //   });
-  // });
-
-  // it('want to use http client in testcase', () => {
-  //   let logger: NGXLogger = TestBed.get(NGXLogger);
-  //   let http: HttpClient = TestBed.get(HttpClient);
-  //   let service: BackendService = new BackendService(http, logger);
-
-  //   // is there any way to use real XHRs in testcase?
-  //   http.get("https://www.google.com").toPromise().then(
-  //     resp => {
-  //       logger.log("resp:", resp);
-  //     },
-  //     error => {
-  //       logger.log("error:", error);
-  //     }
-  //   );
-  // });
 
 });
