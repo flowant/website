@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MessageComponent } from './message.component';
 import { AppModule } from '../app.module';
+import { BackendService } from '../_services';
 
 describe('MessageComponent', () => {
   let component: MessageComponent;
@@ -10,7 +11,10 @@ describe('MessageComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ],
-      imports: [ AppModule ]
+      imports: [ AppModule ],
+      providers: [
+        BackendService
+      ]
     })
     TestBed.overrideModule(AppModule, {
     }).compileComponents();
