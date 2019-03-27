@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { concatMap } from 'rxjs/operators';
 
 import { AuthService, BackendService } from '../_services';
@@ -15,14 +15,13 @@ import { User } from '../_models';
 export class SignUpComponent implements OnInit {
 
   signUpForm: FormGroup;
-  loading = false;
-  submitted = false;
+  pending = false;
+
   returnUrl: string;
   error = '';
 
   constructor(
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private backendService: BackendService,
@@ -36,66 +35,46 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit() {
     this.signUpForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      email: ['', Validators.required],
-      password: ['', Validators.required],
-      confirm: ['', Validators.required],
-      accept: [false, Validators.required]
-    }, { validator: this.validate });
+      username: ['', [
+        Validators.required,
+        Validators.minLength(6)
+      ]],
+      email: ['', [
+        Validators.required,
+        Validators.email
+      ]],
+      password: ['', [
+        Validators.required,
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/),
+        Validators.pattern(/^[^{}]+$/) // cannot contain { or } character.
+      ]],
+      confirm: [''],
+      accept: [false, Validators.requiredTrue]
+    }, { validator: this.passwordConfirmValidator });
 
     this.returnUrl = '/';
   }
 
-  validate(group: FormGroup) {
-
-    let mustNotContain = new RegExp("^(?=.*[{}])");
-
-    // validate username
-    if (group.controls.username.value.length < 6) {
-      group.controls.username.setErrors({ tooShort: true });
-    }
-
-    if (mustNotContain.test(group.controls.username.value) === true) {
-      group.controls.username.setErrors({ mustNotContain: true });
-    }
-
-    // validate email
-    if (group.controls.email.value.length < 5) {
-      group.controls.email.setErrors({ tooShort: true });
-    }
-
-    if (group.controls.email.value.includes('@') === false) {
-      group.controls.email.setErrors({ mustContain: true });
-    }
-
-    // validate password
-    let passwordMustContain = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
-    if (passwordMustContain.test(group.controls.password.value) === false) {
-      group.controls.password.setErrors({ mustContain: true });
-    }
-
-    if (mustNotContain.test(group.controls.password.value) === true) {
-      group.controls.password.setErrors({ mustNotContain: true });
-    }
-
-    // validate password and confirmation
-    if (group.controls.password.value !== group.controls.confirm.value) {
-      group.controls.confirm.setErrors({ notSame: true });
-    }
+  passwordConfirmValidator: ValidatorFn = (group: FormGroup): ValidationErrors | null => {
+    return group.controls.password.value !== group.controls.confirm.value ? { notSame: true } : null;
   }
 
-  get f() { 
+  get f() {
     return this.signUpForm.controls;
   }
 
+  isInvalid(control): boolean {
+    return control.invalid && (control.dirty || control.touched);
+  }
+
   onSubmit() {
-    this.submitted = true;
+    // this.submitted = true;
 
     if (this.signUpForm.invalid) {
       return;
     }
 
-    this.loading = true;
+    this.pending = true;
 
     let newUser: User = User.of(this.f.username.value, this.f.email.value, this.f.password.value);
 
@@ -105,11 +84,11 @@ export class SignUpComponent implements OnInit {
       concatMap(u =>  this.authService.signIn(this.f.username.value, this.f.password.value))
     ).subscribe(
       _ => {
-        this.loading = false;
+        this.pending = false;
         this.router.navigate(['/user/profile']);
       },
       error => {
-        this.loading = false;
+        this.pending = false;
         this.error = error;
       }
     );
