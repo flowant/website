@@ -47,7 +47,9 @@
             [ngClass]="{ 'is-invalid': isInvalid(f.password) }">
         <div *ngIf="isInvalid(f.password)" class="invalid-feedback">
           <div *ngIf="f.password.errors.required">Password is required.</div>
-          <div *ngIf="f.password.errors.pattern">Password cannot contain {{'{ or }'}} character and must have at least 8 characters with at least one capital letter, at least one lower case letter and at least one number.</div>
+          <div *ngIf="f.password.errors.pattern">Password cannot contain {{'{ or }'}} character
+            and must have at least 8 characters with at least one capital letter, at least one
+             lower case letter and at least one number.</div>
         </div>
       </div>
     </div>

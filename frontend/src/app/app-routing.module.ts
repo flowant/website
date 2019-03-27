@@ -27,8 +27,7 @@ const routes: Routes = [
   { path: 'message', component: MessageComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'user/profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'user/profile/:id', component: UserProfileComponent, canActivate: [AuthGuard], data: { a: Authority.User } },
-  { path: '**', redirectTo: '' }
-  // { path: '**', component: PageNotFoundComponent }
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
