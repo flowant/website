@@ -62,8 +62,8 @@ import { SignUpComponent } from './sign-up/sign-up.component';
     JwtModule.forRoot({
       config: {
         tokenGetter: getAccessToken,
-        whitelistedDomains: [Config.gateway.domain + ':' + Config.gateway.port],
-        blacklistedRoutes: [Config.gateway.domain + ':' + Config.gateway.port + Config.path.gateway + Config.path.auth]
+        whitelistedDomains: Config.whitelistedDomains,
+        blacklistedRoutes: Config.blacklistedRoutes
       }
     }),
     LoggerModule.forRoot({

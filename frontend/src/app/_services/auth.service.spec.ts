@@ -3,7 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { LoggerModule, NgxLoggerLevel, NGXLogger } from 'ngx-logger';
 import { JwtModule } from '@auth0/angular-jwt';
 
-import { AuthService, getAccessToken } from './auth.service';
+import { AuthService, getAccessToken, setAccessToken } from './auth.service';
+import { BackendService } from './backend.service';
 import { Config } from '../config';
 import { Auth, User, Relation } from '../_models';
 
@@ -11,7 +12,8 @@ describe('AuthService', () => {
 
   let httpTestingController: HttpTestingController;
   let logger: NGXLogger;
-  let jwtToken: string = '{"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib2F1dGgyLXJlc291cmNlIl0sInVzZXJfbmFtZSI6InVzZXIwIiwic2NvcGUiOlsibWVzc2FnZTpyZWFkIiwibWVzc2FnZTp3cml0ZSJdLCJleHAiOjE1NTM2NzI4NjMsImF1dGhvcml0aWVzIjpbIlUiLCJST0xFX1VTRVIiXSwianRpIjoiN2U0OTczNzgtNDZjOC00MzEwLWE0NTktYTA0NGVmNDQ2NzgwIiwiY2xpZW50X2lkIjoiY2xpZW50In0.i8a6jp8DL4QDSCk_TXBRVkqI0sYQxzQZhkx-1ke8uAMcZYy9c3n61D-7BUPhwBpybrcL6jE1p_RK0eJQPaCqtPpQiMTwyvMFpO01meadAjIxaxdgXY2ueuV4TncRA-K_GJBuZaGnM4P1SFpN-8NwEF4WiDy9DrSa317nouL28IZCagaSCSKRTqV3Cloq51RxmAA5e21_ecIRIU7NhkdKco2fQbo4SK_xlkTdvDJItvmm6ilTwN0hMcshj9BRjaOjsp02nWtsdTbt6sfDdBI0bpuPW-E4e62jZbitorSg6NxM6aXgPI5Jtshfu4zVb1DdHT3sQMkaPh3vobHKg6XfQw","token_type":"bearer","refresh_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib2F1dGgyLXJlc291cmNlIl0sInVzZXJfbmFtZSI6InVzZXIwIiwic2NvcGUiOlsibWVzc2FnZTpyZWFkIiwibWVzc2FnZTp3cml0ZSJdLCJhdGkiOiI3ZTQ5NzM3OC00NmM4LTQzMTAtYTQ1OS1hMDQ0ZWY0NDY3ODAiLCJleHAiOjE1NTYyMjE2NjMsImF1dGhvcml0aWVzIjpbIlUiLCJST0xFX1VTRVIiXSwianRpIjoiOWVhMWQ4ZmItMTQzMS00MGQ5LTkwZDgtYjNkNjgwMzYxMTM4IiwiY2xpZW50X2lkIjoiY2xpZW50In0.NcbXURIHh6wD79saXuBQDd3WyCYP58BDaJ46U0ZmkABraX6pcLy6xSlQwiTweM-wWIGvH0JRrGWwtI6G-e8slH5eTxkB0fNUJgd1z2qwUsCfjWsvRVPY1ac7RbpMyB3Z_xlDO1OEsC1lPkMbWhDaW1IFafu0B6xMfSah4UnIIm5qRdoSEE8Oyvz45rSGqzWuXXTtzvxY3GJzcj2hdCyWVTjdr3FLfQdYHuiwcZF_tSaaU3mjrSCB4xi243kwxqwTvj1TB9IunKQn8yR-x15omHUneOP0jiVt-FSlknnH6zNXIJr3myY80a7xcTvpi-0jSjHJUHN76RrJov4xxxrN3Q","expires_in":43199,"scope":"message:read message:write","jti":"7e497378-46c8-4310-a459-a044ef446780"}';
+  // TODO generate
+  let jwt: Auth = {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib2F1dGgyLXJlc291cmNlIl0sInVzZXJfbmFtZSI6InVzZXIwIiwic2NvcGUiOlsibWVzc2FnZTpyZWFkIiwibWVzc2FnZTp3cml0ZSJdLCJleHAiOjE1NTM2NzI4NjMsImF1dGhvcml0aWVzIjpbIlUiLCJST0xFX1VTRVIiXSwianRpIjoiN2U0OTczNzgtNDZjOC00MzEwLWE0NTktYTA0NGVmNDQ2NzgwIiwiY2xpZW50X2lkIjoiY2xpZW50In0.i8a6jp8DL4QDSCk_TXBRVkqI0sYQxzQZhkx-1ke8uAMcZYy9c3n61D-7BUPhwBpybrcL6jE1p_RK0eJQPaCqtPpQiMTwyvMFpO01meadAjIxaxdgXY2ueuV4TncRA-K_GJBuZaGnM4P1SFpN-8NwEF4WiDy9DrSa317nouL28IZCagaSCSKRTqV3Cloq51RxmAA5e21_ecIRIU7NhkdKco2fQbo4SK_xlkTdvDJItvmm6ilTwN0hMcshj9BRjaOjsp02nWtsdTbt6sfDdBI0bpuPW-E4e62jZbitorSg6NxM6aXgPI5Jtshfu4zVb1DdHT3sQMkaPh3vobHKg6XfQw","token_type":"bearer","refresh_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib2F1dGgyLXJlc291cmNlIl0sInVzZXJfbmFtZSI6InVzZXIwIiwic2NvcGUiOlsibWVzc2FnZTpyZWFkIiwibWVzc2FnZTp3cml0ZSJdLCJhdGkiOiI3ZTQ5NzM3OC00NmM4LTQzMTAtYTQ1OS1hMDQ0ZWY0NDY3ODAiLCJleHAiOjE1NTYyMjE2NjMsImF1dGhvcml0aWVzIjpbIlUiLCJST0xFX1VTRVIiXSwianRpIjoiOWVhMWQ4ZmItMTQzMS00MGQ5LTkwZDgtYjNkNjgwMzYxMTM4IiwiY2xpZW50X2lkIjoiY2xpZW50In0.NcbXURIHh6wD79saXuBQDd3WyCYP58BDaJ46U0ZmkABraX6pcLy6xSlQwiTweM-wWIGvH0JRrGWwtI6G-e8slH5eTxkB0fNUJgd1z2qwUsCfjWsvRVPY1ac7RbpMyB3Z_xlDO1OEsC1lPkMbWhDaW1IFafu0B6xMfSah4UnIIm5qRdoSEE8Oyvz45rSGqzWuXXTtzvxY3GJzcj2hdCyWVTjdr3FLfQdYHuiwcZF_tSaaU3mjrSCB4xi243kwxqwTvj1TB9IunKQn8yR-x15omHUneOP0jiVt-FSlknnH6zNXIJr3myY80a7xcTvpi-0jSjHJUHN76RrJov4xxxrN3Q","expires_in":43199,"scope":"message:read message:write","jti":"7e497378-46c8-4310-a459-a044ef446780"};
 
   beforeEach(() => {
 
@@ -21,8 +23,8 @@ describe('AuthService', () => {
         JwtModule.forRoot({
           config: {
             tokenGetter: getAccessToken,
-            whitelistedDomains: [Config.gateway.domain + ':' + Config.gateway.port],
-            blacklistedRoutes: [Config.gateway.domain + ':' + Config.gateway.port + Config.path.gateway + Config.path.auth]
+            whitelistedDomains: Config.whitelistedDomains,
+            blacklistedRoutes: Config.blacklistedRoutes
           }
         }),
         LoggerModule.forRoot({
@@ -38,7 +40,8 @@ describe('AuthService', () => {
     httpTestingController = TestBed.get(HttpTestingController);
     logger = TestBed.get(NGXLogger);
 
-    localStorage.removeItem(AuthService.AUTHENTICATION);
+    // AuthService has an initialization routine based on data in localStorage.
+    setAccessToken();
   });
 
   afterEach(() => {
@@ -51,36 +54,74 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('loading unexpired JWT token should return User', () => {
+
+    let signedInUser = User.random();
+    jwt.username = signedInUser.username;
+    localStorage.setItem(AuthService.AUTHENTICATION, JSON.stringify(jwt));
+    setAccessToken(jwt.access_token);
+
+    let service: AuthService = TestBed.get(AuthService);
+
+    if (service.isTokenExpired()) {
+      expect(service).toBeTruthy();
+      return;
+    }
+
+    TestBed.get(BackendService).getUser().toPromise().then(
+      user => {
+        expect(user.isUser()).toBe(true, 'expected User role');
+        expect(user).toEqual(signedInUser, 'expected signedInUser');
+      }
+    )
+
+    expect(service.isSignedIn()).toBe(true, 'expected signed in');
+    expect(getAccessToken()).not.toBe(null, 'expected access token');
+    expect(localStorage.getItem(AuthService.AUTHENTICATION)).not.toBe(null, 'expected auth data stored');
+
+    httpTestingController.expectOne(req => {
+      return req.method.toUpperCase() === 'GET'
+          && req.url.includes(Config.userUrl + '?un=' + signedInUser.username)
+    }).flush(signedInUser);
+
+    httpTestingController.expectOne(req => {
+      return req.method.toUpperCase() === 'GET'
+          && req.urlWithParams.includes(Config.relationUrl + '/' + signedInUser.identity);
+    }).flush(Relation.empty);
+
+  });
+
   it('signIn should return User', () => {
     let service: AuthService = TestBed.get(AuthService);
 
-    let auth: Auth = Object.assign(new Auth(), JSON.parse(jwtToken));
+    let auth: Auth = Object.assign(new Auth(), jwt);
     let signedInUser: User = User.random();
 
-    service.signIn(signedInUser.username, "mock password").toPromise().then(
+    service.signIn(signedInUser.username, 'ignore password').toPromise().then(
       user => {
+        expect(user.isUser()).toBe(true, 'expected User role');
         expect(user).toEqual(signedInUser, 'expected signedInUser');
         expect(service.isSignedIn()).toBe(true, 'expected signed in');
         expect(getAccessToken()).not.toBe(null, 'expected access token');
         expect(localStorage.getItem(AuthService.AUTHENTICATION)).not.toBe(null, 'expected auth data stored');
+        expect(user).toEqual(TestBed.get(BackendService).getUserValue(), 'expected users are the same');
       },
       fail
     );
 
-    // TODO refine
-    httpTestingController.expectOne((req) => {
-      logger.trace(req);
-      return req.url.includes('oauth/token');
+    httpTestingController.expectOne(req => {
+      return req.method.toUpperCase() === 'POST'
+          && req.url.includes(Config.authUrl)
     }).flush(auth);
 
-    httpTestingController.expectOne((req) => {
-      logger.trace(req);
-      return req.urlWithParams.includes('api/user?un');
+    httpTestingController.expectOne(req => {
+      return req.method.toUpperCase() === 'GET'
+          && req.url.includes(Config.userUrl + '?un=' + signedInUser.username)
     }).flush(signedInUser);
 
-    httpTestingController.expectOne((req) => {
-      logger.trace(req);
-      return req.urlWithParams.includes('api/relation');
+    httpTestingController.expectOne(req => {
+      return req.method.toUpperCase() === 'GET'
+          && req.urlWithParams.includes(Config.relationUrl + '/' + signedInUser.identity);
     }).flush(Relation.empty);
 
   });
@@ -90,7 +131,7 @@ describe('AuthService', () => {
 
     service.signOut().toPromise().then(
       user => {
-        expect(user.isGuest()).toBe(true, 'expected guest user');
+        expect(user.isGuest()).toBe(true, 'expected Guest role');
         expect(service.isSignedIn()).toBe(false, 'expected signed out');
         expect(service.isTokenExpired()).toBe(true, 'expected Token expired');
         expect(getAccessToken()).toBe(null, 'expected null access token');

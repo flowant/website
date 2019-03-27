@@ -1,5 +1,4 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { LoggerModule, NgxLoggerLevel, NGXLogger } from 'ngx-logger';
 
@@ -58,10 +57,10 @@ describe('BackendService', () => {
         fail
       );
 
-      const req = httpTestingController.expectOne(Config.signupUrl);
-      expect(req.request.method).toEqual('POST');
-
-      req.flush(expectedUser);
+      httpTestingController.expectOne(req => {
+        return req.method.toUpperCase() === 'POST'
+            && req.urlWithParams.includes(Config.signupUrl);
+      }).flush(expectedUser);
     });
 
     it('signUpUser should return 409 status', () => {
@@ -72,11 +71,10 @@ describe('BackendService', () => {
         error => expect(error.status).toBe(409, 'expected 409: Conflict staus')
       );
 
-      const req = httpTestingController.expectOne(Config.signupUrl);
-      expect(req.request.method).toEqual('POST');
-
-      // respond with a 404 and the error message in the body
-      req.flush('user alread exist', {status: 409, statusText: 'Conflict'});
+      httpTestingController.expectOne(req => {
+        return req.method.toUpperCase() === 'POST'
+            && req.urlWithParams.includes(Config.signupUrl);
+      }).flush('user alread exist', { status: 409, statusText: 'Conflict' });
     });
 
     it('getModel<User> should return expected user', () => {
@@ -92,10 +90,10 @@ describe('BackendService', () => {
         fail
       );
 
-      const req = httpTestingController.expectOne(Config.userUrl + '/' + expectedUser.identity);
-      expect(req.request.method).toEqual('GET');
-
-      req.flush(expectedUser);
+      httpTestingController.expectOne(req => {
+        return req.method.toUpperCase() === 'GET'
+            && req.urlWithParams.includes(Config.userUrl + '/' + expectedUser.identity);
+      }).flush(expectedUser);
     });
 
     it('getModel<User> should return empty', () => {
@@ -106,11 +104,10 @@ describe('BackendService', () => {
         fail
       );
 
-      const req = httpTestingController.expectOne(Config.userUrl + '/' + expectedUser.identity);
-      expect(req.request.method).toEqual('GET');
-
-      // respond with a 404 and the error message in the body
-      req.flush('unknown identity', {status: 404, statusText: 'Not Found'});
+      httpTestingController.expectOne(req => {
+        return req.method.toUpperCase() === 'GET'
+            && req.urlWithParams.includes(Config.userUrl + '/' + expectedUser.identity);
+      }).flush('unknown identity', { status: 404, statusText: 'Not Found' });
     });
 
   });

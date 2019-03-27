@@ -25,6 +25,9 @@ export class Config {
   static auth = env.auth;
   static paging = env.paging;
 
+  static whitelistedDomains = [Config.gateway.domain + ':' + Config.gateway.port];
+  static blacklistedRoutes = [Config.gateway.domain + ':' + Config.gateway.port + Config.path.gateway + Config.path.auth];
+
   // key: type name, value: url
   static urlMap: Map<string, string> = new Map([
     ['Content', Config.contentUrl],

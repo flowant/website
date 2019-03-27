@@ -12,7 +12,12 @@ export function getAccessToken(): string {
 }
 
 export function setAccessToken(access_token?: string) {
-  access_token ? localStorage.setItem('access_token', access_token) : localStorage.removeItem('access_token');
+  if (access_token) {
+    localStorage.setItem('access_token', access_token);
+  } else {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem(AuthService.AUTHENTICATION);
+  }
 }
 
 @Injectable({
@@ -34,7 +39,7 @@ export class AuthService {
 
   private initAuth() {
     if (this.isTokenExpired()) {
-      this.logger.trace("access_token is expired, remove storage");
+      this.logger.trace("access_token is expired or empty, remove storage");
       this.setAuthChangeUser()
           .toPromise()
           .then(user => this.logger.trace("initAuth, user:", user));
@@ -58,7 +63,6 @@ export class AuthService {
     } else {
       this.auth = undefined;
       setAccessToken();
-      localStorage.removeItem(AuthService.AUTHENTICATION);
       return this.backendService.changeUser();
     }
   }
