@@ -48,8 +48,8 @@ export class UserRefComponent implements OnInit {
     return !this.user.isGuest() && !this.user.isMe(this.userRefId);
   }
 
-  postRelation(follow: boolean) {
-    this.backendService.postRelation(follow, this.user.identity, this.userRefId)
+  postRelation(follow: boolean): Promise<Relation> {
+    return this.backendService.postRelation(follow, this.user.identity, this.userRefId)
         .toPromise()
         .then();
   }

@@ -50,7 +50,7 @@ public class UserMaker {
                 .username(username + id.toString().substring(0, 8))
                 .password(password + id)
                 .email(email + id)
-                .address(PostalAddress.of(address + id, city + id, state + id, country + id, zipCode + id))
+                .postalAddress(PostalAddress.of(address + id, city + id, state + id, country + id, zipCode + id))
                 .birthdate(ZonedDate.now())
                 .firstname(firstname + id)
                 .lastname(lastname + id)

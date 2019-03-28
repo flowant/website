@@ -1,4 +1,4 @@
-<div  class="btn-group dropright">
+<div *ngIf="userRefId && userRefName" class="btn-group dropright">
 
   <img class="icon dropdown-toggle" [ngClass]="{ 'disabled' : !canShowMenu() }" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
     src="{{imgPath + userRefId}}" onError="this.src='/assets/img/icon-user-64.png';">

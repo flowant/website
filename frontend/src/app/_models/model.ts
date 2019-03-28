@@ -20,14 +20,9 @@ export function reviver(key, value): any {
     case 'phone': {
       return Object.assign(new Phone(), value);
     }
-    case 'address': {
-      return Object.assign(new Address(), value);
+    case 'postalAddress': {
+      return Object.assign(new PostalAddress(), value);
     }
-    case 'followings':
-    case 'followers':
-    case 'likes':
-    case 'interests':
-      return new Set(value);
     case 'authorities':
       return value.map(e => Authority.of(e.authority));
     default: {
@@ -169,17 +164,17 @@ export class Message {
 
 export class Relation {
 
-  static empty: Relation = Relation.of('empty', new Set(), new Set());
+  static empty: Relation = Relation.of('empty', new Array(), new Array());
 
   identity: string;
-  followings: Set<string>;
-  followers: Set<string>;
+  followings: Array<string>;
+  followers: Array<string>;
 
   hasFollowee(userRefId: string): boolean {
-    return this.followings.has(userRefId);
+    return this.followings.includes(userRefId);
   }
 
-  static of(identity:string , followings: Set<string>, followers: Set<string>): Relation {
+  static of(identity:string , followings: Array<string>, followers: Array<string>): Relation {
     let relation = new Relation();
     relation.identity = identity;
     relation.followings = followings;
@@ -241,7 +236,7 @@ export class User {
   gender: Gender = Gender.Undefined;
   birthdate: Birthdate;
   phone: Phone = new Phone();
-  address: Address;
+  postalAddress: PostalAddress;
   authorities: (Authority)[] = new Array();
   likes?: Set<string> | null;
   interests?: Set<string> | null;
@@ -315,7 +310,7 @@ export class Phone {
   nationalNumber: number;
 }
 
-export class Address {
+export class PostalAddress {
   address: string;
   city: string;
   state: string;

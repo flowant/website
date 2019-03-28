@@ -65,7 +65,7 @@ public class User implements UserDetails, HasIdentity, HasCruTime {
     Phone phone;
 
     @Column("ad")
-    PostalAddress address;
+    PostalAddress postalAddress;
 
     @NonNull
     @Column("at")

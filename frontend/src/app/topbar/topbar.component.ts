@@ -25,10 +25,10 @@ export class TopbarComponent implements OnInit {
 
   ngOnInit() {
     this.backendService.getUser()
-          .subscribe(u => {
-            this.user = u;
-            this.userImgUrl = Config.imgServerUrl + '/' + this.user.identity;
-          });
+        .subscribe(user => {
+          this.user = user;
+          this.userImgUrl = Config.imgServerUrl + '/' + user.identity;
+        });
   }
 
   onSearch() {

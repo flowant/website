@@ -1,10 +1,11 @@
+<div *ngIf="isPreview">
+  <div *ngFor="let noti of notifications; index as i" class="noti">
+    <ngb-alert type="primary" (click)="onClick(i)" (close)="onDelete(i)">
+      <strong>{{noti.authorName}} </strong>
+      {{toString(noti)}}
+      <small class="text-muted">{{noti.time.created}}</small>
+    </ngb-alert>
+  </div>
 
-<div *ngFor="let noti of notifications; index as i" class="noti">
-  <ngb-alert type="primary" (click)="onClick(i)" (close)="onDelete(i)">
-    <strong>{{noti.authorName}} </strong>
-    {{toString(noti)}}
-    <small class="text-muted">{{noti.time.created}}</small>
-  </ngb-alert>
+  <button *ngIf="!isPreview" type="button" (click)="getNext()" class="btn-next-page" [disabled]="!nextInfo">More</button>
 </div>
-
-<button *ngIf="!isPreview" type="button" (click)="getNext()" class="btn-next-page" [disabled]="!nextInfo">More</button>
