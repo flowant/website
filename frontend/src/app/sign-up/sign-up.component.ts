@@ -6,6 +6,7 @@ import { concatMap } from 'rxjs/operators';
 import { AuthService, BackendService } from '../_services';
 import { NGXLogger } from 'ngx-logger';
 import { User } from '../_models';
+import { userInfo } from 'os';
 
 @Component({
   selector: 'app-sign-up',
@@ -67,7 +68,7 @@ export class SignUpComponent implements OnInit {
     return control.invalid && (control.dirty || control.touched);
   }
 
-  onSubmit() {
+  onSubmit(): Promise<User> {
     // this.submitted = true;
 
     if (this.signUpForm.invalid) {
@@ -80,16 +81,18 @@ export class SignUpComponent implements OnInit {
 
     this.logger.trace("signUpUser:", newUser);
 
-    this.backendService.signUpUser(newUser).pipe(
+    return this.backendService.signUpUser(newUser).pipe(
       concatMap(u =>  this.authService.signIn(this.f.username.value, this.f.password.value))
-    ).subscribe(
-      _ => {
+    ).toPromise().then(
+      (user: User) => {
         this.pending = false;
         this.router.navigate(['/user/profile']);
+        return user;
       },
       error => {
         this.pending = false;
         this.error = error;
+        return error;
       }
     );
   }

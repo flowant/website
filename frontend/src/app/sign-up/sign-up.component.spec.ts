@@ -2,17 +2,16 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { LoggerModule, NgxLoggerLevel, NGXLogger } from 'ngx-logger';
 
-import { SignUpComponent } from './sign-up.component';
 import { AppModule } from '../app.module';
 import { AuthService, BackendService } from '../_services';
 import { Config } from '../config';
-
+import { SignUpComponent } from './sign-up.component';
 
 describe('SignUpComponent', () => {
-  let httpTestingController: HttpTestingController;
-  let logger: NGXLogger;
   let component: SignUpComponent;
   let fixture: ComponentFixture<SignUpComponent>;
+  let httpTestingController: HttpTestingController;
+  let logger: NGXLogger;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -107,16 +106,18 @@ describe('SignUpComponent', () => {
 
     fixture.detectChanges();
     expect(component.signUpForm.valid).toBeTruthy();
-    component.onSubmit();
+    component.onSubmit().then(
+      _ => {
+        fixture.detectChanges();
+        expect(component.error).toEqual('Conflict');
+        logger.trace("signup error message:", component.error);
+      }
+    );
 
     httpTestingController.expectOne(req => {
       return req.method.toUpperCase() === 'POST'
           && req.urlWithParams.includes(Config.signupUrl);
     }).flush('user alread exist', { status: 409, statusText: 'Conflict' });
-
-    fixture.detectChanges();
-    expect(component.error).toEqual('Conflict');
-    logger.trace("signup error message:", component.error);
 
   });
 

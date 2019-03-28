@@ -5,6 +5,7 @@ import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbModalSendMessageComponent } from '../ngb-modal-send-message/ngb-modal-send-message.component';
+import { User, Relation } from '../_models';
 
 
 
@@ -18,9 +19,11 @@ export class UserRefComponent implements OnInit {
   @Input() userRefId: string;
   @Input() userRefName: string;
 
-  imgServerUrl: string = Config.fileUrl + "/";
+  imgPath: string = Config.imgServerUrl + "/";
 
-  isFollowee: boolean;
+  relation: Relation;
+
+  user: User;
 
   constructor(
     private backendService: BackendService,
@@ -28,19 +31,27 @@ export class UserRefComponent implements OnInit {
     private logger: NGXLogger) { }
 
   ngOnInit() {
-    this.updateRelation();
+
+    this.backendService.getRelation()
+        .subscribe(relation => this.relation = relation);
+
+    this.backendService.getUser()
+        .subscribe(user => this.user = user);
+
   }
 
-  updateRelation() {
-    this.backendService.getRelation().subscribe(relation => {
-      this.isFollowee = relation.followings.has(this.userRefId);
-    });
+  hasFollowee(): boolean {
+    return this.relation.hasFollowee(this.userRefId);
+  }
+
+  canShowMenu(): boolean {
+    return !this.user.isGuest() && !this.user.isMe(this.userRefId);
   }
 
   postRelation(follow: boolean) {
-    this.backendService.getUser()
-        .pipe(concatMap(user => this.backendService.postRelation(follow, user.identity, this.userRefId)))
-        .subscribe(_ => this.updateRelation());
+    this.backendService.postRelation(follow, this.user.identity, this.userRefId)
+        .toPromise()
+        .then();
   }
 
   sendMessage() {

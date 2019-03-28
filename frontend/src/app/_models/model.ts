@@ -169,11 +169,24 @@ export class Message {
 
 export class Relation {
 
-  static empty: Relation = new Relation();
+  static empty: Relation = Relation.of('empty', new Set(), new Set());
 
   identity: string;
-  followings: Set<string> = new Set();
-  followers: Set<string> = new Set();
+  followings: Set<string>;
+  followers: Set<string>;
+
+  hasFollowee(userRefId: string): boolean {
+    return this.followings.has(userRefId);
+  }
+
+  static of(identity:string , followings: Set<string>, followers: Set<string>): Relation {
+    let relation = new Relation();
+    relation.identity = identity;
+    relation.followings = followings;
+    relation.followers = followers;
+    return relation;
+  }
+
 }
 
 export class Notification {
@@ -249,6 +262,10 @@ export class User {
 
   isAdmin(): boolean {
     return this.authorities.includes(Authority.Admin);
+  }
+
+  isMe(identity: string): boolean {
+    return this.identity === identity;
   }
 
   public static of(username: string, email: string, password: string): User {

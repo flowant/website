@@ -84,8 +84,8 @@
       <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{user.displayName}}</span>
-          <img *ngIf="user.isGuest()" class="img-profile rounded-circle" src="/assets/img/img60x60.jpg">
-          <img *ngIf="!user.isGuest()" class="img-profile rounded-circle" src="{{userImgUrl}}" onError="this.src='/assets/img/img60x60.jpg';">
+          <img *ngIf="user.isGuest()" class="img-profile rounded-circle" src="/assets/img/icon-user-64.png">
+          <img *ngIf="!user.isGuest()" class="img-profile rounded-circle" src="{{userImgUrl}}" onError="this.src='/assets/img/icon-user-64.png';">
         </a>
         <!-- Dropdown - User Information -->
         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">

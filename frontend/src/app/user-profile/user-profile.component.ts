@@ -59,7 +59,7 @@ export class UserProfileComponent implements OnInit {
     if(this.user.fileRefs) {
       this.userImageUri = Config.imgServerUrl + '/' + this.user.identity;
     } else {
-      this.userImageUri = "/assets/img/emptyAvatar.png";
+      this.userImageUri = "/assets/img/icon-user-128.png";
     }
 
     this.logger.trace("userImageUri and user are updated:", this.userImageUri, this.user);

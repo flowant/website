@@ -17,6 +17,7 @@ import org.flowant.website.model.ContentReputation;
 import org.flowant.website.model.FileRef;
 import org.flowant.website.model.Message;
 import org.flowant.website.model.Notification;
+import org.flowant.website.model.Relation;
 import org.flowant.website.model.Reply;
 import org.flowant.website.model.ReplyReputation;
 import org.flowant.website.model.Review;
@@ -277,6 +278,8 @@ public class MockDataUtil {
         contents = users.map(user -> ContentMaker.largeRandom(recipeCid).setAuthor(user)).cache();
 
         contents.map(c -> saveContent(c)).blockLast();
+
+        users.flatMap(user -> repoRelation.save(Relation.of(user.getIdentity(), Set.of(), Set.of()))).blockLast();
 
         users.subscribe(this::sendMessage);
 
