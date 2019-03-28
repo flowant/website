@@ -94,11 +94,11 @@ export class BackendService {
     return this.relationSubject;
   }
 
-  postRelation(follow:boolean, followerId: string, followeeId: string) {
+  postRelation(follow:boolean, followerId: string, followeeId: string): Observable<Relation> {
 
     if (this.userSubject.value.isGuest()) {
       this.logger.warn("Guest user's postRelation request is ignored");
-      return;
+      return of(this.relationSubject.value);
     }
 
     let url = Config.relationUrl + (follow ? Config.path.follow : Config.path.unfollow)
@@ -108,8 +108,7 @@ export class BackendService {
       map(resp => JSON.parse(resp.body, reviver)),
       map(object => Object.assign(new Relation(), object)),
       tap(relation => this.relationSubject.next(relation)),
-      tap(relation => this.logger.trace('postRelation resp:', relation)),
-      catchError(this.handleError<any>('postRelation'))
+      tap(relation => this.logger.trace('postRelation resp:', relation))
     );
   }
 
