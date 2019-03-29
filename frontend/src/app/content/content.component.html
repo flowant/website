@@ -44,7 +44,7 @@
   </div>
 
   <div *ngIf="isReadonly" class="border rounded my-1 p-1">
-    <app-reputation [typeName]="Content" [idCid]="idCid" [reputation]="content.reputation"></app-reputation>
+    <app-reputation [typeName]="'Content'" [authorId]="content.authorId" [idCid]="idCid" [reputation]="content.reputation"></app-reputation>
   </div>
 
   <div *ngIf="!isReadonly" class="border rounded my-1 p-1">

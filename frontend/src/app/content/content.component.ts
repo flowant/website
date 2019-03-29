@@ -49,12 +49,12 @@ export class ContentComponent implements OnInit {
     this.backendService.getUser().pipe(
       tap(user => this.user = user),
       tap(_ => this.prepareContent())
-    ).subscribe();
+    ).toPromise().then();
   }
 
   prepareContent(): void {
     let observable = this.idCid ? this.backendService.getModel<Content>(Content, this.idCid) : this.newContent();
-    observable.subscribe(c => {
+    observable.toPromise().then(c => {
       this.content = c;
       this.convertFromContent();
       this.isReadonly = this.user.identity !== c.authorId;

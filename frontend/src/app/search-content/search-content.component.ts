@@ -43,7 +43,8 @@ export class SearchContentComponent implements OnInit {
   getPopularContents(): void {
     this.getNext = this.getNextLatest;
     this.backendService.getPopularItems<Content>(Content, "56a1cd50-3c77-11e9-bf26-d571c84212ed")
-        .subscribe(contents => {
+        .toPromise()
+        .then(contents => {
           this.contents = this.contents.concat(contents);
         });
 
@@ -53,7 +54,8 @@ export class SearchContentComponent implements OnInit {
   getNextLatest() {
     this.backendService.getModels<Content>(Content, this.nextInfo, 'cid', "56a1cd50-3c77-11e9-bf26-d571c84212ed")
         .pipe(filter(Boolean))
-        .subscribe(respWithLink => {
+        .toPromise()
+        .then(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
           this.logger.trace("nextQueryParams:", this.nextInfo);
@@ -68,7 +70,8 @@ export class SearchContentComponent implements OnInit {
   getNextSearch(tag?: string) {
     this.backendService.getSearch(this.nextInfo, tag)
         .pipe(filter(Boolean))
-        .subscribe(respWithLink => {
+        .toPromise()
+        .then(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
           this.logger.trace("nextQueryParams:", this.nextInfo);

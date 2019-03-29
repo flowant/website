@@ -43,7 +43,6 @@ export class MessageComponent implements OnInit {
     this.backendService.getUser()
         .pipe(filter(user => !user.isGuest()))
         .subscribe(user => {
-          this.logger.trace("getUser Subscription:", user);
           this.user = user;
           if (this.isPreview) {
             this.getPreview();

@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { catchError, map, tap, concatMap } from 'rxjs/operators';
-import { IdCid, IdToPath, Content, Reputation, reviver, FileRefs } from '../_models';
+import { IdCid, IdToPath, Content, Reputation, reviver, FileRefs, replacer } from '../_models';
 import { RespWithLink, User, Relation, Auth } from '../_models';
 import { Config } from '../config';
 
@@ -77,7 +77,7 @@ export class BackendService {
   }
 
   signUpUser(user: User): Observable<User> {
-    return this.http.post(encodeURI(Config.signupUrl), user, writeOptions).pipe(
+    return this.http.post(encodeURI(Config.signupUrl), JSON.stringify(user, replacer), writeOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
       map(object => Object.assign(new User, object)),
       tap(item => this.logger.trace('signUp User:', item)),
@@ -176,7 +176,7 @@ export class BackendService {
   postModel<T>(type, entity: T, urlSuffix?: string): Observable<T> {
     let url = Config.getUrl(type.name) + (urlSuffix ? '/' + urlSuffix : '');
 
-    return this.http.post(encodeURI(url), entity, writeOptions).pipe(
+    return this.http.post(encodeURI(url), JSON.stringify(entity, replacer), writeOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
       map(object => Object.assign(new type(), object)),
       tap(item => this.logger.trace('postModel resp:', item)),
@@ -201,7 +201,7 @@ export class BackendService {
 
     let url = Config.fileUrl + '/' + identity;
 
-    return this.http.post(encodeURI(url), uploadData, baseOptions).pipe(
+    return this.http.post(encodeURI(url), JSON.stringify(uploadData, replacer), baseOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
       map(object => Object.assign(new FileRefs(), object)),
       tap(item => this.logger.trace('addFile resp:', item)),
@@ -216,7 +216,7 @@ export class BackendService {
       uploadData.append('attachment', files[i], files[i].name);
     }
 
-    return this.http.post(encodeURI(Config.fileUrl), uploadData, baseOptions).pipe(
+    return this.http.post(encodeURI(Config.fileUrl), JSON.stringify(uploadData, replacer), baseOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
       map(array => array.map(object => Object.assign(new FileRefs(), object))),
       tap(items => this.logger.trace('addFiles resp:', items)),
@@ -225,7 +225,7 @@ export class BackendService {
   }
 
   deleteFiles(files: FileRefs[]): Observable<any> {
-    return this.http.post(encodeURI(Config.fileDeletesUrl), files, writeOptions).pipe(
+    return this.http.post(encodeURI(Config.fileDeletesUrl), JSON.stringify(files, replacer), writeOptions).pipe(
       tap(resp => this.logger.trace('deleteFiles resp:', resp)),
       catchError(this.handleError<FileRefs[]>('deleteFiles'))
     );
@@ -237,7 +237,7 @@ export class BackendService {
 
     let url = Config.getUrl(Config.toRptName(typeName));
 
-    return this.http.post(encodeURI(url), rpt, writeOptions).pipe(
+    return this.http.post(encodeURI(url), JSON.stringify(rpt, replacer), writeOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
       map(object => Object.assign(new Reputation(), object)),
       tap(item => this.logger.trace('acculateRepute resp:', item)),

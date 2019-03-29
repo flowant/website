@@ -22,7 +22,7 @@
       <div class="user-ref">
         <app-user-ref [userRefId]="review.authorId" [userRefName]="review.authorName"></app-user-ref>
         <p class="date">{{review.cruTime.created.toLocalDate()}}</p>
-        <app-reputation [typeName]="Review" [idCid]="review.idCid" [reputation]="review.reputation"></app-reputation>
+        <app-reputation [typeName]="'Review'" [authorId]="review.authorId" [idCid]="review.idCid" [reputation]="review.reputation"></app-reputation>
       </div>
       <div class="media-body">
         <p>{{review.authorName}}</p>

@@ -1,7 +1,7 @@
 
-<div *ngIf="typeName && idCid && reputation" class="reputation">
+<div *ngIf="typeName && authorId && idCid && reputation" class="reputation">
 
-  <ngb-rating *ngIf="isRated()" class="uniform" [rate]="getRated()" [readonly]="true">
+  <ngb-rating *ngIf="hasRated()" class="uniform" [rate]="reputation.avrRated()" [readonly]="true">
     <ng-template let-fill="fill">
       <span class="rating-star" [class.rating-star-full]="fill === 100">
         <span class="rating-star-half" [style.width.%]="fill">&#9733;</span>&#9733;
@@ -9,9 +9,10 @@
     </ng-template>
   </ngb-rating>
 
-  <span *ngIf="isRated()" class="uniform"> {{toNumberal(reputation.reputed)}} voters </span>
+  <span *ngIf="hasRated()" class="uniform"> {{toNumberal(reputation.reputed)}} voters </span>
 
-  <button type="button" class="btn-like uniform" (click)="onRepute(idCid, 'liked')" value="liked">
+  <button type="button" class="btn-like uniform" [disabled]="!canRepute()" [class.active]="isLiked()"
+      (click)="onRepute('liked')">
     <i class="far fa-thumbs-up"></i><span> {{toNumberal(reputation.liked)}}</span>
   </button>
 

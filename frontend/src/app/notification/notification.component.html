@@ -1,4 +1,4 @@
-<div *ngIf="isPreview">
+<div>
   <div *ngFor="let noti of notifications; index as i" class="noti">
     <ngb-alert type="primary" (click)="onClick(i)" (close)="onDelete(i)">
       <strong>{{noti.authorName}} </strong>

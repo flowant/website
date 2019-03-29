@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     const user = this.backendService.getUserValue();
 
     if (route.data.a) {
-      if (user.authorities.includes(route.data.a)) {
+      if (user.authorities.has(route.data.a)) {
         this.logger.trace("canActivate: true ", user, route);
         return true;
       } else {

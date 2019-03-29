@@ -6,9 +6,9 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { AuthService, getAccessToken, setAccessToken } from './auth.service';
 import { BackendService } from './backend.service';
 import { Config } from '../config';
-import { Auth, User, Relation } from '../_models';
+import { Auth, User, Relation, replacer } from '../_models';
 
-export let jwt = {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib2F1dGgyLXJlc291cmNlIl0sInVzZXJfbmFtZSI6InVzZXIwIiwic2NvcGUiOlsibWVzc2FnZTpyZWFkIiwibWVzc2FnZTp3cml0ZSJdLCJleHAiOjE1NTM2NzI4NjMsImF1dGhvcml0aWVzIjpbIlUiLCJST0xFX1VTRVIiXSwianRpIjoiN2U0OTczNzgtNDZjOC00MzEwLWE0NTktYTA0NGVmNDQ2NzgwIiwiY2xpZW50X2lkIjoiY2xpZW50In0.i8a6jp8DL4QDSCk_TXBRVkqI0sYQxzQZhkx-1ke8uAMcZYy9c3n61D-7BUPhwBpybrcL6jE1p_RK0eJQPaCqtPpQiMTwyvMFpO01meadAjIxaxdgXY2ueuV4TncRA-K_GJBuZaGnM4P1SFpN-8NwEF4WiDy9DrSa317nouL28IZCagaSCSKRTqV3Cloq51RxmAA5e21_ecIRIU7NhkdKco2fQbo4SK_xlkTdvDJItvmm6ilTwN0hMcshj9BRjaOjsp02nWtsdTbt6sfDdBI0bpuPW-E4e62jZbitorSg6NxM6aXgPI5Jtshfu4zVb1DdHT3sQMkaPh3vobHKg6XfQw","token_type":"bearer","refresh_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib2F1dGgyLXJlc291cmNlIl0sInVzZXJfbmFtZSI6InVzZXIwIiwic2NvcGUiOlsibWVzc2FnZTpyZWFkIiwibWVzc2FnZTp3cml0ZSJdLCJhdGkiOiI3ZTQ5NzM3OC00NmM4LTQzMTAtYTQ1OS1hMDQ0ZWY0NDY3ODAiLCJleHAiOjE1NTYyMjE2NjMsImF1dGhvcml0aWVzIjpbIlUiLCJST0xFX1VTRVIiXSwianRpIjoiOWVhMWQ4ZmItMTQzMS00MGQ5LTkwZDgtYjNkNjgwMzYxMTM4IiwiY2xpZW50X2lkIjoiY2xpZW50In0.NcbXURIHh6wD79saXuBQDd3WyCYP58BDaJ46U0ZmkABraX6pcLy6xSlQwiTweM-wWIGvH0JRrGWwtI6G-e8slH5eTxkB0fNUJgd1z2qwUsCfjWsvRVPY1ac7RbpMyB3Z_xlDO1OEsC1lPkMbWhDaW1IFafu0B6xMfSah4UnIIm5qRdoSEE8Oyvz45rSGqzWuXXTtzvxY3GJzcj2hdCyWVTjdr3FLfQdYHuiwcZF_tSaaU3mjrSCB4xi243kwxqwTvj1TB9IunKQn8yR-x15omHUneOP0jiVt-FSlknnH6zNXIJr3myY80a7xcTvpi-0jSjHJUHN76RrJov4xxxrN3Q","expires_in":43199,"scope":"message:read message:write","jti":"7e497378-46c8-4310-a459-a044ef446780"};
+export let jwt = {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib2F1dGgyLXJlc291cmNlIl0sInVzZXJfbmFtZSI6InVzZXIwIiwic2NvcGUiOlsibWVzc2FnZTpyZWFkIiwibWVzc2FnZTp3cml0ZSJdLCJleHAiOjE1NTM4NzMyMjksImF1dGhvcml0aWVzIjpbIlUiLCJHIl0sImp0aSI6IjhjNDgyNjg1LTg0NjAtNGQ0Zi1iMjlhLTU4Yjk3ZWNhYjUxMSIsImNsaWVudF9pZCI6ImNsaWVudCJ9.Zhc3M3vZ9sVwem7DQ9kO2IJfcfPlU7e2_XbIz3LLRoiHkzcOznXwho3G5pObKKefGk_m9ICXfotP3EBRgpsofIZOWD9DnP-L-IoxILRaUCi3q2N2ce-BH96qGafE1T5DbEwwNRP53DXiPLmrVZc19xsCRhxmw76Cj9Z-vqjxQKEl5HM2DD1rryDL_z6xIzMqmj7Rzw4I3uiKG8tTadZmCXmZzHGJE116XEGUi_KK2fH1yw3mQ_OUU5KsNSoAYSW4Kvhs0sKC1j3q7YH7-DbEwc15zeJGUJMJQYA-ffblVWhceB78qn7OQvNhROUoayVv6cWRXQ7ZL3glA-vI77ZUjQ","token_type":"bearer","refresh_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib2F1dGgyLXJlc291cmNlIl0sInVzZXJfbmFtZSI6InVzZXIwIiwic2NvcGUiOlsibWVzc2FnZTpyZWFkIiwibWVzc2FnZTp3cml0ZSJdLCJhdGkiOiI4YzQ4MjY4NS04NDYwLTRkNGYtYjI5YS01OGI5N2VjYWI1MTEiLCJleHAiOjE1NTY0MjIwMjksImF1dGhvcml0aWVzIjpbIlUiLCJHIl0sImp0aSI6IjY4MmI4ZmJmLTU0MGItNDAzZC04N2FjLWI4NzAyZjQyZGE5MiIsImNsaWVudF9pZCI6ImNsaWVudCJ9.DKXXrEhPVmAZ---L5Zzyc1XAckls9JAKbggzzCv2YtiZK_1AqTpEBnnZ8dk9tKXrnFzN2Aabw5WXFciKDQUL349LV0GfurOvEDWi1EUFIcdC0j4A_J-C0Y4M9cqx8NcrS_--b2bCKmkh16nG0lNOm1Ool8QHMEiZCfkPtdb6E-vxjw-bH5NEsnFevlYzdkDoPONkcOO8MHCfutNXEiFXpvs9-HXnDOovJYkRmiljIAC5rm-HqA-mlDJ-kJpL4rk8FCdOyFquggnBTR9h6M55Dbb0JoPQbEyId28tzpPs8miRuAF94Ktaclskdt1cEz16sudBSLYLPJ3NCRz8-qnFHw","expires_in":43199,"scope":"message:read message:write","jti":"8c482685-8460-4d4f-b29a-58b97ecab511"};
 export let auth: Auth = Object.assign(new Auth(), jwt);
 
 export function signIn(signedInUser: User, service: AuthService, httpTestingController: HttpTestingController): Promise<User> {
@@ -29,20 +29,29 @@ export function signIn(signedInUser: User, service: AuthService, httpTestingCont
     }
   );
 
-  httpTestingController.expectOne(req => {
-    return req.method.toUpperCase() === 'POST'
-        && req.url.includes(Config.authUrl)
-  }).flush(auth);
+  httpTestingController.expectOne(
+    req => {
+      return req.method.toUpperCase() === 'POST'
+          && req.url.includes(Config.authUrl)
+    },
+    Config.authUrl
+  ).flush(auth);
 
-  httpTestingController.expectOne(req => {
-    return req.method.toUpperCase() === 'GET'
-        && req.url.includes(Config.userUrl + '?un=' + signedInUser.username)
-  }).flush(signedInUser);
+  httpTestingController.expectOne(
+    req => {
+      return req.method.toUpperCase() === 'GET'
+          && req.url.includes(Config.userUrl + '?un=' + signedInUser.username)
+    },
+    Config.userUrl + '?un=' + signedInUser.username
+  ).flush(JSON.stringify(signedInUser, replacer));
 
-  httpTestingController.expectOne(req => {
-    return req.method.toUpperCase() === 'GET'
-        && req.urlWithParams.includes(Config.relationUrl + '/' + signedInUser.identity);
-  }).flush(Relation.empty);
+  httpTestingController.expectOne(
+    req => {
+      return req.method.toUpperCase() === 'GET'
+          && req.urlWithParams.includes(Config.relationUrl + '/' + signedInUser.identity);
+    },
+    Config.relationUrl + '/' + signedInUser.identity
+  ).flush(JSON.stringify(Relation.empty, replacer));
 
   return promiseUser;
 }
@@ -88,7 +97,8 @@ describe('AuthService', () => {
         })
       ],
       providers: [
-        AuthService
+        AuthService,
+        BackendService
       ]
     });
 
@@ -134,16 +144,21 @@ describe('AuthService', () => {
     expect(getAccessToken()).not.toBe(null, 'expected access token');
     expect(localStorage.getItem(AuthService.AUTHENTICATION)).not.toBe(null, 'expected auth data stored');
 
-    httpTestingController.expectOne(req => {
+    httpTestingController.expectOne(
+      req => {
       return req.method.toUpperCase() === 'GET'
           && req.url.includes(Config.userUrl + '?un=' + signedInUser.username)
-    }).flush(signedInUser);
+      },
+      Config.userUrl + '?un=' + signedInUser.username
+    ).flush(JSON.stringify(signedInUser, replacer));
 
-    httpTestingController.expectOne(req => {
-      return req.method.toUpperCase() === 'GET'
-          && req.urlWithParams.includes(Config.relationUrl + '/' + signedInUser.identity);
-    }).flush(Relation.empty);
-
+    httpTestingController.expectOne(
+      req => {
+        return req.method.toUpperCase() === 'GET'
+            && req.urlWithParams.includes(Config.relationUrl + '/' + signedInUser.identity);
+      },
+      Config.relationUrl + '/' + signedInUser.identity
+    ).flush(JSON.stringify(Relation.empty, replacer));
   });
 
   it('signIn should return User', () => {

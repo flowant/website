@@ -23,8 +23,45 @@ export function reviver(key, value): any {
     case 'postalAddress': {
       return Object.assign(new PostalAddress(), value);
     }
+    case 'reputing':
+    case 'reputation': {
+      return Object.assign(new Reputation(), value);
+    }
+    case 'authorities': {
+      return new Set(value.map(e => Authority.of(e.authority)));
+    }
+    case 'fileRefs': {
+      return value ? value.map(e =>Object.assign(new FileRefs(), e)) : [];
+    }
+    case 'tags':
+    case 'followings':
+    case 'followers':
+    case 'subscribers':
+    case 'likes':
+    case 'interests': {
+      return new Set(value);
+    }
+    case 'ingredients': {
+      return value ? value : [];
+    }
+    default: {
+      return value;
+    }
+  }
+}
+
+export function replacer(key, value): any {
+  switch (key) {
     case 'authorities':
-      return value.map(e => Authority.of(e.authority));
+    case 'tags':
+    case 'followings':
+    case 'followers':
+    case 'subscribers':
+    case 'likes':
+    case 'interests': {
+      // from Set, "{ }" to Array, "[ ]"
+      return Array.from(value.values());
+    }
     default: {
       return value;
     }
@@ -66,15 +103,15 @@ export class Content {
   authorName: string;
   title: string;
   extend: Extend = new Extend();
-  fileRefs?: (FileRefs)[] = [];
+  fileRefs: Array<FileRefs> = [];
   sentences: string;
-  tags?: (string)[] | null;
+  tags: Set<string> = new Set();
   reputation: Reputation = new Reputation();
   cruTime: CruTime = CruTime.now();
 }
 
 export class Extend {
-  ingredients?: (string)[] | null = ["Please type ingredients in separated lines.", "e.g., 6 ounces mozzarella cheese, shredded."];
+  ingredients:  Array<string> = ["Please type ingredients in separated lines.", "e.g., 6 ounces mozzarella cheese, shredded."];
   prepareTime: string = "10m30s";
   cookTime: string = "1h10m";
   servings: number = 0;
@@ -99,6 +136,16 @@ export class Review {
   comment: string;
   reputation: Reputation = new Reputation();
   cruTime: CruTime = CruTime.now();
+
+  static random(authorId: string, authorName: string): Review {
+    let review = new Review();
+    review.idCid = IdCid.random();
+    review.authorId = authorId;
+    review.authorName = authorName;
+    review.comment = v1();
+    return review;
+  }
+
 }
 
 export class Reply {
@@ -112,15 +159,15 @@ export class Reply {
 
 export class Reputation {
   idCid?: IdCid;
-  viewed: number = 0;
-  rated: number = 0;
-  liked: number = 0;
-  disliked: number = 0;
-  reported: number = 0;
-  reputed: number = 0;
+  viewed: number = 1;
+  rated: number;
+  liked: number;
+  disliked: number;
+  reported: number;
+  reputed: number;
 
   subtract(r: Reputation): Reputation {
-    let diff = Object.assign({}, this);
+    let diff = Object.assign(new Reputation(), this);
     diff.viewed -= r.viewed;
     diff.rated -= r.rated;
     diff.liked -= r.liked;
@@ -130,12 +177,22 @@ export class Reputation {
     return diff;
   }
 
-  select(key: string): Reputation {
+  rate(rating: number): Reputation {
+    this.rated = rating;
+    this.reputed = 1;
+    return this;
+  }
+
+  avrRated(): string {
+    return this.reputed ? (this.rated / this.reputed).toFixed(1) : '0';
+  }
+
+  select(key: string, increase: boolean): Reputation {
     //TODO assert this.hasOwnProperty('key')
     this.liked = 0;
     this.disliked = 0;
     this.reported = 0;
-    this[key] = 1;
+    this[key] = increase ? 1 : -1;
     return this;
   }
 
@@ -164,17 +221,17 @@ export class Message {
 
 export class Relation {
 
-  static empty: Relation = Relation.of('empty', new Array(), new Array());
+  static empty: Relation = Relation.of('empty', new Set(), new Set());
 
   identity: string;
-  followings: Array<string>;
-  followers: Array<string>;
+  followings: Set<string> = new Set();
+  followers: Set<string> = new Set();
 
   hasFollowee(userRefId: string): boolean {
-    return this.followings.includes(userRefId);
+    return this.followings.has(userRefId);
   }
 
-  static of(identity:string , followings: Array<string>, followers: Array<string>): Relation {
+  static of(identity:string , followings: Set<string>, followers: Set<string>): Relation {
     let relation = new Relation();
     relation.identity = identity;
     relation.followings = followings;
@@ -188,11 +245,30 @@ export class Notification {
   idCid: IdCid;
   authorName: string;
   category: Category;
-  subscribers?: (string)[] | null;
+  subscribers: Set<string> = new Set();
   referenceId: string;
   referenceCid: string;
   appendix: string;
   time: ZonedTime;
+
+  static of(authorId:string, authorName: string, category: Category, subscriber?: string,
+      referenceId?: string, referenceCid?: string, appendix?: string): Notification {
+
+    let noti = new Notification();
+    noti.idCid = IdCid.random(authorId);
+    noti.authorName = authorName;
+    noti.category = category;
+    // In case of New Content, followers are added to subscribers in backend.
+    if (subscriber) {
+      noti.subscribers.add(subscriber);
+    }
+    noti.referenceId = referenceId;
+    noti.referenceCid = referenceCid;
+    noti.appendix = appendix;
+    noti.time = ZonedTime.now();
+    return noti;
+  }
+
 }
 
 export namespace Category {
@@ -237,10 +313,10 @@ export class User {
   birthdate: Birthdate;
   phone: Phone = new Phone();
   postalAddress: PostalAddress;
-  authorities: (Authority)[] = new Array();
-  likes?: Set<string> | null;
-  interests?: Set<string> | null;
-  fileRefs?: (FileRefs)[] = [];
+  authorities: Set<Authority> = new Set();
+  likes: Set<string> = new Set();
+  interests: Set<string> = new Set();
+  fileRefs: Array<FileRefs> = [];
   cruTime: CruTime;
   accountNonExpired: boolean;
   accountNonLocked: boolean;
@@ -248,15 +324,15 @@ export class User {
   enabled: boolean;
 
   isGuest(): boolean {
-    return this.authorities.includes(Authority.Guest) && this.authorities.length === 1;
+    return this.authorities.has(Authority.Guest) && this.authorities.size === 1;
   }
 
   isUser(): boolean {
-    return this.authorities.includes(Authority.User);
+    return this.authorities.has(Authority.User);
   }
 
   isAdmin(): boolean {
-    return this.authorities.includes(Authority.Admin);
+    return this.authorities.has(Authority.Admin);
   }
 
   isMe(identity: string): boolean {
@@ -272,7 +348,7 @@ export class User {
 
     user.identity = v1();
     user.displayName = user.username;
-    user.authorities.push(Authority.User);
+    user.authorities = new Set().add(Authority.User);
     user.cruTime = CruTime.now();
     return user;
   }
@@ -287,7 +363,7 @@ export class User {
     let user = new User();
     user.identity = v1();
     user.displayName = 'Guest';
-    user.authorities.push(Authority.Guest);
+    user.authorities = new Set().add(Authority.Guest);
     user.cruTime = CruTime.now();
     return user;
   }

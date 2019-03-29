@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { LoggerModule, NgxLoggerLevel, NGXLogger } from 'ngx-logger';
 
 import { BackendService } from './backend.service';
-import { User } from '../_models';
+import { User, replacer } from '../_models';
 import { Config } from '../config';
 
 describe('BackendService', () => {
@@ -38,10 +38,6 @@ describe('BackendService', () => {
 
   describe('#User', () => {
 
-    beforeEach(() => {
-      service = TestBed.get(BackendService);
-    });
-
     it('should be created', () => {
       expect(TestBed.get(BackendService)).toBeTruthy();
       expect(TestBed.get(NGXLogger)).toBeTruthy();
@@ -57,10 +53,13 @@ describe('BackendService', () => {
         fail
       );
 
-      httpTestingController.expectOne(req => {
-        return req.method.toUpperCase() === 'POST'
-            && req.urlWithParams.includes(Config.signupUrl);
-      }).flush(expectedUser);
+      httpTestingController.expectOne(
+        req => {
+          return req.method.toUpperCase() === 'POST'
+              && req.urlWithParams.includes(Config.signupUrl);
+        },
+        Config.signupUrl
+      ).flush(JSON.stringify(expectedUser, replacer));
     });
 
     it('signUpUser should return 409 status', () => {
@@ -71,10 +70,13 @@ describe('BackendService', () => {
         error => expect(error.status).toBe(409, 'expected 409: Conflict staus')
       );
 
-      httpTestingController.expectOne(req => {
-        return req.method.toUpperCase() === 'POST'
-            && req.urlWithParams.includes(Config.signupUrl);
-      }).flush('user alread exist', { status: 409, statusText: 'Conflict' });
+      httpTestingController.expectOne(
+        req => {
+          return req.method.toUpperCase() === 'POST'
+              && req.urlWithParams.includes(Config.signupUrl);
+        },
+        Config.signupUrl
+      ).flush('user alread exist', { status: 409, statusText: 'Conflict' });
     });
 
     it('getModel<User> should return expected user', () => {
@@ -90,10 +92,13 @@ describe('BackendService', () => {
         fail
       );
 
-      httpTestingController.expectOne(req => {
-        return req.method.toUpperCase() === 'GET'
-            && req.urlWithParams.includes(Config.userUrl + '/' + expectedUser.identity);
-      }).flush(expectedUser);
+      httpTestingController.expectOne(
+        req => {
+          return req.method.toUpperCase() === 'GET'
+              && req.urlWithParams.includes(Config.userUrl + '/' + expectedUser.identity);
+        },
+        Config.userUrl + '/' + expectedUser.identity
+      ).flush(JSON.stringify(expectedUser, replacer));
     });
 
     it('getModel<User> should return empty', () => {
@@ -104,10 +109,13 @@ describe('BackendService', () => {
         fail
       );
 
-      httpTestingController.expectOne(req => {
-        return req.method.toUpperCase() === 'GET'
-            && req.urlWithParams.includes(Config.userUrl + '/' + expectedUser.identity);
-      }).flush('unknown identity', { status: 404, statusText: 'Not Found' });
+      httpTestingController.expectOne(
+        req => {
+          return req.method.toUpperCase() === 'GET'
+              && req.urlWithParams.includes(Config.userUrl + '/' + expectedUser.identity);
+        },
+        Config.userUrl + '/' + expectedUser.identity
+      ).flush('unknown identity', { status: 404, statusText: 'Not Found' });
     });
 
   });

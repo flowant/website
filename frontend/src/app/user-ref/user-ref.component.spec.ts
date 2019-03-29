@@ -7,7 +7,9 @@ import { AppModule } from '../app.module';
 import { AuthService, BackendService } from '../_services';
 import { Config } from '../config';
 import { signIn, signOut } from '../_services/auth.service.spec'
-import { User, Relation } from '../_models';
+import { User, Relation, replacer } from '../_models';
+import { from } from 'rxjs';
+import { concatMap, tap } from 'rxjs/operators';
 
 describe('UserRefComponent', () => {
   let httpTestingController: HttpTestingController;
@@ -60,34 +62,46 @@ describe('UserRefComponent', () => {
     component.userRefName = refUser.displayName;
     fixture.detectChanges();
 
-    signIn(user, TestBed.get(AuthService), httpTestingController).then(
-      user => {
-        logger.trace("signIn testcases, signed in");
-        expect(component.user).toEqual(user);
-        expect(component.canShowMenu()).toBeTruthy();
+    signIn(user, TestBed.get(AuthService), httpTestingController).then(user => {
+      logger.trace("signIn testcases, signed in");
+      expect(component.user).toEqual(user);
+      expect(component.canShowMenu()).toBeTruthy();
+    }).then(_ => {
+      let p:Promise<void> = component.postRelation(true).then(relation => {
+        expect(component.hasFollowee()).toBeTruthy();
+        logger.trace("follow tested");
+      });
 
-        // response for component.postRelation(true)
-        httpTestingController.expectOne(req => {
+      httpTestingController.expectOne(
+        req => {
           return req.method.toUpperCase() === 'POST'
               && req.urlWithParams.includes(Config.relationUrl + Config.path.follow
-                 + "/" + component.user.identity + "/" + component.userRefId);
-        }).flush(Relation.of(component.user.identity, [component.userRefId], []));
+                + "/" + component.user.identity + "/" + component.userRefId);
+        },
+        Config.relationUrl + Config.path.follow + "/" + component.user.identity + "/" + component.userRefId
+      ).flush(JSON.stringify(Relation.of(component.user.identity, new Set().add(component.userRefId), new Set()), replacer));
 
-        component.postRelation(true)
-            .then(_ => expect(component.hasFollowee()).toBeTruthy())
-            .then(_ => {
-              // response for component.postRelation(false)
-              httpTestingController.expectOne(req => {
-                return req.method.toUpperCase() === 'POST'
-                    && req.urlWithParams.includes(Config.relationUrl + Config.path.unfollow
-                      + "/" + component.user.identity + "/" + component.userRefId);
-              }).flush(Relation.of(component.user.identity, [], []));
+      return p;
 
-              component.postRelation(false)
-                  .then(_ => expect(component.hasFollowee()).toBeFalsy());
-            });
-      }
-    );
+    }).then(_ => {
+      let p:Promise<void> = component.postRelation(false).then(_ => {
+        expect(component.hasFollowee()).toBeFalsy();
+        logger.trace("unfollow tested");
+      });
+
+      httpTestingController.expectOne(
+        req => {
+          return req.method.toUpperCase() === 'POST'
+              && req.urlWithParams.includes(Config.relationUrl + Config.path.unfollow
+                + "/" + component.user.identity + "/" + component.userRefId);
+        },
+        Config.relationUrl + Config.path.unfollow + "/" + component.user.identity + "/" + component.userRefId
+      ).flush(JSON.stringify(Relation.of(component.user.identity, new Set(), new Set()), replacer));
+
+      return p;
+
+    }).then(_ => signOut(TestBed.get(AuthService)));
+
   });
 
   it('should disable menu when the user and the refUser are the same', () => {
@@ -100,7 +114,8 @@ describe('UserRefComponent', () => {
     fixture.detectChanges();
 
     signIn(user, TestBed.get(AuthService), httpTestingController)
-        .then(_ => expect(component.canShowMenu()).toBeFalsy());
+        .then(_ => expect(component.canShowMenu()).toBeFalsy())
+        .then(_ => signOut(TestBed.get(AuthService)));
   });
 
   it('signOut testcases', () => {
