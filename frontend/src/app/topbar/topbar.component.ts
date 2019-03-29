@@ -24,16 +24,15 @@ export class TopbarComponent implements OnInit {
     private logger: NGXLogger) { }
 
   ngOnInit() {
-    this.backendService.getUser()
-        .subscribe(user => {
-          this.user = user;
-          this.userImgUrl = Config.imgServerUrl + '/' + user.identity;
-        });
+    this.backendService.getUser().subscribe(user => {
+      this.user = user;
+      this.userImgUrl = Config.imgServerUrl + '/' + user.identity;
+    });
   }
 
   onSearch() {
-    this.logger.trace("onSearch(), searchTag", this.searchTag);
     if (this.searchTag) {
+      this.logger.trace("onSearch(), searchTag", this.searchTag);
       this.router.navigate(['/', 'search', this.searchTag]);
     }
   }

@@ -1,6 +1,6 @@
-<!--
+
 <div *ngIf="user">
--->
+
   <!-- Topbar -->
   <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -45,7 +45,7 @@
       </li>
 
       <!-- Nav Item - Notification -->
-      <li class="nav-item dropdown no-arrow mx-1">
+      <li *ngIf="!user.isGuest()" class="nav-item dropdown no-arrow mx-1">
         <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-bell fa-fw"></i>
           <!-- Counter - Alerts -->
@@ -62,7 +62,7 @@
       </li>
 
       <!-- Nav Item - Message -->
-      <li class="nav-item dropdown no-arrow mx-1">
+      <li *ngIf="!user.isGuest()" class="nav-item dropdown no-arrow mx-1">
         <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-envelope fa-fw"></i>
           <!-- TODO show only if there are unreaded Items - Messages -->
@@ -89,11 +89,11 @@
         </a>
         <!-- Dropdown - User Information -->
         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-          <a class="dropdown-item" routerLink="/user/profile">
+          <a *ngIf="!user.isGuest()" class="dropdown-item" routerLink="/user/profile">
             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
             Profile
           </a>
-          <a class="dropdown-item" routerLink="/content">
+          <a *ngIf="!user.isGuest()" class="dropdown-item" routerLink="/content">
             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
             Create Content
           </a>
@@ -107,7 +107,6 @@
             Activity Log
           </a>
           -->
-          <div class="dropdown-divider"></div>
           <a *ngIf="user.isGuest()" class="dropdown-item" routerLink="/signin">
             <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
             Sign In
@@ -126,7 +125,6 @@
     </ul>
   </nav>
 
-  <!--
 </div>
--->
+
 <!-- End of Topbar -->
