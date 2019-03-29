@@ -56,7 +56,7 @@ export class SignInComponent implements OnInit {
     this.loading = true;
     this.authService.signIn(this.f.username.value, this.f.password.value)
         .pipe(first())
-        .subscribe(
+        .toPromise().then(
           _ => {
             this.router.navigate([this.returnUrl]);
           },

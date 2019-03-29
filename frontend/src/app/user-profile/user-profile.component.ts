@@ -42,11 +42,10 @@ export class UserProfileComponent implements OnInit {
 
     if (this.identity) {
       this.isReadonly = true;
-      this.backendService.getUser(this.identity).subscribe(u => this.updateUser(u));
+      this.backendService.getUser(this.identity).toPromise().then(u => this.updateUser(u));
     } else {
       this.isReadonly = false;
-      //TODO login user based
-      this.backendService.getUser().subscribe(u => this.updateUser(u));
+      this.updateUser(this.backendService.getUserValue());
     }
   }
 
@@ -69,7 +68,7 @@ export class UserProfileComponent implements OnInit {
 
   onSave() {
     this.backendService.postUser(this.user)
-        .subscribe(u => this.updateUser(u));
+        .toPromise().then(u => this.updateUser(u));
   }
 
   deleteIfExistPhoto(): Observable<any> {
@@ -83,13 +82,13 @@ export class UserProfileComponent implements OnInit {
   }
 
   onDeletePhoto() {
-    this.deleteIfExistPhoto().subscribe();
+    this.deleteIfExistPhoto().toPromise().then();
   }
 
   onUploadPhoto(files: FileList) {
     this.deleteIfExistPhoto()
         .pipe(concatMap(_ => this.backendService.addFile(this.user.identity, files)))
-        .subscribe(fileRef => {
+        .toPromise().then(fileRef => {
           this.user.fileRefs = [fileRef];
           this.updateUser();
         });

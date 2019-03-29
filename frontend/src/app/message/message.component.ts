@@ -56,7 +56,7 @@ export class MessageComponent implements OnInit {
   getPreview() {
     this.backendService.getModels<Message>(Message, this.nextInfoMap.get(Option.Received),
         this.paramNameMap.get(Option.Received), this.user.identity, Config.paging.defaultPage, Config.paging.previewSize)
-        .subscribe(respWithLink => {
+        .toPromise().then(respWithLink => {
           this.msgMap.set(Option.Received, this.msgMap.get(Option.Received).concat(respWithLink.response));
           this.nextInfoMap.set(Option.Received, respWithLink.getNextQueryParams());
         });
@@ -65,7 +65,7 @@ export class MessageComponent implements OnInit {
   getNext(option: Option) {
     this.backendService.getModels<Message>(Message, this.nextInfoMap.get(option),
         this.paramNameMap.get(option), this.user.identity)
-        .subscribe(respWithLink => {
+        .toPromise().then(respWithLink => {
           this.msgMap.set(option, this.msgMap.get(option).concat(respWithLink.response));
           this.nextInfoMap.set(option, respWithLink.getNextQueryParams());
           this.logger.trace("nextInfo:", this.nextInfoMap.get(option));
@@ -73,7 +73,6 @@ export class MessageComponent implements OnInit {
   }
 
   onClick(option: Option, index: number) {
-    this.logger.trace('onClick, option:', option);
     let message = this.msgMap.get(option)[index];
     this.logger.trace('onClick:', message);
   }
@@ -82,7 +81,8 @@ export class MessageComponent implements OnInit {
     let message = this.msgMap.get(option)[index];
     this.logger.trace('onDelete:', message);
     this.backendService.deleteModel(Message, message.idCid)
-        .subscribe(_ => this.msgMap.get(option).splice(index, 1));
+        .toPromise()
+        .then(_ => this.msgMap.get(option).splice(index, 1));
   }
 
 }

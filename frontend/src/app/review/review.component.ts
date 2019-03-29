@@ -37,15 +37,15 @@ export class ReviewComponent implements OnInit {
 
   getPopularReviews(): void {
     this.backendService.getPopularItems<Review>(Review, this.content.idCid.identity)
-      .subscribe(pupolarReviews => {
-        this.reviews = this.reviews.concat(pupolarReviews);
-        this.getNextReview();
-      });
+        .toPromise().then(pupolarReviews => {
+          this.reviews = this.reviews.concat(pupolarReviews);
+          this.getNextReview();
+        });
   }
 
   getNextReview() {
     this.backendService.getModels<Review>(Review, this.nextInfo, 'cid', this.content.idCid.identity)
-        .subscribe(respWithLink => {
+        .toPromise().then(respWithLink => {
           this.reviews = this.reviews.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
           this.logger.trace("nextInfo:", this.nextInfo);
@@ -57,7 +57,7 @@ export class ReviewComponent implements OnInit {
 
     this.logger.trace('onSave:', this.review);
     this.backendService.postModel<Review>(Review, this.review)
-        .subscribe(() => {});
+        .toPromise().then(() => {});
 
     this.review.reputing.reputed = 1;
 
@@ -66,7 +66,7 @@ export class ReviewComponent implements OnInit {
 
     this.logger.trace("onSave, ContentRpt:", contentRpt);
     this.backendService.acculateRepute(Content.name, this.content.idCid, contentRpt)
-        .subscribe((rpt) => {
+        .toPromise().then((rpt) => {
           this.content.reputation = rpt;
           this.postedRpt = Object.assign({}, this.review.reputing);
         });

@@ -201,7 +201,7 @@ export class BackendService {
 
     let url = Config.fileUrl + '/' + identity;
 
-    return this.http.post(encodeURI(url), JSON.stringify(uploadData, replacer), baseOptions).pipe(
+    return this.http.post(encodeURI(url), uploadData, baseOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
       map(object => Object.assign(new FileRefs(), object)),
       tap(item => this.logger.trace('addFile resp:', item)),
@@ -216,7 +216,7 @@ export class BackendService {
       uploadData.append('attachment', files[i], files[i].name);
     }
 
-    return this.http.post(encodeURI(Config.fileUrl), JSON.stringify(uploadData, replacer), baseOptions).pipe(
+    return this.http.post(encodeURI(Config.fileUrl), uploadData, baseOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
       map(array => array.map(object => Object.assign(new FileRefs(), object))),
       tap(items => this.logger.trace('addFiles resp:', items)),

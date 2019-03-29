@@ -41,7 +41,7 @@ export class NotificationComponent implements OnInit {
   getPreview() {
     this.backendService.getModels<Notification>(Notification, this.nextInfo,
         'sid', this.user.identity, Config.paging.defaultPage, Config.paging.previewSize)
-        .subscribe(respWithLink => {
+        .toPromise().then(respWithLink => {
           this.notifications = this.notifications.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
         });
@@ -49,7 +49,7 @@ export class NotificationComponent implements OnInit {
 
   getNext() {
     this.backendService.getModels<Notification>(Notification, this.nextInfo, 'sid', this.user.identity)
-        .subscribe(respWithLink => {
+        .toPromise().then(respWithLink => {
           this.notifications = this.notifications.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
           this.logger.trace("nextInfo:", this.nextInfo);
@@ -60,7 +60,7 @@ export class NotificationComponent implements OnInit {
     let noti = this.notifications[index];
     this.logger.trace('onDelete:', noti);
     this.backendService.deleteModel(Notification, noti.idCid, this.user.identity)
-      .subscribe(_ => this.notifications.splice(index, 1));
+        .toPromise().then(_ => this.notifications.splice(index, 1));
   }
 
   onClick(index: number) {
