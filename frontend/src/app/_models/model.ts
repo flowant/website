@@ -98,7 +98,7 @@ export class IdCid {
 }
 
 export class Content {
-  idCid: IdCid = IdCid.random();
+  idCid: IdCid;
   authorId: string;
   authorName: string;
   title: string;
@@ -108,6 +108,19 @@ export class Content {
   tags: Set<string> = new Set();
   reputation: Reputation = new Reputation();
   cruTime: CruTime = CruTime.now();
+
+  static random(): Content {
+    let id = v1();
+    let randomStr = id.substring(0, 8);
+    let content = new Content();
+    content.idCid = IdCid.random();
+    content.authorId = id;
+    content.authorName = randomStr;
+    content.title = randomStr;
+    content.sentences = randomStr;
+    content.tags.add('tag');
+    return content;
+  }
 }
 
 export class Extend {
@@ -315,6 +328,8 @@ export enum Category {
 }
 
 export class WebSite {
+  static empty: WebSite = new WebSite();
+
   identity: string;
   contentContainerIds: Map<string, string>;
   popularTagCounts?: null;

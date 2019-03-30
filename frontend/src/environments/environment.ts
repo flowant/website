@@ -5,6 +5,9 @@
 export const environment = {
   production: false,
 
+  webSite: {
+    identity: 'f1b8dba2-44a4-11e9-944f-99e89c6a8c79'
+  },
   gateway: {
     scheme: 'http',
     domain: 'localhost',

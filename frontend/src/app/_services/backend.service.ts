@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { NGXLogger } from 'ngx-logger';
+import { NGXLogger, LoggerConfig } from 'ngx-logger';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { catchError, map, tap, concatMap } from 'rxjs/operators';
-import { IdCid, IdToPath, Content, Reputation, reviver, FileRefs, replacer } from '../_models';
+import { catchError, map, tap, concatMap, filter } from 'rxjs/operators';
+import { IdCid, IdToPath, Content, Reputation, reviver, FileRefs, replacer, WebSite } from '../_models';
 import { RespWithLink, User, Relation, Auth } from '../_models';
 import { Config } from '../config';
 
@@ -40,12 +40,24 @@ export class BackendService {
 
   private relationSubject: BehaviorSubject<Relation>;
 
+  private webSite: WebSite;
+
   constructor(
     private http: HttpClient,
     private logger: NGXLogger) {
 
     this.userSubject = new BehaviorSubject<User>(User.guest());
     this.relationSubject = new BehaviorSubject<Relation>(Relation.empty);
+  }
+
+  getWebSite(): Observable<WebSite> {
+    if (this.webSite) {
+      return of(this.webSite);
+    }
+
+    return this.getModel<WebSite>(WebSite, Config.webSite.identity).pipe(
+      tap(webSite => this.webSite = webSite)
+    );
   }
 
   getUserValue(): User {

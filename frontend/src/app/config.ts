@@ -18,12 +18,14 @@ export class Config {
   static userUrl = Config.gatewayUrl + env.path.user;
   static signupUrl = Config.userUrl + env.path.signup;
   static authUrl = Config.gatewayUrl + env.path.auth;
+  static webSiteUrl = Config.gatewayUrl + env.path.website;
   static imgServerUrl = Config.fileUrl;
 
   static gateway = env.gateway;
   static path = env.path;
   static auth = env.auth;
   static paging = env.paging;
+  static webSite = env.webSite;
 
   static whitelistedDomains = [Config.gateway.domain + ':' + Config.gateway.port];
   static blacklistedRoutes = [Config.gateway.domain + ':' + Config.gateway.port + Config.path.gateway + Config.path.auth];
@@ -39,7 +41,8 @@ export class Config {
     ['User', Config.userUrl],
     ['Message', Config.messageUrl],
     ['Notification', Config.notificationUrl],
-    ['Relation', Config.relationUrl]
+    ['Relation', Config.relationUrl],
+    ['WebSite', Config.webSiteUrl]
   ]);
 
   static getUrl(typeName: string): string {
@@ -50,4 +53,5 @@ export class Config {
     return typeName + 'Rpt';
   }
 
+  static RECIPE = "recipe";
 }

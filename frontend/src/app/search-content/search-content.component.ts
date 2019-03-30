@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { filter } from 'rxjs/operators';
+import { filter, concatMap } from 'rxjs/operators';
 
-import { Content } from '../_models';
+import { Content, WebSite } from '../_models';
 import { BackendService } from '../_services'
 import { Config } from '../config';
-import { NGXLogger } from 'ngx-logger';
+import { NGXLogger, LoggerConfig } from 'ngx-logger';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-search-content',
@@ -14,9 +15,11 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SearchContentComponent implements OnInit {
 
-  contents: Content[];
+  webSite: WebSite;
+
+  contents: Content[] = new Array<Content>();
   nextInfo: string;
-  getNext: () => void;
+  getNext: () => void = this.getNextLatest;
 
   imgServerUrl: string = Config.gatewayUrl;
 
@@ -27,54 +30,65 @@ export class SearchContentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.route.params.subscribe(param => {
-      this.logger.trace('ActivatedRoute params subscrive:', param);
-      let tag: string = param['tag'];
-      this.contents = new Array<Content>();
-      if (tag) {
-        this.search(tag);
-      } else {
-        this.getPopularContents();
-      }
+    return this.fetchWebSite()
+        .then(() => this.init().toPromise().then());
+  }
+
+  fetchWebSite(): Promise<WebSite> {
+    return this.backendService.getWebSite().toPromise().then(webSite => this.webSite = webSite);
+  }
+
+  init(): Observable<Content[]> {
+    return this.route.params.pipe(
+      concatMap(param => {
+        this.logger.trace('ActivatedRoute params:', param);
+        let tag: string = param['tag'];
+        if (tag) {
+          return this.search(tag);
+        } else {
+          return this.getPopularContents();
+        }
+      }));
+  }
+
+  getPopularContents(): Promise<Content[]> {
+    return this.backendService.getPopularItems<Content>(
+      Content,
+      this.webSite.contentContainerIds[Config.RECIPE]
+    ).toPromise().then(contents => {
+      this.contents = this.contents.concat(contents);
+      return this.contents;
+    }).then(() => this.getNextLatest());
+  }
+
+  getNextLatest(): Promise<Content[]> {
+    return this.backendService.getModels<Content>(
+      Content,
+      this.nextInfo,
+      'cid',
+      this.webSite.contentContainerIds[Config.RECIPE]
+    ).pipe(filter(Boolean)).toPromise().then(respWithLink => {
+      this.contents = this.contents.concat(respWithLink.response);
+      this.nextInfo = respWithLink.getNextQueryParams();
+      this.logger.trace("nextQueryParams:", this.nextInfo);
+      return this.contents;
     });
   }
 
-  //TODO get container id from the backend
-  getPopularContents(): void {
-    this.getNext = this.getNextLatest;
-    this.backendService.getPopularItems<Content>(Content, "56a1cd50-3c77-11e9-bf26-d571c84212ed")
-        .toPromise()
-        .then(contents => {
-          this.contents = this.contents.concat(contents);
-        });
-
-    this.getNextLatest();
-  }
-
-  getNextLatest() {
-    this.backendService.getModels<Content>(Content, this.nextInfo, 'cid', "56a1cd50-3c77-11e9-bf26-d571c84212ed")
-        .pipe(filter(Boolean))
-        .toPromise()
-        .then(respWithLink => {
-          this.contents = this.contents.concat(respWithLink.response);
-          this.nextInfo = respWithLink.getNextQueryParams();
-          this.logger.trace("nextQueryParams:", this.nextInfo);
-        });
-  }
-
-  search(tag?: string) {
+  search(tag?: string): Promise<Content[]> {
     this.getNext = this.getNextSearch;
-    this.getNextSearch(tag);
+    return this.getNextSearch(tag);
   }
 
-  getNextSearch(tag?: string) {
-    this.backendService.getSearch(this.nextInfo, tag)
+  getNextSearch(tag?: string): Promise<Content[]> {
+    return this.backendService.getSearch(this.nextInfo, tag)
         .pipe(filter(Boolean))
         .toPromise()
         .then(respWithLink => {
           this.contents = this.contents.concat(respWithLink.response);
           this.nextInfo = respWithLink.getNextQueryParams();
           this.logger.trace("nextQueryParams:", this.nextInfo);
+          return this.contents;
         });
   }
 
