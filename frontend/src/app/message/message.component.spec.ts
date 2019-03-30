@@ -77,7 +77,7 @@ describe('MessageComponent', () => {
   });
 
   afterEach(() => {
-    signOut(TestBed.get(AuthService)).then();
+    signOut(TestBed.get(AuthService));
     httpTestingController.verify();
   });
 

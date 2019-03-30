@@ -49,7 +49,7 @@ export class ContentComponent implements OnInit {
     this.backendService.getUser().pipe(
       tap(user => this.user = user),
       tap(_ => this.prepareContent())
-    ).toPromise().then();
+    ).toPromise();
   }
 
   prepareContent(): void {

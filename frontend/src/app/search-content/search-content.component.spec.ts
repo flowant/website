@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { LoggerModule, NgxLoggerLevel, NGXLogger } from 'ngx-logger';
 
@@ -13,6 +13,12 @@ describe('SearchContentComponent', () => {
   let fixture: ComponentFixture<SearchContentComponent>;
   let httpTestingController: HttpTestingController;
   let logger: NGXLogger;
+
+  let webSite = {
+    identity: "f1b8dba2-44a4-11e9-944f-99e89c6a8c79",
+    contentContainerIds: { recipe: "56a1cd50-3c77-11e9-bf26-d571c84212ed" },
+    popularTagCounts: null
+  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -33,22 +39,15 @@ describe('SearchContentComponent', () => {
     .compileComponents();
   }));
 
-  beforeEach(() => {
+  beforeEach(async(() => {
     httpTestingController = TestBed.get(HttpTestingController);
     logger = TestBed.get(NGXLogger);
-
     fixture = TestBed.createComponent(SearchContentComponent);
     component = fixture.componentInstance;
+  }));
+
+  beforeEach(async(() => {
     fixture.detectChanges();
-
-    let contents: Content[] = [Content.random()];
-    let cid = contents[0].idCid.containerId;
-    let webSite = {
-      identity: "f1b8dba2-44a4-11e9-944f-99e89c6a8c79",
-      contentContainerIds: { recipe: "56a1cd50-3c77-11e9-bf26-d571c84212ed" },
-      popularTagCounts: null
-    }
-
     httpTestingController.expectOne(
       req => {
         return req.method.toUpperCase() === 'GET'
@@ -56,25 +55,31 @@ describe('SearchContentComponent', () => {
       },
       Config.webSiteUrl + "/" + Config.webSite.identity
     ).flush(JSON.stringify(webSite, replacer));
+  }));
 
-    // httpTestingController.expectOne(
-    //   req => {
-    //     return req.method.toUpperCase() === 'GET'
-    //         && req.urlWithParams.includes(Config.contentUrl + Config.path.popular + "?" + 'cid=' + cid);
-    //   },
-    //   Config.contentUrl + Config.path.popular + "?" + 'cid=' + cid
-    // ).flush(JSON.stringify(contents, replacer));
+  beforeEach(async(() => {
+    fixture.detectChanges();
+    let populars: Content[] = [Content.random()];
+    httpTestingController.expectOne(
+      req => {
+        return req.method.toUpperCase() === 'GET'
+            && req.urlWithParams.includes(Config.contentUrl + Config.path.popular
+                + '?cid=' + webSite.contentContainerIds['recipe']);
+      },
+      Config.contentUrl + Config.path.popular + '?cid=' + webSite.contentContainerIds['recipe']
+    ).flush(JSON.stringify(populars, replacer));
+  }));
 
-    // return component;
-    // httpTestingController.expectOne(
-    //   req => {
-    //     return req.method.toUpperCase() === 'GET'
-    //         && req.urlWithParams.includes(Config.contentUrl + "?" + 'cid=' + cid);
-    //   },
-    //   Config.contentUrl + "?" + 'cid=' + cid
-    // ).flush(JSON.stringify(contents, replacer));
-
-  });
+  beforeEach(async(() => {
+    let latests: Content[] = [Content.random()];
+    httpTestingController.expectOne(
+      req => {
+        return req.method.toUpperCase() === 'GET'
+            && req.urlWithParams.includes(Config.contentUrl + '?cid=' + webSite.contentContainerIds['recipe']);
+      },
+      Config.contentUrl + '?cid=' + webSite.contentContainerIds['recipe']
+    ).flush(JSON.stringify(latests, replacer));
+  }));
 
   afterEach(() => {
     httpTestingController.verify();
@@ -82,36 +87,23 @@ describe('SearchContentComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-    fixture.detectChanges();
-    logger.trace("webSite info:", component.webSite);
+    expect(component.webSite).toBeTruthy();
+    expect(component.contents.length).toBeGreaterThan(0);
   });
 
-  // it('getPopularContents', () => {
-  //   expect(component).toBeTruthy();
+  it('getPopularContents', () => {
+    let latest: Content[] = [Content.random()];
+    component.getNextLatest().then(latest => {
+      latest.map(e => expect(component.contents).toContain(e));
+    });
 
-  //   component.getPopularContents().then(contents => {
-  //     logger.trace("contents:", contents);
-  //   });
-
-  //   let contents: Content[] = [Content.random()];
-  //   let cid = contents[0].idCid.containerId;
-
-  //   httpTestingController.expectOne(
-  //     req => {
-  //       return req.method.toUpperCase() === 'GET'
-  //           && req.urlWithParams.includes(Config.contentUrl + "?" + 'cid=' + cid);
-  //     },
-  //     Config.contentUrl + "?" + 'cid=' + cid
-  //   ).flush(JSON.stringify(contents, replacer));
-
-  //   httpTestingController.expectOne(
-  //     req => {
-  //       return req.method.toUpperCase() === 'GET'
-  //           && req.urlWithParams.includes(Config.contentUrl + Config.path.popular + "?" + 'cid=' + cid);
-  //     },
-  //     Config.contentUrl + Config.path.popular + "?" + 'cid=' + cid
-  //   ).flush(JSON.stringify(contents, replacer));
-
-  // });
+    httpTestingController.expectOne(
+      req => {
+        return req.method.toUpperCase() === 'GET'
+            && req.urlWithParams.includes(Config.contentUrl + '?cid=' + webSite.contentContainerIds['recipe']);
+      },
+      Config.contentUrl + '?cid=' + webSite.contentContainerIds['recipe']
+    ).flush(JSON.stringify(latest, replacer));
+  });
 
 });

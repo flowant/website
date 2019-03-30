@@ -50,8 +50,7 @@ export class UserRefComponent implements OnInit {
 
   postRelation(follow: boolean): Promise<Relation> {
     return this.backendService.postRelation(follow, this.user.identity, this.userRefId)
-        .toPromise()
-        .then();
+        .toPromise();
   }
 
   sendMessage() {

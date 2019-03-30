@@ -82,7 +82,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   onDeletePhoto() {
-    this.deleteIfExistPhoto().toPromise().then();
+    this.deleteIfExistPhoto().toPromise();
   }
 
   onUploadPhoto(files: FileList) {

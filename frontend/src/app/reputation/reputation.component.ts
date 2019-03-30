@@ -53,16 +53,14 @@ export class ReputationComponent implements OnInit {
     if (liked === false) {
       this.user.likes.add(this.idCid.identity);
       this.backendService.postModel<Notification>(Notification, notification)
-          .toPromise()
-          .then();
+          .toPromise();
     } else {
       this.user.likes.delete(this.idCid.identity);
     }
 
     // TODO handle error
     this.backendService.postUser(this.user)
-        .toPromise()
-        .then();
+        .toPromise();
 
     reputation.select(selected, !liked);
     reputation.idCid = this.idCid;

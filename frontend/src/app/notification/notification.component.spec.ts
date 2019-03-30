@@ -57,10 +57,11 @@ describe('NotificationComponent', () => {
         Config.notificationUrl + "?" + 'sid=' + user.identity
       ).flush(JSON.stringify(notifications, replacer));
     });
+
   });
 
   afterEach(() => {
-    signOut(TestBed.get(AuthService)).then();
+    signOut(TestBed.get(AuthService));
     httpTestingController.verify();
   });
 

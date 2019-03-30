@@ -19,7 +19,7 @@ export class SearchContentComponent implements OnInit {
 
   contents: Content[] = new Array<Content>();
   nextInfo: string;
-  getNext: () => void = this.getNextLatest;
+  getNext: () => Promise<Content[]>;
 
   imgServerUrl: string = Config.gatewayUrl;
 
@@ -30,25 +30,26 @@ export class SearchContentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    return this.fetchWebSite()
-        .then(() => this.init().toPromise().then());
+    this.fetchWebSite()
+      .then(() => this.initContents().toPromise());
   }
 
   fetchWebSite(): Promise<WebSite> {
     return this.backendService.getWebSite().toPromise().then(webSite => this.webSite = webSite);
   }
 
-  init(): Observable<Content[]> {
+  initContents(): Observable<Content[]> {
     return this.route.params.pipe(
       concatMap(param => {
         this.logger.trace('ActivatedRoute params:', param);
         let tag: string = param['tag'];
         if (tag) {
-          return this.search(tag);
+          return this.getNextSearch(tag);
         } else {
-          return this.getPopularContents();
+          return this.getPopularContents().then(() => this.getNextLatest());
         }
-      }));
+      })
+    );
   }
 
   getPopularContents(): Promise<Content[]> {
@@ -58,29 +59,25 @@ export class SearchContentComponent implements OnInit {
     ).toPromise().then(contents => {
       this.contents = this.contents.concat(contents);
       return this.contents;
-    }).then(() => this.getNextLatest());
-  }
-
-  getNextLatest(): Promise<Content[]> {
-    return this.backendService.getModels<Content>(
-      Content,
-      this.nextInfo,
-      'cid',
-      this.webSite.contentContainerIds[Config.RECIPE]
-    ).pipe(filter(Boolean)).toPromise().then(respWithLink => {
-      this.contents = this.contents.concat(respWithLink.response);
-      this.nextInfo = respWithLink.getNextQueryParams();
-      this.logger.trace("nextQueryParams:", this.nextInfo);
-      return this.contents;
     });
   }
 
-  search(tag?: string): Promise<Content[]> {
-    this.getNext = this.getNextSearch;
-    return this.getNextSearch(tag);
+  getNextLatest(): Promise<Content[]> {
+    this.getNext = this.getNextLatest;
+    return this.backendService.getModels<Content>(Content, this.nextInfo,
+        'cid', this.webSite.contentContainerIds[Config.RECIPE])
+        .pipe(filter(Boolean))
+        .toPromise()
+        .then(respWithLink => {
+          this.contents = this.contents.concat(respWithLink.response);
+          this.nextInfo = respWithLink.getNextQueryParams();
+          this.logger.trace("nextQueryParams:", this.nextInfo);
+          return this.contents;
+        });
   }
 
   getNextSearch(tag?: string): Promise<Content[]> {
+    this.getNext = this.getNextSearch;
     return this.backendService.getSearch(this.nextInfo, tag)
         .pipe(filter(Boolean))
         .toPromise()
