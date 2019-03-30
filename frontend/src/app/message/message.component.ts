@@ -4,10 +4,12 @@ import { User, Message } from '../_models';
 import { BackendService } from '../_services';
 import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
+import { Router } from '@angular/router';
 
 export enum Option {
   Sent,
-  Received
+  Received,
+  Preview
 }
 
 @Component({
@@ -23,6 +25,7 @@ export class MessageComponent implements OnInit {
 
   sent = Option.Sent;
   received = Option.Received;
+  preview = Option.Preview;
 
   msgMap: Map<Option, Message[]> = new Map();
   paramNameMap: Map<Option, string> = new Map();
@@ -32,6 +35,7 @@ export class MessageComponent implements OnInit {
 
   constructor(
     private backendService: BackendService,
+    private router: Router,
     private logger: NGXLogger) { }
 
   ngOnInit() {
@@ -40,17 +44,14 @@ export class MessageComponent implements OnInit {
     this.paramNameMap.set(Option.Received, 'cid');
     this.paramNameMap.set(Option.Sent, 'aid');
 
-    this.backendService.getUser()
-        .pipe(filter(user => !user.isGuest()))
-        .subscribe(user => {
-          this.user = user;
-          if (this.isPreview) {
-            this.getPreview();
-          } else {
-            this.getNext(Option.Received);
-            this.getNext(Option.Sent);
-          }
-        });
+    this.backendService.getUser().subscribe(user => this.user = user);
+
+    if (this.isPreview) {
+      this.getPreview();
+    } else {
+      this.getNext(Option.Received);
+      this.getNext(Option.Sent);
+    }
   }
 
   getPreview() {
@@ -63,18 +64,25 @@ export class MessageComponent implements OnInit {
   }
 
   getNext(option: Option) {
-    this.backendService.getModels<Message>(Message, this.nextInfoMap.get(option),
-        this.paramNameMap.get(option), this.user.identity)
-        .toPromise().then(respWithLink => {
-          this.msgMap.set(option, this.msgMap.get(option).concat(respWithLink.response));
-          this.nextInfoMap.set(option, respWithLink.getNextQueryParams());
-          this.logger.trace("nextInfo:", this.nextInfoMap.get(option));
-        });
+    this.backendService.getModels<Message>(
+      Message,
+      this.nextInfoMap.get(option),
+      this.paramNameMap.get(option),
+      this.user.identity
+    ).toPromise().then(respWithLink => {
+      this.msgMap.set(option, this.msgMap.get(option).concat(respWithLink.response));
+      this.nextInfoMap.set(option, respWithLink.getNextQueryParams());
+      this.logger.trace("nextInfo:", this.nextInfoMap.get(option));
+    });
   }
 
   onClick(option: Option, index: number) {
-    let message = this.msgMap.get(option)[index];
-    this.logger.trace('onClick:', message);
+    if (option === Option.Preview) {
+      this.router.navigate(['/message']);
+    } else {
+      let message = this.msgMap.get(option)[index];
+      this.logger.trace('onClick:', message);
+    }
   }
 
   onDelete(option: Option, index: number) {

@@ -251,7 +251,11 @@ export class Notification {
   appendix: string;
   time: ZonedTime;
 
-  static of(authorId:string, authorName: string, category: Category, subscriber?: string,
+  toString(): string {
+    return Category.toString(this.category);
+  }
+
+  static of(authorId:string, authorName: string, category: Category, subscriberId?: string,
       referenceId?: string, referenceCid?: string, appendix?: string): Notification {
 
     let noti = new Notification();
@@ -259,14 +263,26 @@ export class Notification {
     noti.authorName = authorName;
     noti.category = category;
     // In case of New Content, followers are added to subscribers in backend.
-    if (subscriber) {
-      noti.subscribers.add(subscriber);
+    if (subscriberId) {
+      noti.subscribers.add(subscriberId);
     }
-    noti.referenceId = referenceId;
-    noti.referenceCid = referenceCid;
-    noti.appendix = appendix;
+    if (referenceId) {
+      noti.referenceId = referenceId;
+    }
+    if (referenceCid) {
+      noti.referenceCid = referenceCid;
+    }
+    if (appendix) {
+      noti.appendix = appendix;
+    }
     noti.time = ZonedTime.now();
     return noti;
+  }
+
+  public static random(subscriberId: string): Notification {
+    let randomId: string = v1();
+    let randomStr = randomId.substring(0, 8);
+    return Notification.of(randomId, randomStr, Category.Like, subscriberId);
   }
 
 }
