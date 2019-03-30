@@ -31,8 +31,6 @@ export class MessageComponent implements OnInit {
   paramNameMap: Map<Option, string> = new Map();
   nextInfoMap: Map<Option, string> = new Map();
 
-  imgServerUrl: string = Config.fileUrl + "/";
-
   constructor(
     private backendService: BackendService,
     private router: Router,
@@ -54,17 +52,18 @@ export class MessageComponent implements OnInit {
     }
   }
 
-  getPreview() {
-    this.backendService.getModels<Message>(Message, this.nextInfoMap.get(Option.Received),
+  getPreview(): Promise<Message[]> {
+    return this.backendService.getModels<Message>(Message, this.nextInfoMap.get(Option.Received),
         this.paramNameMap.get(Option.Received), this.user.identity, Config.paging.defaultPage, Config.paging.previewSize)
         .toPromise().then(respWithLink => {
           this.msgMap.set(Option.Received, this.msgMap.get(Option.Received).concat(respWithLink.response));
           this.nextInfoMap.set(Option.Received, respWithLink.getNextQueryParams());
+          return this.msgMap.get(Option.Received);
         });
   }
 
-  getNext(option: Option) {
-    this.backendService.getModels<Message>(
+  getNext(option: Option): Promise<Message[]> {
+    return this.backendService.getModels<Message>(
       Message,
       this.nextInfoMap.get(option),
       this.paramNameMap.get(option),
@@ -73,7 +72,16 @@ export class MessageComponent implements OnInit {
       this.msgMap.set(option, this.msgMap.get(option).concat(respWithLink.response));
       this.nextInfoMap.set(option, respWithLink.getNextQueryParams());
       this.logger.trace("nextInfo:", this.nextInfoMap.get(option));
+      return this.msgMap.get(option);
     });
+  }
+
+  onDelete(option: Option, index: number): Promise<Message[]> {
+    let message = this.msgMap.get(option)[index];
+    this.logger.trace('onDelete:', message);
+    return this.backendService.deleteModel(Message, message.idCid)
+        .toPromise()
+        .then(_ => this.msgMap.get(option).splice(index, 1));
   }
 
   onClick(option: Option, index: number) {
@@ -83,14 +91,6 @@ export class MessageComponent implements OnInit {
       let message = this.msgMap.get(option)[index];
       this.logger.trace('onClick:', message);
     }
-  }
-
-  onDelete(option: Option, index: number) {
-    let message = this.msgMap.get(option)[index];
-    this.logger.trace('onDelete:', message);
-    this.backendService.deleteModel(Message, message.idCid)
-        .toPromise()
-        .then(_ => this.msgMap.get(option).splice(index, 1));
   }
 
 }

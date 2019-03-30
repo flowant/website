@@ -205,7 +205,7 @@ export class Message {
   authorName: string;
   sentences: string;
   markedAsRead: boolean = false;
-  time: ZonedTime = new ZonedTime();
+  time: ZonedTime = ZonedTime.now();
 
   static of(receiverId: string, receiverName: string, senderId: string, senderName: string, sentences: string): Message {
     let msg: Message = new Message();
@@ -215,6 +215,10 @@ export class Message {
     msg.authorName = senderName;
     msg.sentences = sentences;
     return msg;
+  }
+
+  static fromUser(receiver: User, sender: User, sentences: string): Message {
+    return Message.of(receiver.identity, receiver.displayName, sender.identity, sender.displayName, sentences);
   }
 
 }
@@ -249,7 +253,7 @@ export class Notification {
   referenceId: string;
   referenceCid: string;
   appendix: string;
-  time: ZonedTime;
+  time: ZonedTime = ZonedTime.now();
 
   toString(): string {
     return Category.toString(this.category);
@@ -275,7 +279,6 @@ export class Notification {
     if (appendix) {
       noti.appendix = appendix;
     }
-    noti.time = ZonedTime.now();
     return noti;
   }
 
