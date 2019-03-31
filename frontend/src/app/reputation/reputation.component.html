@@ -5,7 +5,7 @@
     <i class="far fa-thumbs-up"></i><span> {{toNumberal(reputation.liked)}}</span>
   </button>
 
-  <ngb-rating *ngIf="hasRated()" class="uniform" [rate]="reputation.avrRated()" [readonly]="true">
+  <ngb-rating *ngIf="hasRated()" class="uniform ml-1" [rate]="reputation.avrRated()" [readonly]="true">
     <ng-template let-fill="fill">
       <span class="rating-star" [class.rating-star-full]="fill === 100">
         <span class="rating-star-half" [style.width.%]="fill">&#9733;</span>&#9733;

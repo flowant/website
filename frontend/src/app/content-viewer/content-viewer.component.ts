@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Content, IdCid, User } from '../_models';
 import { BackendService } from '../_services';
-import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
 
 @Component({
@@ -21,7 +17,7 @@ export class ContentViewerComponent implements OnInit {
 
   constructor(
     private backendService: BackendService,
-    private location: Location,
+    private router: Router,
     private route: ActivatedRoute,
     private logger: NGXLogger) { }
 
@@ -35,10 +31,21 @@ export class ContentViewerComponent implements OnInit {
       this.backendService.getModel<Content>(Content, IdCid.of(identity, containerId))
           .toPromise()
           .then(content => {
-            this.content = content;
             this.logger.trace('ContentViewer, content:', content);
+            content ? this.content = content : this.notFound();
           });
+    } else {
+      this.notFound();
     }
+  }
+
+  notFound() {
+    this.router.navigate(['/', 'page-not-found']);
+  }
+
+  onTag(tag: string): void {
+    this.logger.trace("onTag:", tag);
+    this.router.navigate(['/', 'search', tag]);
   }
 
 
