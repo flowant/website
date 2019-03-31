@@ -124,11 +124,11 @@ export class Content {
 }
 
 export class Extend {
-  ingredients:  Array<string> = ["Please type ingredients in separated lines.", "e.g., 6 ounces mozzarella cheese, shredded."];
-  prepareTime: string = "10m30s";
-  cookTime: string = "1h10m";
-  servings: number = 0;
-  calory: number = 0;
+  ingredients: Array<string> = [];
+  prepareTime: string;
+  cookTime: string;
+  servings: number;
+  calory: number;
   nutritionFacts: string;
 }
 

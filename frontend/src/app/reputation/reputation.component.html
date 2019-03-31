@@ -1,6 +1,10 @@
 
 <div *ngIf="typeName && authorId && idCid && reputation" class="reputation">
 
+  <button type="button" class="btn-like uniform" [disabled]="!canRepute()" [class.active]="isLiked()" (click)="onRepute('liked')">
+    <i class="far fa-thumbs-up"></i><span> {{toNumberal(reputation.liked)}}</span>
+  </button>
+
   <ngb-rating *ngIf="hasRated()" class="uniform" [rate]="reputation.avrRated()" [readonly]="true">
     <ng-template let-fill="fill">
       <span class="rating-star" [class.rating-star-full]="fill === 100">
@@ -9,12 +13,7 @@
     </ng-template>
   </ngb-rating>
 
-  <span *ngIf="hasRated()" class="uniform"> {{toNumberal(reputation.reputed)}} voters </span>
-
-  <button type="button" class="btn-like uniform" [disabled]="!canRepute()" [class.active]="isLiked()"
-      (click)="onRepute('liked')">
-    <i class="far fa-thumbs-up"></i><span> {{toNumberal(reputation.liked)}}</span>
-  </button>
+  <span *ngIf="hasRated()" class="uniform ml-1 text-muted"> {{toNumberal(reputation.reputed)}} voters </span>
 
   <!--
   <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic">

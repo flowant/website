@@ -13,6 +13,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { Authority } from './_models';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { ContentViewerComponent } from './content-viewer/content-viewer.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -22,7 +23,7 @@ const routes: Routes = [
   { path: 'search', component: SearchContentComponent },
   { path: 'search/:tag', component: SearchContentComponent },
   { path: 'content', component: ContentComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
-  { path: 'content/:id/:cid', component: ContentComponent },
+  { path: 'content/:id/:cid', component: ContentViewerComponent },
   { path: 'notification', component: NotificationComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'message', component: MessageComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'user/profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { a: Authority.User} },

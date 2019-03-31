@@ -1,0 +1,52 @@
+<div *ngIf="content" class="content">
+
+  <div class="h3">{{content.title}}</div>
+
+  <div class="row">
+    <div class="m-2 p-1 row no-gutters align-items-center col-sm" >
+      <div class="col-2">
+        <app-user-ref [userRefId]="content.authorId" [userRefName]="content.authorName"></app-user-ref>
+      </div>
+      <div class="col pl-2">
+        <span>@{{content.authorName}}</span>
+        <p class="m-0"><small>{{content.cruTime.created.toLocalDate()}}</small></p>
+      </div>
+    </div>
+
+    <div class="m-2 p-1 col-sm">
+      <app-reputation [typeName]="'Content'" [authorId]="content.authorId" [idCid]="content.idCid" [reputation]="content.reputation"></app-reputation>
+    </div>
+  </div>
+
+  <div class="h5 my-3">Ingredients
+    <span class="ml-2 small text-muted">
+      <i class="fas fa-chart-pie"></i> {{content.extend.servings}} servings
+    </span>
+  </div>
+  <div class="ml-2" *ngFor="let ingredient of content.extend.ingredients; index as i">{{i + 1}}. {{ingredient}}</div>
+
+  <div class="h5 my-3">Directions
+    <span class="ml-2 small text-muted">
+      <i class="far fa-clock"></i> Prep: {{content.extend.prepareTime}}
+      <i class="far fa-clock"></i> Cook {{content.extend.cookTime}}
+    </span>
+  </div>
+  <div class="ml-2">{{content.sentences}}</div>
+
+  <span class="ml-2" *ngFor="let tag of content.tags; index as i">#{{tag}} </span>
+
+  <div *ngIf="user.isMe(content.authorId)" class="border rounded my-1 p-1">
+    <button type="button" (click)="onEdit()" class="btn btn-outline-secondary">
+      Edit
+    </button>
+    <button type="button" (click)="onDelete()" class="btn btn-outline-secondary">
+      Delete
+    </button>
+  </div>
+
+  <div class="my-2">
+    <app-review [content]="content"></app-review>
+  </div>
+
+</div> <!-- *ngIf="content" class="content" -->
+

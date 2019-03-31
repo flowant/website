@@ -30,6 +30,8 @@ import { getAccessToken } from './_services';
 import { Config } from './config';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { ContentEditorComponent } from './content-editor/content-editor.component';
+import { ContentViewerComponent } from './content-viewer/content-viewer.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +52,9 @@ import { SignUpComponent } from './sign-up/sign-up.component';
     HomeComponent,
     AdminComponent,
     SignInComponent,
-    SignUpComponent
+    SignUpComponent,
+    ContentEditorComponent,
+    ContentViewerComponent
   ],
   imports: [
     NgbModule,
