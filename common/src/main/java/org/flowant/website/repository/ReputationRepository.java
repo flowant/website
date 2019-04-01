@@ -18,6 +18,8 @@ public interface ReputationRepository<T extends HasIdCid & HasReputation>
 
     Mono<Slice<T>> findAllByAuthorId(UUID authorId, Pageable pageable);
 
+    Mono<Slice<T>> findAllByIdCidContainerIdAndAuthorId(UUID containerId, UUID authorId, Pageable pageable);
+
     Mono<Reputation> updateReputationById(IdCid idCid, Reputation reputation);
 
     Mono<Void> deleteByIdWithRelationship(IdCid idCid);

@@ -41,6 +41,16 @@ public class ReplyRepositoryTest extends IdCidRepositoryTest<Reply, ReplyReposit
     }
 
     @Test
+    public void findAllByIdCidContainerIdAndAuthorId() {
+        UUID containerId = IdMaker.randomUUID();
+        UUID authorId = IdMaker.randomUUID();
+        Flux<Reply> entities = Flux.range(1, 10)
+                .map(i -> ReplyMaker.largeRandom(containerId).setAuthorId(authorId)).cache();
+        cleaner.registerToBeDeleted(entities);
+        saveAndGetPaging(entities, pageable -> repo.findAllByIdCidContainerIdAndAuthorId(containerId, authorId, pageable));
+    }
+
+    @Test
     public void ordered() {
         testOrdered(Reply::getIdCid, Comparator.comparing(Reply::getIdentity).reversed(),
                 ReplyMaker::smallRandom);

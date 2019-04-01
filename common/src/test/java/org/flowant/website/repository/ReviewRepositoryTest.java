@@ -41,6 +41,16 @@ public class ReviewRepositoryTest extends IdCidRepositoryTest<Review, ReviewRepo
     }
 
     @Test
+    public void findAllByIdCidContainerIdAndAuthorId() {
+        UUID containerId = IdMaker.randomUUID();
+        UUID authorId = IdMaker.randomUUID();
+        Flux<Review> entities = Flux.range(1, 10)
+                .map(i -> ReviewMaker.largeRandom(containerId).setAuthorId(authorId)).cache();
+        cleaner.registerToBeDeleted(entities);
+        saveAndGetPaging(entities, pageable -> repo.findAllByIdCidContainerIdAndAuthorId(containerId, authorId, pageable));
+    }
+
+    @Test
     public void ordered() {
         testOrdered(Review::getIdCid, Comparator.comparing(Review::getIdentity).reversed(),
                 ReviewMaker::smallRandom);
