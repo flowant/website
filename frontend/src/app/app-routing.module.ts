@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SearchContentComponent } from './search-content/search-content.component';
-import { ContentComponent } from './content/content.component';
 import { NotificationComponent } from './notification/notification.component';
 import { MessageComponent } from './message/message.component';
 import { HomeComponent } from './home/home.component';

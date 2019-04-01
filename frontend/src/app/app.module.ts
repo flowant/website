@@ -10,7 +10,6 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { ContentComponent } from './content/content.component';
 import { SearchContentComponent } from './search-content/search-content.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ReviewComponent } from './review/review.component';
@@ -38,7 +37,6 @@ import { ContentRefComponent } from './content-ref/content-ref.component';
 @NgModule({
   declarations: [
     AppComponent,
-    ContentComponent,
     SearchContentComponent,
     PageNotFoundComponent,
     ReviewComponent,
