@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Content, IdCid, User } from '../_models';
 import { BackendService } from '../_services';
 import { NGXLogger } from 'ngx-logger';
+import * as $ from 'jquery';
+
+declare var $: any;
 
 @Component({
   selector: 'app-content-viewer',
@@ -36,6 +39,9 @@ export class ContentViewerComponent implements OnInit {
               return this.notFound();
             }
             this.content = content;
+            $(document).ready(function() {
+              $('#sentences').html(content.sentences);
+            });
           });
     } else {
       return this.notFound();

@@ -5,13 +5,11 @@
     @extend .m-1;
 }
 
-.input-prepend {
-    @extend .input-group-prepend;
+.input-group-prepend {
     width: 33%;
 }
 
-.input-prepend-label {
-    @extend .input-group-text;
+.input-group-text {
     @extend .pl-2;
     width: 100%;
 }

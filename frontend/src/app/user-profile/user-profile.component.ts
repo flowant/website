@@ -55,7 +55,7 @@ export class UserProfileComponent implements OnInit {
       this.user = user;
     }
 
-    if(this.user.fileRefs) {
+    if(this.user.fileRefs && this.user.fileRefs.length > 0) {
       this.userImageUri = Config.imgServerUrl + '/' + this.user.identity;
     } else {
       this.userImageUri = "/assets/img/icon-user-128.png";
@@ -73,7 +73,7 @@ export class UserProfileComponent implements OnInit {
 
   deleteIfExistPhoto(): Observable<any> {
     return of(this.user.fileRefs).pipe(
-        filter(refs => Boolean(refs)),
+        filter(refs => Boolean(refs) && refs.length > 0),
         concatMap(refs => this.backendService.deleteFiles(refs)),
         tap(_ => this.user.fileRefs = undefined),
         tap(_ => this.updateUser()),

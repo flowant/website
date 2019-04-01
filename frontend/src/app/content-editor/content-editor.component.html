@@ -26,11 +26,11 @@
         </thead>
         <tbody>
           <tr>
-            <td><input type="text" [(ngModel)]="content.extend.prepTime"
+            <td><input type="text" [(ngModel)]="content.extend.prepareTime"
                 class="input-table" placeholder="10m30s"></td>
             <td><input type="text" [(ngModel)]="content.extend.cookTime"
                 class="input-table" placeholder="1h"></td>
-            <td><input type="text" [(ngModel)]="content.extend.servings"
+            <td><input type="number" [(ngModel)]="content.extend.servings"
                 class="input-table" placeholder="1"></td>
           </tr>
         </tbody>
@@ -55,7 +55,7 @@
     <div id="directions" class="border rounded my-1 p-1"></div>
   </div>
 
-  <div class="border rounded my-1 p-1 d-flex justify-content-end">
+  <div class="border rounded my-3 p-1 d-flex justify-content-end">
     <button type="button" [disabled]="!isValid(content.title, flatIngredients)" (click)="onSave()" class="btn-basic">
       Save
     </button>

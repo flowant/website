@@ -18,24 +18,28 @@
   </div>
 
   <div class="h5 my-3">Ingredients
-    <span class="ml-2 small text-muted">
+    <span *ngIf="content.extend.servings" class="ml-2 small text-muted">
       <i class="fas fa-chart-pie"></i> {{content.extend.servings}} servings
     </span>
   </div>
   <div class="ml-2" *ngFor="let ingredient of content.extend.ingredients; index as i">{{i + 1}}. {{ingredient}}</div>
 
   <div class="h5 my-3">Directions
-    <span class="ml-2 small text-muted">
+    <span *ngIf="content.extend.prepareTime" class="ml-2 small text-muted">
       <i class="far fa-clock"></i> Prep: {{content.extend.prepareTime}}
-      <i class="far fa-clock"></i> Cook {{content.extend.cookTime}}
+    </span>
+    <span *ngIf="content.extend.cookTime" class="ml-2 small text-muted">
+      <i class="far fa-clock"></i> Prep: {{content.extend.cookTime}}
     </span>
   </div>
 
-  <div class="sentences">
+  <div id="sentences" class="sentences">
+    <!--
     <div class="ml-2" [innerHTML]="content.sentences"></div>
+    -->
   </div>
 
-  <div *ngIf="content.tags.length > 0">
+  <div *ngIf="content.tags.size > 0">
     <div class="h5 my-3">Tags</div>
     <div class="ml-2" >
       <button type="button" class="btn btn-outline-primary border-0 rounded-lg p-0 mr-1"
@@ -43,7 +47,7 @@
     </div>
   </div>
 
-  <div *ngIf="user.isMe(content.authorId)" class="border rounded my-1 p-1 d-flex justify-content-end">
+  <div *ngIf="user.isMe(content.authorId)" class="border rounded my-3 p-1 d-flex justify-content-end">
     <button type="button" (click)="onEdit()" class="btn-basic">
       Edit
     </button>

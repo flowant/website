@@ -20,13 +20,15 @@ export class ContentEditorComponent implements OnInit {
 
   imgServerUrl: string = Config.gatewayUrl;
 
-  containerId: string;
-
   user: User;
 
   content: Content;
 
+  containerId: string;
+
   idCid: IdCid;
+
+  flatTags: string = "";
 
   flatIngredients: string = "";
 
@@ -73,11 +75,19 @@ export class ContentEditorComponent implements OnInit {
     for (let i in this.content.extend.ingredients) {
       this.flatIngredients += this.content.extend.ingredients[i] + '\n';
     }
+
+    if (this.content.tags.size > 0) {
+      this.flatTags = Array.from(this.content.tags.values()).join(' ');
+    }
+
     this.renderSentences();
   }
 
   convertToContent(): void {
-    this.content.extend.ingredients = this.flatIngredients.split('\n');
+    this.content.extend.ingredients = this.flatIngredients.split('\n').filter(e => /\S/.test(e));
+    if (this.flatTags) {
+      this.flatTags.replace(/[#]/g, ' ').split(/\s+/).map(e => this.content.tags.add(e));
+    }
     this.content.sentences = $('#directions').summernote('code');
   }
 
@@ -85,35 +95,41 @@ export class ContentEditorComponent implements OnInit {
     let component = this;
 
     $(document).ready(function() {
-      $('#directions').summernote({
-        placeholder: 'Please type directions here.',
-        height: 200,
-        toolbar: [
-          ['style', ['style']],
-          ['font', ['bold', 'italic', 'underline', 'clear']],
-          ['fontColor', ['color']],
-          ['history', ['undo', 'redo']],
-          ['para', ['ul', 'paragraph', 'height']],
-          ['insert', ['link', 'picture', 'video']],
-          ['fullscreen', ['fullscreen']]
-        ],
-        callbacks: {
-          onImageUpload: function(files) {
-            component.backendService.addFiles(files).subscribe(fileRefs => {
-              for(let fileRef of fileRefs) {
-                component.content.fileRefs.push(fileRef);
-                $('#directions').summernote('insertImage', component.imgServerUrl + fileRef.uri);
-              }
-            });
-          },
-          onMediaDelete : function (target) {
-            // This callback isn't called when Media are deleted by a keyboard.
-            // We need another way to delete images on the backend. see deleteUnusedFile()
-            // Use this event handler after this issue is resolved.
-            // component.logger.trace('onMediaDelete:', target.attr('src'));
+
+      $('#directions').summernote(
+        {
+          placeholder: 'Please type directions here.',
+          height: 250,
+          toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontColor', ['color']],
+            ['history', ['undo', 'redo']],
+            ['para', ['ul', 'paragraph', 'height']],
+            ['insert', ['link', 'picture', 'video']],
+            ['fullscreen', ['fullscreen']]
+          ],
+          callbacks: {
+            onImageUpload: function(files) {
+              component.backendService.addFiles(files).subscribe(fileRefs => {
+                for(let fileRef of fileRefs) {
+                  component.content.fileRefs.push(fileRef);
+                  $('#directions').summernote('insertImage', component.imgServerUrl + fileRef.uri);
+                }
+              });
+            },
+            onMediaDelete : function (target) {
+              // This callback isn't called when Media are deleted by a keyboard.
+              // We need another way to delete images on the backend. see deleteUnusedFile()
+              // Use this event handler after this issue is resolved.
+              // component.logger.trace('onMediaDelete:', target.attr('src'));
+            }
           }
         }
-      });
+      );
+
+      $('#directions').summernote('code', component.content.sentences);
+
     });
   }
 

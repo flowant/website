@@ -18,43 +18,43 @@
         </div>
 
         <div class="input-group">
-          <div class="input-prepend">
-            <span class="input-prepend-label">Username</span>
+          <div class="input-group-prepend">
+            <span class="input-group-text">Username</span>
           </div>
           <input class="input-box-readonly" type="text" [(ngModel)]="user.username">
         </div>
 
         <div class="input-group">
-          <div class="input-prepend">
-            <span class="input-prepend-label">Display Name</span>
+          <div class="input-group-prepend">
+            <span class="input-group-text">Display Name</span>
           </div>
           <input [ngClass]="'input-box'+ suffixReadonly()" type="text" [(ngModel)]="user.displayName">
         </div>
 
         <div class="input-group">
-          <div class="input-prepend">
-            <span class="input-prepend-label">Firstname</span>
+          <div class="input-group-prepend">
+            <span class="input-group-text">Firstname</span>
           </div>
           <input [ngClass]="'input-box'+ suffixReadonly()" type="text" [(ngModel)]="user.firstname">
         </div>
 
         <div class="input-group">
-          <div class="input-prepend">
-            <span class="input-prepend-label">Lastname</span>
+          <div class="input-group-prepend">
+            <span class="input-group-text">Lastname</span>
           </div>
           <input [ngClass]="'input-box'+ suffixReadonly()" type="text" [(ngModel)]="user.lastname">
         </div>
 
         <div class="input-group">
-          <div class="input-prepend">
-            <span class="input-prepend-label">Email</span>
+          <div class="input-group-prepend">
+            <span class="input-group-text">Email</span>
           </div>
           <input [ngClass]="'input-box'+ suffixReadonly()" type="text" [(ngModel)]="user.email">
         </div>
 
         <div class="input-group">
-          <div class="input-prepend">
-            <label class="input-prepend-label" for="genderSelector">Gender</label>
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="genderSelector">Gender</label>
           </div>
           <select [ngClass]="'select'+ suffixReadonly()" id="genderSelector" [(ngModel)]="user.gender">
             <option *ngFor="let key of genderKeys" [value]="genders[key]">{{key}}</option>
