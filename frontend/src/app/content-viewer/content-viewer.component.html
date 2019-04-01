@@ -1,4 +1,4 @@
-<div *ngIf="content" class="content">
+<div *ngIf="content">
 
   <div class="h3">{{content.title}}</div>
 
@@ -30,19 +30,24 @@
       <i class="far fa-clock"></i> Cook {{content.extend.cookTime}}
     </span>
   </div>
-  <div class="ml-2">{{content.sentences}}</div>
 
-  <div class="h5 my-3">Tags</div>
-  <div class="ml-2" >
-    <button type="button" class="btn btn-outline-primary border-0 rounded-lg p-0 mr-1"
-        (click)="onTag(tag)" *ngFor="let tag of content.tags; index as i">#{{tag}}</button>
+  <div class="sentences">
+    <div class="ml-2" [innerHTML]="content.sentences"></div>
   </div>
 
-  <div *ngIf="user.isMe(content.authorId)" class="border rounded my-1 p-1">
-    <button type="button" (click)="onEdit()" class="btn btn-outline-secondary">
+  <div *ngIf="content.tags.length > 0">
+    <div class="h5 my-3">Tags</div>
+    <div class="ml-2" >
+      <button type="button" class="btn btn-outline-primary border-0 rounded-lg p-0 mr-1"
+          (click)="onTag(tag)" *ngFor="let tag of content.tags; index as i">#{{tag}}</button>
+    </div>
+  </div>
+
+  <div *ngIf="user.isMe(content.authorId)" class="border rounded my-1 p-1 d-flex justify-content-end">
+    <button type="button" (click)="onEdit()" class="btn-basic">
       Edit
     </button>
-    <button type="button" (click)="onDelete()" class="btn btn-outline-secondary">
+    <button type="button" (click)="onDelete()" class="btn-basic">
       Delete
     </button>
   </div>

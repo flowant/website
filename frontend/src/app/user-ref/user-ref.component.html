@@ -5,6 +5,7 @@
 
   <div class="dropdown-menu">
     <a class="dropdown-item" routerLink="/user/profile/{{userRefId}}">Profile</a>
+    <a class="dropdown-item" routerLink="/user/content/{{userRefId}}">Contents</a>
     <a *ngIf="!hasFollowee()" class="dropdown-item" (click)="postRelation(true)">Follow</a>
     <a *ngIf="hasFollowee()" class="dropdown-item" (click)="postRelation(false)">Unfollow</a>
     <a class="dropdown-item" (click)="sendMessage()">Send Message</a>

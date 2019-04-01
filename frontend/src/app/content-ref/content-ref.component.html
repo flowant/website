@@ -1,0 +1,9 @@
+<div *ngIf="content">
+  <div class="card" (click)="onClick()">
+    <img *ngIf="content.fileRefs && content.fileRefs.length > 0" class="card-img-top"
+        [src]="imgServerUrl + content.fileRefs[0].uri" alt="Card image cap">
+    <div class="card-body">
+      <span class="card-text">{{content.title}}</span>
+    </div>
+  </div>
+</div>

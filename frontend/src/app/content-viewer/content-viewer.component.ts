@@ -32,15 +32,18 @@ export class ContentViewerComponent implements OnInit {
           .toPromise()
           .then(content => {
             this.logger.trace('ContentViewer, content:', content);
-            content ? this.content = content : this.notFound();
+            if (Boolean(content) === false) {
+              return this.notFound();
+            }
+            this.content = content;
           });
     } else {
-      this.notFound();
+      return this.notFound();
     }
   }
 
-  notFound() {
-    this.router.navigate(['/', 'page-not-found']);
+  notFound(): Promise<boolean> {
+    return this.router.navigate(['/', 'page-not-found']);
   }
 
   onTag(tag: string): void {
@@ -48,5 +51,15 @@ export class ContentViewerComponent implements OnInit {
     this.router.navigate(['/', 'search', tag]);
   }
 
+  onEdit(): void {
+    this.router.navigate(['/content/edit/', this.content.idCid.identity, this.content.idCid.containerId]);
+  }
+
+  onDelete(): void {
+    this.logger.trace('onDelete:', this.content);
+    this.backendService.deleteModel(Content, this.content.idCid)
+      .toPromise()
+      .then(() => this.router.navigate(['/user/content/', this.user.identity]));
+  }
 
 }

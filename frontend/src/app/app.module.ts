@@ -32,6 +32,8 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ContentEditorComponent } from './content-editor/content-editor.component';
 import { ContentViewerComponent } from './content-viewer/content-viewer.component';
+import { UserContentComponent } from './user-content/user-content.component';
+import { ContentRefComponent } from './content-ref/content-ref.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,9 @@ import { ContentViewerComponent } from './content-viewer/content-viewer.componen
     SignInComponent,
     SignUpComponent,
     ContentEditorComponent,
-    ContentViewerComponent
+    ContentViewerComponent,
+    UserContentComponent,
+    ContentRefComponent
   ],
   imports: [
     NgbModule,

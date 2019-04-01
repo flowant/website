@@ -91,9 +91,13 @@
         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
           <a *ngIf="!user.isGuest()" class="dropdown-item" routerLink="/user/profile">
             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-            Profile
+            My Profile
           </a>
-          <a *ngIf="!user.isGuest()" class="dropdown-item" routerLink="/content">
+          <a *ngIf="!user.isGuest()" class="dropdown-item" [routerLink]="'/user/content/' + user.identity">
+            <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+            My Contents
+          </a>
+          <a *ngIf="!user.isGuest()" class="dropdown-item" routerLink="/content/edit">
             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
             Create Content
           </a>

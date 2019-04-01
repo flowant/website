@@ -14,6 +14,8 @@ import { Authority } from './_models';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ContentViewerComponent } from './content-viewer/content-viewer.component';
+import { ContentEditorComponent } from './content-editor/content-editor.component';
+import { UserContentComponent } from './user-content/user-content.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -22,12 +24,15 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent, canActivate: [AuthGuard], data: { a: Authority.Admin } },
   { path: 'search', component: SearchContentComponent },
   { path: 'search/:tag', component: SearchContentComponent },
-  { path: 'content', component: ContentComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
-  { path: 'content/:id/:cid', component: ContentViewerComponent },
+  { path: 'content/edit', component: ContentEditorComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
+  { path: 'content/edit/:id/:cid', component: ContentEditorComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
+  { path: 'content/view/:id/:cid', component: ContentViewerComponent },
   { path: 'notification', component: NotificationComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'message', component: MessageComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'user/profile', component: UserProfileComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: 'user/profile/:id', component: UserProfileComponent, canActivate: [AuthGuard], data: { a: Authority.User } },
+  { path: 'user/content', component: UserContentComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
+  { path: 'user/content/:id', component: UserContentComponent, canActivate: [AuthGuard], data: { a: Authority.User} },
   { path: '**', component: PageNotFoundComponent }
 ];
 

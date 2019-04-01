@@ -1,3 +1,70 @@
-<p>
-  content-editor works!
-</p>
+<div *ngIf="content" class="border rounded p-1 mb-2">
+
+  <div class="border rounded my-1 p-1">
+    <div class="h5 my-3">Title</div>
+    <textarea [(ngModel)]="content.title" class="form-control h3"
+        placeholder="Please type a title here." [class.is-invalid]="!isValid(content.title)"></textarea>
+  </div>
+
+  <div class="row m-1">
+    <div class="m-2 p-1 row no-gutters align-items-center col-sm">
+      <div class="col-2">
+        <app-user-ref [userRefId]="content.authorId" [userRefName]="content.authorName"></app-user-ref>
+      </div>
+      <div class="col pl-2">
+        <div class=""><i class="far fa-user"></i> {{content.authorName}}</div>
+        <div class="text-muted"><i class="far fa-calendar-alt"></i> {{content.cruTime.created.toLocalDate()}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="table-responsive-sm">
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr> <th>Prepair</th> <th>Cook</th> <th>Servings</th> </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" [(ngModel)]="content.extend.prepTime"
+                class="input-table" placeholder="10m30s"></td>
+            <td><input type="text" [(ngModel)]="content.extend.cookTime"
+                class="input-table" placeholder="1h"></td>
+            <td><input type="text" [(ngModel)]="content.extend.servings"
+                class="input-table" placeholder="1"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="border rounded my-1 p-1">
+    <div class="h5 my-3">Ingredients</div>
+    <textarea [(ngModel)]="flatIngredients" class="form-control" rows="4" [class.is-invalid]="!isValid(flatIngredients)"
+        placeholder="Please type ingredients in separated lines. For example, 6 ounces mozzarella cheese, shredded."></textarea>
+  </div>
+
+  <div class="border rounded my-1 p-1">
+    <div class="h5 my-3">Tags</div>
+    <textarea [(ngModel)]="flatTags" class="form-control" rows="2"
+        placeholder="Please type tags. For example, cheese beef two-word"></textarea>
+  </div>
+
+  <div class="border rounded my-1 p-1">
+    <div class="h5 my-3">Directions</div>
+    <div id="directions" class="border rounded my-1 p-1"></div>
+  </div>
+
+  <div class="border rounded my-1 p-1 d-flex justify-content-end">
+    <button type="button" [disabled]="!isValid(content.title, flatIngredients)" (click)="onSave()" class="btn-basic">
+      Save
+    </button>
+    <button type="button" [disabled]="!isValid(content.title, flatIngredients)" (click)="onSave(true)" class="btn-basic">
+      View
+    </button>
+    <button type="button" (click)="onDelete()" class="btn-basic">
+      Delete
+    </button>
+  </div>
+
+</div> <!-- *ngIf="content" class="content" -->

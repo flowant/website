@@ -109,13 +109,20 @@ export class Content {
   reputation: Reputation = new Reputation();
   cruTime: CruTime = CruTime.now();
 
-  static random(): Content {
-    let id = v1();
-    let randomStr = id.substring(0, 8);
+  static of(user: User, containerId: string): Content {
     let content = new Content();
-    content.idCid = IdCid.random();
-    content.authorId = id;
-    content.authorName = randomStr;
+    content.idCid = IdCid.random(containerId);
+    content.authorId = user.identity;
+    content.authorName = user.displayName;
+    return content;
+  }
+
+  static random(): Content {
+    let cid = v1();
+    let user = User.random();
+    let content = Content.of(user, cid);
+
+    let randomStr = cid.substring(0, 8);
     content.title = randomStr;
     content.sentences = randomStr;
     content.tags.add('tag');
