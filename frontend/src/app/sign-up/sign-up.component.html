@@ -72,8 +72,8 @@
     <div class="form-group">
       <label class="checkbox-inline">
         <input type="checkbox" formControlName="accept" required>
-            I accept the <a routerLink="#" class="text-primary">Terms of Use</a>
-            &amp; <a routerLink="#" class="text-primary">Privacy Policy</a>
+            I accept the <a routerLink="/page-not-found" class="text-primary">Terms of Use</a>
+            &amp; <a routerLink="/page-not-found" class="text-primary">Privacy Policy</a>
         <div *ngIf="isInvalid(f.accept)">
           <div *ngIf="f.accept.errors.required" class="text-danger">Acceptance is required.</div>
         </div>
