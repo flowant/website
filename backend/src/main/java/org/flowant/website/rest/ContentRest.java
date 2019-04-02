@@ -38,7 +38,9 @@ public class ContentRest extends PopularRepositoryRest<Content, ContentRepositor
 
         UriComponentsBuilder uriBuilderWithPath = uriBuilder.path(PATH_CONTENT);
 
-        if (containerId != null) {
+        if (containerId != null && authorId != null) {
+            return super.getAllByParams(containerId, authorId, page, size, pagingState, uriBuilderWithPath);
+        } else if (containerId != null) {
             return super.getAllByParam(repo::findAllByIdCidContainerId, CID, containerId,
                     page, size, pagingState, uriBuilderWithPath);
         } else if (authorId != null) {

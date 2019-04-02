@@ -44,6 +44,8 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -240,17 +242,26 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
     }
 
     public void pagination(int cntEntities, int pageSize, String paramName, Function<UUID, Entity> supplier) {
-        UUID paramValue = UUIDs.timeBased();
+        MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add(paramName, IdMaker.randomUUID().toString());
+
+        Function<MultiValueMap<String, String>, Entity> proxy =
+                (params) -> supplier.apply(UUID.fromString(params.getFirst(paramName)));
+
+        pagination(cntEntities, pageSize, multiValueMap, proxy);
+    }
+
+    public void pagination(int cntEntities, int pageSize, MultiValueMap<String, String> params, Function<MultiValueMap<String, String>, Entity> supplier) {
 
         Assert.assertTrue(repo instanceof IdCidRepository);
 
-        Flux<Entity> entities = Flux.range(1, cntEntities).map(i -> supplier.apply(paramValue)).cache();
+        Flux<Entity> entities = Flux.range(1, cntEntities).map(i -> supplier.apply(params)).cache();
         repo.saveAll(entities).blockLast();
         cleaner.registerToBeDeleted(entities);
 
         ResponseSpec resp = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path(baseUrl)
-                    .queryParam(paramName, paramValue.toString())
+                    .queryParams(params)
                     .queryParam(PAGE, "0")
                     .queryParam(SIZE, String.valueOf(pageSize)).build())
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -276,7 +287,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
                     .exchange();
         }
 
-        if (paramName.equalsIgnoreCase(SID)) {
+        if (params.size() == 1 && params.keySet().contains(SID)) {
             List<ID> actualIdCids = list.stream().map(getEntityId).collect(Collectors.toList());
             Assert.assertTrue(entities.map(getEntityId).all(actualIdCids::contains).block());
         } else {

@@ -1,6 +1,7 @@
 package org.flowant.website.rest;
 
 import static org.flowant.website.rest.IdCidRepositoryRest.AID;
+import static org.flowant.website.rest.IdCidRepositoryRest.CID;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -16,6 +17,7 @@ import org.flowant.website.repository.ContentRepository;
 import org.flowant.website.repository.ContentReputationRepository;
 import org.flowant.website.repository.RelationshipService;
 import org.flowant.website.storage.FileStorage;
+import org.flowant.website.util.IdMaker;
 import org.flowant.website.util.test.ContentMaker;
 import org.flowant.website.util.test.ReputationMaker;
 import org.junit.Assert;
@@ -24,6 +26,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import junitparams.JUnitParamsRunner;
 import lombok.extern.log4j.Log4j2;
@@ -86,6 +90,23 @@ public class ContentRestTest extends RestWithRepositoryTest<Content, IdCid, Cont
         pagination(10, 3, AID, supplier);
         pagination(10, 5, AID, supplier);
         pagination(10, 11, AID, supplier);
+    }
+
+    @Test
+    public void testPaginationByContainerIdAndAuthorId() {
+
+        MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add(AID, IdMaker.randomUUID().toString());
+        multiValueMap.add(CID, IdMaker.randomUUID().toString());
+
+        Function<MultiValueMap<String, String>, Content> supplier =
+                (params) -> ContentMaker.largeRandom(UUID.fromString(params.getFirst(CID)))
+                                        .setAuthorId(UUID.fromString(params.getFirst(AID)));
+
+        pagination(10, 1, multiValueMap, supplier);
+        pagination(10, 3, multiValueMap, supplier);
+        pagination(10, 5, multiValueMap, supplier);
+        pagination(10, 11, multiValueMap, supplier);
     }
 
     @Autowired

@@ -12,17 +12,25 @@ import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class LinkUtil {
 
     public static HttpHeaders nextLinkHeader(String paramName, String paramValue, UriComponentsBuilder uriBuilder, Slice<?> slice) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add(paramName, paramValue);
+        return nextLinkHeader(params, uriBuilder, slice);
+    }
+
+    public static HttpHeaders nextLinkHeader(MultiValueMap<String, String> params, UriComponentsBuilder uriBuilder, Slice<?> slice) {
         if (slice.hasNext() == false) {
             return null;
         }
         CassandraPageRequest pageable = CassandraPageRequest.class.cast(slice.nextPageable());
         String url = uriBuilder
-                .queryParam(paramName, paramValue)
+                .queryParams(params)
                 .queryParam(PAGE, pageable.getPageNumber())
                 .queryParam(SIZE, pageable.getPageSize())
                 .queryParam(PS, pageable.getPagingState())
