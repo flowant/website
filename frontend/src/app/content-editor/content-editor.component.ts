@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { tap, concatMap } from 'rxjs/operators';
 import * as $ from 'jquery';
-import { Content, IdCid, User, WebSite } from '../_models';
+import { Content, IdCid, User, WebSite, Category, Notification } from '../_models';
 import { BackendService } from '../_services';
 import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
@@ -167,6 +167,10 @@ export class ContentEditorComponent implements OnInit {
           this.router.navigate(['/content/view/', this.idCid.identity, this.idCid.containerId]);
         }
       });
+    let notification = Notification.of(this.user.identity, this.user.displayName,
+        Category.NewContent, undefined, this.idCid.identity, this.idCid.containerId, Content.name);
+    this.backendService.postModel<Notification>(Notification, notification)
+      .toPromise();
   }
 
   notFound(): Promise<boolean> {

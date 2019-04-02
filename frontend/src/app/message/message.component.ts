@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { filter } from 'rxjs/operators';
 import { User, Message } from '../_models';
-import { BackendService } from '../_services';
+import { BackendService, IdParams } from '../_services';
 import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
 import { Router } from '@angular/router';
@@ -28,7 +27,7 @@ export class MessageComponent implements OnInit {
   preview = Option.Preview;
 
   msgMap: Map<Option, Message[]> = new Map();
-  paramNameMap: Map<Option, string> = new Map();
+  paramsMap: Map<Option, IdParams> = new Map();
   nextInfoMap: Map<Option, string> = new Map();
 
   constructor(
@@ -39,10 +38,12 @@ export class MessageComponent implements OnInit {
   ngOnInit() {
     this.msgMap.set(Option.Received, new Array<Message>())
     this.msgMap.set(Option.Sent, new Array<Message>())
-    this.paramNameMap.set(Option.Received, 'cid');
-    this.paramNameMap.set(Option.Sent, 'aid');
 
-    this.backendService.getUser().subscribe(user => this.user = user);
+    this.backendService.getUser().subscribe(user => {
+      this.user = user;
+      this.paramsMap.set(Option.Received, {cid: user.identity});
+      this.paramsMap.set(Option.Sent, {aid: user.identity});
+    });
 
     if (this.isPreview) {
       this.getPreview();
@@ -54,8 +55,9 @@ export class MessageComponent implements OnInit {
 
   getPreview(): Promise<Message[]> {
     return this.backendService.getModels<Message>(Message, this.nextInfoMap.get(Option.Received),
-        this.paramNameMap.get(Option.Received), this.user.identity, Config.paging.defaultPage, Config.paging.previewSize)
-        .toPromise().then(respWithLink => {
+        this.paramsMap.get(Option.Received), Config.paging.defaultPage, Config.paging.previewSize)
+        .toPromise()
+        .then(respWithLink => {
           this.msgMap.set(Option.Received, this.msgMap.get(Option.Received).concat(respWithLink.response));
           this.nextInfoMap.set(Option.Received, respWithLink.getNextQueryParams());
           return this.msgMap.get(Option.Received);
@@ -63,17 +65,15 @@ export class MessageComponent implements OnInit {
   }
 
   getNext(option: Option): Promise<Message[]> {
-    return this.backendService.getModels<Message>(
-      Message,
-      this.nextInfoMap.get(option),
-      this.paramNameMap.get(option),
-      this.user.identity
-    ).toPromise().then(respWithLink => {
-      this.msgMap.set(option, this.msgMap.get(option).concat(respWithLink.response));
-      this.nextInfoMap.set(option, respWithLink.getNextQueryParams());
-      this.logger.trace("nextInfo:", this.nextInfoMap.get(option));
-      return this.msgMap.get(option);
-    });
+    return this.backendService.getModels<Message>(Message, this.nextInfoMap.get(option),
+        this.paramsMap.get(option))
+        .toPromise()
+        .then(respWithLink => {
+          this.msgMap.set(option, this.msgMap.get(option).concat(respWithLink.response));
+          this.nextInfoMap.set(option, respWithLink.getNextQueryParams());
+          this.logger.trace("nextInfo:", this.nextInfoMap.get(option));
+          return this.msgMap.get(option);
+        });
   }
 
   onDelete(option: Option, index: number): Promise<Message[]> {

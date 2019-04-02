@@ -80,7 +80,7 @@ describe('ReputationComponent', () => {
 
     let user: User = User.random();
     let author: User = User.random();
-    let review = Review.random(author.identity, author.displayName);
+    let review = Review.random(author);
 
     component.typeName = "Review";
     component.authorId = review.authorId;
@@ -171,7 +171,7 @@ describe('ReputationComponent', () => {
 
     let user: User = User.random();
     let author: User = User.random();
-    let review = Review.random(author.identity, author.displayName);
+    let review = Review.random(author);
 
     component.typeName = "Review";
     component.authorId = review.authorId;

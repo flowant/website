@@ -20,7 +20,7 @@ export class ModalsComponent implements OnInit {
 
   signOut() {
     this.authService.signOut()
-        .subscribe(_ => this.router.navigate(['/']));
+        .subscribe(_ => this.router.navigate(['']));
   }
 
 }

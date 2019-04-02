@@ -1,12 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
-import { filter } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { User, Notification, Category } from '../_models';
 import { BackendService } from '../_services';
 import { Config } from '../config';
 import { NGXLogger } from 'ngx-logger';
-import { userInfo } from 'os';
 
 @Component({
   selector: 'app-notification',
@@ -35,7 +32,7 @@ export class NotificationComponent implements OnInit {
 
   getNext(): Promise<Notification[]> {
     return this.backendService.getModels<Notification>(
-      Notification, this.nextInfo, 'sid', this.user.identity,
+      Notification, this.nextInfo, {sid: this.user.identity},
       this.isPreview ? Config.paging.defaultPage : undefined,
       this.isPreview ? Config.paging.previewSize : undefined
     ).toPromise().then(respWithLink => {

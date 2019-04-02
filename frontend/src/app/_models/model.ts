@@ -157,13 +157,20 @@ export class Review {
   reputation: Reputation = new Reputation();
   cruTime: CruTime = CruTime.now();
 
-  static random(authorId: string, authorName: string): Review {
+  static of(containerId:string, user: User, comment?:string): Review {
     let review = new Review();
-    review.idCid = IdCid.random();
-    review.authorId = authorId;
-    review.authorName = authorName;
-    review.comment = v1();
+    review.idCid = IdCid.random(containerId);
+    review.authorId = user.identity;
+    review.authorName = user.displayName;
+    if (comment) {
+      review.comment = comment;
+    }
     return review;
+  }
+
+  static random(user: User): Review {
+    let identity = v1();
+    return Review.of(identity, user, 'comment' + identity);
   }
 
 }
@@ -180,11 +187,11 @@ export class Reply {
 export class Reputation {
   idCid?: IdCid;
   viewed: number = 1;
-  rated: number;
-  liked: number;
-  disliked: number;
-  reported: number;
-  reputed: number;
+  rated: number = 0;
+  liked: number = 0;
+  disliked: number = 0;
+  reported: number = 0;
+  reputed: number = 0;
 
   subtract(r: Reputation): Reputation {
     let diff = Object.assign(new Reputation(), this);
@@ -197,9 +204,30 @@ export class Reputation {
     return diff;
   }
 
+  negative(): Reputation {
+    let n = new Reputation();
+    if(this.idCid) {
+      n.idCid = this.idCid;
+    }
+    n.viewed = -this.viewed;
+    n.rated = -this.rated;
+    n.liked = -this.liked;
+    n.disliked = -this.disliked;
+    n.reported = -this.reported;
+    n.reputed = -this.reputed;
+    return n;
+  }
+
   rate(rating: number): Reputation {
     this.rated = rating;
     this.reputed = 1;
+    return this;
+  }
+
+  adjust(): Reputation {
+    if (this.rated > 0) {
+      this.reputed = 1;
+    }
     return this;
   }
 

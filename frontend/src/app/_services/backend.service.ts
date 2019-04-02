@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { NGXLogger, LoggerConfig } from 'ngx-logger';
+import { NGXLogger } from 'ngx-logger';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { catchError, map, tap, concatMap, filter } from 'rxjs/operators';
 import { IdCid, IdToPath, Content, Reputation, reviver, FileRefs, replacer, WebSite } from '../_models';
 import { RespWithLink, User, Relation, Auth } from '../_models';
 import { Config } from '../config';
+
+export interface IdParams {
+  [name: string]: string;
+}
 
 interface TextResponseOption {
   headers?: HttpHeaders | {
@@ -154,13 +158,14 @@ export class BackendService {
     );
   }
 
-  getModels<T>(type, nextInfo: string, queryName: string, queryValue: string, page?: string, size?: string)
+  getModels<T>(type, nextInfo: string, params: IdParams, page?: string, size?: string)
       : Observable<RespWithLink<T>> {
 
     page = page ? page : Config.paging.defaultPage;
     size = size ? size: Config.paging.defaultSize;
 
-    let queryParams: string = nextInfo ? nextInfo : `?${queryName}=${queryValue}&page=${page}&size=${size}`;
+    let queryParams: string = nextInfo ? nextInfo
+        : '?' + Object.keys(params).map(key => key + '=' + params[key]).join('&') + `&page=${page}&size=${size}`;
 
     return this.http.get(encodeURI(Config.getUrl(type.name) + queryParams) , baseOptions).pipe(
       map(resp => RespWithLink.of<T>(

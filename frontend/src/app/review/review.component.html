@@ -1,24 +1,27 @@
-<div *ngIf="content">
-  <div *ngIf="review" class="review">
-    <textarea class="form-control" [(ngModel)]="review.comment" placeholder="Please type a title here."></textarea>
+<div *ngIf="content && user">
+  <div *ngIf="!user.isGuest() && userReview" class="review">
+    <textarea class="form-control" [(ngModel)]="userReview.comment" placeholder="Please type a title here."></textarea>
     <div class="review-btns">
       <div class="col-5">
-        <ngb-rating [(rate)]="review.reputing.rated">
+        <ngb-rating [(rate)]="userReview.reputing.rated">
           <ng-template let-fill="fill">
             <span class="rating-star" [class.rating-star-full]="fill === 100">&#9733;</span>
           </ng-template>
         </ngb-rating>
       </div>
-      <div class="col-7">
+      <div class="col-7 d-flex justify-content-end">
         <button type="button" (click)="onSave()" class="btn-basic">
           <i class="far fa-save"></i><span> Save</span>
+        </button>
+        <button type="button" (click)="onDelete()" class="btn-basic">
+          <i class="far fa-trash-alt"></i><span> Delete</span>
         </button>
       </div>
     </div>
   </div>
 
   <ul class="list-unstyled">
-    <li class="media" *ngFor="let review of reviews" >
+    <li class="media" *ngFor="let review of reviews">
       <div class="user-ref">
         <app-user-ref [userRefId]="review.authorId" [userRefName]="review.authorName"></app-user-ref>
         <p class="date">{{review.cruTime.created.toLocalDate()}}</p>
@@ -35,5 +38,5 @@
       </div>
     </li>
   </ul>
-<button type="button" (click)="getNextReview()" class="btn btn-primary btn-lg btn-block" [disabled]="!nextInfo">More</button>
+<button type="button" (click)="getNext()" class="btn btn-primary btn-lg btn-block" [disabled]="!nextInfo">More</button>
 </div>

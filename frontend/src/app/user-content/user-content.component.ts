@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Content, User } from '../_models';
+import { Content } from '../_models';
 import { BackendService } from '../_services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NGXLogger } from 'ngx-logger';
-import { filter, tap, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-content',
@@ -30,7 +30,7 @@ export class UserContentComponent implements OnInit {
   }
 
   getNext(): Promise<Content[]> {
-    return this.backendService.getModels<Content>(Content, this.nextInfo, 'aid', this.identity)
+    return this.backendService.getModels<Content>(Content, this.nextInfo, { aid: this.identity })
         .pipe(filter(Boolean))
         .toPromise()
         .then(respWithLink => {

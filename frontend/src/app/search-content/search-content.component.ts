@@ -4,7 +4,7 @@ import { filter, concatMap } from 'rxjs/operators';
 import { Content, WebSite } from '../_models';
 import { BackendService } from '../_services'
 import { Config } from '../config';
-import { NGXLogger, LoggerConfig } from 'ngx-logger';
+import { NGXLogger } from 'ngx-logger';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -64,16 +64,17 @@ export class SearchContentComponent implements OnInit {
 
   getNextLatest(): Promise<Content[]> {
     this.getNext = this.getNextLatest;
-    return this.backendService.getModels<Content>(Content, this.nextInfo,
-        'cid', this.webSite.contentContainerIds[Config.RECIPE])
-        .pipe(filter(Boolean))
-        .toPromise()
-        .then(respWithLink => {
-          this.contents = this.contents.concat(respWithLink.response);
-          this.nextInfo = respWithLink.getNextQueryParams();
-          this.logger.trace("nextQueryParams:", this.nextInfo);
-          return this.contents;
-        });
+    return this.backendService.getModels<Content>(
+      Content, this.nextInfo, { cid: this.webSite.contentContainerIds[Config.RECIPE] }
+    )
+    .pipe(filter(Boolean))
+    .toPromise()
+    .then(respWithLink => {
+      this.contents = this.contents.concat(respWithLink.response);
+      this.nextInfo = respWithLink.getNextQueryParams();
+      this.logger.trace("nextQueryParams:", this.nextInfo);
+      return this.contents;
+    });
   }
 
   getNextSearch(tag?: string): Promise<Content[]> {
