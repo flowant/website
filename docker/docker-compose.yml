@@ -41,7 +41,7 @@ services:
   gateway:
     image: flowant/gateway:0.0.1
     ports:
-      - "80"
+      - "9091:80"
       - "443"
     networks:
       website:
