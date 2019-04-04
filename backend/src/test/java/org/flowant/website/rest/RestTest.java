@@ -31,8 +31,7 @@ public abstract class RestTest {
 
     protected WebTestClient webTestClient;
 
-    @Value("${server.address}")
-    protected String host;
+    protected String host = "localhost";
 
     @LocalServerPort
     protected int port;

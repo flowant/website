@@ -28,8 +28,7 @@ public class KeyStoreConfig {
 
     @Bean
     KeyPair exposeKeyPair() throws FileNotFoundException {
-        keyStoreKeyFactory = new KeyStoreKeyFactory(new FileSystemResource(getFile(path)),
-                password.toCharArray());
+        keyStoreKeyFactory = new KeyStoreKeyFactory(new FileSystemResource(getFile(path)), password.toCharArray());
         return keyStoreKeyFactory.getKeyPair(alias);
     }
 }

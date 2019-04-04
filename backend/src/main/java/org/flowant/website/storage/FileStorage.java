@@ -141,7 +141,7 @@ public class FileStorage {
 
     public static Path mkdirs(Path path) throws IOException {
         if (Files.exists(path) == false)
-            Files.createDirectory(path);
+            Files.createDirectories(path);
         return path;
     }
 

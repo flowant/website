@@ -71,9 +71,6 @@ public class MockDataUtil {
     @Value("${server.port}")
     int port;
 
-    @Value("${server.address}")
-    String address;
-
     @Autowired
     WebSiteConfig config;
 
@@ -187,7 +184,7 @@ public class MockDataUtil {
         parts.add(FileRest.ATTACHMENT, entity);
 
         return WebClient
-                .create("http://" + address + ":" + port + FileRest.PATH_FILES + pathSegId.orElse(""))
+                .create("http://localhost:" + port + FileRest.PATH_FILES + pathSegId.orElse(""))
                 .post()
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + getAccessToken())

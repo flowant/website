@@ -3,7 +3,7 @@ spring:
     active: test
   data:
     cassandra:
-      contactPoints: 127.0.0.1
+      contactPoints: cassandra
       port: 9042
 
 website:

@@ -76,8 +76,7 @@ public abstract class RestWithRepositoryTest <Entity, ID, Repository extends Rea
 
     WebTestClient webTestClient;
 
-    @Value("${server.address}")
-    protected String host;
+    protected String host = "localhost";
 
     @LocalServerPort
     protected int port;

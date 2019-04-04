@@ -1,0 +1,11 @@
+# /etc/hosts example, for your test
+
+# for local build
+127.0.0.1	cassandra
+
+# see docker-compose.yml, gateway ip address in the website network
+172.28.1.1	gateway.flowant.org
+
+# for local build, local browser should use www.flowant.org
+# instead of 127.0.0.1 because of CORS setting
+127.0.0.1	www.flowant.org

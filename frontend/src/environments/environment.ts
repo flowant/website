@@ -10,8 +10,8 @@ export const environment = {
   },
   gateway: {
     scheme: 'http',
-    domain: 'localhost',
-    port: 9091,
+    domain: 'gateway.flowant.org',
+    port: 80,
   },
   path: {
     gateway: '/api',

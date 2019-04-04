@@ -1,5 +1,5 @@
 server:
-  port: 9093
+  port: 80
   servlet:
     context-path: /uaa
 
@@ -8,7 +8,7 @@ spring:
     active: test
   data:
     cassandra:
-      contactPoints: localhost
+      contactPoints: cassandra
       port: 9042
 
 website:
@@ -59,15 +59,15 @@ website:
       - write
     autoApprove: true
     registeredRedirectUris:
-      - http://127.0.0.1:9090/login/oauth2/code/website
-      - http://127.0.0.1:9090/
-      - http://localhost:9090/login/oauth2/code/website
-      - http://localhost:9090/
+      - http://auth.flowant.org/login/oauth2/code/website
+      - http://auth.flowant.org/
+      - http://auth.flowant.org/login/oauth2/code/website
+      - http://auth.flowant.org/
     resourceIds: oauth2-resource
     additionalInformation:
       org: flowant
   keystore:
-    path: classpath:keystore/keystore.jks
+    path: keystore/keystore.jks
     alias: website_keystore
     password: ${OAUTH2_KEYSTORE_STOREPASS}
 

@@ -1,31 +1,69 @@
 version: "3.7"
+
 services:
 
-#  session-redis:
-#    image: redis:latest
-#    deploy:
-#      replicas: 1
-#      resources:
-#        limits:
-#          cpus: "0.1"
-#          memory: 50M
-#      restart_policy:
-#        condition: on-failure
-#    ports:
-#      - "6379:6379"
-#    networks:
-#      - inner
-
-  db-cassandra:
+  cassandra:
     image: cassandra:latest
     ports:
-      - "9042:9042"
+      - "9042"
+      - "7000"
     volumes:
-      - /home/flowant/work/cassandra_data:/var/lib/cassandra
+      - /home/flowant/cassandra_data:/var/lib/cassandra
     networks:
-      - inner
+      - website
+
+  auth:
+    image: flowant/authserver:0.0.1
+    ports:
+      - "80"
+      - "443"
+    env_file:
+      - /home/flowant/work/env_file.txt
+    networks:
+      website:
+        aliases:
+         - auth.flowant.org
+
+  backend:
+    image: flowant/backend:0.0.1
+    ports:
+      - "80"
+      - "443"
+    env_file:
+      - /home/flowant/work/env_file.txt
+    volumes:
+      - /home/flowant/storage:/usr/share/website/backend/storage
+    networks:
+      website:
+        aliases:
+         - backend.flowant.org
+
+  gateway:
+    image: flowant/gateway:0.0.1
+    ports:
+      - "80"
+      - "443"
+    networks:
+      website:
+        ipv4_address: 172.28.1.1
+        aliases:
+         - gateway.flowant.org
+
+  frontend:
+    image: flowant/frontend:0.0.1
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      website:
+        aliases:
+         - www.flowant.org
 
 networks:
-  inner:
+  website:
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.28.0.0/16
 
 
