@@ -3,7 +3,6 @@ package org.flowant.website.util.test;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Assert;
 
 import lombok.extern.log4j.Log4j2;
@@ -43,7 +42,7 @@ public class AssertUtil {
                         Assert.assertEquals(method.invoke(expected), method.invoke(actual));
                     }
                 } catch (Exception e) {
-                    log.error(ExceptionUtils.getStackTrace(e));
+                    log.error(e.getMessage());
                 }
             }
         }

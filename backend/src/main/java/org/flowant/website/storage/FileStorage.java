@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.flowant.website.model.CRUZonedTime;
 import org.flowant.website.model.FileRef;
 import org.flowant.website.rest.FileRest;
@@ -82,10 +81,12 @@ public class FileStorage {
     }
 
     public static Mono<Boolean> deleteById(String id) {
-        return exist(id) == false ? Mono.empty() : Mono.fromCallable(() -> rmdirs(getPath(id))).onErrorResume(t -> {
-            log.error(ExceptionUtils.getStackTrace(t));
-            return Mono.just(Boolean.FALSE);
-        });
+        return exist(id) == false ? Mono.empty() :
+                Mono.fromCallable(() -> rmdirs(getPath(id)))
+                    .onErrorResume(t -> {
+                        log.error(t.getMessage());
+                        return Mono.just(Boolean.FALSE);
+                    });
     }
 
     public static Mono<Boolean> deleteById(UUID id) {
