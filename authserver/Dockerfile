@@ -2,12 +2,10 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /usr/share/website/authserver
 
-ARG JAR_FILE
-
 COPY ./wait-for-it.sh /usr/share/website/wait-for-it.sh
 
 # spring boot executable jar
-COPY target/${JAR_FILE} /usr/share/website/authserver/authserver-exec.jar
+COPY target/*-exec.jar /usr/share/website/authserver/authserver-exec.jar
 
 # Auth Server keystore for JWT authentication
 COPY keystore/keystore.jks /usr/share/website/authserver/keystore/keystore.jks

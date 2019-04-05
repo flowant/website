@@ -2,12 +2,10 @@ FROM openjdk:11-jre-slim
 
 WORKDIR /usr/share/website/backend
 
-ARG JAR_FILE
-
 COPY ./wait-for-it.sh /usr/share/website/wait-for-it.sh
 
 # spring boot executable jar
-COPY target/${JAR_FILE} /usr/share/website/backend/backend-exec.jar
+COPY target/*-exec.jar /usr/share/website/backend/backend-exec.jar
 
 RUN mkdir -p /usr/share/website/backend/storage
 

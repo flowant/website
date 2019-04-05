@@ -25,6 +25,7 @@
     </dependency>
   </dependencies>
 
+<!--
   <build>
     <plugins>
       <plugin>
@@ -43,12 +44,10 @@
         <configuration>
           <repository>flowant/gateway</repository>
           <tag>${project.version}</tag>
-          <buildArgs>
-            <JAR_FILE>${project.build.finalName}-exec.jar</JAR_FILE>
-          </buildArgs>
         </configuration>
       </plugin>
     </plugins>
   </build>
+-->
 
 </project>
