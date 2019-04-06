@@ -52,7 +52,7 @@ OAUTH2_KEYSTORE_STOREPASS=Yours
 
 # Make your new ones, they are used in authserver's application.yml.
 OAUTH2_CLIENT_ID=Yours
-OAUTH2_CLIENT_PASSWORD=Yours``
+OAUTH2_CLIENT_PASSWORD=Yours
 ~~~~
 Modify your **env_file.txt** path in docker-compose*.yml files.
 
