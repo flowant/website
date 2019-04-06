@@ -47,14 +47,21 @@ FACEBOOK_CLIENT_ID=Yours
 FACEBOOK_CLIENT_SECRET=Yours
 
 # Using Keytool program, make your new keystore.jks
-# Place athserver/keystore directory then write your password here.
+# Place it to ${Project}/keystore/keystore.jks
+# It's used for JWK
 OAUTH2_KEYSTORE_STOREPASS=Yours
 
 # Make your new ones, they are used in authserver's application.yml.
 OAUTH2_CLIENT_ID=Yours
 OAUTH2_CLIENT_PASSWORD=Yours
+
+# Using Keytool program, Make your new ssl_certificate.p12
+# Place it to ${Project}/keystore/ssl_certificate.p12
+# It's used by Spring Boot Server SSL.
+SSL_KEYSTORE_STOREPASS=Yours
+
 ~~~~
-Modify your **env_file.txt** path in docker-compose*.yml files.
+Modify your **env_file.txt** path in docker-compose*.yml files. Default value is **~/site/env_file.txt**
 
 Add website server addresses to **/etc/hosts** file in your host.
 
@@ -73,7 +80,8 @@ Add website server addresses to **/etc/hosts** file in your host.
 
 Clone Website project git.
 ~~~~
-cd ~/work
+mkdir -p ~/site
+cd ~/site
 git clone https://github.com/flowant/website.git
 ~~~~
 
@@ -82,19 +90,19 @@ Make directories to be used as docker volumes, they are used in docker-compose*.
 
 ```
 # Cassandra data storage.
-mkdir -p /home/flowant/cassandra_data
+mkdir -p ~/site/cassandra_data
 
 # Backend File Storage.
-mkdir -p /home/flowant/storage
+mkdir -p ~/site/storage
 ```
 
 Create build container for maven based project.
 ~~~~
-cd ~/work/website
+cd ~/site/website
 docker-compose -f docker-compose-maven.yml build
 ~~~~
 
-Cassandra will run and start Maven building. Targets will be created in ~/work/website directory on your host by virtue of Docker Volume.
+Cassandra will run and start Maven building. Targets will be created in ~/site/website directory on your host by virtue of Docker Volume.
 ~~~~
 docker-compose -f docker-compose-maven.yml up
 ~~~~
@@ -120,7 +128,7 @@ maven-build_1  | [INFO] Finished at: 2019-04-05T10:18:05Z
 ~~~~
 Press ctrl-c to quit.
 
-Clean up.
+Clean up docker resources.
 ```
 sudo docker-compose -f docker-compose-maven.yml down
 ```
