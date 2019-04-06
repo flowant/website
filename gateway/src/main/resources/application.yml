@@ -1,5 +1,11 @@
 server:
-  port: 80
+  port: 443
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: keystore/ssl_certificate.p12
+    key-store-password: ${SSL_KEYSTORE_STOREPASS}
+    key-alias: website_ssl
 
 spring:
   profiles:
@@ -8,105 +14,105 @@ spring:
     gateway:
       routes:
       - id: website
-        uri: http://backend.flowant.org/website
+        uri: https://backend.flowant.org/website
         predicates:
         - Path=/api/website/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: subitem
-        uri: http://backend.flowant.org/subitem
+        uri: https://backend.flowant.org/subitem
         predicates:
         - Path=/api/subitem/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: search
-        uri: http://backend.flowant.org/search
+        uri: https://backend.flowant.org/search
         predicates:
         - Path=/api/search/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: content
-        uri: http://backend.flowant.org/content
+        uri: https://backend.flowant.org/content
         predicates:
         - Path=/api/content/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: review
-        uri: http://backend.flowant.org/review
+        uri: https://backend.flowant.org/review
         predicates:
         - Path=/api/review/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: reply
-        uri: http://backend.flowant.org/reply
+        uri: https://backend.flowant.org/reply
         predicates:
         - Path=/api/reply/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: content_rpt
-        uri: http://backend.flowant.org/content_rpt
+        uri: https://backend.flowant.org/content_rpt
         predicates:
         - Path=/api/content_rpt/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: review_rpt
-        uri: http://backend.flowant.org/review_rpt
+        uri: https://backend.flowant.org/review_rpt
         predicates:
         - Path=/api/review_rpt/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: reply_rpt
-        uri: http://backend.flowant.org/reply_rpt
+        uri: https://backend.flowant.org/reply_rpt
         predicates:
         - Path=/api/reply_rpt/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: files
-        uri: http://backend.flowant.org/files
+        uri: https://backend.flowant.org/files
         predicates:
         - Path=/api/files/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: message
-        uri: http://backend.flowant.org/message
+        uri: https://backend.flowant.org/message
         predicates:
         - Path=/api/message/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: notification
-        uri: http://backend.flowant.org/notification
+        uri: https://backend.flowant.org/notification
         predicates:
         - Path=/api/notification/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: relation
-        uri: http://backend.flowant.org/relation
+        uri: https://backend.flowant.org/relation
         predicates:
         - Path=/api/relation/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: user
-        uri: http://backend.flowant.org/user
+        uri: https://backend.flowant.org/user
         predicates:
         - Path=/api/user/**
         filters:
         - RewritePath=/api/(?<segment>.*), /$\{segment}
 
       - id: oauth
-        uri: http://auth.flowant.org/uaa/oauth/token
+        uri: https://auth.flowant.org/uaa/oauth/token
         predicates:
         - Path=/api/oauth/token/**
         filters:
@@ -114,7 +120,7 @@ spring:
 
 website:
   cors:
-    allowedOrigins: "http://www.flowant.org"
+    allowedOrigins: "https://www.flowant.org"
 
 ---
 spring:
