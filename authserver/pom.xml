@@ -91,7 +91,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-resources</id>
+            <id>copy-keystore</id>
             <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -106,7 +106,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-resources</id>
+            <id>copy-scripts</id>
             <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
