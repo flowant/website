@@ -9,9 +9,9 @@ export const environment = {
     identity: 'f1b8dba2-44a4-11e9-944f-99e89c6a8c79'
   },
   gateway: {
-    scheme: 'http',
+    scheme: 'https',
     domain: 'gateway.flowant.org',
-    port: 9091,
+    port: 8443,
   },
   path: {
     gateway: '/api',
