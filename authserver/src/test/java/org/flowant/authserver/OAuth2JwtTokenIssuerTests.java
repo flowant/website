@@ -68,8 +68,8 @@ public class OAuth2JwtTokenIssuerTests {
     @Test
     public void testGetJWKs() throws Exception {
         ResultActions result = mockMvc.perform(get(JWK_SET_URI))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType("application/json;charset=UTF-8"));
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
 
         log.trace(result.andReturn().getResponse().getContentAsString());
     }

@@ -17,36 +17,47 @@
 package org.flowant.authserver;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.flowant.website.AuthserverApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import lombok.extern.log4j.Log4j2;
 
 @RunWith(SpringRunner.class)
+@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
                 classes=AuthserverApplication.class)
+@Log4j2
 public class OAuth2ClientApplicationTests {
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private MockMvc mockMvc;
 
     @Test
-    public void index() {
-        ResponseEntity<String> entity = this.restTemplate.getForEntity("/", String.class);
-        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    public void index() throws Exception {
+        ResultActions result = mockMvc.perform(get("/"))
+                .andExpect(status().isOk());
+
+        log.trace(result.andReturn().getResponse().getContentAsString());
     }
 
     @Test
-    public void loginShouldHaveAllOAuth2ClientsToChooseFrom() {
-        ResponseEntity<String> entity = this.restTemplate.getForEntity("/login", String.class);
-        assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(entity.getBody()).contains("/facebook");
-        assertThat(entity.getBody()).contains("/google");
+    public void loginShouldHaveAllOAuth2ClientsToChooseFrom() throws Exception {
+        ResultActions result = mockMvc.perform(get("/login"))
+                .andExpect(status().isOk());
+
+        String content = result.andReturn().getResponse().getContentAsString();
+        log.trace(content);
+        assertThat(content).contains("/facebook");
+        assertThat(content).contains("/google");
     }
 }
