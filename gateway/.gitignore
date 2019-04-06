@@ -1,6 +1,10 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
+# Copy from parent before compile time.
+keystore/
+wait-for-it.sh
+
 ### STS ###
 .apt_generated
 .classpath
