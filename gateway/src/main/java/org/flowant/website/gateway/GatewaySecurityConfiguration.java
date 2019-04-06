@@ -1,6 +1,8 @@
 package org.flowant.website.gateway;
 
-import org.springframework.beans.factory.annotation.Value;
+import java.util.List;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -9,11 +11,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 @Configuration
+@ConfigurationProperties(prefix = "website.cors")
+@Getter @Setter @ToString
 public class GatewaySecurityConfiguration {
 
-    @Value("${website.cors.allowedOrigins}")
-    private String allowedOrigins;
+    private List<String> allowedOrigins;
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
@@ -27,7 +34,7 @@ public class GatewaySecurityConfiguration {
     CorsWebFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin(allowedOrigins);
+        config.setAllowedOrigins(allowedOrigins);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 

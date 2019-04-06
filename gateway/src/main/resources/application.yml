@@ -120,7 +120,9 @@ spring:
 
 website:
   cors:
-    allowedOrigins: "https://www.flowant.org"
+    allowedOrigins:
+    - "https://www.flowant.org"
+    - "https://www.flowant.org:4200"
 
 ---
 spring:
