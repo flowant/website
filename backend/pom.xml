@@ -33,29 +33,47 @@
 
   </dependencies>
 
-<!--
   <build>
     <plugins>
       <plugin>
-        <groupId>com.spotify</groupId>
-        <artifactId>dockerfile-maven-plugin</artifactId>
-        <version>${dockerfile-maven-version}</version>
+        <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>default</id>
+            <id>copy-keystore</id>
+            <phase>validate</phase>
             <goals>
-              <goal>build</goal>
-              <goal>push</goal>
+              <goal>copy-resources</goal>
             </goals>
+            <configuration>
+              <outputDirectory>${basedir}/keystore</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.parent.basedir}/keystore</directory>
+                  <includes>
+                    <include>ssl_certificate.p12</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-scripts</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.parent.basedir}/scripts</directory>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <repository>flowant/backend</repository>
-          <tag>${project.version}</tag>
-        </configuration>
       </plugin>
     </plugins>
   </build>
--->
 
 </project>

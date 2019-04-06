@@ -152,7 +152,7 @@ public class MockDataUtil {
         log.trace("in getAccessToken: {}", devUser.getPassword());
 
         String resp = WebClient.create().post()
-                .uri(uriBuilder -> uriBuilder.scheme("http")
+                .uri(uriBuilder -> uriBuilder.scheme("https")
                         .host(config.getOauth2Server().get("address"))
                         .port(config.getOauth2Server().get("port"))
                         .path("/uaa/oauth/token")
@@ -184,7 +184,7 @@ public class MockDataUtil {
         parts.add(FileRest.ATTACHMENT, entity);
 
         return WebClient
-                .create("http://localhost:" + port + FileRest.PATH_FILES + pathSegId.orElse(""))
+                .create("https://backend.flowant.org:" + port + FileRest.PATH_FILES + pathSegId.orElse(""))
                 .post()
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Bearer " + getAccessToken())
