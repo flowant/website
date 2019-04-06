@@ -8,9 +8,11 @@ server:
 
 spring:
   profiles:
-    active: test
+    active: prod
   data:
     cassandra:
+      keyspace-name: website
+      schema-action: CREATE_IF_NOT_EXISTS
       contactPoints: cassandra
       port: 9042
   security:
@@ -40,10 +42,6 @@ website:
 ---
 spring:
   profiles: prod
-  data:
-    cassandra:
-      keyspace-name: backend_prod
-      schema-action: CREATE_IF_NOT_EXISTS
 
 logging:
   config: classpath:log4j2-spring-prod.xml
@@ -51,10 +49,6 @@ logging:
 ---
 spring:
   profiles: test
-  data:
-    cassandra:
-      keyspace-name: backend_test
-      schema-action: CREATE_IF_NOT_EXISTS
 
 logging:
   config: classpath:log4j2-spring-test.xml
