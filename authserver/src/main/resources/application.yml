@@ -64,10 +64,10 @@ website:
       - write
     autoApprove: true
     registeredRedirectUris:
-      - http://auth.flowant.org/login/oauth2/code/website
-      - http://auth.flowant.org/
-      - http://auth.flowant.org/login/oauth2/code/website
-      - http://auth.flowant.org/
+      - https://auth.flowant.org/login/oauth2/code/website
+      - https://auth.flowant.org/
+      - https://auth.flowant.org/login/oauth2/code/website
+      - https://auth.flowant.org/
     resourceIds: oauth2-resource
     additionalInformation:
       org: flowant
