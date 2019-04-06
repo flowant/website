@@ -130,17 +130,17 @@ Press ctrl-c to quit.
 
 Clean up docker resources.
 ```
-sudo docker-compose -f docker-compose-maven.yml down
+docker-compose -f docker-compose-maven.yml down
 ```
 
 Create docker images from build results.
 ```
-sudo docker-compose -f docker-compose.yml build
+docker-compose -f docker-compose.yml build
 ```
 
 Run servers.
 ~~~~
-sudo docker-compose -f docker-compose.yml up -d
+docker-compose -f docker-compose.yml up -d
 ~~~~
 
 ### To check, open your browser and go www.flowant.org
