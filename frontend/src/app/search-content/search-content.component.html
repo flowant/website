@@ -1,6 +1,8 @@
-<div class="row">
-  <div *ngFor="let content of contents" class="m-1 p-1 col-sm-3">
-    <app-content-ref [content]="content"></app-content-ref>
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div *ngFor="let content of contents" class="m-1 p-1 col-sm-3">
+      <app-content-ref [content]="content"></app-content-ref>
+    </div>
   </div>
 </div>
 <button type="button" (click)="getNext()" class="btn btn-primary btn-lg btn-block" [disabled]="!nextInfo">More</button>
