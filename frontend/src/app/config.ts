@@ -1,4 +1,5 @@
 import { environment as env } from '../environments/environment';
+import { Content, Review, Reply, User, Message, Relation, WebSite, Notification } from './_models';
 
 export class Config {
 
@@ -30,23 +31,42 @@ export class Config {
   static whitelistedDomains = [Config.gateway.domain + ':' + Config.gateway.port];
   static blacklistedRoutes = [Config.gateway.domain + ':' + Config.gateway.port + Config.path.gateway + Config.path.auth];
 
-  // key: type name, value: url
-  static urlMap: Map<string, string> = new Map([
-    ['Content', Config.contentUrl],
-    ['Review', Config.reviewUrl],
-    ['Reply', Config.replyUrl],
-    ['ContentRpt', Config.contentRptUrl],
-    ['ReviewRpt', Config.reviewRptUrl],
-    ['ReplyRpt', Config.replyRptUrl],
-    ['User', Config.userUrl],
-    ['Message', Config.messageUrl],
-    ['Notification', Config.notificationUrl],
-    ['Relation', Config.relationUrl],
-    ['WebSite', Config.webSiteUrl]
-  ]);
-
-  static getUrl(typeName: string): string {
-    return this.urlMap.get(typeName);
+  static getUrl(type: any): string {
+    switch(type) {
+      case Content:{
+        return Config.contentUrl;
+      }
+      case Review:{
+        return Config.reviewUrl;
+      }
+      case Reply:{
+        return Config.replyUrl;
+      }
+      case User:{
+        return Config.userUrl;
+      }
+      case Message:{
+        return Config.messageUrl;
+      }
+      case Notification:{
+        return Config.notificationUrl;
+      }
+      case Relation:{
+        return Config.relationUrl;
+      }
+      case WebSite:{
+        return Config.webSiteUrl;
+      }
+      case "ContentRpt":{
+        return Config.contentRptUrl;
+      }
+      case "ReviewRpt":{
+        return Config.reviewRptUrl;
+      }
+      case "ReplyRpt":{
+        return Config.replyRptUrl;
+      }
+    }
   }
 
   static toRptName(typeName: string): any {

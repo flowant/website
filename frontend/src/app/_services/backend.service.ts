@@ -130,7 +130,7 @@ export class BackendService {
 
   getPopularItems<T>(type, containerId: string): Observable<T[]> {
 
-    let url = Config.getUrl(type.name) + Config.path.popular + '?cid=' + containerId;
+    let url = Config.getUrl(type) + Config.path.popular + '?cid=' + containerId;
 
     return this.http.get(encodeURI(url), baseOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
@@ -167,7 +167,7 @@ export class BackendService {
     let queryParams: string = nextInfo ? nextInfo
         : '?' + Object.keys(params).map(key => key + '=' + params[key]).join('&') + `&page=${page}&size=${size}`;
 
-    return this.http.get(encodeURI(Config.getUrl(type.name) + queryParams) , baseOptions).pipe(
+    return this.http.get(encodeURI(Config.getUrl(type) + queryParams) , baseOptions).pipe(
       map(resp => RespWithLink.of<T>(
         JSON.parse(resp.body, reviver).map(object => Object.assign(new type(), object)),
         resp.headers.get("link")
@@ -178,7 +178,7 @@ export class BackendService {
   }
 
   getModel<T>(type, idToPath?: IdToPath, queryName?: string, queryValue?: string): Observable<T> {
-    let url = Config.getUrl(type.name)
+    let url = Config.getUrl(type)
         + (idToPath ? '/' + idToPath.toString() : '')
         + (queryName && queryValue ? '?' + queryName + '=' + queryValue : '');
 
@@ -191,7 +191,7 @@ export class BackendService {
   }
 
   postModel<T>(type, entity: T, urlSuffix?: string): Observable<T> {
-    let url = Config.getUrl(type.name) + (urlSuffix ? '/' + urlSuffix : '');
+    let url = Config.getUrl(type) + (urlSuffix ? '/' + urlSuffix : '');
 
     return this.http.post(encodeURI(url), JSON.stringify(entity, replacer), writeOptions).pipe(
       map(resp => JSON.parse(resp.body, reviver)),
@@ -202,7 +202,7 @@ export class BackendService {
   }
 
   deleteModel(type, idToPath: IdToPath, urlSuffix?: string): Observable<any> {
-    let url = Config.getUrl(type.name) + '/' + idToPath.toString() + (urlSuffix ? '/' + urlSuffix : '');
+    let url = Config.getUrl(type) + '/' + idToPath.toString() + (urlSuffix ? '/' + urlSuffix : '');
 
     return this.http.delete(encodeURI(url), writeOptions).pipe(
       tap(resp => this.logger.trace(`deleteModel idToPath:${idToPath}, resp:`, resp)),

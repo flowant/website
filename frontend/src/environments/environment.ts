@@ -11,7 +11,7 @@ export const environment = {
   gateway: {
     scheme: 'https',
     domain: 'gateway.flowant.org',
-    port: 8443,
+    port: 8443
   },
   path: {
     gateway: '/api',
