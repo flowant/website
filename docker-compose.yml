@@ -58,6 +58,7 @@ services:
     build:
       context: ./frontend
     ports:
+      - "80:80"
       - "443:443"
     volumes:
       - ~/site/keystore:/etc/keystore
