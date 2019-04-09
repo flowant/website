@@ -10,25 +10,36 @@ Studying and operating modern web technologies and sharing results.
 
 ## Architecture
 
+### Security
+- The OAuth 2.0 Authorization Framework.
+- HTTPS.
+
 ### Frontend
-- Angular, Bootstrap, SCSS, OAuth2 JWT authentication.
+- Angular, Bootstrap, SCSS.
+- OAuth2 role: client.
+- With the authorization obtained from Auth Server, provides UX to users.
 
 ### API Gateway
-- Spring Boot Cloud Gateway. Facade of Backend and Author Servers.
+- Spring Boot Cloud Gateway.
+- Facade of Backend and Auth Servers.
 
 ### Backend
-- API Server: Spring Boot Webflux, requires JWT issued by Auth server.
+- Spring Boot Webflux.
+- OAuth2 role: resource server.
+- API Server
 
 ### Auth server
-- Spring Boot Oauth2.
+- Spring Boot OAuth2.
+- OAuth2 role: authorization server.
 
 ### Database
-- Cassandra, used by Backend and Auth Server
+- Cassandra
+- Used by Backend and Auth Server
 
 ### Log Management
 - Angular based servers use ngx logger.
 - Spring based servers use log4j2 async logger.
-- Capacity for log directories should be small (< 30M): file logs will be used for debugging server booting issues.
+
 
 ---
 ## Install
@@ -148,8 +159,6 @@ docker-compose -f docker-compose.yml up -d
 ---
 
 ## TODO List
-- Apply HTTPS.
-- Apply product mode.
 - Apply social login using OAuth2.
 - CI/CD.
 - Study and refine frontend with testcases.
