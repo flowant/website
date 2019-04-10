@@ -24,7 +24,7 @@ matrix:
       script: "mvn clean test"
 
     # Frontend test
-    - before_script:
+    - before_install:
       - "cd frontend"
 
       language: node_js
