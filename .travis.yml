@@ -6,4 +6,12 @@ jdk:
 services:
   - cassandra
 
+addons:
+  hosts:
+    - cassandra
+    - www.flowant.org
+    - gateway.flowant.org
+    - backend.flowant.org
+    - auth.flowant.org
+
 script: "mvn clean test"
