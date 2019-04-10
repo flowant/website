@@ -1,3 +1,9 @@
 language: java
+
+jdk:
+  - openjdk11
+
 services:
   - cassandra
+
+script: "mvn clean test"
