@@ -10,6 +10,7 @@ check_fail() {
 SITE=~/site
 echo Site Directory:$SITE
 
+# Env. variables are imported by source command. See also Readme.md
 source $SITE/env_file.txt
 
 set -x
@@ -33,7 +34,7 @@ else
 fi
 
 echo Current Directory:`pwd`
-# export SSL_KEYSTORE_STOREPASS env variable before run scripts
+# SSL_KEYSTORE_STOREPASS env variable has been loaded from env_file.txt.
 set +x
 set -v
 openssl pkcs12 -nokeys -in keystore/ssl_certificate.p12 -out $SITE/keystore/certificate.crt -password pass:$SSL_KEYSTORE_STOREPASS
