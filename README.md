@@ -80,7 +80,9 @@ Modify your **env_file.txt** path in docker-compose*.yml files. Default value is
 
 Make HTTPS Certificates named **certificate.crt** and private key named **private.key**.
 Modify **frontend: volumns** value in docker-compose.yml using the directory path of your created files.
-Default value is **~/site/keystore**
+Default value is **~/site/keystore**.
+
+> Or you can export those keys from **keystore/ssl_certificate.p12**. Openssl command examples are in **scripts/deploy.sh**.
 
 
 Add website server addresses to **/etc/hosts** file in your host.
