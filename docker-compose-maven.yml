@@ -12,7 +12,7 @@ services:
     networks:
       - maven-build
 
-  maven-build:
+  maven:
     build:
       context: .
     env_file:

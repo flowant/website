@@ -116,6 +116,9 @@
               <resources>
                 <resource>
                   <directory>${project.parent.basedir}/scripts</directory>
+                  <includes>
+                    <include>wait-for-it.sh</include>
+                  </includes>
                 </resource>
               </resources>
             </configuration>
