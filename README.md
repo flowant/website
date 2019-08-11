@@ -4,8 +4,6 @@
 
 Studying and operating modern web technologies and sharing results.
 
-[Website Demo link](https://www.flowant.org)
-
 ---
 
 ## Architecture
