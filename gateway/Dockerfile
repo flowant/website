@@ -11,4 +11,4 @@ COPY keystore /usr/share/website/gateway/keystore
 # Make port 443 available to the world outside this container
 EXPOSE 443
 
-ENTRYPOINT ["/usr/bin/java", "-jar", "/usr/share/website/gateway/gateway-exec.jar"]
+ENTRYPOINT ["java", "-jar", "/usr/share/website/gateway/gateway-exec.jar"]
