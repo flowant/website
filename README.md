@@ -6,50 +6,111 @@ Studying and operating modern web technologies and sharing results.
 
 ---
 
+## DynamicDNS
+```mermaid
+sequenceDiagram
+    loop update periodically
+    DDClient In Desktop ->> DDClient In Desktop: Find Public IP (Router's IP)
+    DDClient In Desktop ->> GoogleDomain: Update Public IP in Dynamic DNS Record
+    end
+```
+
 ## Architecture
 
+```mermaid
+graph TB
+   
+  subgraph "Home"
+  Router(Router Verizon)
+  Router -- https 8443 --> APIGateway
+  Router -- https 443 --> Frontend
+
+    subgraph "Desktop"
+    Frontend
+    APIGateway(APIGateway)
+    APIGateway --> AuthServer
+    APIGateway --> Backend
+    AuthServer --> Cassandra
+    Backend --> Cassandra
+    end
+
+  end
+
+  subgraph "Browser"
+  WebApp --> Router
+  end
+```
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    Note right of Frontend: NGINX
+    participant AuthServer
+    Note right of AuthServer: Spring
+    participant Backend
+    User ->> Frontend: browse www.flowant.org
+    Frontend -->> User: download HTML5 App.
+    User ->> AuthServer: Sign-up
+    User ->> AuthServer: Sign-in
+    AuthServer -->> User: Access-token
+    
+    loop handle resources with access token
+    User ->> Backend: REST API Request
+    Backend -->> User: REST API Response
+    end
+```
+
 ### CI/CD
+
 - https://travis-ci.org/flowant/website
 
 ### Security
+
 - The OAuth 2.0 Authorization Framework.
 - HTTPS.
 
 ### Frontend
+
 - Angular, Bootstrap, SCSS.
 - OAuth2 role: client.
 - With the authorization obtained from Auth Server, provides UX to users.
 
 ### API Gateway
+
 - Spring Boot Cloud Gateway.
 - Facade of Backend and Auth Servers.
 
 ### Backend
+
 - Spring Boot Webflux.
 - OAuth2 role: resource server.
 - API Server
 
 ### Auth server
+
 - Spring Boot OAuth2.
 - OAuth2 role: authorization server.
 
 ### Database
+
 - Cassandra
 - Used by Backend and Auth Server
 
 ### Log Management
+
 - Angular based servers use ngx logger.
 - Spring based servers use log4j2 async logger.
 
-
 ---
+
 ## Install
 
 Install Docker and Docker-compose.
 
 Make **env_file.txt** file containing as following contents.
 
-~~~~
+```
 # Visit Goole's OpenID Connect Site and make your one.
 GOOGLE_CLIENT_ID=Yours
 GOOGLE_CLIENT_SECRET=Yours
@@ -71,8 +132,7 @@ OAUTH2_CLIENT_PASSWORD=Yours
 # Place it to ${Project}/keystore/ssl_certificate.p12
 # It's used by Spring Boot Server SSL.
 SSL_KEYSTORE_STOREPASS=Yours
-
-~~~~
+```
 
 Modify your **env_file.txt** path in docker-compose*.yml files. Default value is **~/site/env_file.txt**
 
@@ -82,10 +142,9 @@ Default value is **~/site/keystore**.
 
 > Or you can export those keys from **keystore/ssl_certificate.p12**. Openssl command examples are in **scripts/deploy.sh**.
 
-
 Add website server addresses to **/etc/hosts** file in your host.
 
-~~~~
+```
 # For local build.
 127.0.0.1    cassandra
 
@@ -95,16 +154,15 @@ Add website server addresses to **/etc/hosts** file in your host.
 
 # The same address of www.flowant.org.
 127.0.0.1    gateway.flowant.org
-~~~~
-
+```
 
 Clone Website project git.
-~~~~
+
+```
 mkdir -p ~/site
 cd ~/site
 git clone https://github.com/flowant/website.git
-~~~~
-
+```
 
 Make directories to be used as docker volumes, they are used in docker-compose*.yml files.
 
@@ -117,24 +175,27 @@ mkdir -p ~/site/storage
 ```
 
 Create build container for maven based project.
-~~~~
+
+```
 cd ~/site/website
 docker-compose -f docker-compose-maven.yml build
-~~~~
+```
 
 Cassandra will run and start Maven building. Targets will be created in ~/site/website directory on your host by virtue of Docker Volume.
-~~~~
+
+```
 docker-compose -f docker-compose-maven.yml up --exit-code-from maven
-~~~~
+```
+
 > If your development environment has Java, Maven, Cassandra then you can build by your self.
+> 
 > ```
 > mvn clean install
 > ```
 
-
 You can make sure the build has done successfully by following messages.
 
-~~~~
+```
 maven_1      | [INFO] Reactor Summary for Basic Website 0.0.1:
 maven_1      | [INFO]
 maven_1      | [INFO] Basic Website ................ SUCCESS [  0.968 s]
@@ -149,23 +210,26 @@ maven_1      | [INFO] Total time:  50.513 s
 maven_1      | [INFO] Finished at: 2019-04-11T07:50:42Z
 
 website_maven_1 exited with code 0
-~~~~
+```
 
 Create docker images from build results.
+
 ```
 docker-compose -f docker-compose.yml build
 ```
 
 Run servers.
-~~~~
+
+```
 docker-compose -f docker-compose.yml up -d
-~~~~
+```
 
 ### To check, open your browser and go www.flowant.org
 
 ---
 
 ## TODO List
+
 - Apply social login using OAuth2.
 - CI/CD.
 - Study and refine frontend with testcases.
