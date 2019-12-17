@@ -20,12 +20,12 @@ sequenceDiagram
 ```mermaid
 graph TB
    
-  subgraph "Home"
+  subgraph Home
   Router(Router Verizon)
   Router -- https 8443 --> APIGateway
   Router -- https 443 --> Frontend
 
-    subgraph "Desktop"
+    subgraph Desktop
     Frontend
     APIGateway(APIGateway)
     APIGateway --> AuthServer
@@ -36,7 +36,7 @@ graph TB
 
   end
 
-  subgraph "Browser"
+  subgraph Browser
   WebApp --> Router
   end
 ```
