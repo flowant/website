@@ -6,15 +6,6 @@ Studying and operating modern web technologies and sharing results.
 
 ---
 
-## DynamicDNS
-```mermaid
-sequenceDiagram
-    loop update periodically
-    DDClient In Desktop ->> DDClient In Desktop: Find Public IP (Router's IP)
-    DDClient In Desktop ->> GoogleDomain: Update Public IP in Dynamic DNS Record
-    end
-```
-
 ## Architecture
 
 ```mermaid
@@ -39,26 +30,6 @@ graph TB
   subgraph Browser
   WebApp --> Router
   end
-```
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend
-    Note right of Frontend: NGINX
-    participant AuthServer
-    Note right of AuthServer: Spring
-    participant Backend
-    User ->> Frontend: browse www.flowant.org
-    Frontend -->> User: download HTML5 App.
-    User ->> AuthServer: Sign-up
-    User ->> AuthServer: Sign-in
-    AuthServer -->> User: Access-token
-    
-    loop handle resources with access token
-    User ->> Backend: REST API Request
-    Backend -->> User: REST API Response
-    end
 ```
 
 ### CI/CD
@@ -101,6 +72,40 @@ sequenceDiagram
 
 - Angular based servers use ngx logger.
 - Spring based servers use log4j2 async logger.
+
+---
+
+## Sequence
+
+### How DynamicDNS is updated
+```mermaid
+sequenceDiagram
+    loop update periodically
+    DDClient In Desktop ->> DDClient In Desktop: Find Public IP (Router's IP)
+    DDClient In Desktop ->> GoogleDomain: Update Public IP in Dynamic DNS Record
+    end
+```
+
+### How this website works
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    Note right of Frontend: NGINX
+    participant AuthServer
+    Note right of AuthServer: Spring
+    participant Backend
+    User ->> Frontend: browse www.flowant.org
+    Frontend -->> User: download HTML5 App.
+    User ->> AuthServer: Sign-up
+    User ->> AuthServer: Sign-in
+    AuthServer -->> User: Access-token
+    
+    loop handle resources with access token
+    User ->> Backend: REST API Request
+    Backend -->> User: REST API Response
+    end
+```
 
 ---
 
