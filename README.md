@@ -141,12 +141,6 @@ SSL_KEYSTORE_STOREPASS=Yours
 
 Modify your **env_file.txt** path in docker-compose*.yml files. Default value is **~/site/env_file.txt**
 
-Make HTTPS Certificates named **certificate.crt** and private key named **private.key**.
-Modify **frontend: volumns** value in docker-compose.yml using the directory path of your created files.
-Default value is **~/site/keystore**.
-
-> Or you can export those keys from **keystore/ssl_certificate.p12**. Openssl command examples are in **scripts/deploy.sh**.
-
 Add website server addresses to **/etc/hosts** file in your host.
 
 ```
@@ -167,6 +161,18 @@ Clone Website project git.
 mkdir -p ~/site
 cd ~/site
 git clone https://github.com/flowant/website.git
+```
+
+Make free certification from "SSL for free", then make PKCS12 for HTTPS as follows.
+
+```
+openssl pkcs12 -export -name website_ssl -out ~/site/website/keystore/ssl_certificate.p12 -inkey private.key -in certificate.crt -certfile ca_bundle.crt
+```
+
+Make jwk cert for AuthServer
+
+```
+keytool -genkey -keyalg RSA -alias website_keystore -keypass Yourkey -keystore ~/site/website/keystore/keystore.jks -storepass Yourkey -validity 365
 ```
 
 Make directories to be used as docker volumes, they are used in docker-compose*.yml files.
@@ -227,6 +233,13 @@ Run servers.
 
 ```
 docker-compose -f docker-compose.yml up -d
+```
+
+Or you can just run the deploy script just after deploying certificates to ~/site/website/keystore
+
+```
+cd website
+./scripts/deploy.sh
 ```
 
 ### To check, open your browser and go www.flowant.org
