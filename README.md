@@ -137,6 +137,11 @@ OAUTH2_CLIENT_PASSWORD=Yours
 # Place it to ${Project}/keystore/ssl_certificate.p12
 # It's used by Spring Boot Server SSL.
 SSL_KEYSTORE_STOREPASS=Yours
+
+# Registry and load balancer for services
+EUREKA_ID=Yours
+EUREKA_PASSWORD=Yours
+
 ```
 
 Modify your **env_file.txt** path in docker-compose*.yml files. Default value is **~/site/env_file.txt**
