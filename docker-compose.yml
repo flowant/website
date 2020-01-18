@@ -12,6 +12,19 @@ services:
     networks:
       - website
 
+  registry:
+    image: flowant/registry:0.0.1
+    build:
+      context: ./registry
+    ports:
+      - "8761"
+    env_file:
+      - ~/site/env_file.txt
+    networks:
+      website:
+        aliases:
+         - registry.flowant.org
+
   auth:
     image: flowant/authserver:0.0.1
     build:

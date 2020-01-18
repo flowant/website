@@ -149,6 +149,7 @@
     <module>authserver</module>
     <module>backend</module>
     <module>gateway</module>
+    <module>registry</module>
   </modules>
 
 </project>
