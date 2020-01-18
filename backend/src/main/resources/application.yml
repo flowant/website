@@ -1,12 +1,9 @@
 server:
-  port: 443
-  ssl:
-    key-store-type: PKCS12
-    key-store: keystore/ssl_certificate.p12
-    key-store-password: ${SSL_KEYSTORE_STOREPASS}
-    key-alias: website_ssl
+  port: 80
 
 spring:
+  application:
+    name: backend
   profiles:
     active: prod
   data:
@@ -19,7 +16,15 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: https://auth.flowant.org/uaa/.well-known/jwks.json
+          jwk-set-uri: http://auth.flowant.org/uaa/.well-known/jwks.json
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_ID}:${EUREKA_PASSWORD}@registry.flowant.org:8761/eureka
+    healthcheck:
+      enabled: true
 
 website:
   identity: f1b8dba2-44a4-11e9-944f-99e89c6a8c79
@@ -31,7 +36,7 @@ website:
     recipe: "56a1cd50-3c77-11e9-bf26-d571c84212ed"
   oauth2Server:
     address: auth.flowant.org
-    port: 443
+    port: 80
     clientId: ${OAUTH2_CLIENT_ID}
     clientSecret: ${OAUTH2_CLIENT_PASSWORD}
   cassandra:

@@ -1,14 +1,11 @@
 server:
-  port: 443
-  ssl:
-    key-store-type: PKCS12
-    key-store: keystore/ssl_certificate.p12
-    key-store-password: ${SSL_KEYSTORE_STOREPASS}
-    key-alias: website_ssl
+  port: 80
   servlet:
     context-path: /uaa
 
 spring:
+  application:
+    name: authserver
   profiles:
     active: prod
   data:
@@ -17,6 +14,14 @@ spring:
       schema-action: CREATE_IF_NOT_EXISTS
       contactPoints: cassandra
       port: 9042
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_ID}:${EUREKA_PASSWORD}@registry.flowant.org:8761/eureka
+    healthcheck:
+      enabled: true
 
 website:
   cassandra:

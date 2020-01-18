@@ -17,7 +17,7 @@ services:
     build:
       context: ./authserver
     ports:
-      - "443"
+      - "80"
     env_file:
       - ~/site/env_file.txt
     networks:
@@ -30,7 +30,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "443"
+      - "80"
     env_file:
       - ~/site/env_file.txt
     volumes:

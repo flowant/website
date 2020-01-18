@@ -15,7 +15,7 @@ RUN mkdir -p /usr/share/website/backend/storage
 
 VOLUME /usr/share/website/backend/storage
 
-# Make port 443 available to the world outside this container
-EXPOSE 443
+# Make port 80 available to the world outside this container
+EXPOSE 80
 
-ENTRYPOINT ["/usr/share/website/wait-for-it.sh", "auth.flowant.org:443", "--timeout=0", "--", "java", "-jar", "/usr/share/website/backend/backend-exec.jar"]
+ENTRYPOINT ["/usr/share/website/wait-for-it.sh", "auth.flowant.org:80", "--timeout=0", "--", "java", "-jar", "/usr/share/website/backend/backend-exec.jar"]

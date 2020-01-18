@@ -8,115 +8,34 @@ server:
     key-alias: website_ssl
 
 spring:
+  application:
+    name: gateway
   profiles:
     active: prod
   cloud:
     gateway:
       routes:
-      - id: website
-        uri: https://backend.flowant.org/website
-        predicates:
-        - Path=/api/website/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: subitem
-        uri: https://backend.flowant.org/subitem
-        predicates:
-        - Path=/api/subitem/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: search
-        uri: https://backend.flowant.org/search
-        predicates:
-        - Path=/api/search/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: content
-        uri: https://backend.flowant.org/content
-        predicates:
-        - Path=/api/content/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: review
-        uri: https://backend.flowant.org/review
-        predicates:
-        - Path=/api/review/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: reply
-        uri: https://backend.flowant.org/reply
-        predicates:
-        - Path=/api/reply/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: content_rpt
-        uri: https://backend.flowant.org/content_rpt
-        predicates:
-        - Path=/api/content_rpt/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: review_rpt
-        uri: https://backend.flowant.org/review_rpt
-        predicates:
-        - Path=/api/review_rpt/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: reply_rpt
-        uri: https://backend.flowant.org/reply_rpt
-        predicates:
-        - Path=/api/reply_rpt/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: files
-        uri: https://backend.flowant.org/files
-        predicates:
-        - Path=/api/files/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: message
-        uri: https://backend.flowant.org/message
-        predicates:
-        - Path=/api/message/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: notification
-        uri: https://backend.flowant.org/notification
-        predicates:
-        - Path=/api/notification/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: relation
-        uri: https://backend.flowant.org/relation
-        predicates:
-        - Path=/api/relation/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: user
-        uri: https://backend.flowant.org/user
-        predicates:
-        - Path=/api/user/**
-        filters:
-        - RewritePath=/api/(?<segment>.*), /$\{segment}
-
-      - id: oauth
-        uri: https://auth.flowant.org/uaa/oauth/token
+      - id: authserver
+        uri: lb://authserver
         predicates:
         - Path=/api/oauth/token/**
         filters:
         - RewritePath=/api/(?<segment>.*), /uaa/$\{segment}
+
+      - id: backend
+        uri: lb://backend
+        predicates:
+        - Path=/api/**
+        filters:
+        - StripPrefix=1
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_ID}:${EUREKA_PASSWORD}@registry.flowant.org:8761/eureka
+    healthcheck:
+      enabled: true
 
 website:
   cors:
