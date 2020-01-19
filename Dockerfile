@@ -1,6 +1,6 @@
 # build maven projects containing spring-boot application
 
-FROM maven:3.6.0-jdk-11-slim AS build
+FROM maven:3.6.3-jdk-11-slim AS build
 
 WORKDIR /usr/share/website
 

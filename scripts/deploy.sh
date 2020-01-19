@@ -16,6 +16,9 @@ source $SITE/env_file.txt
 set -x
 
 # Cassandra data storage.
+mkdir -p ~/.m2
+
+# Cassandra data storage.
 mkdir -p $SITE/cassandra_data
 
 # Backend File Storage.

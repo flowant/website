@@ -19,6 +19,7 @@ services:
       - ~/site/env_file.txt
     volumes:
       - .:/usr/share/website
+      - ~/.m2:/root/.m2
     networks:
       - maven-build
 
