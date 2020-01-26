@@ -1,10 +1,12 @@
 def UUID = UUID.randomUUID().toString()
 def NETWORK_ID = 'build_network_' + UUID
+def builtPath
 
 pipeline {
 
     agent any
 
+    // Environment variables used in containers for test, production modes.
     environment {
         GOOGLE_CLIENT_ID = credentials('GOOGLE_CLIENT_ID')
         GOOGLE_CLIENT_SECRET = credentials('GOOGLE_CLIENT_SECRET')
@@ -18,7 +20,7 @@ pipeline {
 
     stages {
 
-        stage('Build Information') {
+        stage('Build Version Information') {
             steps {
                 echo "UUID: ${UUID}"
                 echo "NETWORK_ID: ${NETWORK_ID}"
@@ -34,7 +36,7 @@ pipeline {
             }
         }
 
-        stage('Create Network') {
+        stage('Create Docker Network') {
             steps {
                 sh "hostname"
                 sh "pwd"
@@ -50,86 +52,83 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Maven Build, UnitTest') {
             agent {
                 docker {
                     image 'maven:3.6.3-jdk-11-slim'
-                    // label 'my-defined-label'
                     args "--network ${NETWORK_ID} -v $HOME/.m2:/root/.m2 -v $WORKSPACE:/usr/share/website"
                 }
-                // dockerfile {
-                //     filename 'Dockerfile'
-                //     additionalBuildArgs  '-t maven_builder'
-                //     dir '.'
-                //     args '--network ${NETWORK_ID} -v $WORKSPACE:/usr/share/website'
-                // }
             }
             steps {
                 sh "hostname"
                 sh "printenv"
-                sh "pwd"
+                script {
+                    // Save the location for built artifacts
+                    builtPath = pwd()
+                }
+                echo "pwd:${builtPath}"
                 sh "cd /usr/share/website"
                 sh "/usr/share/website/scripts/wait-for-it.sh cassandra:9042 --timeout=0 -- mvn clean install"
-                // sh "mvn validate"
             }
         }
 
-        stage('Test') {
+        stage('Build and Push Docker Images') {
             steps {
-                sh "hostname"
-                sh "pwd"
-                //sh "mvn validate"
-            }
-        }
-
-        stage('Deploy - Staging') {
-            steps {
-                sh "pwd"
-                sh 'echo "Deploy - Staging"'
-            }
-        }
-
-        stage('Sanity check') {
-            steps {
-                sh "pwd"
-                sh 'echo "Sanity check"'
-            }
-        }
-
-        stage('Deploy - ImageRepository for Production') {
-            steps {
-                sh "pwd"
-                sh 'echo "Deploy - ImageRepository for Production"'
+                script {
+                    // Change workspace containing built artifacts.
+                    ws(builtPath) {
+                        sh("hostname")
+                        sh("pwd")
+                        docker.withRegistry('', 'dockerhub_credential') {
+                            docker.build("flowant/authserver:${env.BUILD_ID}", "./authserver").push()
+                            docker.build("flowant/backend:${env.BUILD_ID}", "./backend").push()
+                            docker.build("flowant/frontend:${env.BUILD_ID}", "./frontend").push()
+                            docker.build("flowant/gateway:${env.BUILD_ID}", "./gateway").push()
+                            docker.build("flowant/registry:${env.BUILD_ID}", "./registry").push()
+                        }
+                    }
+                }
             }
         }
     }
+
     post {
         always {
-            echo 'This will always run'
-            //archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
-            //junit 'build/reports/**/*.xml'
+            // archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+            // junit 'build/reports/**/*.xml'
 
             sh "hostname"
+            sh "pwd"
+            echo 'Remove Docker containers and network'
             sh "docker container stop cassandra"
             sh "docker container rm cassandra"
-            echo "remove network ${NETWORK_ID}"
             sh "docker network rm ${NETWORK_ID}"
 
+            echo 'Remove local Docker images'
+            sh """ docker rmi \
+                    flowant/authserver:${env.BUILD_ID} \
+                    flowant/backend:${env.BUILD_ID} \
+                    flowant/frontend:${env.BUILD_ID} \
+                    flowant/gateway:${env.BUILD_ID} \
+                    flowant/registry:${env.BUILD_ID}
+               """
+
+            echo 'Remove the workspace'
             deleteDir() // clean up our workspace
         }
+
         success {
             echo 'This will run only if successful'
         }
+
         failure {
             echo 'This will run only if failed'
-            //SMTP host should be set up
-            //mail to: 'flowant@gmail.com',
-            //  subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-            //  body: "Something is wrong with ${env.BUILD_URL}"
         }
+
         unstable {
             echo 'This will run only if the run was marked as unstable'
         }
+
         changed {
             echo 'This will run only if the state of the Pipeline has changed'
             echo 'For example, if the Pipeline was previously failing but is now successful'
