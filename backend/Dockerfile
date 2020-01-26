@@ -8,9 +8,6 @@ RUN chmod +x /usr/share/website/wait-for-it.sh
 
 COPY target/*-exec.jar /usr/share/website/backend/backend-exec.jar
 
-# SSL keystore
-COPY keystore /usr/share/website/backend/keystore
-
 RUN mkdir -p /usr/share/website/backend/storage
 
 VOLUME /usr/share/website/backend/storage
