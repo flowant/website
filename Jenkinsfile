@@ -80,11 +80,22 @@ pipeline {
                         sh("hostname")
                         sh("pwd")
                         docker.withRegistry('', 'dockerhub_credential') {
+                            // Build and push docker images.
                             docker.build("flowant/authserver:${env.BUILD_ID}", "./authserver").push()
+                            // Remove local docker images after pushing
+                            sh("docker rmi flowant/authserver:${env.BUILD_ID}")
+
                             docker.build("flowant/backend:${env.BUILD_ID}", "./backend").push()
+                            sh("docker rmi flowant/backend:${env.BUILD_ID}")
+
                             docker.build("flowant/frontend:${env.BUILD_ID}", "./frontend").push()
+                            sh("docker rmi flowant/frontend:${env.BUILD_ID}")
+
                             docker.build("flowant/gateway:${env.BUILD_ID}", "./gateway").push()
+                            sh("docker rmi flowant/gateway:${env.BUILD_ID}")
+
                             docker.build("flowant/registry:${env.BUILD_ID}", "./registry").push()
+                            sh("docker rmi flowant/registry:${env.BUILD_ID}")
                         }
                     }
                 }
@@ -99,22 +110,14 @@ pipeline {
 
             sh "hostname"
             sh "pwd"
-            echo 'Remove Docker containers and network'
+
+            echo 'Remove the docker containers and network'
             sh "docker container stop cassandra"
             sh "docker container rm cassandra"
             sh "docker network rm ${NETWORK_ID}"
 
-            echo 'Remove local Docker images'
-            sh """ docker rmi \
-                    flowant/authserver:${env.BUILD_ID} \
-                    flowant/backend:${env.BUILD_ID} \
-                    flowant/frontend:${env.BUILD_ID} \
-                    flowant/gateway:${env.BUILD_ID} \
-                    flowant/registry:${env.BUILD_ID}
-               """
-
             echo 'Remove the workspace'
-            deleteDir() // clean up our workspace
+            deleteDir()
         }
 
         success {
