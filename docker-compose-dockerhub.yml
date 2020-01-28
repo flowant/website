@@ -1,0 +1,79 @@
+version: "3.7"
+
+# Command Example
+# export BUILD_ID=111
+# docker-compose -f docker-compose-dockerhub.yml up -d
+# docker-compose -f docker-compose-dockerhub.yml up -d --scale backend=3
+# docker-compose -f docker-compose-dockerhub.yml down
+services:
+
+  cassandra:
+    image: cassandra:latest
+    ports:
+      - "9042"
+      - "7000"
+    volumes:
+      - ~/site/cassandra_data:/var/lib/cassandra
+    networks:
+      - website
+
+  registry:
+    image: flowant/registry:${BUILD_ID}
+    ports:
+      - "8761"
+    env_file:
+      - ~/site/env_file.txt
+    networks:
+      website:
+        aliases:
+         - registry.flowant.org
+
+  auth:
+    image: flowant/authserver:${BUILD_ID}
+    ports:
+      - "80"
+    env_file:
+      - ~/site/env_file.txt
+    networks:
+      website:
+        aliases:
+         - auth.flowant.org
+
+  backend:
+    image: flowant/backend:${BUILD_ID}
+    ports:
+      - "80"
+    env_file:
+      - ~/site/env_file.txt
+    volumes:
+      - ~/site/storage:/usr/share/website/backend/storage
+    networks:
+      website:
+        aliases:
+         - backend.flowant.org
+
+  gateway:
+    image: flowant/gateway:${BUILD_ID}
+    ports:
+      - "8443:443"
+    env_file:
+      - ~/site/env_file.txt
+    networks:
+      website:
+        aliases:
+         - gateway.flowant.org
+
+  frontend:
+    image: flowant/frontend:${BUILD_ID}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ~/site/keystore:/etc/keystore
+    networks:
+      website:
+        aliases:
+         - www.flowant.org
+
+networks:
+  website:
