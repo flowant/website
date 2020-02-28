@@ -5,36 +5,28 @@
 Studying and operating modern web technologies and sharing results.
 
 ---
+## Demo Site
+https://www.flowant.org
+
+For your convenience, you can use the following username/password to sign in.
+
+    Username: user0
+    Password: pass0
+
+
+---
 
 ## Architecture
 
-```mermaid
-graph TB
-   
-  subgraph Home
-  Router(Router Verizon)
-  Router -- https 8443 --> APIGateway
-  Router -- https 443 --> Frontend
+[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVEJcbiAgIFxuICBzdWJncmFwaCBIb21lXG4gIFJvdXRlcihSb3V0ZXIgVmVyaXpvbilcbiAgUm91dGVyIC0tIGh0dHBzIDg0NDMgLS0-IEFQSUdhdGV3YXlcbiAgUm91dGVyIC0tIGh0dHBzIDQ0MyAtLT4gRnJvbnRlbmRcblxuICAgIHN1YmdyYXBoIExpbnV4IERlc2t0b3BcbiAgICBGcm9udGVuZFxuICAgIEFQSUdhdGV3YXkoQVBJR2F0ZXdheSlcbiAgICBBUElHYXRld2F5IC0tIDgwIC0tPiBBdXRoU2VydmVyXG4gICAgQVBJR2F0ZXdheSAtLSA4MCAtLT4gQmFja2VuZFxuICAgIEFQSUdhdGV3YXkgLS4tIEV1cmVrYVsoRXVyZWthKV1cbiAgICBBdXRoU2VydmVyIC0tPiBDYXNzYW5kcmFbKENhc3NhbmRyYSldXG4gICAgQXV0aFNlcnZlciAtLi0gRXVyZWthWyhFdXJla2EpXVxuICAgIEJhY2tlbmQgLS0-IENhc3NhbmRyYVsoQ2Fzc2FuZHJhKV1cbiAgICBCYWNrZW5kIC0uLSBFdXJla2FbKEV1cmVrYSldXG5cbiAgICBlbmRcblxuICBlbmRcblxuICBzdWJncmFwaCBCcm93c2VyXG4gIFdlYkFwcCAtLT4gUm91dGVyXG4gIGVuZCIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVEJcbiAgIFxuICBzdWJncmFwaCBIb21lXG4gIFJvdXRlcihSb3V0ZXIgVmVyaXpvbilcbiAgUm91dGVyIC0tIGh0dHBzIDg0NDMgLS0-IEFQSUdhdGV3YXlcbiAgUm91dGVyIC0tIGh0dHBzIDQ0MyAtLT4gRnJvbnRlbmRcblxuICAgIHN1YmdyYXBoIExpbnV4IERlc2t0b3BcbiAgICBGcm9udGVuZFxuICAgIEFQSUdhdGV3YXkoQVBJR2F0ZXdheSlcbiAgICBBUElHYXRld2F5IC0tIDgwIC0tPiBBdXRoU2VydmVyXG4gICAgQVBJR2F0ZXdheSAtLSA4MCAtLT4gQmFja2VuZFxuICAgIEFQSUdhdGV3YXkgLS4tIEV1cmVrYVsoRXVyZWthKV1cbiAgICBBdXRoU2VydmVyIC0tPiBDYXNzYW5kcmFbKENhc3NhbmRyYSldXG4gICAgQXV0aFNlcnZlciAtLi0gRXVyZWthWyhFdXJla2EpXVxuICAgIEJhY2tlbmQgLS0-IENhc3NhbmRyYVsoQ2Fzc2FuZHJhKV1cbiAgICBCYWNrZW5kIC0uLSBFdXJla2FbKEV1cmVrYSldXG5cbiAgICBlbmRcblxuICBlbmRcblxuICBzdWJncmFwaCBCcm93c2VyXG4gIFdlYkFwcCAtLT4gUm91dGVyXG4gIGVuZCIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
 
-    subgraph Desktop
-    Frontend
-    APIGateway(APIGateway)
-    APIGateway --> AuthServer
-    APIGateway --> Backend
-    AuthServer --> Cassandra
-    Backend --> Cassandra
-    end
-
-  end
-
-  subgraph Browser
-  WebApp --> Router
-  end
-```
 
 ### CI/CD
 
-- https://travis-ci.org/flowant/website
+- CI: Jenkins builds, tests and pushs images to DockerHub
+- CD: Kubernetes
+  - Being Developed
+  - I’m porting this site to Kubernetes on my desktop in my free time. Eureka Registry will be deprecated because Kubernetes’ Service manages the pods and provides load balancing, Spring Cloud API Gateway will be substituted with a Kubernetes’ Ingress controller which has API gateway functionalities.
 
 ### Security
 
@@ -78,34 +70,13 @@ graph TB
 ## Sequence
 
 ### How DynamicDNS is updated
-```mermaid
-sequenceDiagram
-    loop update periodically
-    DDClient In Desktop ->> DDClient In Desktop: Find Public IP (Router's IP)
-    DDClient In Desktop ->> GoogleDomain: Update Public IP in Dynamic DNS Record
-    end
-```
+
+[![](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgbG9vcCB1cGRhdGUgcGVyaW9kaWNhbGx5XG4gICAgRERDbGllbnQgSW4gRGVza3RvcCAtPj4gRERDbGllbnQgSW4gRGVza3RvcDogRmluZCBQdWJsaWMgSVAgKFJvdXRlcidzIElQKVxuICAgIEREQ2xpZW50IEluIERlc2t0b3AgLT4-IEdvb2dsZURvbWFpbjogVXBkYXRlIFB1YmxpYyBJUCBpbiBEeW5hbWljIEROUyBSZWNvcmRcbiAgICBlbmQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgbG9vcCB1cGRhdGUgcGVyaW9kaWNhbGx5XG4gICAgRERDbGllbnQgSW4gRGVza3RvcCAtPj4gRERDbGllbnQgSW4gRGVza3RvcDogRmluZCBQdWJsaWMgSVAgKFJvdXRlcidzIElQKVxuICAgIEREQ2xpZW50IEluIERlc2t0b3AgLT4-IEdvb2dsZURvbWFpbjogVXBkYXRlIFB1YmxpYyBJUCBpbiBEeW5hbWljIEROUyBSZWNvcmRcbiAgICBlbmQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)
+
 
 ### How this website works
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend
-    Note right of Frontend: NGINX
-    participant AuthServer
-    Note right of AuthServer: Spring
-    participant Backend
-    User ->> Frontend: browse www.flowant.org
-    Frontend -->> User: download HTML5 App.
-    User ->> AuthServer: Sign-up
-    User ->> AuthServer: Sign-in
-    AuthServer -->> User: Access-token
-    
-    loop handle resources with access token
-    User ->> Backend: REST API Request
-    Backend -->> User: REST API Response
-    end
-```
+
+[![](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgcGFydGljaXBhbnQgVXNlclxuICAgIHBhcnRpY2lwYW50IEZyb250ZW5kXG4gICAgTm90ZSByaWdodCBvZiBGcm9udGVuZDogTkdJTlhcbiAgICBwYXJ0aWNpcGFudCBBdXRoU2VydmVyXG4gICAgTm90ZSByaWdodCBvZiBBdXRoU2VydmVyOiBTcHJpbmdcbiAgICBwYXJ0aWNpcGFudCBCYWNrZW5kXG4gICAgVXNlciAtPj4gRnJvbnRlbmQ6IGJyb3dzZSB3d3cuZmxvd2FudC5vcmdcbiAgICBGcm9udGVuZCAtLT4-IFVzZXI6IGRvd25sb2FkIEhUTUw1IEFwcC5cbiAgICBVc2VyIC0-PiBBdXRoU2VydmVyOiBTaWduLXVwXG4gICAgVXNlciAtPj4gQXV0aFNlcnZlcjogU2lnbi1pblxuICAgIEF1dGhTZXJ2ZXIgLS0-PiBVc2VyOiBBY2Nlc3MtdG9rZW5cbiAgICBcbiAgICBsb29wIGhhbmRsZSByZXNvdXJjZXMgd2l0aCBhY2Nlc3MgdG9rZW5cbiAgICBVc2VyIC0-PiBCYWNrZW5kOiBSRVNUIEFQSSBSZXF1ZXN0XG4gICAgQmFja2VuZCAtLT4-IFVzZXI6IFJFU1QgQVBJIFJlc3BvbnNlXG4gICAgZW5kIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgcGFydGljaXBhbnQgVXNlclxuICAgIHBhcnRpY2lwYW50IEZyb250ZW5kXG4gICAgTm90ZSByaWdodCBvZiBGcm9udGVuZDogTkdJTlhcbiAgICBwYXJ0aWNpcGFudCBBdXRoU2VydmVyXG4gICAgTm90ZSByaWdodCBvZiBBdXRoU2VydmVyOiBTcHJpbmdcbiAgICBwYXJ0aWNpcGFudCBCYWNrZW5kXG4gICAgVXNlciAtPj4gRnJvbnRlbmQ6IGJyb3dzZSB3d3cuZmxvd2FudC5vcmdcbiAgICBGcm9udGVuZCAtLT4-IFVzZXI6IGRvd25sb2FkIEhUTUw1IEFwcC5cbiAgICBVc2VyIC0-PiBBdXRoU2VydmVyOiBTaWduLXVwXG4gICAgVXNlciAtPj4gQXV0aFNlcnZlcjogU2lnbi1pblxuICAgIEF1dGhTZXJ2ZXIgLS0-PiBVc2VyOiBBY2Nlc3MtdG9rZW5cbiAgICBcbiAgICBsb29wIGhhbmRsZSByZXNvdXJjZXMgd2l0aCBhY2Nlc3MgdG9rZW5cbiAgICBVc2VyIC0-PiBCYWNrZW5kOiBSRVNUIEFQSSBSZXF1ZXN0XG4gICAgQmFja2VuZCAtLT4-IFVzZXI6IFJFU1QgQVBJIFJlc3BvbnNlXG4gICAgZW5kIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
 
 ---
 
@@ -212,20 +183,15 @@ docker-compose -f docker-compose-maven.yml up --exit-code-from maven
 You can make sure the build has done successfully by following messages.
 
 ```
-maven_1      | [INFO] Reactor Summary for Basic Website 0.0.1:
-maven_1      | [INFO]
-maven_1      | [INFO] Basic Website ................ SUCCESS [  0.968 s]
-maven_1      | [INFO] common ....................... SUCCESS [ 15.298 s]
-maven_1      | [INFO] authserver ................... SUCCESS [ 15.288 s]
-maven_1      | [INFO] backend ...................... SUCCESS [ 17.199 s]
-maven_1      | [INFO] gateway ...................... SUCCESS [  1.208 s]
-
+maven_1      | [INFO] Basic Website ...................................... SUCCESS [  1.042 s]
+maven_1      | [INFO] common ............................................. SUCCESS [ 20.422 s]
+maven_1      | [INFO] authserver ......................................... SUCCESS [ 24.546 s]
+maven_1      | [INFO] backend ............................................ SUCCESS [ 24.208 s]
+maven_1      | [INFO] gateway ............................................ SUCCESS [  1.545 s]
+maven_1      | [INFO] registry ........................................... SUCCESS [  0.692 s]
+maven_1      | [INFO] ------------------------------------------------------------------------
 maven_1      | [INFO] BUILD SUCCESS
 
-maven_1      | [INFO] Total time:  50.513 s
-maven_1      | [INFO] Finished at: 2019-04-11T07:50:42Z
-
-website_maven_1 exited with code 0
 ```
 
 Create docker images from build results.
@@ -254,5 +220,5 @@ cd website
 ## TODO List
 
 - Apply social login using OAuth2.
-- CI/CD.
+- Porting on Kubernetes
 - Study and refine frontend with testcases.
