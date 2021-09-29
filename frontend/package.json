@@ -24,7 +24,7 @@
     "@ng-bootstrap/ng-bootstrap": "^4.1.0",
     "ajv": "^6.10.0",
     "bootstrap": "^4.3.1",
-    "i": "^0.3.6",
+    "i": "^0.3.7",
     "jquery": "^3.3.1",
     "jquery.easing": "^1.4.1",
     "js-joda": "^1.9.3",
